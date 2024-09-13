@@ -1,0 +1,654 @@
+[gd_scene load_steps=6 format=3 uid="uid://cjcmn1g4vfh8e"]
+
+[ext_resource type="Script" path="res://Scripts/map.gd" id="1_5htnh"]
+[ext_resource type="PackedScene" uid="uid://dm4f1jygoeja8" path="res://Assets/floor.glb" id="2_3yak2"]
+[ext_resource type="Script" path="res://Scripts/map_floor_tile.gd" id="3_7jn5u"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_csxew"]
+size = Vector3(1, 0.2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tnvj3"]
+size = Vector3(1, 0.2, 1)
+
+[node name="Map" type="Node3D"]
+script = ExtResource("1_5htnh")
+
+[node name="FloorTile11" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile11"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile11/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile12" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile12"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile12/Area3D"]
+shape = SubResource("BoxShape3D_tnvj3")
+
+[node name="FloorTile13" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile13/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile14" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile14"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile14/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile15" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile15"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile15/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile16" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile16"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile16/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile17" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile17"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile17/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile18" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile18"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile18/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile21" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile21"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile21/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile22" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile22"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile22/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile23" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile23"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile23/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile24" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile24"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile24/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile25" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile25"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile25/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile26" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile26"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile26/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile27" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile27"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile27/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile28" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile28"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile28/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile31" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile31"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile31/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile32" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile32/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile33" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile33"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile33/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile34" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile34"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile34/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile35" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile35"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile35/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile36" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile36"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile36/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile37" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile37"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile37/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile38" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile38"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile38/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile41" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile41"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile41/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile42" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile42/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile43" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile43"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile43/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile44" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile44"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile44/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile45" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile45"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile45/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile46" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile46"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile46/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile47" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile47"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile47/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile48" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile48"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile48/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile51" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile51"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile51/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile52" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile52/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile53" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile53"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile53/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile54" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile54"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile54/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile55" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile55"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile55/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile56" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile56"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile56/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile57" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile57"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile57/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile58" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 0.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile58"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile58/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile61" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile61"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile61/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile62" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile62"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile62/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile63" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile63"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile63/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile64" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile64"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile64/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile65" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile65"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile65/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile66" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile66"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile66/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile67" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile67"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile67/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile68" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 1.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile68"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile68/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile71" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile71"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile71/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile72" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile72"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile72/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile73" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile73"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile73/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile74" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile74"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile74/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile75" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile75"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile75/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile76" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile76"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile76/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile77" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile77"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile77/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile78" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 2.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile78"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile78/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile81" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile81"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile81/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile82" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile82"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile82/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile83" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile83"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile83/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile84" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile84"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile84/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile85" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile85"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile85/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile86" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile86"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile86/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile87" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile87"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile87/Area3D"]
+shape = SubResource("BoxShape3D_csxew")
+
+[node name="FloorTile88" parent="." instance=ExtResource("2_3yak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 3.5)
+script = ExtResource("3_7jn5u")
+
+[node name="Area3D" type="Area3D" parent="FloorTile88"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTile88/Area3D"]
+shape = SubResource("BoxShape3D_csxew")

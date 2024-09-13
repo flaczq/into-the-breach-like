@@ -1,0 +1,145 @@
+[gd_scene load_steps=15 format=3 uid="uid://cygwqk0c02vjo"]
+
+[ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
+[ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
+[ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map.tscn" id="2_gdtvm"]
+[ext_resource type="PackedScene" uid="uid://d3kikj28cfn8h" path="res://Scenes/enemy.tscn" id="3_nwkag"]
+[ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player.tscn" id="3_yn7e4"]
+[ext_resource type="PackedScene" uid="uid://b60h1emnunq1s" path="res://Scenes/civilian.tscn" id="6_thiki"]
+[ext_resource type="Script" path="res://Scripts/util.gd" id="7_gp40j"]
+[ext_resource type="ButtonGroup" uid="uid://by0pbsfufftxo" path="res://Other/shoot_action_button_group.tres" id="8_t76ir"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oi1vl"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_c3o0l"]
+device = -1
+keycode = 32
+unicode = 32
+
+[sub_resource type="Shortcut" id="Shortcut_mhvaf"]
+events = [SubResource("InputEventKey_c3o0l")]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l1dh4"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_comoe"]
+device = -1
+keycode = 4194309
+
+[sub_resource type="Shortcut" id="Shortcut_8tcml"]
+events = [SubResource("InputEventKey_comoe")]
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_h8ron")
+
+[node name="GameStateManager" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9, 0)
+script = ExtResource("2_23un4")
+map_scenes = Array[PackedScene]([ExtResource("2_gdtvm")])
+player_scenes = Array[PackedScene]([ExtResource("3_yn7e4")])
+enemy_scenes = Array[PackedScene]([ExtResource("3_nwkag")])
+civilian_scenes = Array[PackedScene]([ExtResource("6_thiki")])
+
+[node name="Util" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
+script = ExtResource("7_gp40j")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 12, 16, 12)
+fov = 21.0
+size = 8.604
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 5, 0)
+shadow_enabled = true
+shadow_normal_bias = 0.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+mouse_filter = 2
+
+[node name="GameInfo" type="Label" parent="CanvasLayer/UI"]
+layout_mode = 1
+offset_right = 76.0
+offset_bottom = 75.0
+text = "LEVEL: 0
+TURN: 0
+POINTS: 0"
+
+[node name="PlayerInfoContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -181.0
+offset_bottom = 101.0
+grow_horizontal = 0
+
+[node name="PlayerInfo" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
+layout_mode = 2
+text = "MOVES: 0
+ACTIONS: 0"
+
+[node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI/PlayerInfoContainer"]
+layout_mode = 2
+
+[node name="EndTurnButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_oi1vl")
+disabled = true
+shortcut = SubResource("Shortcut_mhvaf")
+text = "END TURN"
+
+[node name="ShootButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_l1dh4")
+disabled = true
+toggle_mode = true
+button_group = ExtResource("8_t76ir")
+shortcut = SubResource("Shortcut_8tcml")
+text = "SHOOT"
+
+[node name="ActionButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_l1dh4")
+disabled = true
+toggle_mode = true
+button_group = ExtResource("8_t76ir")
+shortcut = SubResource("Shortcut_8tcml")
+text = "ACTION"
+
+[node name="LevelEndPopup" type="ColorRect" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="LevelEndLabel" type="Label" parent="CanvasLayer/UI/LevelEndPopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -67.5
+offset_top = -11.5
+offset_right = 67.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "LEVEL WON/LOST"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton" to="GameStateManager" method="_on_end_turn_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton" to="GameStateManager" method="_on_shoot_button_toggled"]
+[connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton" to="GameStateManager" method="_on_action_button_toggled"]
+[connection signal="gui_input" from="CanvasLayer/UI/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

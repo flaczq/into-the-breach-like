@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://cygwqk0c02vjo"]
+
+[ext_resource type="MeshLibrary" uid="uid://d0oyj0sly47ra" path="res://Assets/tiles3.tres" id="1_dikm8"]
+[ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_h8ron")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 12, 16.8, 12)
+fov = 10.0
+size = 5.0
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("1_dikm8")
+cell_size = Vector3(0.5, 0.1, 0.5)
+data = {
+"cells": PackedInt32Array(1, 65535, 2, 2, 65535, 2, 2, 65534, 2, 1, 65534, 2, 2, 0, 2, 3, 65534, 2, 3, 65533, 2, 1, 65533, 2, 2, 65532, 2, 2, 65533, 2, 3, 65535, 2, 3, 0, 2, 1, 65532, 2, 65534, 65532, 2, 65535, 65532, 2, 0, 65532, 2, 3, 65532, 2, 65534, 2, 2, 65534, 1, 2, 65534, 0, 2, 65534, 65535, 2, 65534, 65534, 2, 65534, 65533, 2, 65535, 2, 2, 0, 2, 2, 65535, 1, 2, 65535, 0, 2, 65535, 65535, 2, 65535, 65534, 2, 65535, 65533, 2, 0, 65534, 2, 0, 65535, 2, 0, 0, 2, 0, 1, 2, 1, 2, 2, 1, 1, 2, 1, 0, 2, 0, 65533, 2, 2, 2, 2, 2, 1, 2, 3, 1, 2, 3, 2, 2, 65533, 65532, 2, 65532, 65532, 2, 65532, 65533, 2, 65533, 65533, 2, 65533, 65534, 2, 65532, 65534, 2, 65532, 65535, 2, 65533, 65535, 2, 65533, 0, 2, 65532, 0, 2, 65532, 1, 2, 65533, 1, 2, 65533, 2, 2, 65532, 2, 2, 65532, 3, 2, 65533, 3, 2, 65534, 3, 2, 65535, 3, 2, 0, 3, 2, 1, 3, 2, 2, 3, 2, 3, 3, 2)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 5, 0)
+shadow_enabled = true
+shadow_normal_bias = 0.0

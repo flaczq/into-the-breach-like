@@ -1,0 +1,220 @@
+extends Util
+
+signal hovered_event(tile: Node3D)
+signal clicked_event(tile: Node3D)
+
+@onready var area_3d = $Area3D
+@onready var model = $'floor-thick'
+
+var is_hovered: bool = false
+var is_player_clicked: bool = false
+var is_planned_enemy_action: bool = false
+
+var tile_type: TileType
+var health: HealthType
+var coords: Vector2i
+var player: Node3D
+var enemy: Node3D
+var civilian: Node3D
+var model_material: Material
+var model_default_color: Color
+
+func _ready():
+	area_3d.connect('mouse_entered', _on_area_3d_mouse_entered)
+	area_3d.connect('mouse_exited', _on_area_3d_mouse_exited)
+	area_3d.connect('input_event', _on_area_3d_input_event)
+	
+	# coords from name int values: x = position.z, y = position.x
+	coords = Vector2i(int(name.substr(4, 1)), int(name.substr(5, 1)))
+	
+	model_material = StandardMaterial3D.new()
+	model.set_surface_override_material(0, model_material)
+
+
+func convert_tile_type_initial_to_enum(tile_type_initial):
+	match tile_type_initial:
+		'P': return TileType.PLAIN
+		'G': return TileType.GRASS
+		'T': return TileType.TREE
+		'M': return TileType.MOUNTAIN
+		'W': return TileType.WATER
+		'L': return TileType.LAVA
+		_:
+			print('unknown tile type: ' + tile_type_initial)
+			return TileType.PLAIN
+
+
+func convert_tile_type_enum_to_initial(tile_type_enum):
+	match tile_type_enum:
+		TileType.PLAIN: return 'P'
+		TileType.GRASS: return 'G'
+		TileType.TREE: return 'T'
+		TileType.MOUNTAIN: return 'M'
+		TileType.WATER: return 'W'
+		TileType.LAVA: return 'L'
+		_:
+			print('unknown tile type: ' + str(tile_type_enum))
+			return 'P'
+
+
+func set_tile_type(new_tile_type):
+	if new_tile_type:
+		tile_type = convert_tile_type_initial_to_enum(new_tile_type)
+	else:
+		# TODO random map generation
+		tile_type = TileType.values()[TileType.values().pick_random()]
+	
+	match tile_type:
+		TileType.PLAIN:
+			model_default_color = Color.PALE_GOLDENROD
+			model_material.albedo_color = model_default_color
+			
+			health = HealthType.HEALTHY
+		TileType.GRASS:
+			model_default_color = Color.YELLOW_GREEN
+			model_material.albedo_color = model_default_color
+			
+			health = HealthType.HEALTHY
+		TileType.TREE:
+			model_default_color = Color.DARK_GREEN
+			model_material.albedo_color = model_default_color
+			
+			health = HealthType.HEALTHY
+		TileType.MOUNTAIN:
+			model_default_color = Color.RED
+			model_material.albedo_color = model_default_color
+			
+			health = HealthType.INDESTRUCTIBLE
+		TileType.WATER:
+			model_default_color = Color.DODGER_BLUE
+			model_material.albedo_color = model_default_color
+			
+			health = HealthType.INDESTRUCTIBLE
+		TileType.LAVA:
+			model_default_color = Color.ORANGE
+			model_material.albedo_color = model_default_color
+			
+			health = HealthType.INDESTRUCTIBLE
+		_:
+			print('unknown tile type: ' + str(tile_type))
+			model_default_color = Color.PALE_GOLDENROD
+			model_material.albedo_color = model_default_color
+			
+			health = HealthType.HEALTHY
+
+
+func set_player(new_player):
+	player = new_player
+
+
+func set_enemy(new_enemy):
+	enemy = new_enemy
+
+
+func set_civilian(new_civilian):
+	civilian = new_civilian
+
+
+func is_free():
+	return health != HealthType.DESTROYED and health != HealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
+
+
+func reset():
+	player = null
+	enemy = null
+	civilian = null
+
+
+func color_model(color):
+	if color:
+		model_material.albedo_color = color
+	elif is_planned_enemy_action:
+		model_material.albedo_color = Color.PALE_VIOLET_RED
+	else:
+		model_material.albedo_color = model_default_color
+
+
+func toggle_player_hovered(new_is_player_hovered):
+	if new_is_player_hovered:
+		model_material.albedo_color = Color.MEDIUM_PURPLE
+	else:
+		color_model(null)
+
+
+func toggle_player_clicked(new_is_player_clicked):
+	is_player_clicked = new_is_player_clicked
+	
+	if is_player_clicked:
+		model_material.albedo_color = Color.PURPLE
+	else:
+		color_model(null)
+
+
+func set_planned_enemy_action(new_is_planned_enemy_action):
+	is_planned_enemy_action = new_is_planned_enemy_action
+	
+	color_model(null)
+
+
+func get_shot(taken_damage, action_type, origin_tile_coords):
+	if player:
+		await player.get_shot(taken_damage, action_type, origin_tile_coords)
+	elif enemy:
+		await enemy.get_shot(taken_damage, action_type, origin_tile_coords)
+	elif civilian:
+		await civilian.get_shot(taken_damage, action_type, origin_tile_coords)
+	else:
+		# TODO maybe apply_action_type()?
+		if taken_damage > 0:
+			if health == HealthType.HEALTHY:
+				health = HealthType.DAMAGED
+				
+				model_default_color = Color.INDIAN_RED
+				model_material.albedo_color = model_default_color
+				print('ttile ' + str(coords) + ' -> damaged tile')
+			elif health == HealthType.DAMAGED:
+				health = HealthType.DESTROYED
+				
+				model_default_color = Color.RED
+				model_material.albedo_color = model_default_color
+				print('ttile ' + str(coords) + ' -> destroyed')
+			elif health == HealthType.DESTROYED:
+				print('ttile ' + str(coords) + ' -> already destroyed, nothing happens')
+			elif health == HealthType.INDESTRUCTIBLE:
+				print('ttile ' + str(coords) + ' -> indestructible, nothing happens')
+		else:
+			print('ttile ' + str(coords) + ' -> used action on empty tile, nothing happens')
+
+
+func _on_area_3d_mouse_entered():
+	if is_player_clicked:
+		is_hovered = true
+		
+		model_material.albedo_color = Color.WEB_PURPLE
+		
+		hovered_event.emit(self)
+	elif player:
+		player.on_mouse_entered()
+
+
+func _on_area_3d_mouse_exited():
+	if is_player_clicked:
+		is_hovered = false
+		
+		model_material.albedo_color = Color.PURPLE
+		
+		hovered_event.emit(self)
+	elif player:
+		player.on_mouse_exited()
+
+
+func _on_area_3d_input_event(camera, event, position, normal, shape_idx):
+	#if health == HealthType.DESTROYED or health == HealthType.INDESTRUCTIBLE:
+		#return
+	
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		clicked_event.emit(self)
+		#if player:
+			#player.on_clicked()
+		#elif is_player_clicked:
+			#clicked_event.emit(self)

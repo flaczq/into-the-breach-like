@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://bb3b503xrvj7m"]
+
+[ext_resource type="Script" path="res://Scripts/player.gd" id="1_04v0u"]
+[ext_resource type="PackedScene" uid="uid://brsufyjqxpqs3" path="res://Assets/Prototype/shape-cube.glb" id="1_d3u5g"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3urax"]
+
+[node name="Player" type="Node3D"]
+script = ExtResource("1_04v0u")
+
+[node name="ShapeCube" parent="." instance=ExtResource("1_d3u5g")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="ShapeCube"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ShapeCube/Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_3urax")
+disabled = true

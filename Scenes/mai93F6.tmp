@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://cygwqk0c02vjo"]
+
+[ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
+[ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map.tscn" id="2_gdtvm"]
+[ext_resource type="PackedScene" uid="uid://d3kikj28cfn8h" path="res://Scenes/enemy.tscn" id="3_nwkag"]
+[ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player.tscn" id="3_yn7e4"]
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_h8ron")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 12, 16, 12)
+fov = 21.0
+size = 8.604
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 5, 0)
+shadow_enabled = true
+shadow_normal_bias = 0.0
+
+[node name="Map" parent="." instance=ExtResource("2_gdtvm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+
+[node name="Enemy" parent="." instance=ExtResource("3_nwkag")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.5, 0, -2.5)
+
+[node name="Player" parent="." instance=ExtResource("3_yn7e4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.5)
+
+[connection signal="clicked" from="Player" to="Map" method="_on_player_clicked"]

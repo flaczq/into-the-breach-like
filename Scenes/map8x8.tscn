@@ -10,7 +10,7 @@ size = Vector3(1, 0.2, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_tnvj3"]
 size = Vector3(1, 0.2, 1)
 
-[node name="Map" type="Node3D"]
+[node name="Map8x8" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 script = ExtResource("1_5htnh")
 

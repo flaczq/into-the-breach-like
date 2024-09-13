@@ -58,10 +58,14 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 	await color_tween.finished
 	
 	if health <= 0 and is_alive:
-		is_alive = false
-		print('civil ' + str(tile.coords) + ' -> dead!')
-		
-		tile.set_civilian(null)
-		tile = null
-		
-		active_material.albedo_color = Color.DARK_RED
+		get_killed()
+
+
+func get_killed():
+	is_alive = false
+	print('civil ' + str(tile.coords) + ' -> dead!')
+	
+	tile.set_civilian(null)
+	tile = null
+	
+	active_material.albedo_color = Color.DARK_RED

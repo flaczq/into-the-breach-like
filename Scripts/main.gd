@@ -40,7 +40,7 @@ func _input(event):
 		var map_dimension = sqrt(game_state_manager.map.tiles.size())
 		for tile in game_state_manager.map.tiles:
 			var index = map_dimension * (tile.coords.x - 1) + (tile.coords.y - 1)
-			if index > 0 and int(index) % 8 == 0:
+			if index > 0 and int(index) % game_state_manager.map.get_side_dimension() == 0:
 				content += '\n'
 			
 			content += tile.convert_tile_type_enum_to_initial(tile.tile_type)

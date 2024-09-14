@@ -1,7 +1,5 @@
 extends Character
 
-signal clicked_event(enemy: Node3D)
-
 @onready var model = $'TargetRound/target-a-round'
 
 var planned_tile: Node3D
@@ -29,17 +27,25 @@ func move(tiles_path, forced):
 		
 		var target_tile = tiles_path.back()
 		if target_tile == tile:
-			print('enemy ' + str(tile.coords) + ' -> is not moving')
+			if forced:
+				#enemy was pushed/pulled into wall
+				await get_shot(1, ActionType.NONE, target_tile.coords)
+			else:
+				print('enemy ' + str(tile.coords) + ' -> is not moving')
 		else:
-			tile.set_enemy(null)
-			tile = target_tile
-			tile.set_enemy(self)
-			
-			var duration = 0.4 / tiles_path.size()
-			for current_tile in tiles_path:
-				var position_tween = create_tween()
-				position_tween.tween_property(self, 'position', current_tile.position, duration).set_delay(0.1)
-				await position_tween.finished
+			if target_tile.player or target_tile.enemy or target_tile.civilian:
+				get_shot(1, ActionType.NONE, target_tile.coords)
+				await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
+			else:
+				tile.set_enemy(null)
+				tile = target_tile
+				tile.set_enemy(self)
+				
+				var duration = 0.4 / tiles_path.size()
+				for current_tile in tiles_path:
+					var position_tween = create_tween()
+					position_tween.tween_property(self, 'position', current_tile.position, duration).set_delay(0.1)
+					await position_tween.finished
 
 
 func plan_action(target_tile):

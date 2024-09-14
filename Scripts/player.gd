@@ -1,7 +1,7 @@
 extends Character
 
-signal hovered_event(player: Node3D)
-signal clicked_event(player: Node3D)
+signal hovered_event(player: Node3D, is_hovered: bool)
+signal clicked_event(player: Node3D, is_clicked: bool)
 
 @onready var model = $'ShapeCube/shape-cube'
 
@@ -10,7 +10,7 @@ var moves_made_current_turn: int = 0
 var actions_per_turn: int = 1
 var actions_made_current_turn: int = 0
 var current_phase: PhaseType = PhaseType.WAIT
-var is_hovered: bool = false
+#var is_hovered: bool = false
 var is_clicked: bool = false
 
 
@@ -59,33 +59,45 @@ func move(tiles_path, forced):
 		print('playe ' + str(tile.coords) + ' -> slowed down')
 		state_type = StateType.NONE
 	
-	var duration = 0.5 / tiles_path.size()
-	for current_tile in tiles_path:
-		var position_tween = create_tween()
-		position_tween.tween_property(self, 'position', current_tile.position, duration).set_delay(0.1)
-		await position_tween.finished
-	
-	tile.set_player(null)
-	tile = tiles_path.back()
-	
-	reset_tiles()
-	
-	# need call set_player() after reset_tiles() to properly toggle target tile
-	tile.set_player(self)
-	
-	if not forced:
-		moves_made_current_turn += 1
-	
-		#print('playe ' + str(tile.coords) + ' -> moved: ' + str(moves_per_turn - moves_made_current_turn) + ' more move(s) in this turn')
-	
-		if no_more_moves_this_turn():
-			current_phase = PhaseType.ACTION
-			#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(actions_per_turn) + ' ACTION(S)')
+	var target_tile = tiles_path.back()
+	if target_tile == tile:
+		if forced:
+			#player was pushed/pulled into wall
+			await get_shot(1, ActionType.NONE, target_tile.coords)
+		else:
+			print('playe ' + str(tile.coords) + ' -> is not moving')
+	else:
+		if target_tile.player or target_tile.enemy or target_tile.civilian:
+			get_shot(1, ActionType.NONE, target_tile.coords)
+			await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
+		else:
+			tile.set_player(null)
+			tile = tiles_path.back()
 			
-			mouse_exited()
-		elif not is_clicked:
-			# click again if moves are available
-			clicked()
+			reset_tiles()
+			
+			# need call set_player() after reset_tiles() to properly toggle target tile
+			tile.set_player(self)
+			
+			var duration = 0.4 / tiles_path.size()
+			for current_tile in tiles_path:
+				var position_tween = create_tween()
+				position_tween.tween_property(self, 'position', current_tile.position, duration).set_delay(0.1)
+				await position_tween.finished
+			
+			if not forced:
+				moves_made_current_turn += 1
+			
+				#print('playe ' + str(tile.coords) + ' -> moved: ' + str(moves_per_turn - moves_made_current_turn) + ' more move(s) in this turn')
+			
+				if no_more_moves_this_turn():
+					current_phase = PhaseType.ACTION
+					#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(actions_per_turn) + ' ACTION(S)')
+					
+					mouse_exited()
+				elif not is_clicked:
+					# click again if moves are available
+					clicked()
 
 
 func after_action():
@@ -206,7 +218,7 @@ func clicked():
 	
 	is_clicked = not is_clicked
 	
-	clicked_event.emit(self)
+	clicked_event.emit(self, is_clicked)
 	
 	# FIXME
 	if is_clicked:
@@ -214,34 +226,36 @@ func clicked():
 	else:
 		rotation_degrees.y = 0.0
 		
-		hovered_event.emit(self)
+		hovered_event.emit(self, true)
 
 
 func on_mouse_entered():
 	if not can_be_interacted_with():
 		return
 	
-	if not is_hovered and not is_clicked:
+	#if not is_hovered and not is_clicked:
+	if not is_clicked:
 		if is_alive:
 			#Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
 			
-			is_hovered = true
+			#is_hovered = true
 			
-			hovered_event.emit(self)
+			hovered_event.emit(self, true)
 		else:
 			print('playe ' + str(tile.coords) + ' -> dead, cannot hover')
 
 
 func mouse_exited():
-	is_hovered = false
+	#is_hovered = false
 	
-	hovered_event.emit(self)
+	hovered_event.emit(self, false)
 
 
 func on_mouse_exited():
 	#Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	
-	if is_hovered and not is_clicked:
+	#if is_hovered and not is_clicked:
+	if not is_clicked:
 		if is_alive:
 			mouse_exited()
 

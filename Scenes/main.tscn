@@ -81,10 +81,10 @@ offset_left = -181.0
 offset_bottom = 101.0
 grow_horizontal = 0
 
-[node name="PlayerInfo" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
+[node name="TileInfo" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
 layout_mode = 2
-text = "MOVES: 0
-ACTIONS: 0"
+text = "TILE TYPE: PLAIN
+ACTION TYPE: NONE"
 
 [node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI/PlayerInfoContainer"]
 layout_mode = 2

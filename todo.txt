@@ -7,8 +7,6 @@
 menu:
 - po ukończeniu poziomu wybór kolejnych graczy na podstawie zdobytych morali
 
-popchnięcie w inną postać powoduje obrażenia obu
-
 obrażenia środowiskowe?
 
 ai na podstawie wagi każdego pola

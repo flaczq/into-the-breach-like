@@ -1,17 +1,18 @@
 extends Util
 
-signal hovered_event(tile: Node3D)
-signal clicked_event(tile: Node3D)
+signal hovered_event(tile: Node3D, is_hovered: bool)
+signal clicked_event(tile: Node3D, is_clicked: bool)
 
 @onready var area_3d = $Area3D
 @onready var model = $'floor-thick'
 
-var is_hovered: bool = false
+var is_clicked: bool = false
+#var is_hovered: bool = false
 var is_player_clicked: bool = false
 var is_planned_enemy_action: bool = false
 
 var tile_type: TileType
-var health: HealthType
+var health_type: TileHealthType
 var coords: Vector2i
 var player: Node3D
 var enemy: Node3D
@@ -69,38 +70,38 @@ func set_tile_type(new_tile_type):
 			model_default_color = Color.PALE_GOLDENROD
 			model_material.albedo_color = model_default_color
 			
-			health = HealthType.HEALTHY
+			health_type = TileHealthType.HEALTHY
 		TileType.GRASS:
 			model_default_color = Color.YELLOW_GREEN
 			model_material.albedo_color = model_default_color
 			
-			health = HealthType.HEALTHY
+			health_type = TileHealthType.HEALTHY
 		TileType.TREE:
 			model_default_color = Color.DARK_GREEN
 			model_material.albedo_color = model_default_color
 			
-			health = HealthType.HEALTHY
+			health_type = TileHealthType.HEALTHY
 		TileType.MOUNTAIN:
 			model_default_color = Color.RED
 			model_material.albedo_color = model_default_color
 			
-			health = HealthType.INDESTRUCTIBLE
+			health_type = TileHealthType.INDESTRUCTIBLE
 		TileType.WATER:
 			model_default_color = Color.DODGER_BLUE
 			model_material.albedo_color = model_default_color
 			
-			health = HealthType.INDESTRUCTIBLE
+			health_type = TileHealthType.INDESTRUCTIBLE
 		TileType.LAVA:
 			model_default_color = Color.ORANGE
 			model_material.albedo_color = model_default_color
 			
-			health = HealthType.INDESTRUCTIBLE
+			health_type = TileHealthType.INDESTRUCTIBLE
 		_:
 			print('unknown tile type: ' + str(tile_type))
 			model_default_color = Color.PALE_GOLDENROD
 			model_material.albedo_color = model_default_color
 			
-			health = HealthType.HEALTHY
+			health_type = TileHealthType.HEALTHY
 
 
 func set_player(new_player):
@@ -116,7 +117,7 @@ func set_civilian(new_civilian):
 
 
 func is_free():
-	return health != HealthType.DESTROYED and health != HealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
+	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
 
 
 func reset():
@@ -166,21 +167,21 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 	else:
 		# TODO maybe apply_action_type()?
 		if taken_damage > 0:
-			if health == HealthType.HEALTHY:
-				health = HealthType.DAMAGED
+			if health_type == TileHealthType.HEALTHY:
+				health_type = TileHealthType.DAMAGED
 				
 				model_default_color = Color.INDIAN_RED
 				model_material.albedo_color = model_default_color
 				print('ttile ' + str(coords) + ' -> damaged tile')
-			elif health == HealthType.DAMAGED:
-				health = HealthType.DESTROYED
+			elif health_type == TileHealthType.DAMAGED:
+				health_type = TileHealthType.DESTROYED
 				
 				model_default_color = Color.RED
 				model_material.albedo_color = model_default_color
 				print('ttile ' + str(coords) + ' -> destroyed')
-			elif health == HealthType.DESTROYED:
+			elif health_type == TileHealthType.DESTROYED:
 				print('ttile ' + str(coords) + ' -> already destroyed, nothing happens')
-			elif health == HealthType.INDESTRUCTIBLE:
+			elif health_type == TileHealthType.INDESTRUCTIBLE:
 				print('ttile ' + str(coords) + ' -> indestructible, nothing happens')
 		else:
 			print('ttile ' + str(coords) + ' -> used action on empty tile, nothing happens')
@@ -188,33 +189,31 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 
 func _on_area_3d_mouse_entered():
 	if is_player_clicked:
-		is_hovered = true
+		#is_hovered = true
 		
 		model_material.albedo_color = Color.WEB_PURPLE
 		
-		hovered_event.emit(self)
+		hovered_event.emit(self, true)
 	elif player:
 		player.on_mouse_entered()
 
 
 func _on_area_3d_mouse_exited():
 	if is_player_clicked:
-		is_hovered = false
+		#is_hovered = false
 		
 		model_material.albedo_color = Color.PURPLE
 		
-		hovered_event.emit(self)
+		hovered_event.emit(self, false)
 	elif player:
 		player.on_mouse_exited()
 
 
 func _on_area_3d_input_event(camera, event, position, normal, shape_idx):
-	#if health == HealthType.DESTROYED or health == HealthType.INDESTRUCTIBLE:
+	#if health_type == TileHealthType.DESTROYED or health_type == TileHealthType.INDESTRUCTIBLE:
 		#return
 	
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		clicked_event.emit(self)
-		#if player:
-			#player.on_clicked()
-		#elif is_player_clicked:
-			#clicked_event.emit(self)
+		is_clicked = not is_clicked
+		
+		clicked_event.emit(self, is_clicked)

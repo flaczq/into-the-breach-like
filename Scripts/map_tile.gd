@@ -58,7 +58,7 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 			return 'P'
 
 
-func set_tile_type(new_tile_type):
+func set_tile_type(new_tile_type, tile_asset):
 	if new_tile_type:
 		tile_type = convert_tile_type_initial_to_enum(new_tile_type)
 	else:
@@ -81,6 +81,10 @@ func set_tile_type(new_tile_type):
 			model_material.albedo_color = model_default_color
 			
 			health_type = TileHealthType.HEALTHY
+			
+			if tile_asset:
+				tile_asset.position.y = position.y
+				add_child(tile_asset)
 		TileType.MOUNTAIN:
 			model_default_color = Color.RED
 			model_material.albedo_color = model_default_color
@@ -188,23 +192,27 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 
 
 func _on_area_3d_mouse_entered():
+	hovered_event.emit(self, true)
+		
 	if is_player_clicked:
 		#is_hovered = true
 		
 		model_material.albedo_color = Color.WEB_PURPLE
 		
-		hovered_event.emit(self, true)
+		#hovered_event.emit(self, true)
 	elif player:
 		player.on_mouse_entered()
 
 
 func _on_area_3d_mouse_exited():
+	hovered_event.emit(self, false)
+	
 	if is_player_clicked:
 		#is_hovered = false
 		
 		model_material.albedo_color = Color.PURPLE
 		
-		hovered_event.emit(self, false)
+		#hovered_event.emit(self, false)
 	elif player:
 		player.on_mouse_exited()
 

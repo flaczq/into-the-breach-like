@@ -34,7 +34,7 @@ events = [SubResource("InputEventKey_comoe")]
 script = ExtResource("1_h8ron")
 
 [node name="GameStateManager" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
 script = ExtResource("2_23un4")
 map_scenes = Array[PackedScene]([ExtResource("4_22mq3"), ExtResource("4_wpjf0"), ExtResource("2_gdtvm")])
 player_scenes = Array[PackedScene]([ExtResource("3_yn7e4")])
@@ -42,7 +42,7 @@ enemy_scenes = Array[PackedScene]([ExtResource("3_nwkag")])
 civilian_scenes = Array[PackedScene]([ExtResource("6_thiki")])
 
 [node name="Util" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 script = ExtResource("7_gp40j")
 
 [node name="Camera3D" type="Camera3D" parent="."]

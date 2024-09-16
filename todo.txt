@@ -1,8 +1,13 @@
 !GRAFIKA:
-- kosmici bronią swoich zwierząt przed ludźmi
-- ludzie z różnych epok bronią się przed kosmitami
-- 3 kosmitów żołnierzy, kilku cywilów, jeśli przeżyją to zwiększają się morale np. 20%, czyli co 5 cywil chce zostać żołnierzem
-+ pociski
+1. kosmici bronią swoich zwierząt przed ludźmi
+2. ludzie z różnych epok bronią się przed kosmitami
+3. 3 kosmitów żołnierzy, kilku cywilów, jeśli przeżyją to zwiększają się morale np. 20%, czyli co 5 cywil chce zostać żołnierzem
+4. - cute, scary, w lesie namioty z dziećmi, których musisz bronić przed wilkami (zabierają dzieci i trzeba ich uderzyć bez obrażeń, żeby dziecko upadło);
+   - zaczynasz z jednym graczem, potem ratujesz kolejnego (albo i nie) - mapy tworzą historyjkę
+
+pociski
+pokaż co się stanie po najechaniu atakiem/akcją
+highlight tiles po najechaniu
 
 menu:
 - po ukończeniu poziomu wybór kolejnych graczy na podstawie zdobytych morali
@@ -10,3 +15,10 @@ menu:
 obrażenia środowiskowe?
 
 ai na podstawie wagi każdego pola
+
+?
+- czy i jak pojawiają się nowi przeciwnicy w trakcie jednej mapy
+- za co zwiększasz poziom umiejętności
+- jaki jest warunek zwycięstwa i porażki?
+- czy liczy się liczba tur
+- czy umiejętności powinny też zadawać obrażenia

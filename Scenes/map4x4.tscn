@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bysqedydgeakv"]
+[gd_scene load_steps=6 format=3 uid="uid://bysqedydgeakv"]
 
 [ext_resource type="Script" path="res://Scripts/map.gd" id="1_f1t5o"]
+[ext_resource type="PackedScene" uid="uid://bquyk326k5xjx" path="res://Assets/lowpolytrees.glb" id="2_2cg6c"]
 [ext_resource type="PackedScene" uid="uid://dm4f1jygoeja8" path="res://Assets/floor.glb" id="2_hn88d"]
 [ext_resource type="Script" path="res://Scripts/map_tile.gd" id="3_r8cvs"]
 
@@ -11,7 +12,10 @@ size = Vector3(1, 0.2, 1)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 script = ExtResource("1_f1t5o")
 
-[node name="Tile11" parent="." instance=ExtResource("2_hn88d")]
+[node name="TreesAssets" parent="." instance=ExtResource("2_2cg6c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+
+[node name="Tile11" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -1.5)
 script = ExtResource("3_r8cvs")
 
@@ -21,7 +25,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile11/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile12" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile12" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -1.5)
 script = ExtResource("3_r8cvs")
 
@@ -31,7 +35,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile12/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile13" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile13" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -1.5)
 script = ExtResource("3_r8cvs")
 
@@ -41,7 +45,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile13/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile14" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile14" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -1.5)
 script = ExtResource("3_r8cvs")
 
@@ -51,7 +55,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile14/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile21" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile21" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -0.5)
 script = ExtResource("3_r8cvs")
 
@@ -61,7 +65,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile21/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile22" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile22" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
 script = ExtResource("3_r8cvs")
 
@@ -71,7 +75,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile22/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile23" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile23" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
 script = ExtResource("3_r8cvs")
 
@@ -81,7 +85,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile23/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile24" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile24" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -0.5)
 script = ExtResource("3_r8cvs")
 
@@ -91,7 +95,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile24/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile31" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile31" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0.5)
 script = ExtResource("3_r8cvs")
 
@@ -101,7 +105,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile31/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile32" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile32" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
 script = ExtResource("3_r8cvs")
 
@@ -111,7 +115,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile32/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile33" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile33" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
 script = ExtResource("3_r8cvs")
 
@@ -121,7 +125,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile33/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile34" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile34" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0.5)
 script = ExtResource("3_r8cvs")
 
@@ -131,7 +135,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile34/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile41" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile41" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 1.5)
 script = ExtResource("3_r8cvs")
 
@@ -141,7 +145,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile41/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile42" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile42" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 1.5)
 script = ExtResource("3_r8cvs")
 
@@ -151,7 +155,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile42/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile43" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile43" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 1.5)
 script = ExtResource("3_r8cvs")
 
@@ -161,7 +165,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tile43/Area3D"]
 shape = SubResource("BoxShape3D_csxew")
 
-[node name="Tile44" parent="." instance=ExtResource("2_hn88d")]
+[node name="Tile44" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 1.5)
 script = ExtResource("3_r8cvs")
 

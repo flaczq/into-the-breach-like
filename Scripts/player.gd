@@ -121,6 +121,7 @@ func execute_action(target_tile):
 	if current_phase != PhaseType.ACTION:
 		return
 	
+	# FIXME: dodaj obrażenia dla action_type
 	await target_tile.get_shot(0, action_type, tile.coords)
 	
 	after_action()

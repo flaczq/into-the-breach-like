@@ -18,10 +18,10 @@ const LEVELS_DATA: Array = [
 		# 4x4
 		'map_scene': 0,
 		'players': [
-			{'scene': 0, 'health': 1, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
 		],
 		'civilians': [],
 		'max_turns': 5
@@ -29,13 +29,13 @@ const LEVELS_DATA: Array = [
 	{
 		'map_scene': 0,
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 		],
 		'max_turns': 5
 	},
@@ -43,29 +43,29 @@ const LEVELS_DATA: Array = [
 		# 6x6
 		'map_scene': 1,
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 4, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 		],
 		'max_turns': 5
 	},
 	{
 		'map_scene': 1,
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 3, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.PULL_FRONT},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 		],
 		'max_turns': 5
 	},
@@ -73,43 +73,44 @@ const LEVELS_DATA: Array = [
 		# 8x8
 		'map_scene': 2,
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 3, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT},
 		],
 		'enemies': [
 			{'scene': 0, 'health': 4, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
 			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 		],
 		'max_turns': 5
 	},
 	{
-		# 8x8
 		'map_scene': 2,
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.GIVE_SHIELD},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.GIVE_SHIELD},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT},
 		],
 		'enemies': [
 			{'scene': 0, 'health': 4, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.NONE},
 			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 		],
 		'max_turns': 5
 	},
 ]
 const MAPS_FILE_PATH: String = 'res://Data/maps.txt'
+
+var tutorial: bool = true
 
 var level: int
 var max_levels: int
@@ -125,7 +126,11 @@ var civilians: Array[Node3D]
 
 
 func _ready():
-	level = 4
+	if tutorial:
+		level = 1
+	else:
+		level = 5
+	
 	max_levels = LEVELS_DATA.size()
 	points = 0
 
@@ -172,7 +177,6 @@ func init_players(current_level_data):
 	players = []
 	
 	for current_level_player in current_level_data.players:
-		# FIXME
 		var current_player: Node3D = player_scenes[current_level_player.scene].instantiate()
 		add_sibling(current_player)
 		current_player.init(current_level_player)
@@ -195,7 +199,6 @@ func init_enemies(current_level_data):
 	enemies = []
 	
 	for current_level_enemy in current_level_data.enemies:
-		# FIXME
 		var current_enemy: Node3D = enemy_scenes[current_level_enemy.scene].instantiate()
 		add_sibling(current_enemy)
 		current_enemy.init(current_level_enemy)
@@ -216,7 +219,6 @@ func init_civilians(current_level_data):
 	civilians = []
 	
 	for current_level_civilian in current_level_data.civilians:
-		# FIXME
 		var current_civilian: Node3D = civilian_scenes[current_level_civilian.scene].instantiate()
 		add_sibling(current_civilian)
 		current_civilian.init(current_level_civilian)
@@ -298,12 +300,18 @@ func end_turn():
 			
 			await enemy.execute_planned_action()
 	
+	
+	if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
+		level_won()
+	
 	if players.filter(func(player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
 		level_lost()
-	elif current_turn < max_turns:
-		next_turn()
 	else:
-		level_won()
+		next_turn()
+	#elif current_turn < max_turns:
+		#next_turn()
+	#else:
+		#level_won()
 
 
 func next_turn():
@@ -564,28 +572,8 @@ func on_shoot_action_button_toggled(toggled_on):
 
 
 func _on_tile_hovered(tile, is_hovered):
-	if selected_player and selected_player.tile != tile and tile.is_player_clicked and selected_player.current_phase == PhaseType.MOVE:
-		var tiles_path = calculate_tiles_path(selected_player.tile, tile)
-		# different color for the hovered (target) tile
-		tiles_path.erase(tile)
-		
-		var color
-		if is_hovered:
-			color = Color.REBECCA_PURPLE
-		else:
-			color = Color.PURPLE
-		
-		for current_tile in tiles_path:
-			current_tile.color_model(color)
-
-
-func _on_tile_clicked(tile, is_clicked):
-	for other_tile in map.tiles.filter(func(t): return t != tile and t.is_clicked):
-		other_tile.is_clicked = false
-	
-	if is_clicked:
+	if is_hovered:
 		# info about clicked tile
-		# FIXME może zmiana na hover?
 		tile_info.text = 'COORDS: ' + str(tile.coords) + '\n'
 		tile_info.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n'
 		tile_info.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type])
@@ -605,6 +593,49 @@ func _on_tile_clicked(tile, is_clicked):
 			tile_info.text += '\n' + 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
 	else:
 		tile_info.text = ''
+	
+	# highlight tiles while player is hovered
+	if selected_player and selected_player.tile != tile and tile.is_player_clicked and selected_player.current_phase == PhaseType.MOVE:
+		var tiles_path = calculate_tiles_path(selected_player.tile, tile)
+		# different color for the hovered (target) tile
+		tiles_path.erase(tile)
+		
+		var color
+		if is_hovered:
+			color = Color.REBECCA_PURPLE
+		else:
+			color = Color.PURPLE
+		
+		for current_tile in tiles_path:
+			current_tile.color_model(color)
+
+
+func _on_tile_clicked(tile, is_clicked):
+	#for other_tile in map.tiles.filter(func(t): return t != tile and t.is_clicked):
+		#other_tile.is_clicked = false
+	
+	#if is_clicked:
+		## info about clicked tile
+		## FIXME może zmiana na hover?
+		#tile_info.text = 'COORDS: ' + str(tile.coords) + '\n'
+		#tile_info.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n'
+		#tile_info.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type])
+		#
+		#if tile.player:
+			#tile_info.text += '\n' + 'HEALTH: ' + str(tile.player.health) + '\n'
+			#tile_info.text += '\n' + 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+			#tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
+			#tile_info.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
+		#if tile.enemy:
+			#tile_info.text += '\n' + 'HEALTH: ' + str(tile.enemy.health) + '\n'
+			#tile_info.text += '\n' + 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+			#tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
+			#tile_info.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
+		#if tile.civilian:
+			#tile_info.text += '\n' + 'HEALTH: ' + str(tile.civilian.health) + '\n'
+			#tile_info.text += '\n' + 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
+	#else:
+		#tile_info.text = ''
 	
 	# highlighted tile is clicked while player is selected
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
@@ -688,17 +719,18 @@ func _on_character_action_push_back(character, origin_tile_coords):
 		var target_tile = target_tiles.front()
 		await character.move([target_tile], true)
 		
-		if character.tile.health_type == TileHealthType.DESTROYED:
-			# fell down
-			character.get_killed()
-		elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
-			var enemy = character
-			# push planned tile with pushed enemy
-			target_tiles = map.tiles.filter(func(tiles): return tiles.coords == enemy.planned_tile.coords + push_direction)
-			if target_tiles.is_empty():
-				print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pushed back')
-			else:
-				enemy.plan_action(target_tile)
+		if character.is_alive and character.tile:
+			if character.tile.health_type == TileHealthType.DESTROYED:
+				# fell down
+				character.get_killed()
+			elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
+				var enemy = character
+				# push planned tile with pushed enemy
+				target_tiles = map.tiles.filter(func(tiles): return tiles.coords == enemy.planned_tile.coords + push_direction)
+				if target_tiles.is_empty():
+					print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pushed back')
+				else:
+					enemy.plan_action(target_tile)
 
 
 func _on_character_action_pull_front(character, origin_tile_coords):
@@ -708,23 +740,24 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 	var available_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE)
 	var target_tiles = available_tiles.filter(func(available_tile): return available_tile.coords == character.tile.coords + pull_direction)
 	if target_tiles.is_empty():
-		# pushed outside of the map
-		print(str(character.tile.coords) + ' ' + character.name + ': cannot be pulled front')
+		# pulled outside of the map - is this even possible?
+		await character.move([character.tile], true)
 	else:
 		var target_tile = target_tiles.front()
 		await character.move([target_tiles.front()], true)
 		
-		if character.tile.health_type == TileHealthType.DESTROYED:
-			# fell down
-			character.get_killed()
-		elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
-			var enemy = character
-			# pull planned tile with pulled enemy
-			target_tiles = map.tiles.filter(func(tiles): return tiles.coords == enemy.planned_tile.coords + pull_direction)
-			if target_tiles.is_empty():
-				print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pulled front')
-			else:
-				enemy.plan_action(target_tiles.front())
+		if character.is_alive and character.tile:
+			if character.tile.health_type == TileHealthType.DESTROYED:
+				# fell down
+				character.get_killed()
+			elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
+				var enemy = character
+				# pull planned tile with pulled enemy
+				target_tiles = map.tiles.filter(func(tiles): return tiles.coords == enemy.planned_tile.coords + pull_direction)
+				if target_tiles.is_empty():
+					print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pulled front')
+				else:
+					enemy.plan_action(target_tiles.front())
 
 
 func _on_character_action_miss_action(character):

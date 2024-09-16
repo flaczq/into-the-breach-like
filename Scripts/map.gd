@@ -1,11 +1,14 @@
 extends Util
 
+@onready var trees_assets = $TreesAssets
+
 var tiles: Array[Node] = []
 
 
 func _ready():
-	# assuming all maps are squares
-	tiles = get_children()
+	for child in get_children():
+		if child.is_in_group('TILES'):
+			tiles.push_back(child)
 
 
 func spawn(file_path, level):
@@ -23,7 +26,16 @@ func spawn(file_path, level):
 			map_level_tile = map_level_tiles[index]
 		
 		tile.reset()
-		tile.set_tile_type(map_level_tile)
+		# tile needs an asset
+		if true:
+			for tree in trees_assets.get_children():
+				if tree.name == 'pineSmall':
+					tree.show()
+				else:
+					tree.hide()
+		tile.set_tile_type(map_level_tile, trees_assets.duplicate())
+	
+	trees_assets.queue_free()
 
 
 func get_side_dimension():

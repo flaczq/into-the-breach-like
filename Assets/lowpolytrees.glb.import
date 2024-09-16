@@ -29,6 +29,39 @@ animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
 import_script/path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:bendedTree01Big": {
+"import/skip_import": true
+},
+"PATH:bendedTree01Medium": {
+"import/skip_import": true
+},
+"PATH:coneTreeBig": {
+"import/skip_import": true
+},
+"PATH:coneTreeMedium": {
+"import/skip_import": true
+},
+"PATH:pineBig": {
+"import/skip_import": true
+},
+"PATH:pineMedium": {
+"import/skip_import": true
+},
+"PATH:roundSquareTree01Big": {
+"import/skip_import": true
+},
+"PATH:roundSquareTree01Medium": {
+"import/skip_import": true
+},
+"PATH:roundTree01Big": {
+"import/skip_import": true
+},
+"PATH:roundTree01Medium": {
+"import/skip_import": true
+}
+}
+}
 gltf/naming_version=1
 gltf/embedded_image_handling=1

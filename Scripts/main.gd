@@ -51,7 +51,7 @@ func _input(event):
 			if index > 0 and int(index) % game_state_manager.map.get_side_dimension() == 0:
 				content += '\n'
 			
-			content += tile.convert_tile_type_enum_to_initial(tile.tile_type)
+			content += game_state_manager.map.convert_tile_type_enum_to_initial(tile.tile_type)
 		
 		content += '\nX->STOP\n'
 		file.store_string(content)

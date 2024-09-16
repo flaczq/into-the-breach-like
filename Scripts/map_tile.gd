@@ -17,6 +17,7 @@ var coords: Vector2i
 var player: Node3D
 var enemy: Node3D
 var civilian: Node3D
+#var model: MeshInstance3D
 var model_material: Material
 var model_default_color: Color
 
@@ -32,80 +33,24 @@ func _ready():
 	model.set_surface_override_material(0, model_material)
 
 
-func convert_tile_type_initial_to_enum(tile_type_initial):
-	match tile_type_initial:
-		'P': return TileType.PLAIN
-		'G': return TileType.GRASS
-		'T': return TileType.TREE
-		'M': return TileType.MOUNTAIN
-		'W': return TileType.WATER
-		'L': return TileType.LAVA
-		_:
-			print('unknown tile type: ' + tile_type_initial)
-			return TileType.PLAIN
+func init(tile_init_data):
+	print(get_node('floor-thick'))
+	tile_type = tile_init_data.tile_type
+	health_type = tile_init_data.health_type
+	model_default_color = tile_init_data.model_default_color
+	#model = tile_init_data.model
+	#add_child(model)
 
-
-func convert_tile_type_enum_to_initial(tile_type_enum):
-	match tile_type_enum:
-		TileType.PLAIN: return 'P'
-		TileType.GRASS: return 'G'
-		TileType.TREE: return 'T'
-		TileType.MOUNTAIN: return 'M'
-		TileType.WATER: return 'W'
-		TileType.LAVA: return 'L'
-		_:
-			print('unknown tile type: ' + str(tile_type_enum))
-			return 'P'
-
-
-func set_tile_type(new_tile_type, tile_asset):
-	if new_tile_type:
-		tile_type = convert_tile_type_initial_to_enum(new_tile_type)
-	else:
-		# TODO random map generation
-		tile_type = TileType.values()[TileType.values().pick_random()]
+	if tile_init_data.asset:
+		add_child(tile_init_data.asset)
 	
-	match tile_type:
-		TileType.PLAIN:
-			model_default_color = Color.PALE_GOLDENROD
-			model_material.albedo_color = model_default_color
-			
-			health_type = TileHealthType.HEALTHY
-		TileType.GRASS:
-			model_default_color = Color.YELLOW_GREEN
-			model_material.albedo_color = model_default_color
-			
-			health_type = TileHealthType.HEALTHY
-		TileType.TREE:
-			model_default_color = Color.DARK_GREEN
-			model_material.albedo_color = model_default_color
-			
-			health_type = TileHealthType.HEALTHY
-			
-			if tile_asset:
-				tile_asset.position.y = position.y
-				add_child(tile_asset)
-		TileType.MOUNTAIN:
-			model_default_color = Color.RED
-			model_material.albedo_color = model_default_color
-			
-			health_type = TileHealthType.INDESTRUCTIBLE
-		TileType.WATER:
-			model_default_color = Color.DODGER_BLUE
-			model_material.albedo_color = model_default_color
-			
-			health_type = TileHealthType.INDESTRUCTIBLE
-		TileType.LAVA:
-			model_default_color = Color.ORANGE
-			model_material.albedo_color = model_default_color
-			
-			health_type = TileHealthType.INDESTRUCTIBLE
-		_:
-			print('unknown tile type: ' + str(tile_type))
-			model_default_color = Color.PALE_GOLDENROD
-			model_material.albedo_color = model_default_color
-			
-			health_type = TileHealthType.HEALTHY
+	color_model(model_default_color)
+
+
+func reset():
+	player = null
+	enemy = null
+	civilian = null
 
 
 func set_player(new_player):
@@ -122,12 +67,6 @@ func set_civilian(new_civilian):
 
 func is_free():
 	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
-
-
-func reset():
-	player = null
-	enemy = null
-	civilian = null
 
 
 func color_model(color):

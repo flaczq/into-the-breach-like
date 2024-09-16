@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://bysqedydgeakv"]
 
 [ext_resource type="Script" path="res://Scripts/map.gd" id="1_f1t5o"]
-[ext_resource type="PackedScene" uid="uid://bquyk326k5xjx" path="res://Assets/lowpolytrees.glb" id="2_2cg6c"]
 [ext_resource type="PackedScene" uid="uid://dm4f1jygoeja8" path="res://Assets/floor.glb" id="2_hn88d"]
+[ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_ryi5j"]
 [ext_resource type="Script" path="res://Scripts/map_tile.gd" id="3_r8cvs"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_csxew"]
@@ -11,9 +11,7 @@ size = Vector3(1, 0.2, 1)
 [node name="Map4x4" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 script = ExtResource("1_f1t5o")
-
-[node name="TreesAssets" parent="." instance=ExtResource("2_2cg6c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+assets_scene = ExtResource("2_ryi5j")
 
 [node name="Tile11" parent="." groups=["TILES"] instance=ExtResource("2_hn88d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -1.5)

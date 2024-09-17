@@ -4,7 +4,6 @@ signal hovered_event(tile: Node3D, is_hovered: bool)
 signal clicked_event(tile: Node3D, is_clicked: bool)
 
 @onready var area_3d = $Area3D
-@onready var model = $'floor-thick'
 
 var is_clicked: bool = false
 #var is_hovered: bool = false
@@ -17,8 +16,7 @@ var coords: Vector2i
 var player: Node3D
 var enemy: Node3D
 var civilian: Node3D
-#var model: MeshInstance3D
-var model_material: Material
+var model: MeshInstance3D
 var model_default_color: Color
 
 func _ready():
@@ -28,21 +26,24 @@ func _ready():
 	
 	# coords from name int values: x = position.z, y = position.x
 	coords = Vector2i(int(name.substr(4, 1)), int(name.substr(5, 1)))
-	
-	model_material = StandardMaterial3D.new()
-	model.set_surface_override_material(0, model_material)
 
 
 func init(tile_init_data):
-	print(get_node('floor-thick'))
+	# remove default tile
+	remove_child(get_child(0))
+	
+	model = tile_init_data.model
+	add_child(model)
+	
 	tile_type = tile_init_data.tile_type
 	health_type = tile_init_data.health_type
-	model_default_color = tile_init_data.model_default_color
-	#model = tile_init_data.model
-	#add_child(model)
+	#model_default_color = tile_init_data.model_default_color
 
 	if tile_init_data.asset:
 		add_child(tile_init_data.asset)
+	
+	#model_material = StandardMaterial3D.new()
+	#model.set_surface_override_material(0, model_material)
 	
 	color_model(model_default_color)
 
@@ -71,16 +72,16 @@ func is_free():
 
 func color_model(color):
 	if color:
-		model_material.albedo_color = color
+		model.material_override.albedo_color = color
 	elif is_planned_enemy_action:
-		model_material.albedo_color = Color.PALE_VIOLET_RED
-	else:
-		model_material.albedo_color = model_default_color
+		model.material_override.albedo_color = Color.PALE_VIOLET_RED
+	#else:
+		#model.material_override.albedo_color = model_default_color
 
 
 func toggle_player_hovered(new_is_player_hovered):
 	if new_is_player_hovered:
-		model_material.albedo_color = Color.MEDIUM_PURPLE
+		model.material_override.albedo_color = Color.MEDIUM_PURPLE
 	else:
 		color_model(null)
 
@@ -89,7 +90,7 @@ func toggle_player_clicked(new_is_player_clicked):
 	is_player_clicked = new_is_player_clicked
 	
 	if is_player_clicked:
-		model_material.albedo_color = Color.PURPLE
+		model.material_override.albedo_color = Color.PURPLE
 	else:
 		color_model(null)
 
@@ -114,13 +115,13 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 				health_type = TileHealthType.DAMAGED
 				
 				model_default_color = Color.INDIAN_RED
-				model_material.albedo_color = model_default_color
+				model.material_override.albedo_color = model_default_color
 				print('ttile ' + str(coords) + ' -> damaged tile')
 			elif health_type == TileHealthType.DAMAGED:
 				health_type = TileHealthType.DESTROYED
 				
 				model_default_color = Color.RED
-				model_material.albedo_color = model_default_color
+				model.material_override.albedo_color = model_default_color
 				print('ttile ' + str(coords) + ' -> destroyed')
 			elif health_type == TileHealthType.DESTROYED:
 				print('ttile ' + str(coords) + ' -> already destroyed, nothing happens')
@@ -136,7 +137,7 @@ func _on_area_3d_mouse_entered():
 	if is_player_clicked:
 		#is_hovered = true
 		
-		model_material.albedo_color = Color.WEB_PURPLE
+		model.material_override.albedo_color = Color.WEB_PURPLE
 		
 		#hovered_event.emit(self, true)
 	elif player:
@@ -149,7 +150,7 @@ func _on_area_3d_mouse_exited():
 	if is_player_clicked:
 		#is_hovered = false
 		
-		model_material.albedo_color = Color.PURPLE
+		model.material_override.albedo_color = Color.PURPLE
 		
 		#hovered_event.emit(self, false)
 	elif player:

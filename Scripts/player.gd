@@ -3,7 +3,7 @@ extends Character
 signal hovered_event(player: Node3D, is_hovered: bool)
 signal clicked_event(player: Node3D, is_clicked: bool)
 
-@onready var model = $'ShapeCube/shape-cube'
+@onready var model = $'shape-cube'
 
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0

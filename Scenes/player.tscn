@@ -1,19 +1,60 @@
-[gd_scene load_steps=4 format=3 uid="uid://bb3b503xrvj7m"]
+[gd_scene load_steps=7 format=3 uid="uid://bb3b503xrvj7m"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_04v0u"]
-[ext_resource type="PackedScene" uid="uid://brsufyjqxpqs3" path="res://Assets/Prototype/shape-cube.glb" id="1_d3u5g"]
+[ext_resource type="Texture2D" uid="uid://o8jtnohtfapr" path="res://Assets/Prototype/Textures/colormap.png" id="2_l4sk5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x2swh"]
+resource_name = "colormap"
+cull_mode = 2
+albedo_texture = ExtResource("2_l4sk5")
+texture_filter = 2
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_mj6nb"]
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1, 1, 1),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray(2, 0, 0, 0, 1, 0, 1, 0, 3, 0, 2, 0, 4, 0, 0, 0, 2, 0, 2, 0, 5, 0, 4, 0, 4, 0, 6, 0, 1, 0, 1, 0, 0, 0, 4, 0, 7, 0, 6, 0, 4, 0, 4, 0, 5, 0, 7, 0, 7, 0, 3, 0, 1, 0, 1, 0, 6, 0, 7, 0, 2, 0, 3, 0, 7, 0, 7, 0, 5, 0, 2, 0),
+"name": "colormap",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_emitp"]
+resource_name = "shape-cube_shape-cube"
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1, 1, 1),
+"attribute_data": PackedByteArray(255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 101, 198, 255, 119, 101, 198, 255, 119, 152, 249, 255, 119, 101, 198, 255, 119, 152, 249, 255, 119, 101, 198, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 101, 198, 255, 119, 101, 198, 255, 119, 101, 198, 255, 119, 152, 249, 255, 119, 101, 198, 255, 119, 152, 249, 255, 119, 101, 198, 255, 119, 101, 198, 255, 119, 101, 198, 255, 119, 101, 198),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray(2, 0, 0, 0, 1, 0, 1, 0, 3, 0, 2, 0, 6, 0, 4, 0, 5, 0, 5, 0, 7, 0, 6, 0, 10, 0, 8, 0, 9, 0, 9, 0, 11, 0, 10, 0, 14, 0, 12, 0, 13, 0, 13, 0, 15, 0, 14, 0, 18, 0, 16, 0, 17, 0, 17, 0, 19, 0, 18, 0, 22, 0, 20, 0, 21, 0, 21, 0, 23, 0, 22, 0),
+"material": SubResource("StandardMaterial3D_x2swh"),
+"name": "colormap",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 255, 191, 0, 0, 255, 255, 0, 0, 255, 191, 0, 0, 0, 0, 255, 255, 255, 191, 0, 0, 255, 255, 255, 255, 255, 191, 255, 255, 0, 0, 255, 255, 255, 191, 255, 255, 0, 0, 0, 0, 255, 191, 0, 0, 0, 0, 255, 255, 255, 191, 0, 0, 0, 0, 0, 0, 255, 191, 255, 255, 0, 0, 255, 255, 0, 128, 0, 0, 0, 0, 255, 255, 0, 128, 255, 255, 255, 255, 255, 255, 0, 128, 0, 0, 255, 255, 255, 255, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 255, 255, 0, 0, 0, 0, 255, 191, 255, 255, 255, 255, 255, 255, 255, 191, 255, 255, 0, 0, 255, 255, 255, 191, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_mj6nb")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3urax"]
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_04v0u")
 
-[node name="ShapeCube" parent="." instance=ExtResource("1_d3u5g")]
+[node name="shape-cube" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+mesh = SubResource("ArrayMesh_emitp")
+skeleton = NodePath("")
+
+[node name="Area3D" type="Area3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
-[node name="Area3D" type="Area3D" parent="ShapeCube"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ShapeCube/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("BoxShape3D_3urax")
 disabled = true

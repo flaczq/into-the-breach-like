@@ -37,11 +37,12 @@ func spawn(file_path, level):
 		else:
 			map_level_tile = convert_tile_type_initial_to_enum(map_level_tiles[index])
 		
+		var tile_model = get_model_by_tile_type(map_level_tile)
 		var tile_health_type = get_health_type_by_tile_type(map_level_tile)
 		var tile_default_color = get_model_default_color_by_tile_type(map_level_tile)
 		var tile_asset = get_asset_by_tile_type(map_level_tile)
 		var tile_init_data = {
-			#'model': assets_tiles[0].duplicate(),
+			'model': tile_model,
 			'tile_type': map_level_tile,
 			'health_type': tile_health_type,
 			'model_default_color': tile_default_color,
@@ -78,48 +79,61 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 			return 'P'
 
 
-func get_model_default_color_by_tile_type(tile_type):
+func get_model_by_tile_type(tile_type):
+	var asset_tile_name
+	
 	match tile_type:
 		TileType.PLAIN:
-			return Color.PALE_GOLDENROD
+			asset_tile_name = 'BlockTileDefault'
 		TileType.GRASS:
-			return Color.YELLOW_GREEN
+			asset_tile_name = 'BlockTileDefault'
 		TileType.TREE:
-			return Color.DARK_GREEN
+			asset_tile_name = 'BlockTileGrass'
 		TileType.MOUNTAIN:
-			return Color.RED
+			asset_tile_name = 'BlockTileDefault'
 		TileType.WATER:
-			return Color.DODGER_BLUE
+			asset_tile_name = 'BlockTileDefault'
 		TileType.LAVA:
-			return Color.ORANGE
+			asset_tile_name = 'BlockTileDefault'
 		_:
 			print('unknown tile type: ' + str(tile_type))
-			return Color.PALE_GOLDENROD
+			asset_tile_name = 'BlockTileDefault'
+	
+	var tile = assets_tiles.filter(func(asset_tile): return asset_tile.name == asset_tile_name)
+	if not tile.is_empty():
+		return tile.front().duplicate()
 
 
 func get_health_type_by_tile_type(tile_type):
 	match tile_type:
-		TileType.PLAIN:
-			return TileHealthType.HEALTHY
-		TileType.GRASS:
-			return TileHealthType.HEALTHY
-		TileType.TREE:
-			return TileHealthType.INDESTRUCTIBLE
-		TileType.MOUNTAIN:
-			return TileHealthType.INDESTRUCTIBLE
-		TileType.WATER:
-			return TileHealthType.INDESTRUCTIBLE
-		TileType.LAVA:
-			return TileHealthType.INDESTRUCTIBLE
+		TileType.PLAIN: return TileHealthType.HEALTHY
+		TileType.GRASS: return TileHealthType.HEALTHY
+		TileType.TREE: return TileHealthType.INDESTRUCTIBLE
+		TileType.MOUNTAIN: return TileHealthType.INDESTRUCTIBLE
+		TileType.WATER: return TileHealthType.INDESTRUCTIBLE
+		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE
 		_:
 			print('unknown tile type: ' + str(tile_type))
 			return TileHealthType.HEALTHY
+
+
+func get_model_default_color_by_tile_type(tile_type):
+	match tile_type:
+		TileType.PLAIN: return Color.PALE_GOLDENROD
+		TileType.GRASS: return Color.YELLOW_GREEN
+		TileType.TREE: return Color.DARK_GREEN
+		TileType.MOUNTAIN: return Color.RED
+		TileType.WATER: return Color.DODGER_BLUE
+		TileType.LAVA: return Color.ORANGE
+		_:
+			print('unknown tile type: ' + str(tile_type))
+			return Color.PALE_GOLDENROD
 
 
 func get_asset_by_tile_type(tile_type):
 	match tile_type:
 		TileType.TREE:
-			var tree = assets_trees.filter(func(asset_tree): return asset_tree.name == 'roundTree01Small')
+			var tree = assets_trees.filter(func(asset_tree): return asset_tree.name == 'Trees_004')
 			if not tree.is_empty():
 				return tree.front().duplicate()
 		TileType.MOUNTAIN:

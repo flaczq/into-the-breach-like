@@ -16,6 +16,8 @@ obrażenia środowiskowe?
 
 ai na podstawie wagi każdego pola
 
+przykładowa mapa w głównej scenie - do usunięcia po rozpoczęciu gry
+
 ?
 - czy i jak pojawiają się nowi przeciwnicy w trakcie jednej mapy
 - za co zwiększasz poziom umiejętności

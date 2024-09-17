@@ -1,6 +1,6 @@
 extends Character
 
-@onready var model = $'AnimalDog/animal-dog/root/torso'
+@onready var model = $flag
 
 
 func _ready():

@@ -1,6 +1,6 @@
 extends Character
 
-@onready var model = $'TargetRound/target-a-round'
+@onready var model = $'target-a-round'
 
 var planned_tile: Node3D
 

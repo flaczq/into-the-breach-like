@@ -23,6 +23,7 @@ var action_direction: ActionDirection
 var action_type: ActionType
 var tile: Node3D
 var model_material: StandardMaterial3D
+var bullet_model: MeshInstance3D
 
 func _ready():
 	# to move properly among available positions
@@ -33,7 +34,9 @@ func _ready():
 		if assets_child.is_in_group('ASSETS_BULLETS'):
 			assets_bullets.append_array(assets_child.get_children())
 	
-	add_child(assets_bullets.front().duplicate())
+	bullet_model = assets_bullets.front().duplicate()
+	bullet_model.hide()
+	add_child(bullet_model)
 
 
 func init(character_init_data):

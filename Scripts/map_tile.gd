@@ -27,7 +27,7 @@ func _ready():
 	area_3d.connect('mouse_exited', _on_area_3d_mouse_exited)
 	area_3d.connect('input_event', _on_area_3d_input_event)
 	
-	# coords from name int values: x = position.z, y = position.x
+	# coords from name int values: x-axis = position.z, y-axis = position.x
 	coords = Vector2i(int(name.substr(4, 1)), int(name.substr(5, 1)))
 	
 	# create new materials for each tile to make them unique
@@ -90,6 +90,7 @@ func toggle_tile_models():
 		models.tile_highlighted.show()
 		
 		if is_hovered:
+			# last (target) tile in path
 			position.y = 0.25
 	elif is_player_hovered:
 		models.tile_highlighted.show()

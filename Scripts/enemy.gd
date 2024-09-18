@@ -56,6 +56,12 @@ func plan_action(target_tile):
 		planned_tile = target_tile
 		planned_tile.set_planned_enemy_action(true)
 		
+		bullet_model.look_at(planned_tile.position)
+		# fix rotation for y-axis only
+		bullet_model.set_rotation_degrees(bullet_model.rotation_degrees * Vector3.UP + Vector3(0, 90, 0))
+		#bullet_model.position.x = bullet_model.position.direction_to(planned_tile.position).rotated(Vector3.UP, deg_to_rad(bullet_model.rotation.y))
+		bullet_model.show()
+		
 		print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 
 

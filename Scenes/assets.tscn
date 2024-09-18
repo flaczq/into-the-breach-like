@@ -561,6 +561,6 @@ mesh = SubResource("ArrayMesh_8fxn6")
 [node name="Bullets" type="Node3D" parent="." groups=["ASSETS_BULLETS"]]
 
 [node name="ArrowSign" type="MeshInstance3D" parent="Bullets"]
-transform = Transform3D(80, 0, 0, 0, 80, 0, 0, 0, 80, 0, 0.5, 0)
+transform = Transform3D(-3.49691e-06, 0, 80, 0, 80, 0, -80, 0, -3.49691e-06, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_b1x4s")
 surface_material_override/0 = SubResource("StandardMaterial3D_adqhn")

@@ -7,7 +7,6 @@
 
 pociski
 pokaż co się stanie po najechaniu atakiem/akcją
-highlight tiles po najechaniu
 
 menu:
 - po ukończeniu poziomu wybór kolejnych graczy na podstawie zdobytych morali

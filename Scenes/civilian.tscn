@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://b60h1emnunq1s"]
+[gd_scene load_steps=8 format=3 uid="uid://b60h1emnunq1s"]
 
 [ext_resource type="Script" path="res://Scripts/civilian.gd" id="1_qxu48"]
 [ext_resource type="Texture2D" uid="uid://o8jtnohtfapr" path="res://Assets/Prototype/Textures/colormap.png" id="2_extln"]
+[ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_q766n"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uclwg"]
 resource_name = "colormap"
@@ -47,10 +48,10 @@ shadow_mesh = SubResource("ArrayMesh_b5bak")
 
 [node name="Civilian" type="Node3D"]
 script = ExtResource("1_qxu48")
+assets_scene = ExtResource("2_q766n")
 
 [node name="flag" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_2qoif")
-skeleton = NodePath("")
 
 [node name="Area3D" type="Area3D" parent="."]
 

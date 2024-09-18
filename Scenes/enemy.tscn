@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://d3kikj28cfn8h"]
+[gd_scene load_steps=8 format=3 uid="uid://d3kikj28cfn8h"]
 
 [ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_2xvnb"]
 [ext_resource type="Texture2D" uid="uid://o8jtnohtfapr" path="res://Assets/Prototype/Textures/colormap.png" id="2_5padi"]
+[ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_egusa"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ai3y"]
 resource_name = "colormap"
@@ -45,11 +46,11 @@ shadow_mesh = SubResource("ArrayMesh_8ny4f")
 
 [node name="Enemy" type="Node3D" groups=["ENEMIES"]]
 script = ExtResource("1_2xvnb")
+assets_scene = ExtResource("2_egusa")
 
 [node name="target-a-round" type="MeshInstance3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("ArrayMesh_di3v3")
-skeleton = NodePath("")
 
 [node name="Area3D" type="Area3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)

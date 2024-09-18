@@ -11,7 +11,7 @@ size = Vector3(1, 0.2, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_tnvj3"]
 size = Vector3(1, 0.2, 1)
 
-[node name="Map6x6" type="Node3D"]
+[node name="Map6x6" type="Node3D" groups=["MAPS"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 script = ExtResource("1_5a60p")
 assets_scene = ExtResource("2_rn047")

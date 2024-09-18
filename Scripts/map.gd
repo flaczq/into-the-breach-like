@@ -1,7 +1,10 @@
 extends Util
 
-#@onready var trees_assets = $TreesAssets
 @export var assets_scene: PackedScene
+
+const TILE_1 = preload("res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile1.png")
+const TILE_5 = preload("res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile5.png")
+const OUTLINE_SHADER = preload("res://Other/outline_shader.gdshader")
 
 var tiles: Array[Node] = []
 var assets_tiles: Array[MeshInstance3D] = []
@@ -37,20 +40,16 @@ func spawn(file_path, level):
 		else:
 			map_level_tile = convert_tile_type_initial_to_enum(map_level_tiles[index])
 		
-		var tile_model = get_model_by_tile_type(map_level_tile)
-		var tile_health_type = get_health_type_by_tile_type(map_level_tile)
-		var tile_default_color = get_model_default_color_by_tile_type(map_level_tile)
-		var tile_asset = get_asset_by_tile_type(map_level_tile)
-		var tile_init_data = {
-			'model': tile_model,
+		var models = get_models_by_tile_type(map_level_tile)
+		var health_type = get_health_type_by_tile_type(map_level_tile)
+		var init_data = {
+			'models': models,
 			'tile_type': map_level_tile,
-			'health_type': tile_health_type,
-			'model_default_color': tile_default_color,
-			'asset': tile_asset
+			'health_type': health_type,
 		};
 		
 		tile.reset()
-		tile.init(tile_init_data)
+		tile.init(init_data)
 
 
 func convert_tile_type_initial_to_enum(tile_type_initial):
@@ -79,29 +78,49 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 			return 'P'
 
 
-func get_model_by_tile_type(tile_type):
-	var asset_tile_name
+func get_models_by_tile_type(tile_type):
+	var models = {'tile_shader': OUTLINE_SHADER}
+	
+	MeshInstance3D
+	for assets_tile in assets_tiles:
+		# has to be duplicated to make them unique
+		if assets_tile.name == 'ground_grass':
+			models.tile = assets_tile.duplicate()
+		elif assets_tile.name == 'TileHighlighted':
+			models.tile_highlighted = assets_tile.duplicate()
+		elif assets_tile.name == 'TileTargeted':
+			models.tile_targeted = assets_tile.duplicate()
+		elif assets_tile.name == 'TileDamaged':
+			models.tile_damaged = assets_tile.duplicate()
+		elif assets_tile.name == 'TileDestroyed':
+			models.tile_destroyed = assets_tile.duplicate()
 	
 	match tile_type:
 		TileType.PLAIN:
-			asset_tile_name = 'BlockTileDefault'
+			#models.tile_texture = TILE_5
+			models.tile_default_color = Color.PALE_GOLDENROD
 		TileType.GRASS:
-			asset_tile_name = 'BlockTileDefault'
+			#models.tile_texture = TILE_5
+			models.tile_default_color = Color.LIME_GREEN
 		TileType.TREE:
-			asset_tile_name = 'BlockTileGrass'
+			#models.tile_texture = TILE_1
+			models.tile_default_color = Color.FOREST_GREEN
+			#models.asset = assets_trees.filter(func(asset_tree): return asset_tree.name == 'Trees_004').front().duplicate()
 		TileType.MOUNTAIN:
-			asset_tile_name = 'BlockTileDefault'
+			#models.tile_texture = TILE_5
+			models.tile_default_color = Color.FIREBRICK
 		TileType.WATER:
-			asset_tile_name = 'BlockTileDefault'
+			#models.tile_texture = TILE_5
+			models.tile_default_color = Color.DODGER_BLUE
 		TileType.LAVA:
-			asset_tile_name = 'BlockTileDefault'
+			#models.tile_texture = TILE_5
+			models.tile_default_color = Color.ORANGE
 		_:
 			print('unknown tile type: ' + str(tile_type))
-			asset_tile_name = 'BlockTileDefault'
+			#models.tile_texture = TILE_5
+			models.tile_default_color = Color.PALE_GOLDENROD
 	
-	var tile = assets_tiles.filter(func(asset_tile): return asset_tile.name == asset_tile_name)
-	if not tile.is_empty():
-		return tile.front().duplicate()
+	return models
 
 
 func get_health_type_by_tile_type(tile_type):
@@ -115,32 +134,6 @@ func get_health_type_by_tile_type(tile_type):
 		_:
 			print('unknown tile type: ' + str(tile_type))
 			return TileHealthType.HEALTHY
-
-
-func get_model_default_color_by_tile_type(tile_type):
-	match tile_type:
-		TileType.PLAIN: return Color.PALE_GOLDENROD
-		TileType.GRASS: return Color.YELLOW_GREEN
-		TileType.TREE: return Color.DARK_GREEN
-		TileType.MOUNTAIN: return Color.RED
-		TileType.WATER: return Color.DODGER_BLUE
-		TileType.LAVA: return Color.ORANGE
-		_:
-			print('unknown tile type: ' + str(tile_type))
-			return Color.PALE_GOLDENROD
-
-
-func get_asset_by_tile_type(tile_type):
-	match tile_type:
-		TileType.TREE:
-			var tree = assets_trees.filter(func(asset_tree): return asset_tree.name == 'Trees_004')
-			if not tree.is_empty():
-				return tree.front().duplicate()
-		TileType.MOUNTAIN:
-			# TODO
-			return null
-		_:
-			return null
 
 
 func get_side_dimension():

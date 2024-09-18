@@ -2,6 +2,8 @@ extends Util
 
 class_name Character
 
+@export var assets_scene: PackedScene
+
 signal action_push_back(character: Character, origin_tile_coords: Vector2i)
 signal action_pull_front(character: Character, origin_tile_coords: Vector2i)
 signal action_miss_action(character: Character)
@@ -11,6 +13,7 @@ signal action_slow_down(character: Character)
 
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
+var assets_bullets: Array[MeshInstance3D] = []
 
 var health: int
 var damage: int
@@ -19,7 +22,18 @@ var can_fly: bool
 var action_direction: ActionDirection
 var action_type: ActionType
 var tile: Node3D
-var active_material: Material
+var model_material: StandardMaterial3D
+
+func _ready():
+	# to move properly among available positions
+	position = Vector3.ZERO
+	
+	var assets = assets_scene.instantiate()
+	for assets_child in assets.get_children():
+		if assets_child.is_in_group('ASSETS_BULLETS'):
+			assets_bullets.append_array(assets_child.get_children())
+	
+	add_child(assets_bullets.front().duplicate())
 
 
 func init(character_init_data):

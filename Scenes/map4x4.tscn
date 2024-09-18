@@ -8,7 +8,7 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_csxew"]
 size = Vector3(1, 0.2, 1)
 
-[node name="Map4x4" type="Node3D"]
+[node name="Map4x4" type="Node3D" groups=["MAPS"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 script = ExtResource("1_f1t5o")
 assets_scene = ExtResource("2_ryi5j")

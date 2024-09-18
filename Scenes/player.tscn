@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bb3b503xrvj7m"]
+[gd_scene load_steps=8 format=3 uid="uid://bb3b503xrvj7m"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_04v0u"]
 [ext_resource type="Texture2D" uid="uid://o8jtnohtfapr" path="res://Assets/Prototype/Textures/colormap.png" id="2_l4sk5"]
+[ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_pbqth"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x2swh"]
 resource_name = "colormap"
@@ -45,6 +46,7 @@ shadow_mesh = SubResource("ArrayMesh_mj6nb")
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_04v0u")
+assets_scene = ExtResource("2_pbqth")
 
 [node name="shape-cube" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

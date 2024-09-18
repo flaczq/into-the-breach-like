@@ -15,10 +15,9 @@ var is_clicked: bool = false
 
 
 func _ready():
-	# to move properly among available positions
-	position = Vector3.ZERO
+	super()
 	
-	active_material = model.get_active_material(0)
+	model_material = StandardMaterial3D.new()
 
 
 #func _input(event):
@@ -101,7 +100,7 @@ func move(tiles_path, forced):
 
 
 func after_action():
-	reset_tiles()
+	#reset_tiles()
 	
 	actions_made_current_turn += 1
 	
@@ -121,6 +120,8 @@ func execute_action(target_tile):
 	if current_phase != PhaseType.ACTION:
 		return
 	
+	reset_tiles()
+	
 	# FIXME: dodaj obrażenia dla action_type
 	await target_tile.get_shot(0, action_type, tile.coords)
 	
@@ -130,6 +131,8 @@ func execute_action(target_tile):
 func shoot(target_tile):
 	if current_phase != PhaseType.ACTION:
 		return
+	
+	reset_tiles()
 	
 	await target_tile.get_shot(damage, ActionType.NONE, tile.coords)
 	
@@ -146,9 +149,11 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 	
 	apply_action_type(action_type, origin_tile_coords)
 	
+	model.set_surface_override_material(0, model_material)
 	var color_tween = create_tween()
-	color_tween.tween_property(active_material, 'albedo_color', active_material.albedo_color, 1.0).from(Color.RED)
+	color_tween.tween_property(model_material, 'albedo_color', model_material.albedo_color, 1.0).from(Color.RED)
 	await color_tween.finished
+	model.set_surface_override_material(0, null)
 	
 	if health <= 0 and is_alive:
 		get_killed()
@@ -161,7 +166,7 @@ func get_killed():
 	tile.set_player(null)
 	tile = null
 	
-	active_material.albedo_color = Color.DARK_RED
+	model_material.albedo_color = Color.DARK_RED
 
 
 func start_turn():

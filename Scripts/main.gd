@@ -1,6 +1,7 @@
 extends Util
 
 @onready var game_state_manager = $GameStateManager
+@onready var camera_3d = $Camera3D
 
 const RANDOM_MAPS_FILE_PATH: String = 'res://Data/random_maps.txt'
 
@@ -9,6 +10,11 @@ var key_pressed: bool = false
 
 func _ready():
 	print('!STARTED')
+	
+	var default_maps = get_children().filter(func(child): return child.is_in_group('MAPS'))
+	if default_maps:
+		for default_map in default_maps:
+			default_map.queue_free()
 	
 	game_state_manager.init()
 

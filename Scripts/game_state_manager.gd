@@ -110,7 +110,7 @@ const LEVELS_DATA: Array = [
 ]
 const MAPS_FILE_PATH: String = 'res://Data/maps.txt'
 
-var tutorial: bool = true
+var tutorial: bool = false
 
 var level: int
 var max_levels: int
@@ -243,10 +243,14 @@ func start_turn():
 	for civilian in alive_civilians:
 		var tiles_for_movement = calculate_tiles_for_movement(true, civilian)
 		var target_tiles_for_movement
-		if tiles_for_movement.size() > 1:
-			target_tiles_for_movement = tiles_for_movement.filter(func(tile_for_movement): return tile_for_movement != civilian.tile)
-		else:
+		if tiles_for_movement.is_empty():
+			tiles_for_movement.push_back(civilian.tile)
+		
+		if tiles_for_movement.size() == 1:
 			target_tiles_for_movement = tiles_for_movement
+		else:
+			# prefer to move if possible
+			target_tiles_for_movement = tiles_for_movement.filter(func(tile_for_movement): return tile_for_movement != civilian.tile)
 		
 		var target_tile_for_movement = target_tiles_for_movement.pick_random()
 		var tiles_path = calculate_tiles_path(civilian.tile, target_tile_for_movement)
@@ -254,6 +258,9 @@ func start_turn():
 	
 	for enemy in alive_enemies:
 		var tiles_for_movement = calculate_tiles_for_movement(true, enemy)
+		if tiles_for_movement.is_empty():
+			tiles_for_movement.push_back(enemy.tile)
+			
 		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, alive_civilians + alive_players)
 		#var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, alive_civilians)
 		#if not target_tile_for_movement:
@@ -366,10 +373,10 @@ func reset_ui():
 
 
 func calculate_tiles_for_movement(active, character):
-	var tiles_for_movement
+	var tiles_for_movement = []
 	
 	if active:
-		tiles_for_movement = [character.tile]
+		#tiles_for_movement.push_back(character.tile)
 		var i = 1
 		
 		# don't even ask how this works
@@ -600,14 +607,18 @@ func _on_tile_hovered(tile, is_hovered):
 		# different color for the hovered (target) tile
 		tiles_path.erase(tile)
 		
-		var color
-		if is_hovered:
-			color = Color.REBECCA_PURPLE
-		else:
-			color = Color.PURPLE
+		#var color
+		#if is_hovered:
+			#color = Color.REBECCA_PURPLE
+		#else:
+			#color = Color.PURPLE
+		#
+		# FIXME
+		for t in map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTROYED):
+			t.position.y = 0
 		
 		for current_tile in tiles_path:
-			current_tile.color_model(color)
+			current_tile.position.y = 0.25
 
 
 func _on_tile_clicked(tile, is_clicked):

@@ -6,10 +6,9 @@ var planned_tile: Node3D
 
 
 func _ready():
-	# to move properly among available positions
-	position = Vector3.ZERO
+	super()
 	
-	active_material = model.get_active_material(0)
+	model_material = StandardMaterial3D.new()
 
 
 func spawn(target_tile):
@@ -83,9 +82,11 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 	
 	apply_action_type(action_type, origin_tile_coords)
 	
+	model.set_surface_override_material(0, model_material)
 	var color_tween = create_tween()
-	color_tween.tween_property(active_material, 'albedo_color', active_material.albedo_color, 1.0).from(Color.RED)
+	color_tween.tween_property(model_material, 'albedo_color', model_material.albedo_color, 1.0).from(Color.RED)
 	await color_tween.finished
+	model.set_surface_override_material(0, null)
 	
 	if health <= 0 and is_alive:
 		get_killed()
@@ -102,4 +103,4 @@ func get_killed():
 	tile.set_enemy(null)
 	tile = null
 	
-	active_material.albedo_color = Color.DARK_RED
+	model_material.albedo_color = Color.DARK_RED

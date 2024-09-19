@@ -1,11 +1,12 @@
 extends Util
 
 signal hovered_event(tile: Node3D, is_hovered: bool)
-signal clicked_event(tile: Node3D, is_clicked: bool)
+#signal clicked_event(tile: Node3D, is_clicked: bool)
+signal clicked_event(tile: Node3D)
 
 @onready var area_3d = $Area3D
 
-var is_clicked: bool = false
+#var is_clicked: bool = false
 var is_hovered: bool = false
 var is_player_clicked: bool = false
 var is_player_hovered: bool = false
@@ -74,12 +75,6 @@ func init(tile_init_data):
 
 
 func toggle_tile_models():
-	#if color:
-		#model_material.albedo_color = color
-	#elif is_planned_enemy_action:
-		#model_material.albedo_color = Color.PALE_VIOLET_RED
-	#else:
-		#model_material.albedo_color = model_default_color
 	models.tile_highlighted.hide()
 	models.tile_targeted.hide()
 	models.tile_damaged.hide()
@@ -100,9 +95,9 @@ func toggle_tile_models():
 	
 	if is_player_clicked and is_hovered:
 		# last (target) tile in path
-		position.y = 0.3
+		position.y = 0.2
 	elif health_type == TileHealthType.DESTROYED:
-		position.y = -0.25
+		position.y = -0.2
 	else:
 		position.y = 0
 
@@ -141,11 +136,11 @@ func toggle_player_hovered(new_is_player_hovered):
 	toggle_tile_models()
 	
 	#if new_is_player_hovered:
-		##model_material.albedo_color = Color.MEDIUM_PURPLE
-		##toggle_shader(true)
+		#model_material.albedo_color = Color.MEDIUM_PURPLE
+		#toggle_shader(true)
 	#else:
 		#toggle_tile_models()
-		##toggle_shader(false)
+		#toggle_shader(false)
 
 
 func toggle_player_clicked(new_is_player_clicked):
@@ -154,8 +149,7 @@ func toggle_player_clicked(new_is_player_clicked):
 	toggle_tile_models()
 	
 	#if is_player_clicked:
-		##model_material.albedo_color = Color.PURPLE
-		##toggle_shader(true)
+		#toggle_shader(true)
 	#else:
 		#toggle_tile_models()
 		#toggle_shader(false)
@@ -236,6 +230,7 @@ func _on_area_3d_mouse_exited():
 
 func _on_area_3d_input_event(camera, event, position, normal, shape_idx):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		is_clicked = not is_clicked
+		#is_clicked = not is_clicked
 		
-		clicked_event.emit(self, is_clicked)
+		#clicked_event.emit(self, is_clicked)
+		clicked_event.emit(self)

@@ -31,10 +31,6 @@ func _input(event):
 	# UNCLICK PLAYER
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 		game_state_manager.reset_ui()
-	
-		for tile in game_state_manager.map.tiles:
-			tile.is_clicked = false
-			tile.ghost = null
 		
 		for player in game_state_manager.players:
 			#player.is_clicked = false
@@ -43,7 +39,15 @@ func _input(event):
 			if player.is_alive:
 				player.reset_phase()
 				player.reset_tiles()
-				game_state_manager.action_button.set_pressed_no_signal(false)
+	
+		for tile in game_state_manager.map.tiles:
+			#tile.is_clicked = false
+			tile.ghost = null
+			
+			tile.toggle_tile_models()
+		
+		game_state_manager.shoot_button.set_pressed_no_signal(false)
+		game_state_manager.action_button.set_pressed_no_signal(false)
 		
 		game_state_manager.recalculate_enemies_planned_actions_for_action_direction_line()
 	

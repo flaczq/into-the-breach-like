@@ -177,7 +177,7 @@ func init_players(current_level_data):
 	players = []
 	
 	for current_level_player in current_level_data.players:
-		var current_player: Node3D = player_scenes[current_level_player.scene].instantiate()
+		var current_player = player_scenes[current_level_player.scene].instantiate()
 		add_sibling(current_player)
 		current_player.init(current_level_player)
 		var spawn_tile = map.get_available_tiles().pick_random()
@@ -198,12 +198,13 @@ func init_players(current_level_data):
 func init_enemies(current_level_data):
 	enemies = []
 	
+	var order = 1
 	for current_level_enemy in current_level_data.enemies:
-		var current_enemy: Node3D = enemy_scenes[current_level_enemy.scene].instantiate()
+		var current_enemy = enemy_scenes[current_level_enemy.scene].instantiate()
 		add_sibling(current_enemy)
 		current_enemy.init(current_level_enemy)
 		var spawn_tile = map.get_available_tiles().pick_random()
-		current_enemy.spawn(spawn_tile)
+		current_enemy.spawn(spawn_tile, order)
 		
 		current_enemy.connect('action_push_back', _on_character_action_push_back)
 		current_enemy.connect('action_pull_front', _on_character_action_pull_front)
@@ -213,13 +214,15 @@ func init_enemies(current_level_data):
 		current_enemy.connect('action_slow_down', _on_character_action_slow_down)
 		
 		enemies.push_back(current_enemy)
+		
+		order += 1
 
 
 func init_civilians(current_level_data):
 	civilians = []
 	
 	for current_level_civilian in current_level_data.civilians:
-		var current_civilian: Node3D = civilian_scenes[current_level_civilian.scene].instantiate()
+		var current_civilian = civilian_scenes[current_level_civilian.scene].instantiate()
 		add_sibling(current_civilian)
 		current_civilian.init(current_level_civilian)
 		var spawn_tile = map.get_available_tiles().pick_random()
@@ -253,11 +256,13 @@ func start_turn():
 			target_tiles_for_movement = tiles_for_movement.filter(func(tile): return tile != civilian.tile)
 		
 		var target_tile_for_movement = target_tiles_for_movement.pick_random()
-		var tiles_path = calculate_tiles_path(civilian.tile, target_tile_for_movement)
+		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
 		await civilian.move(tiles_path, false)
 		
 		# recalculate_enemies_planned_actions_for_action_direction_line is not necessary because civilians move before enemies plan their actions
 	
+	# sort by order
+	alive_enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for enemy in alive_enemies:
 		var tiles_for_movement = calculate_tiles_for_movement(true, enemy)
 		tiles_for_movement.push_back(enemy.tile)
@@ -267,7 +272,7 @@ func start_turn():
 			target_tile_for_movement = tiles_for_movement.pick_random()
 			print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
 		
-		var tiles_path = calculate_tiles_path(enemy.tile, target_tile_for_movement)
+		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
 		await enemy.move(tiles_path, false)
 	
 		# enemy could have moved in front of the other enemy's attack line
@@ -295,6 +300,8 @@ func start_turn():
 func end_turn():
 	# UI
 	end_turn_button.set_disabled(true)
+	shoot_button.set_pressed_no_signal(false)
+	action_button.set_pressed_no_signal(false)
 	
 	for player in players.filter(func(player): return player.is_alive):
 		#player.reset_phase()
@@ -302,6 +309,8 @@ func end_turn():
 		player.reset_states()
 		player.current_phase = PhaseType.WAIT
 	
+	# sort by order
+	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for enemy in enemies:
 		# enemy could have been killed by another enemy inside this loop
 		if enemy.is_alive:
@@ -396,19 +405,23 @@ func calculate_tiles_for_movement(active, character):
 			var temp_origin_tiles = []
 			
 			for origin_tile in origin_tiles:
-				for tile in map.tiles.filter(func(tile): return not tile.player and not tile.enemy and not tile.civilian and not tiles_for_movement.has(tile)):
-					if is_tile_adjacent(tile, origin_tile, true):
-						push_unique_to_array(tiles_for_movement, tile)
-						push_unique_to_array(temp_origin_tiles, tile)
-					elif is_tile_adjacent(tile, origin_tile, not character.can_fly):
-						push_unique_to_array(temp_origin_tiles, tile)
+				for tile in map.tiles:
+					# characters can move through other characters of the same type
+					var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
+					if not occupied_by_characters and not tiles_for_movement.has(tile):
+						if is_tile_adjacent(tile, origin_tile, true):
+							push_unique_to_array(tiles_for_movement, tile)
+							push_unique_to_array(temp_origin_tiles, tile)
+						elif is_tile_adjacent(tile, origin_tile, not character.can_fly):
+							push_unique_to_array(temp_origin_tiles, tile)
 			
 			origin_tiles = temp_origin_tiles
 			i += 1
 	else:
-		tiles_for_movement = map.tiles
+		return map.tiles
 	
-	return tiles_for_movement
+	# remove occupied tiles as target movement tiles
+	return tiles_for_movement.filter(func(tile): return not tile.player and not tile.enemy and not tile.civilian)
 
 
 func is_tile_adjacent(tile, origin_tile, check_for_movement):
@@ -418,19 +431,25 @@ func is_tile_adjacent(tile, origin_tile, check_for_movement):
 	return abs(tile.coords - origin_tile.coords) == Vector2i(0, 1) or abs(tile.coords - origin_tile.coords) == Vector2i(1, 0)
 
 
-func calculate_tiles_path(origin_tile, target_tile):
+func calculate_tiles_path(character, target_tile):
 	var map_dimension = map.get_side_dimension()
 	var astar_grid_map = AStarGrid2D.new()
 	astar_grid_map.region = Rect2i(1, 1, map_dimension, map_dimension)
 	astar_grid_map.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	astar_grid_map.update()
 	
-	for occupied_tile in map.get_occupied_tiles():
-		astar_grid_map.set_point_solid(occupied_tile.coords, true)
+	for tile in map.tiles:
+		var occupied_by_health_type = tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE
+		var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
+		if occupied_by_health_type or occupied_by_characters:
+			astar_grid_map.set_point_solid(tile.coords, true)
 	
-	var tiles_coords_path = astar_grid_map.get_id_path(origin_tile.coords, target_tile.coords)
+	var tiles_coords_path = astar_grid_map.get_id_path(character.tile.coords, target_tile.coords)
 	if tiles_coords_path.size() > 1:
-		tiles_coords_path.erase(origin_tile.coords)
+		tiles_coords_path.erase(character.tile.coords)
+	
+	if tiles_coords_path.size() > character.move_distance:
+		printerr('wtf?! ' + str(tiles_coords_path) + ' ' + str(character))
 	
 	return tiles_coords_path.map(func(tile_coords): return map.tiles.filter(func(tile): return tile.coords == tile_coords).front())
 
@@ -611,6 +630,7 @@ func recalculate_enemies_planned_actions_for_action_direction_line():
 
 
 func on_shoot_action_button_toggled(toggled_on):
+	# order matters here!
 	if toggled_on:
 		if selected_player.current_phase == PhaseType.MOVE and not selected_player.no_more_actions_this_turn():
 			selected_player.current_phase = PhaseType.ACTION
@@ -622,6 +642,11 @@ func on_shoot_action_button_toggled(toggled_on):
 	var player = selected_player
 	player.reset_tiles()
 	player.clicked()
+	
+	if toggled_on and selected_player.current_phase == PhaseType.ACTION:
+		var tiles_for_action = calculate_tiles_for_action(true, selected_player)
+		for tile in tiles_for_action:
+			tile.toggle_player_clicked(true)
 
 
 func _on_tile_hovered(tile, is_hovered):
@@ -648,12 +673,14 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
 			tile_info.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
 			tile_info.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
+		
 		if tile.enemy:
 			tile_info.text += '\n' + 'HEALTH: ' + str(tile.enemy.health) + '\n'
 			tile_info.text += '\n' + 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
 			tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
 			tile_info.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
 			tile_info.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
+		
 		if tile.civilian:
 			tile_info.text += '\n' + 'HEALTH: ' + str(tile.civilian.health) + '\n'
 			tile_info.text += '\n' + 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
@@ -666,9 +693,9 @@ func _on_tile_hovered(tile, is_hovered):
 			#other_tile.toggle_tile_models()
 		
 		if is_hovered:
-			var tiles_path = calculate_tiles_path(selected_player.tile, tile)
+			var tiles_path = calculate_tiles_path(selected_player, tile)
 			for current_tile in tiles_path:
-				current_tile.position.y = 0.25
+				current_tile.position.y = 0.15
 			
 			selected_player.is_ghost = true
 			tile.ghost = selected_player
@@ -676,7 +703,7 @@ func _on_tile_hovered(tile, is_hovered):
 	recalculate_enemies_planned_actions_for_action_direction_line()
 
 
-func _on_tile_clicked(tile, is_clicked):
+func _on_tile_clicked(tile):
 	for current_player in players:
 		current_player.is_ghost = false
 	
@@ -688,7 +715,7 @@ func _on_tile_clicked(tile, is_clicked):
 	# highlighted tile is clicked while player is selected
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
 		if selected_player.current_phase == PhaseType.MOVE:
-			var tiles_path = calculate_tiles_path(selected_player.tile, tile)
+			var tiles_path = calculate_tiles_path(selected_player, tile)
 			await selected_player.move(tiles_path, false)
 			
 			recalculate_enemies_planned_actions_for_action_direction_line()
@@ -708,7 +735,8 @@ func _on_tile_clicked(tile, is_clicked):
 	elif tile.player and (not selected_player or selected_player.tile == tile or selected_player.can_be_interacted_with()):
 		tile.player.reset_phase()
 		tile.player.on_clicked()
-		shoot_button.set_pressed_no_signal(tile.player.current_phase == PhaseType.ACTION)
+		#shoot_button.set_pressed_no_signal(tile.player.current_phase == PhaseType.ACTION)
+		shoot_button.set_pressed_no_signal(false)
 		action_button.set_pressed_no_signal(false)
 
 
@@ -716,14 +744,21 @@ func _on_player_hovered(player, is_hovered):
 	if selected_player and selected_player != player:
 		return
 	
-	if player.current_phase == PhaseType.MOVE:
-		var tiles_for_movement = calculate_tiles_for_movement(is_hovered, player)
-		for tile_for_movement in tiles_for_movement:
-			tile_for_movement.toggle_player_hovered(is_hovered)
-	elif player.current_phase == PhaseType.ACTION:
-		var tiles_for_action = calculate_tiles_for_action(is_hovered, player)
-		for tile_for_action in tiles_for_action:
-			tile_for_action.toggle_player_hovered(is_hovered)
+	if is_hovered:
+		if player.current_phase == PhaseType.MOVE:
+			var tiles_for_movement = calculate_tiles_for_movement(is_hovered, player)
+			for tile_for_movement in tiles_for_movement:
+				tile_for_movement.toggle_player_hovered(is_hovered)
+		#elif player.current_phase == PhaseType.ACTION:
+			#var tiles_for_action = calculate_tiles_for_action(is_hovered, player)
+			#for tile_for_action in tiles_for_action:
+				#tile_for_action.toggle_player_hovered(is_hovered)
+	else:
+		for tile in map.tiles:
+			tile.toggle_player_hovered(false)
+			
+			#if not player.is_clicked:
+				#tile.toggle_player_clicked(false)
 
 
 func _on_player_clicked(player, is_clicked):
@@ -737,31 +772,34 @@ func _on_player_clicked(player, is_clicked):
 		# UI
 		shoot_button.set_disabled(false)
 		action_button.set_disabled(selected_player.action_type == ActionType.NONE)
-		if not action_button.is_pressed() and selected_player.current_phase == PhaseType.ACTION:
-			shoot_button.set_pressed_no_signal(true)
+		#if not action_button.is_pressed() and selected_player.current_phase == PhaseType.ACTION:
+			#shoot_button.set_pressed_no_signal(true)
+		
+		if player.current_phase == PhaseType.MOVE:
+			var tiles_for_movement = calculate_tiles_for_movement(is_clicked, player)
+			for tile_for_movement in tiles_for_movement:
+				tile_for_movement.toggle_player_clicked(is_clicked)
+		#elif player.current_phase == PhaseType.ACTION:
+			#var tiles_for_action = calculate_tiles_for_action(is_clicked, player)
+			#for tile_for_action in tiles_for_action:
+				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
 		selected_player = null
 		
 		# UI
 		shoot_button.set_disabled(true)
 		action_button.set_disabled(true)
-	
-	if player.current_phase == PhaseType.MOVE:
-		var tiles_for_movement = calculate_tiles_for_movement(is_clicked, player)
-		for tile_for_movement in tiles_for_movement:
-			tile_for_movement.toggle_player_clicked(is_clicked)
-	elif player.current_phase == PhaseType.ACTION:
-		var tiles_for_action = calculate_tiles_for_action(is_clicked, player)
-		for tile_for_action in tiles_for_action:
-			tile_for_action.toggle_player_clicked(is_clicked)
+		
+		for tile in map.tiles:
+			#tile.toggle_player_hovered(false)
+			tile.toggle_player_clicked(false)
 
 
 func _on_character_action_push_back(character, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var push_direction = -hit_direction
-	# character can be pushed back into other character or destructible tile
-	var available_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE)
-	var target_tiles = available_tiles.filter(func(available_tile): return available_tile.coords == character.tile.coords + push_direction)
+	# character can be pushed back into other character or (in)destructible tile
+	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTRUCTIBLE and tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + push_direction)
 	if target_tiles.is_empty():
 		# pushed outside of the map
 		await character.move([character.tile], true)
@@ -776,7 +814,7 @@ func _on_character_action_push_back(character, origin_tile_coords):
 			elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
 				var enemy = character
 				# push planned tile with pushed enemy
-				var planned_tiles = map.tiles.filter(func(tiles): return tiles.coords == enemy.planned_tile.coords + push_direction)
+				var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + push_direction)
 				if planned_tiles.is_empty():
 					print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pushed back')
 				else:
@@ -788,9 +826,8 @@ func _on_character_action_push_back(character, origin_tile_coords):
 func _on_character_action_pull_front(character, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var pull_direction = hit_direction
-	# character can be pulled front into other character or destructible tile
-	var available_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTRUCTIBLE and tile.health_type != TileHealthType.INDESTRUCTIBLE)
-	var target_tiles = available_tiles.filter(func(available_tile): return available_tile.coords == character.tile.coords + pull_direction)
+	# character can be pulled front into other character or (in)destructible tile
+	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTRUCTIBLE and tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + pull_direction)
 	if target_tiles.is_empty():
 		# pulled outside of the map - is this even possible?
 		await character.move([character.tile], true)
@@ -805,7 +842,7 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 			elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
 				var enemy = character
 				# pull planned tile with pulled enemy
-				var planned_tiles = map.tiles.filter(func(tiles): return tiles.coords == enemy.planned_tile.coords + pull_direction)
+				var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + pull_direction)
 				if planned_tiles.is_empty():
 					print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pulled front')
 				else:

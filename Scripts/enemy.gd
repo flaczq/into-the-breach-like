@@ -3,6 +3,7 @@ extends Character
 @onready var model = $'target-a-round'
 
 var planned_tile: Node3D
+var order: int
 
 
 func _ready():
@@ -11,11 +12,13 @@ func _ready():
 	model_material = StandardMaterial3D.new()
 
 
-func spawn(target_tile):
+func spawn(target_tile, new_order):
 	tile = target_tile
 	tile.set_enemy(self)
 	
 	position = Vector3(tile.position.x, 0.0, tile.position.z)
+	
+	order = new_order
 
 
 func move(tiles_path, forced):

@@ -5,12 +5,9 @@
 4. - cute, scary, w lesie namioty z dziećmi, których musisz bronić przed wilkami (zabierają dzieci i trzeba ich uderzyć bez obrażeń, żeby dziecko upadło);
    - zaczynasz z jednym graczem, potem ratujesz kolejnego (albo i nie) - mapy tworzą historyjkę
 
-poprawić:
-DONE? czy to robić? ghost -> _on_tile_hovered() dla selected_player.current_phase == PhaseType.ACTION -> pokaż co się stanie 
+pociski - wskaźniki (Prototype/indicator-square-a.glb)
 
-pociski
-
-order - który civilian i enemy po kolei
+pokazać order
 
 menu:
 - po ukończeniu poziomu wybór kolejnych graczy na podstawie zdobytych morali

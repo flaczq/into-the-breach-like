@@ -203,14 +203,14 @@ func reset_states():
 
 func no_more_moves_this_turn():
 	if moves_made_current_turn > moves_per_turn:
-		printerr('wtf?!' + ' ' + str(moves_made_current_turn) + ' ' + str(moves_per_turn))
+		printerr('wtf?! ' + str(moves_made_current_turn) + ' ' + str(moves_per_turn))
 	
 	return moves_made_current_turn == moves_per_turn
 
 
 func no_more_actions_this_turn():
 	if actions_made_current_turn > actions_per_turn:
-		printerr('wtf?!' + ' ' + str(actions_made_current_turn) + ' ' + str(actions_per_turn))
+		printerr('wtf?! ' + str(actions_made_current_turn) + ' ' + str(actions_per_turn))
 	
 	return actions_made_current_turn == actions_per_turn
 

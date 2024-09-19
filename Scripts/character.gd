@@ -21,6 +21,7 @@ var move_distance: int
 var can_fly: bool
 var action_direction: ActionDirection
 var action_type: ActionType
+var action_distance: int
 var tile: Node3D
 var model_material: StandardMaterial3D
 var bullet_model: MeshInstance3D
@@ -46,6 +47,7 @@ func init(character_init_data):
 	can_fly = character_init_data.can_fly
 	action_direction = character_init_data.action_direction
 	action_type = character_init_data.action_type
+	action_distance = character_init_data.action_distance
 
 
 func apply_action_type(action_type, origin_tile_coords):

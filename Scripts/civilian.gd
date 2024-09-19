@@ -31,11 +31,12 @@ func move(tiles_path, forced):
 		if target_tile == tile:
 			if forced:
 				#civilian was pushed/pulled into wall
+				print('civil ' + str(tile.coords) + ' -> pushed into the wall')
 				await get_shot(1, ActionType.NONE, target_tile.coords)
 			else:
 				print('civil ' + str(tile.coords) + ' -> is not moving')
 		else:
-			if target_tile.player or target_tile.enemy or target_tile.civilian:
+			if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
 				get_shot(1, ActionType.NONE, target_tile.coords)
 				await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
 			else:

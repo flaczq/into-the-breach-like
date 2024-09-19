@@ -6,9 +6,11 @@
    - zaczynasz z jednym graczem, potem ratujesz kolejnego (albo i nie) - mapy tworzą historyjkę
 
 poprawić:
-- _on_tile_hovered() dla selected_player.current_phase == PhaseType.ACTION -> pokaż co się stanie DONE?
+DONE? czy to robić? ghost -> _on_tile_hovered() dla selected_player.current_phase == PhaseType.ACTION -> pokaż co się stanie 
 
 pociski
+
+order - który civilian i enemy po kolei
 
 menu:
 - po ukończeniu poziomu wybór kolejnych graczy na podstawie zdobytych morali

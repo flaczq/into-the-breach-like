@@ -105,7 +105,7 @@ func get_models_by_tile_type(tile_type):
 		TileType.TREE:
 			#models.tile_texture = TILE_1
 			models.tile_default_color = Color.FOREST_GREEN
-			#models.asset = assets_trees.filter(func(asset_tree): return asset_tree.name == 'Trees_004').front().duplicate()
+			models.asset = assets_trees.filter(func(asset_tree): return asset_tree.name == 'Trees_004').front().duplicate()
 		TileType.MOUNTAIN:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color.FIREBRICK
@@ -127,7 +127,7 @@ func get_health_type_by_tile_type(tile_type):
 	match tile_type:
 		TileType.PLAIN: return TileHealthType.HEALTHY
 		TileType.GRASS: return TileHealthType.HEALTHY
-		TileType.TREE: return TileHealthType.INDESTRUCTIBLE
+		TileType.TREE: return TileHealthType.DESTRUCTIBLE
 		TileType.MOUNTAIN: return TileHealthType.INDESTRUCTIBLE
 		TileType.WATER: return TileHealthType.INDESTRUCTIBLE
 		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE

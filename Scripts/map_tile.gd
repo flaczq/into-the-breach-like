@@ -15,6 +15,7 @@ var tile_type: TileType
 var health_type: TileHealthType
 var coords: Vector2i
 var player: Node3D
+var ghost: Node3D
 var enemy: Node3D
 var civilian: Node3D
 var models: Dictionary
@@ -84,27 +85,26 @@ func toggle_tile_models():
 	models.tile_damaged.hide()
 	models.tile_destroyed.hide()
 	
-	position.y = 0
-	
 	if is_player_clicked:
 		models.tile_highlighted.show()
-		
-		if is_hovered:
-			# last (target) tile in path
-			position.y = 0.25
 	elif is_player_hovered:
 		models.tile_highlighted.show()
 	
 	if health_type == TileHealthType.DESTROYED:
 		models.tile_destroyed.show()
-		
-		position.y = -0.25
 	elif health_type == TileHealthType.DAMAGED:
 		models.tile_damaged.show()
 	
 	if is_planned_enemy_action:
 		models.tile_targeted.show()
-
+	
+	if is_player_clicked and is_hovered:
+		# last (target) tile in path
+		position.y = 0.3
+	elif health_type == TileHealthType.DESTROYED:
+		position.y = -0.25
+	else:
+		position.y = 0
 
 func reset():
 	player = null
@@ -125,7 +125,7 @@ func set_civilian(new_civilian):
 
 
 func is_free():
-	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
+	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
 
 
 func toggle_shader(new_is_shader):
@@ -181,18 +181,23 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 			color_tween.tween_property(model_material, 'albedo_color', model_material.albedo_color, 1.0).from(Color.RED)
 			await color_tween.finished
 			
-			if health_type == TileHealthType.HEALTHY:
+			if health_type == TileHealthType.DESTRUCTIBLE:
+				health_type = TileHealthType.HEALTHY
+				
+				# destroy required asset for destructible tile
+				if models.asset and not models.asset.is_queued_for_deletion():
+					models.asset.queue_free()
+		
+				toggle_tile_models()
+				print('ttile ' + str(coords) + ' -> healthy tile')
+			elif health_type == TileHealthType.HEALTHY:
 				health_type = TileHealthType.DAMAGED
 				
-				#models.tile_default_color = Color.INDIAN_RED
-				#model_material.albedo_color = models.tile_default_color
 				toggle_tile_models()
 				print('ttile ' + str(coords) + ' -> damaged tile')
 			elif health_type == TileHealthType.DAMAGED:
 				health_type = TileHealthType.DESTROYED
 				
-				#models.tile_default_color = Color.RED
-				#model_material.albedo_color = models.tile_default_color
 				toggle_tile_models()
 				print('ttile ' + str(coords) + ' -> destroyed')
 			elif health_type == TileHealthType.DESTROYED:
@@ -209,7 +214,6 @@ func _on_area_3d_mouse_entered():
 	if is_player_clicked:
 		is_hovered = true
 		
-		#model_material.albedo_color = Color.WEB_PURPLE
 		toggle_tile_models()
 		
 		#hovered_event.emit(self, true)
@@ -223,7 +227,6 @@ func _on_area_3d_mouse_exited():
 	if is_player_clicked:
 		is_hovered = false
 		
-		#model_material.albedo_color = Color.PURPLE
 		toggle_tile_models()
 		
 		#hovered_event.emit(self, false)
@@ -232,9 +235,6 @@ func _on_area_3d_mouse_exited():
 
 
 func _on_area_3d_input_event(camera, event, position, normal, shape_idx):
-	#if health_type == TileHealthType.DESTROYED or health_type == TileHealthType.INDESTRUCTIBLE:
-		#return
-	
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		is_clicked = not is_clicked
 		

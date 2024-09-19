@@ -12,7 +12,7 @@ var actions_made_current_turn: int = 0
 var current_phase: PhaseType = PhaseType.WAIT
 #var is_hovered: bool = false
 var is_clicked: bool = false
-
+var is_ghost: bool = false
 
 func _ready():
 	super()
@@ -62,11 +62,12 @@ func move(tiles_path, forced):
 	if target_tile == tile:
 		if forced:
 			#player was pushed/pulled into wall
+			print('playe ' + str(tile.coords) + ' -> pushed into the wall')
 			await get_shot(1, ActionType.NONE, target_tile.coords)
 		else:
 			print('playe ' + str(tile.coords) + ' -> is not moving')
 	else:
-		if target_tile.player or target_tile.enemy or target_tile.civilian:
+		if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
 			get_shot(1, ActionType.NONE, target_tile.coords)
 			await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
 		else:

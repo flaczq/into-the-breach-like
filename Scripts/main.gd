@@ -34,14 +34,18 @@ func _input(event):
 	
 		for tile in game_state_manager.map.tiles:
 			tile.is_clicked = false
+			tile.ghost = null
 		
 		for player in game_state_manager.players:
 			#player.is_clicked = false
+			player.is_ghost = false
 			
 			if player.is_alive:
 				player.reset_phase()
 				player.reset_tiles()
 				game_state_manager.action_button.set_pressed_no_signal(false)
+		
+		game_state_manager.recalculate_enemies_planned_actions_for_action_direction_line()
 	
 	# !DEBUG!
 	# SAVE RANDOM MAP
@@ -66,13 +70,13 @@ func _input(event):
 	if Input.is_key_pressed(KEY_R):
 		get_tree().reload_current_scene()
 	
-	# LOG INDESTRUCTIBLE TILES
-	if Input.is_key_pressed(KEY_I):
-		print('indestructible tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.health_type == TileHealthType.INDESTRUCTIBLE).map(func(tile): return tile.coords)))
+	# LOG TILES
+	if Input.is_key_pressed(KEY_T):
+		print('tiles: ' + str(game_state_manager.map.tiles.map(func(tile): return str(tile.coords) + ' ' + str(TileHealthType.keys()[tile.health_type]))))
 	
 	# LOG DESTROYED TILES
-	if Input.is_key_pressed(KEY_D):
-		print('destroyed tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.healthType == TileHealthType.DESTROYED).map(func(tile): return tile.coords)))
+	#if Input.is_key_pressed(KEY_D):
+		#print('destroyed tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.health_type == TileHealthType.DESTROYED).map(func(tile): return tile.coords)))
 	
 	# LOG PLAYERS TILES
 	if Input.is_key_pressed(KEY_P):

@@ -28,11 +28,12 @@ func move(tiles_path, forced):
 		if target_tile == tile:
 			if forced:
 				#enemy was pushed/pulled into wall
+				print('enemy ' + str(tile.coords) + ' -> pushed into the wall')
 				await get_shot(1, ActionType.NONE, target_tile.coords)
 			else:
 				print('enemy ' + str(tile.coords) + ' -> is not moving')
 		else:
-			if target_tile.player or target_tile.enemy or target_tile.civilian:
+			if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
 				get_shot(1, ActionType.NONE, target_tile.coords)
 				await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
 			else:
@@ -62,7 +63,7 @@ func plan_action(target_tile):
 		#bullet_model.position.x = bullet_model.position.direction_to(planned_tile.position).rotated(Vector3.UP, deg_to_rad(bullet_model.rotation.y))
 		bullet_model.show()
 		
-		print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
+		#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 
 
 func execute_planned_action():

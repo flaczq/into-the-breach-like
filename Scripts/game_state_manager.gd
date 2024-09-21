@@ -639,9 +639,9 @@ func on_shoot_action_button_toggled(toggled_on):
 			selected_player.current_phase = PhaseType.MOVE
 	
 	# remember selected player to be able to unlick and click it again
-	var player = selected_player
-	player.reset_tiles()
-	player.clicked()
+	var temp_selected_player = selected_player
+	temp_selected_player.reset_tiles()
+	temp_selected_player.clicked()
 	
 	if toggled_on and selected_player.current_phase == PhaseType.ACTION:
 		var tiles_for_action = calculate_tiles_for_action(true, selected_player)
@@ -811,14 +811,15 @@ func _on_character_action_push_back(character, origin_tile_coords):
 			if character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
 				character.get_killed()
-			elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
+			elif character.tile == target_tile and character.is_in_group('ENEMIES'):
 				var enemy = character
-				# push planned tile with pushed enemy
-				var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + push_direction)
-				if planned_tiles.is_empty():
-					print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pushed back')
-				else:
-					enemy.plan_action(planned_tiles.front())
+				if enemy.planned_tile:
+					# push planned tile with pushed enemy
+					var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + push_direction)
+					if planned_tiles.is_empty():
+						print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pushed back')
+					else:
+						enemy.plan_action(planned_tiles.front())
 	
 	recalculate_enemies_planned_actions_for_action_direction_line()
 
@@ -839,14 +840,15 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 			if character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
 				character.get_killed()
-			elif character.tile == target_tile and character.is_in_group('ENEMIES') and character.planned_tile:
+			elif character.tile == target_tile and character.is_in_group('ENEMIES'):
 				var enemy = character
-				# pull planned tile with pulled enemy
-				var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + pull_direction)
-				if planned_tiles.is_empty():
-					print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pulled front')
-				else:
-					enemy.plan_action(planned_tiles.front())
+				if enemy.planned_tile:
+					# pull planned tile with pulled enemy
+					var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + pull_direction)
+					if planned_tiles.is_empty():
+						print(str(enemy.tile.coords) + 'enemy: planned tile cannot be pulled front')
+					else:
+						enemy.plan_action(planned_tiles.front())
 	
 	recalculate_enemies_planned_actions_for_action_direction_line()
 
@@ -854,10 +856,11 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 func _on_character_action_miss_action(character):
 	character.state_type = StateType.MISS_ACTION
 	
-	if character.is_in_group('ENEMIES') and character.planned_tile:
+	if character.is_in_group('ENEMIES'):
 		var enemy = character
-		enemy.planned_tile.set_planned_enemy_action(false)
-		enemy.planned_tile = null
+		if enemy.planned_tile:
+			enemy.planned_tile.set_planned_enemy_action(false)
+			enemy.planned_tile = null
 
 
 func _on_character_action_hit_ally(character):

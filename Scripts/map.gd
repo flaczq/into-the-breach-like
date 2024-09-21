@@ -14,6 +14,8 @@ var rmg: bool = false
 
 
 func _ready():
+	name = name + '_' + str(randi())
+	
 	for child in get_children().filter(func(child): return child.is_in_group('TILES')):
 		tiles.push_back(child)
 	

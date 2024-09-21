@@ -25,8 +25,11 @@ var action_distance: int
 var tile: Node3D
 var model_material: StandardMaterial3D
 var bullet_model: MeshInstance3D
+var bullet_line_model: MeshInstance3D
 
 func _ready():
+	name = name + '_' + str(randi())
+	
 	# to move properly among available positions
 	position = Vector3.ZERO
 	
@@ -38,6 +41,10 @@ func _ready():
 	bullet_model = assets_bullets.front().duplicate()
 	bullet_model.hide()
 	add_child(bullet_model)
+	
+	bullet_line_model = MeshInstance3D.new()
+	bullet_line_model.hide()
+	add_child(bullet_line_model)
 
 
 func init(character_init_data):
@@ -59,3 +66,28 @@ func apply_action_type(action_type, origin_tile_coords):
 		ActionType.GIVE_SHIELD: action_give_shield.emit(self)
 		ActionType.SLOW_DOWN: action_slow_down.emit(self)
 		_: print('no action')
+
+
+func spawn_bullet(target_position):
+	# spawn bullet line
+	var target_local_position = target_position - position
+	var bullet_line_immediate_mesh = ImmediateMesh.new()
+	var bullet_line_material = StandardMaterial3D.new()
+	
+	bullet_line_immediate_mesh.surface_begin(Mesh.PRIMITIVE_LINES, bullet_line_material)
+	bullet_line_immediate_mesh.surface_add_vertex(Vector3.ZERO)
+	bullet_line_immediate_mesh.surface_add_vertex(target_local_position)
+	bullet_line_immediate_mesh.surface_end()
+	
+	# line vertices can be at y-axis = 0
+	bullet_line_model.position = Vector3(0, 0.5, 0)
+	bullet_line_model.mesh = bullet_line_immediate_mesh
+	bullet_line_model.show()
+	
+	# spawn bullet at position = 0 to calculate rotation
+	bullet_model.position = Vector3(0, 0.5, 0)
+	bullet_model.look_at(Vector3(target_position.x, 0.5, target_position.z))
+	# fix rotation for y-axis only
+	bullet_model.set_rotation_degrees(bullet_model.rotation_degrees * Vector3.UP + Vector3(0, 90, 0))
+	bullet_model.position = Vector3(target_local_position.x, 0.5, target_local_position.z)
+	bullet_model.show()

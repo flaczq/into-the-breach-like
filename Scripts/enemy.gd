@@ -52,34 +52,47 @@ func move(tiles_path, forced):
 
 
 func plan_action(target_tile):
+	if bullet_model.is_visible():
+		bullet_model.hide()
+	
+	if bullet_line_model.is_visible():
+		bullet_line_model.hide()
+	
+	if planned_tile:
+		planned_tile.set_planned_enemy_action(false)
+		planned_tile = null
+	
 	if is_alive:
-		if planned_tile:
-			planned_tile.set_planned_enemy_action(false)
-			planned_tile = null
-		
 		planned_tile = target_tile
 		planned_tile.set_planned_enemy_action(true)
 		
-		bullet_model.look_at(planned_tile.position)
-		# fix rotation for y-axis only
-		bullet_model.set_rotation_degrees(bullet_model.rotation_degrees * Vector3.UP + Vector3(0, 90, 0))
-		#bullet_model.position.x = bullet_model.position.direction_to(planned_tile.position).rotated(Vector3.UP, deg_to_rad(bullet_model.rotation.y))
-		bullet_model.show()
+		spawn_bullet(planned_tile.position)
 		
 		#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 
 
 func execute_planned_action():
+	if bullet_model.is_visible():
+		bullet_model.hide()
+	
+	if bullet_line_model.is_visible():
+		bullet_line_model.hide()
+	
+	var temp_planned_tile
+	if planned_tile:
+		# remember planned tile to be able to unset it before shooting
+		temp_planned_tile = planned_tile
+		planned_tile.set_planned_enemy_action(false)
+		planned_tile = null
+	
 	if is_alive:
 		if state_type == StateType.MISS_ACTION:
 			print('enemy ' + str(tile.coords) + ' -> missed action')
 			state_type = StateType.NONE
 			return
 		
-		if planned_tile:
-			await planned_tile.get_shot(damage, action_type, tile.coords)
-			planned_tile.set_planned_enemy_action(false)
-			planned_tile = null
+		if temp_planned_tile:
+			await temp_planned_tile.get_shot(damage, action_type, tile.coords)
 
 
 func get_shot(taken_damage, action_type, origin_tile_coords):
@@ -105,6 +118,12 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 func get_killed():
 	is_alive = false
 	print('enemy ' + str(tile.coords) + ' -> dead!')
+	
+	if bullet_model.is_visible():
+		bullet_model.hide()
+	
+	if bullet_line_model.is_visible():
+		bullet_line_model.hide()
 	
 	if planned_tile:
 		planned_tile.set_planned_enemy_action(false)

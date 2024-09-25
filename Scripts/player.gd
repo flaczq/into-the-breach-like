@@ -3,8 +3,11 @@ extends Character
 signal hovered_event(player: Node3D, is_hovered: bool)
 signal clicked_event(player: Node3D, is_clicked: bool)
 
-@onready var model = $'shape-cube'
+@onready var model = $King_Head
 
+var model_material: StandardMaterial3D
+var default_arrow_model: MeshInstance3D
+var default_arrow_line_model: MeshInstance3D
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0
 var actions_per_turn: int = 1
@@ -14,10 +17,19 @@ var current_phase: PhaseType = PhaseType.WAIT
 var is_clicked: bool = false
 var is_ghost: bool = false
 
+
 func _ready():
 	super()
 	
 	model_material = StandardMaterial3D.new()
+	
+	for assets_group in assets.get_children():
+		if assets_group.is_in_group('ASSETS_INDICATORS'):
+			for assets_child in assets_group.get_children():
+				if assets_child.name == 'ArrowSign':
+					default_arrow_model = assets_child
+				elif assets_child.name == 'doormat':
+					default_arrow_line_model = assets_child
 
 
 #func _input(event):
@@ -45,7 +57,7 @@ func spawn(target_tile):
 	tile = target_tile
 	tile.set_player(self)
 	
-	position = Vector3(tile.position.x, 0.0, tile.position.z)
+	position = Vector3(tile.position.x, 0, tile.position.z)
 	
 	#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(moves_per_turn) + ' MOVE(S) / ' + str(actions_per_turn) + ' ACTION(S)')
 
@@ -80,9 +92,10 @@ func move(tiles_path, forced):
 			tile.set_player(self)
 			
 			var duration = 0.4 / tiles_path.size()
-			for current_tile in tiles_path:
+			for next_tile in tiles_path:
 				var position_tween = create_tween()
-				position_tween.tween_property(self, 'position', current_tile.position, duration).set_delay(0.1)
+				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
+				look_at_y(next_tile.position)
 				await position_tween.finished
 			
 			if not forced:
@@ -170,6 +183,12 @@ func get_killed():
 	model_material.albedo_color = Color.DARK_RED
 
 
+func look_at_y(target_position):
+	model.look_at(target_position, Vector3.UP, true)
+	model.rotation_degrees.x = 0
+	model.rotation_degrees.z = 0
+
+
 func start_turn():
 	if is_alive:
 		current_phase = PhaseType.MOVE
@@ -227,11 +246,10 @@ func clicked():
 	
 	clicked_event.emit(self, is_clicked)
 	
-	# FIXME
 	if is_clicked:
-		rotation_degrees.y = 45.0
+		position.y = 0.15
 	else:
-		rotation_degrees.y = 0.0
+		position.y = 0.0
 		
 		hovered_event.emit(self, true)
 

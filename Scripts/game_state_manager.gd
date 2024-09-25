@@ -688,18 +688,30 @@ func _on_tile_hovered(tile, is_hovered):
 		tile_info.text = ''
 	
 	# highlight tiles while player is hovered
-	if selected_player and selected_player.tile != tile and tile.is_player_clicked and selected_player.current_phase == PhaseType.MOVE:
-		#for other_tile in map.tiles.filter(func(current_tile): return current_tile != tile):
-			#other_tile.toggle_tile_models()
-		
-		if is_hovered:
-			var tiles_path = calculate_tiles_path(selected_player, tile)
-			for current_tile in tiles_path:
-				current_tile.position.y = 0.15
+	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
+		if selected_player.current_phase == PhaseType.MOVE:
+			#for other_tile in map.tiles.filter(func(current_tile): return current_tile != tile):
+				#other_tile.toggle_tile_models()
 			
-			selected_player.is_ghost = true
-			tile.ghost = selected_player
-		
+			if is_hovered:
+				var tiles_path = calculate_tiles_path(selected_player, tile)
+				for next_tile in tiles_path:
+					next_tile.raise()
+				
+				selected_player.look_at_y(tile.position)
+				selected_player.is_ghost = true
+				tile.ghost = selected_player
+		# maybe toggle checkbox?
+		#elif tile.enemy:
+			#for child in tile.enemy.get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
+				#if is_hovered:
+					#child.show()
+				#else:
+					#child.hide()
+		elif selected_player.current_phase == PhaseType.ACTION:
+			if is_hovered:
+				selected_player.look_at_y(tile.position)
+	
 	recalculate_enemies_planned_actions_for_action_direction_line()
 
 

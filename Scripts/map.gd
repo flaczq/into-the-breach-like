@@ -96,6 +96,12 @@ func get_models_by_tile_type(tile_type):
 			models.tile_damaged = assets_tile.duplicate()
 		elif assets_tile.name == 'TileDestroyed':
 			models.tile_destroyed = assets_tile.duplicate()
+		elif assets_tile.name == 'indicator-square-a':
+			models.indicator_solid = assets_tile.duplicate()
+		elif assets_tile.name == 'indicator-square-b':
+			models.indicator_dashed = assets_tile.duplicate()
+		elif assets_tile.name == 'indicator-square-c':
+			models.indicator_corners = assets_tile.duplicate()
 	
 	match tile_type:
 		TileType.PLAIN:

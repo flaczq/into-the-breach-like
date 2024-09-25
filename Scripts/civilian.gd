@@ -1,6 +1,8 @@
 extends Character
 
-@onready var model = $flag
+@onready var model = $Princess_Head
+
+var model_material: StandardMaterial3D
 
 
 func _ready():
@@ -45,9 +47,10 @@ func move(tiles_path, forced):
 				tile.set_civilian(self)
 				
 				var duration = 0.4 / tiles_path.size()
-				for current_tile in tiles_path:
+				for next_tile in tiles_path:
 					var position_tween = create_tween()
-					position_tween.tween_property(self, 'position', current_tile.position, duration).set_delay(0.1)
+					position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
+					look_at_y(next_tile.position)
 					await position_tween.finished
 
 
@@ -79,3 +82,9 @@ func get_killed():
 	tile = null
 	
 	model_material.albedo_color = Color.DARK_RED
+
+
+func look_at_y(target_position):
+	model.look_at(target_position, Vector3.UP, true)
+	model.rotation_degrees.x = 0
+	model.rotation_degrees.z = 0

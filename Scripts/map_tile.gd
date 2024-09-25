@@ -12,6 +12,9 @@ var is_player_clicked: bool = false
 var is_player_hovered: bool = false
 var is_planned_enemy_action: bool = false
 
+var models: Dictionary
+var model_material: StandardMaterial3D
+var shader_material: ShaderMaterial
 var tile_type: TileType
 var health_type: TileHealthType
 var coords: Vector2i
@@ -19,9 +22,6 @@ var player: Node3D
 var ghost: Node3D
 var enemy: Node3D
 var civilian: Node3D
-var models: Dictionary
-var model_material: StandardMaterial3D
-var shader_material: ShaderMaterial
 
 
 func _ready():
@@ -61,6 +61,9 @@ func init(tile_init_data):
 	models.tile_targeted.hide()
 	models.tile_damaged.hide()
 	models.tile_destroyed.hide()
+	models.indicator_solid.hide()
+	models.indicator_dashed.hide()
+	models.indicator_corners.hide()
 	
 	# add tile with all variations
 	add_child(models.tile)
@@ -68,6 +71,9 @@ func init(tile_init_data):
 	add_child(models.tile_targeted)
 	add_child(models.tile_damaged)
 	add_child(models.tile_destroyed)
+	add_child(models.indicator_solid)
+	add_child(models.indicator_dashed)
+	add_child(models.indicator_corners)
 	if models.has('asset'):
 		add_child(models.asset)
 	
@@ -95,11 +101,17 @@ func toggle_tile_models():
 	
 	if is_player_clicked and is_hovered:
 		# last (target) tile in path
-		position.y = 0.2
+		#models.indicator_solid.show()
+		models.indicator_dashed.show()
+		#models.indicator_corners.hide()
+		#position.y = 0.2
 	elif health_type == TileHealthType.DESTROYED:
 		position.y = -0.2
 	else:
-		position.y = 0
+		models.indicator_solid.hide()
+		models.indicator_dashed.hide()
+		models.indicator_corners.hide()
+		#position.y = 0
 
 func reset():
 	player = null
@@ -201,8 +213,18 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 			print('ttile ' + str(coords) + ' -> used action on empty tile, nothing happens')
 
 
+func raise():
+	models.indicator_solid.hide()
+	models.indicator_dashed.hide()
+	models.indicator_corners.show()
+	#position.y = 0.15
+
+
 func _on_area_3d_mouse_entered():
 	hovered_event.emit(self, true)
+	
+	if models:
+		models.indicator_corners.show()
 		
 	if is_player_clicked:
 		is_hovered = true
@@ -216,6 +238,11 @@ func _on_area_3d_mouse_entered():
 
 func _on_area_3d_mouse_exited():
 	hovered_event.emit(self, false)
+	
+	if models:
+		models.indicator_solid.hide()
+		models.indicator_dashed.hide()
+		models.indicator_corners.hide()
 	
 	if is_player_clicked:
 		is_hovered = false

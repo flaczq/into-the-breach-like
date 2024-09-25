@@ -52,11 +52,7 @@ func move(tiles_path, forced):
 
 
 func plan_action(target_tile):
-	if bullet_model.is_visible():
-		bullet_model.hide()
-	
-	if bullet_line_model.is_visible():
-		bullet_line_model.hide()
+	clear_bullets()
 	
 	if planned_tile:
 		planned_tile.set_planned_enemy_action(false)
@@ -72,11 +68,7 @@ func plan_action(target_tile):
 
 
 func execute_planned_action():
-	if bullet_model.is_visible():
-		bullet_model.hide()
-	
-	if bullet_line_model.is_visible():
-		bullet_line_model.hide()
+	clear_bullets()
 	
 	var temp_planned_tile
 	if planned_tile:
@@ -119,11 +111,7 @@ func get_killed():
 	is_alive = false
 	print('enemy ' + str(tile.coords) + ' -> dead!')
 	
-	if bullet_model.is_visible():
-		bullet_model.hide()
-	
-	if bullet_line_model.is_visible():
-		bullet_line_model.hide()
+	clear_bullets()
 	
 	if planned_tile:
 		planned_tile.set_planned_enemy_action(false)

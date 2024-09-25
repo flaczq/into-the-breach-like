@@ -24,8 +24,8 @@ var action_type: ActionType
 var action_distance: int
 var tile: Node3D
 var model_material: StandardMaterial3D
-var bullet_model: MeshInstance3D
-var bullet_line_model: MeshInstance3D
+var arrow_model: MeshInstance3D
+var arrow_line_model: MeshInstance3D
 
 func _ready():
 	name = name + '_' + str(randi())
@@ -38,13 +38,13 @@ func _ready():
 		if assets_child.is_in_group('ASSETS_BULLETS'):
 			assets_bullets.append_array(assets_child.get_children())
 	
-	bullet_model = assets_bullets.front().duplicate()
-	bullet_model.hide()
-	add_child(bullet_model)
+	arrow_model = assets_bullets.filter(func(asset_bullet): return asset_bullet.name == 'ArrowSign').front()#.duplicate()
+	#arrow_model.hide()
+	#add_child(arrow_model)
 	
-	bullet_line_model = MeshInstance3D.new()
-	bullet_line_model.hide()
-	add_child(bullet_line_model)
+	arrow_line_model = assets_bullets.filter(func(asset_bullet): return asset_bullet.name == 'pipe-half-section').front()
+	#arrow_line_model.hide()
+	#add_child(arrow_line_model)
 
 
 func init(character_init_data):
@@ -69,25 +69,38 @@ func apply_action_type(action_type, origin_tile_coords):
 
 
 func spawn_bullet(target_position):
-	# spawn bullet line
-	var target_local_position = target_position - position
-	var bullet_line_immediate_mesh = ImmediateMesh.new()
-	var bullet_line_material = StandardMaterial3D.new()
+	var target_position_on_map = get_vector3_on_map(target_position - position)
+	var hit_direction = Vector2i(target_position_on_map.z, target_position_on_map.x).sign()
 	
-	bullet_line_immediate_mesh.surface_begin(Mesh.PRIMITIVE_LINES, bullet_line_material)
-	bullet_line_immediate_mesh.surface_add_vertex(Vector3.ZERO)
-	bullet_line_immediate_mesh.surface_add_vertex(target_local_position)
-	bullet_line_immediate_mesh.surface_end()
+	var current_arrow_model = arrow_model.duplicate()
+	var current_arrow_line_model = arrow_line_model.duplicate()
 	
-	# line vertices can be at y-axis = 0
-	bullet_line_model.position = Vector3(0, 0.5, 0)
-	bullet_line_model.mesh = bullet_line_immediate_mesh
-	bullet_line_model.show()
 	
-	# spawn bullet at position = 0 to calculate rotation
-	bullet_model.position = Vector3(0, 0.5, 0)
-	bullet_model.look_at(Vector3(target_position.x, 0.5, target_position.z))
-	# fix rotation for y-axis only
-	bullet_model.set_rotation_degrees(bullet_model.rotation_degrees * Vector3.UP + Vector3(0, 90, 0))
-	bullet_model.position = Vector3(target_local_position.x, 0.5, target_local_position.z)
-	bullet_model.show()
+	current_arrow_model.position = target_position_on_map
+	current_arrow_line_model.position = target_position_on_map
+	
+	# hardcoded because rotations suck
+	if hit_direction == Vector2i(1, 0):
+		#print('DOWN (LEFT)')
+		current_arrow_model.rotation_degrees.y = -90
+		current_arrow_line_model.rotation_degrees.y = -180
+	if hit_direction == Vector2i(-1, 0):
+		#print('UP (RIGHT)')
+		current_arrow_model.rotation_degrees.y = 90
+		current_arrow_line_model.rotation_degrees.y = 0
+	if hit_direction == Vector2i(0, 1):
+		#print('RIGHT (DOWN)')
+		current_arrow_model.rotation_degrees.y = 0
+		current_arrow_line_model.rotation_degrees.y = -90
+	if hit_direction == Vector2i(0, -1):
+		#print('LEFT (UP)')
+		current_arrow_model.rotation_degrees.y = 180
+		current_arrow_line_model.rotation_degrees.y = 90
+	
+	add_child(current_arrow_model)
+	add_child(current_arrow_line_model)
+
+
+func clear_bullets():
+	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_BULLET')):
+		child.queue_free()

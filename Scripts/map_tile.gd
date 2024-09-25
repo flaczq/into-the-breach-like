@@ -39,7 +39,7 @@ func _ready():
 
 func init(tile_init_data):
 	# remove default model
-	remove_child(get_child(0))
+	get_child(0).queue_free()
 	
 	models = tile_init_data.models
 	tile_type = tile_init_data.tile_type
@@ -136,7 +136,6 @@ func toggle_player_hovered(new_is_player_hovered):
 	toggle_tile_models()
 	
 	#if new_is_player_hovered:
-		#model_material.albedo_color = Color.MEDIUM_PURPLE
 		#toggle_shader(true)
 	#else:
 		#toggle_tile_models()

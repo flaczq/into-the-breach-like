@@ -14,3 +14,7 @@ enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE, INDESTRUCTIBLE}
 func push_unique_to_array(array, item):
 	if not array.has(item):
 		array.push_back(item)
+
+
+func get_vector3_on_map(position):
+	return Vector3(position.x, 0.5, position.z)

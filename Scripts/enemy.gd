@@ -54,15 +54,20 @@ func move(tiles_path, forced):
 				get_shot(1, ActionType.NONE, target_tile.coords)
 				await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
 			else:
+				#if forced:
+				clear_arrows()
+				
 				tile.set_enemy(null)
 				tile = target_tile
 				tile.set_enemy(self)
 				
 				var duration = 0.4 / tiles_path.size()
 				for next_tile in tiles_path:
+					if not forced:
+						look_at_y(next_tile.position)
+					
 					var position_tween = create_tween()
 					position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
-					look_at_y(next_tile.position)
 					await position_tween.finished
 
 

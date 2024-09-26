@@ -213,45 +213,45 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 			print('ttile ' + str(coords) + ' -> used action on empty tile, nothing happens')
 
 
-func raise():
-	models.indicator_solid.hide()
-	models.indicator_dashed.hide()
+func indicate():
+	#models.indicator_solid.hide()
+	#models.indicator_dashed.hide()
 	models.indicator_corners.show()
 	#position.y = 0.15
 
 
 func _on_area_3d_mouse_entered():
-	hovered_event.emit(self, true)
-	
-	if models:
-		models.indicator_corners.show()
-		
 	if is_player_clicked:
 		is_hovered = true
 		
 		toggle_tile_models()
 		
 		#hovered_event.emit(self, true)
-	elif player:
-		player.on_mouse_entered()
+	else:
+		if models:
+			models.indicator_corners.show()
+		
+		if player:
+			player.on_mouse_entered()
+	
+	hovered_event.emit(self, true)
 
 
 func _on_area_3d_mouse_exited():
-	hovered_event.emit(self, false)
-	
-	if models:
-		models.indicator_solid.hide()
-		models.indicator_dashed.hide()
-		models.indicator_corners.hide()
-	
 	if is_player_clicked:
 		is_hovered = false
 		
 		toggle_tile_models()
 		
 		#hovered_event.emit(self, false)
-	elif player:
-		player.on_mouse_exited()
+	else:
+		if models:
+			models.indicator_corners.hide()
+		
+		if player:
+			player.on_mouse_exited()
+	
+	hovered_event.emit(self, false)
 
 
 func _on_area_3d_input_event(camera, event, position, normal, shape_idx):

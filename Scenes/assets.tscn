@@ -621,6 +621,7 @@ shadow_mesh = SubResource("ArrayMesh_bt5rq")
 [node name="Assets" type="Node3D"]
 
 [node name="Tiles" type="Node3D" parent="." groups=["ASSETS_TILES"]]
+visible = false
 
 [node name="floor-thick" type="MeshInstance3D" parent="Tiles"]
 mesh = SubResource("ArrayMesh_v32f8")
@@ -672,6 +673,7 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.2, 0)
 mesh = SubResource("ArrayMesh_bgdcb")
 
 [node name="Trees" type="Node3D" parent="." groups=["ASSETS_TREES"]]
+visible = false
 
 [node name="tree" type="MeshInstance3D" parent="Trees"]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.2, 0)
@@ -685,10 +687,10 @@ mesh = SubResource("ArrayMesh_8fxn6")
 [node name="Indicators" type="Node3D" parent="." groups=["ASSETS_INDICATORS"]]
 
 [node name="ArrowSign" type="MeshInstance3D" parent="Indicators" groups=["ASSETS_ARROW"]]
-transform = Transform3D(-2.18557e-06, 0, 50, 0, 50, 0, -50, 0, -2.18557e-06, 0, 0.5, 0)
+transform = Transform3D(1.74497, 49.9695, -2.18557e-06, -7.62753e-08, -2.18424e-06, -50, -49.9695, 1.74497, 9.55343e-14, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_b1x4s")
 surface_material_override/0 = SubResource("StandardMaterial3D_adqhn")
 
 [node name="doormat" type="MeshInstance3D" parent="Indicators" groups=["ASSETS_ARROW"]]
-transform = Transform3D(-7.43094e-09, 0.17, -7.43094e-09, 0, -7.43094e-09, -0.17, -0.17, -7.43094e-09, 3.24817e-16, -0.01, 0.5, 0)
+transform = Transform3D(-7.43094e-09, 0, 0.17, 0, 0.17, 0, -0.17, 0, -7.43094e-09, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_5ix2i")

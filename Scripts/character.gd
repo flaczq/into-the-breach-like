@@ -58,9 +58,10 @@ func apply_action_type(action_type, origin_tile_coords):
 
 
 func spawn_arrow(target):
-	var target_position_on_map = get_vector3_on_map(target.position - position)
+	var target_position_on_map = get_vector3_on_map(position - target.position)
 	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
 	var hit_direction = hit_distance.sign()
+	var direction = get_direction(hit_direction)
 	
 	var arrow_model = default_arrow_model.duplicate()
 	#arrow_model.hide()
@@ -71,38 +72,53 @@ func spawn_arrow(target):
 	arrow_line_model.position = get_vector3_on_map(Vector3.ZERO)
 	
 	# hardcoded because rotations suck
-	if hit_direction == Vector2i(1, 0):
-		#print('DOWN (LEFT)')
+	if direction == HitDirection.DOWN_LEFT:
 		arrow_model.rotation_degrees.y = -90
 		arrow_line_model.rotation_degrees.y = -90
-		#pipe-half-section.rotation_degrees.y = -180
-	if hit_direction == Vector2i(-1, 0):
-		#print('UP (RIGHT)')
+		#pipe-half-section.rotation_degrees.y = 0
+	elif direction == HitDirection.UP_RIGHT:
 		arrow_model.rotation_degrees.y = 90
 		arrow_line_model.rotation_degrees.y = 90
-		#pipe-half-section.rotation_degrees.y = 0
-	if hit_direction == Vector2i(0, 1):
-		#print('RIGHT (DOWN)')
+		#pipe-half-section.rotation_degrees.y = -180
+	elif direction == HitDirection.RIGHT_DOWN:
 		arrow_model.rotation_degrees.y = 0
 		arrow_line_model.rotation_degrees.y = 0
-		#pipe-half-section.rotation_degrees.y = -90
-	if hit_direction == Vector2i(0, -1):
-		#print('LEFT (UP)')
+		#pipe-half-section.rotation_degrees.y = 90
+	elif direction == HitDirection.LEFT_UP:
 		arrow_model.rotation_degrees.y = 180
 		arrow_line_model.rotation_degrees.y = 180
-		#pipe-half-section.rotation_degrees.y = 90
+		#pipe-half-section.rotation_degrees.y = -90
+	elif direction == HitDirection.DOWN:
+		arrow_model.rotation_degrees.y = -45
+		arrow_line_model.rotation_degrees.y = -45
+	elif direction == HitDirection.UP:
+		arrow_model.rotation_degrees.y = 135
+		arrow_line_model.rotation_degrees.y = 135
+	elif direction == HitDirection.RIGHT:
+		arrow_model.rotation_degrees.y = 45
+		arrow_line_model.rotation_degrees.y = 45
+	elif direction == HitDirection.LEFT:
+		arrow_model.rotation_degrees.y = -135
+		arrow_line_model.rotation_degrees.y = -135
 	
 	var position_offset = Vector3(hit_direction.y, 0, hit_direction.x)
-	arrow_model.position = target_position_on_map - position_offset * 0.3
+	arrow_model.position = get_vector3_on_map(position_offset * 0.3 - target_position_on_map)
 	
 	add_child(arrow_model)
 	
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
-		var distance = 0.5
-		while abs(hit_distance.y) > distance + 0.5 or abs(hit_distance.x) > distance + 0.5:
-			arrow_line_model.position = get_vector3_on_map(position_offset * distance)
+		var default_distance
+		if action_direction == ActionDirection.HORIZONTAL_LINE:
+			default_distance = 0.6
+		elif action_direction == ActionDirection.VERTICAL_LINE:
+			default_distance = 0.5
+		
+		var distance = default_distance
+		while absi(hit_distance.y) > distance + default_distance or absi(hit_distance.x) > distance + default_distance:
+			#arrow_line_model.position = get_vector3_on_map(-1 * position_offset * distance)
+			arrow_line_model.position = arrow_model.position + position_offset * distance
 			add_child(arrow_line_model.duplicate())
-			distance += 0.5
+			distance += default_distance
 
 
 func clear_arrows():

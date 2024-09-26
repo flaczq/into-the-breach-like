@@ -10,14 +10,13 @@ pociski
 
 menu:
 - po ukończeniu poziomu wybór kolejnych graczy na podstawie zdobytych morali
+- po ukończeniu poziomu zdobywasz np. 1/3 części kosmitów; po zdobyciu 3/3 części kosmitów odblokowujesz umiejętność
 
 obrażenia środowiskowe?
 
 ai na podstawie wagi każdego pola
 
 przykładowa mapa w głównej scenie - do usunięcia po rozpoczęciu gry
-
-możliwość zmiany kątu kamery - trzy tryby
 
 ?
 - czy i jak pojawiają się nowi przeciwnicy w trakcie jednej mapy

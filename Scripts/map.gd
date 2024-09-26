@@ -109,10 +109,10 @@ func get_models_by_tile_type(tile_type):
 			models.tile_default_color = Color.PALE_GOLDENROD
 		TileType.GRASS:
 			#models.tile_texture = TILE_5
-			models.tile_default_color = Color.LIME_GREEN
+			models.tile_default_color = Color.SEA_GREEN
 		TileType.TREE:
 			#models.tile_texture = TILE_1
-			models.tile_default_color = Color.FOREST_GREEN
+			models.tile_default_color = Color.DARK_GREEN
 			models.asset = assets_trees.filter(func(asset_tree): return asset_tree.name == 'Trees_004').front().duplicate()
 		TileType.MOUNTAIN:
 			#models.tile_texture = TILE_5

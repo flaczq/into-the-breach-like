@@ -74,13 +74,13 @@ const LEVELS_DATA: Array = [
 		'map_scene': 2,
 		'players': [
 			{'scene': 0, 'health': 3, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 4, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
+			{'scene': 0, 'health': 4, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
+			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
 		],
 		'civilians': [
 			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
@@ -464,28 +464,30 @@ func calculate_tiles_for_action(active, character):
 		if character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.HORIZONTAL_DOT:
 			for tile in map.tiles.filter(func(tile): return not tile.coords == character.tile.coords):
 				if (tile.coords.x == origin_tile.coords.x and absi(tile.coords.y - origin_tile.coords.y) <= character.action_distance) or (tile.coords.y == origin_tile.coords.y and absi(tile.coords.x - origin_tile.coords.x) <= character.action_distance):
+					# include all tiles in path
 					if character.is_in_group('PLAYERS'):
 						push_unique_to_array(tiles_for_action, tile)
 					else:
 						var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(character, character.tile.coords, tile.coords)
-						if first_occupied_tile_in_line:
-							push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
-						else:
-							push_unique_to_array(tiles_for_action, tile)
+						if not first_occupied_tile_in_line:
+							first_occupied_tile_in_line = tile
+						
+						push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
 		elif character.action_direction == ActionDirection.VERTICAL_LINE or character.action_direction == ActionDirection.VERTICAL_DOT:
 			var max_range = mini(map.get_side_dimension(), character.action_distance)
 			for i in range(1, max_range + 1):
 				var counter = 0
 				for tile in map.tiles.filter(func(tile): return not tiles_for_action.has(tile)):
 					if abs(tile.coords - origin_tile.coords) == Vector2i(i, i):
+						# include all tiles in path
 						if character.is_in_group('PLAYERS'):
 							push_unique_to_array(tiles_for_action, tile)
 						else:
 							var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(character, character.tile.coords, tile.coords)
-							if first_occupied_tile_in_line:
-								push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
-							else:
-								push_unique_to_array(tiles_for_action, tile)
+							if not first_occupied_tile_in_line:
+								first_occupied_tile_in_line = tile
+							
+							push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
 						
 						counter += 1
 						
@@ -498,19 +500,24 @@ func calculate_tiles_for_action(active, character):
 			var occupied_tiles = tiles_for_action.filter(func(tile): return tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE or tile.player or tile.enemy or tile.civilian)
 			if not occupied_tiles.is_empty():
 				for occupied_tile in occupied_tiles:
-					var hit_direction = (occupied_tile.coords - character.tile.coords).sign()
-					if hit_direction == Vector2i(1, 0):
-						#print('DOWN (LEFT)')
+					var hit_direction = (character.tile.coords - occupied_tile.coords).sign()
+					var direction = get_direction(hit_direction)
+					if direction == HitDirection.DOWN_LEFT:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
-					elif hit_direction == Vector2i(-1, 0):
-						#print('UP (RIGHT)')
+					elif direction == HitDirection.UP_RIGHT:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
-					elif hit_direction == Vector2i(0, 1):
-						#print('RIGHT (DOWN)')
+					elif direction == HitDirection.RIGHT_DOWN:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y <= occupied_tile.coords.y)
-					elif hit_direction == Vector2i(0, -1):
-						#print('LEFT (UP)')
+					elif direction == HitDirection.LEFT_UP:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y >= occupied_tile.coords.y)
+					elif direction == HitDirection.DOWN:
+						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
+					elif direction == HitDirection.UP:
+						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
+					elif direction == HitDirection.RIGHT:
+						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y >= occupied_tile.coords.x - occupied_tile.coords.y)
+					elif direction == HitDirection.LEFT:
+						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
 	else:
 		tiles_for_action = map.tiles
 	
@@ -697,7 +704,7 @@ func _on_tile_hovered(tile, is_hovered):
 			if is_hovered:
 				var tiles_path = calculate_tiles_path(selected_player, tile)
 				for next_tile in tiles_path:
-					next_tile.raise()
+					next_tile.indicate()
 				
 				selected_player.look_at_y(tile.position)
 				selected_player.is_ghost = true
@@ -711,8 +718,18 @@ func _on_tile_hovered(tile, is_hovered):
 					#child.hide()
 		elif selected_player.current_phase == PhaseType.ACTION:
 			if is_hovered:
-				selected_player.look_at_y(tile.position)
-				selected_player.spawn_arrow(tile)
+				var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
+				if first_occupied_tile_in_line and first_occupied_tile_in_line != tile:
+					tile.is_hovered = false
+					tile.toggle_tile_models()
+				
+					first_occupied_tile_in_line.is_hovered = true
+					first_occupied_tile_in_line.toggle_tile_models()
+				else:
+					first_occupied_tile_in_line = tile
+				
+				selected_player.look_at_y(first_occupied_tile_in_line.position)
+				selected_player.spawn_arrow(first_occupied_tile_in_line)
 			else:
 				selected_player.clear_arrows()
 	
@@ -739,13 +756,13 @@ func _on_tile_clicked(tile):
 			selected_player.clear_arrows()
 		
 			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
-			if first_occupied_tile_in_line:
-				tile = first_occupied_tile_in_line
+			if not first_occupied_tile_in_line:
+				first_occupied_tile_in_line = tile
 			
 			if action_button.is_pressed():
-				await selected_player.execute_action(tile)
+				await selected_player.execute_action(first_occupied_tile_in_line)
 			else:
-				await selected_player.shoot(tile)
+				await selected_player.shoot(first_occupied_tile_in_line)
 			
 			if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
 				level_won()

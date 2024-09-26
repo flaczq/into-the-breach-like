@@ -18,3 +18,7 @@ func push_unique_to_array(array, item):
 
 func get_vector3_on_map(position):
 	return Vector3(position.x, 0.5, position.z)
+
+
+func is_close(value, target):
+	return absf(value - target) < 0.1

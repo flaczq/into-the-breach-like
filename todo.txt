@@ -4,10 +4,9 @@
 3. 3 kosmitów żołnierzy, kilku cywilów, jeśli przeżyją to zwiększają się morale np. 20%, czyli co 5 cywil chce zostać żołnierzem
 4. - cute, scary, w lesie namioty z dziećmi, których musisz bronić przed wilkami (zabierają dzieci i trzeba ich uderzyć bez obrażeń, żeby dziecko upadło);
    - zaczynasz z jednym graczem, potem ratujesz kolejnego (albo i nie) - mapy tworzą historyjkę
+5. walczysz z kosmitami i przejmujesz ich umiejętności
 
-pociski - wskaźniki (Prototype/indicator-square-a.glb)
-
-pokazać order
+pociski
 
 menu:
 - po ukończeniu poziomu wybór kolejnych graczy na podstawie zdobytych morali
@@ -18,8 +17,9 @@ ai na podstawie wagi każdego pola
 
 przykładowa mapa w głównej scenie - do usunięcia po rozpoczęciu gry
 
+możliwość zmiany kątu kamery - trzy tryby
+
 ?
-- czy można przechodzić przez innych graczy
 - czy i jak pojawiają się nowi przeciwnicy w trakcie jednej mapy
 - za co zwiększasz poziom umiejętności
 - jaki jest warunek zwycięstwa i porażki?

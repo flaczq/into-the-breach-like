@@ -43,7 +43,7 @@ shadow_mesh = SubResource("ArrayMesh_ncwd5")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pvste"]
 transparency = 1
-albedo_color = Color(0, 1, 0.816667, 0.501961)
+albedo_color = Color(0.341176, 0.870588, 0.341176, 0.737255)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ih35y"]
 material = SubResource("StandardMaterial3D_pvste")
@@ -51,7 +51,7 @@ size = Vector2(1, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c1gyw"]
 transparency = 1
-albedo_color = Color(1, 0.345098, 0.466667, 0.501961)
+albedo_color = Color(1, 0.345098, 0.466667, 0.737255)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_cuku6"]
 material = SubResource("StandardMaterial3D_c1gyw")
@@ -59,7 +59,7 @@ size = Vector2(1, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jsvhb"]
 transparency = 1
-albedo_color = Color(0.666667, 0, 0.231373, 0.501961)
+albedo_color = Color(0.666667, 0, 0.231373, 0.737255)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_wwalp"]
 material = SubResource("StandardMaterial3D_jsvhb")
@@ -67,7 +67,7 @@ size = Vector2(1, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hfsk3"]
 transparency = 1
-albedo_color = Color(0, 0, 0, 0.501961)
+albedo_color = Color(0, 0, 0, 0.737255)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_6vd2u"]
 material = SubResource("StandardMaterial3D_hfsk3")
@@ -579,13 +579,10 @@ shadow_mesh = SubResource("ArrayMesh_1ritj")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_adqhn"]
 albedo_color = Color(1, 0, 0, 1)
-albedo_texture = ExtResource("4_abx10")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wytfy"]
 resource_name = "tiny_treats_1"
 albedo_color = Color(1, 0, 0, 1)
-albedo_texture = ExtResource("1_ig0vr")
-roughness = 0.5
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_bt5rq"]
 _surfaces = [{
@@ -689,11 +686,9 @@ mesh = SubResource("ArrayMesh_8fxn6")
 
 [node name="ArrowSign" type="MeshInstance3D" parent="Indicators" groups=["ASSETS_ARROW"]]
 transform = Transform3D(-2.18557e-06, 0, 50, 0, 50, 0, -50, 0, -2.18557e-06, 0, 0.5, 0)
-cast_shadow = 0
 mesh = SubResource("ArrayMesh_b1x4s")
 surface_material_override/0 = SubResource("StandardMaterial3D_adqhn")
 
 [node name="doormat" type="MeshInstance3D" parent="Indicators" groups=["ASSETS_ARROW"]]
 transform = Transform3D(-7.43094e-09, 0.17, -7.43094e-09, 0, -7.43094e-09, -0.17, -0.17, -7.43094e-09, 3.24817e-16, -0.01, 0.5, 0)
-cast_shadow = 0
 mesh = SubResource("ArrayMesh_5ix2i")

@@ -6,8 +6,6 @@ signal clicked_event(player: Node3D, is_clicked: bool)
 @onready var model = $King_Head
 
 var model_material: StandardMaterial3D
-var default_arrow_model: MeshInstance3D
-var default_arrow_line_model: MeshInstance3D
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0
 var actions_per_turn: int = 1
@@ -30,6 +28,11 @@ func _ready():
 					default_arrow_model = assets_child
 				elif assets_child.name == 'doormat':
 					default_arrow_line_model = assets_child
+	
+	var arrow_model_material = StandardMaterial3D.new()
+	arrow_model_material.albedo_color = Color.LIME_GREEN
+	default_arrow_model.set_surface_override_material(0, arrow_model_material)
+	default_arrow_line_model.set_surface_override_material(0, arrow_model_material)
 
 
 #func _input(event):

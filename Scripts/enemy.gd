@@ -3,8 +3,6 @@ extends Character
 @onready var model = $Skeleton_Head
 
 var model_material: StandardMaterial3D
-var default_arrow_model: MeshInstance3D
-var default_arrow_line_model: MeshInstance3D
 var planned_tile: Node3D
 var order: int
 
@@ -21,6 +19,11 @@ func _ready():
 					default_arrow_model = assets_child
 				elif assets_child.name == 'doormat':
 					default_arrow_line_model = assets_child
+	
+	var arrow_model_material = StandardMaterial3D.new()
+	arrow_model_material.albedo_color = Color.RED
+	default_arrow_model.set_surface_override_material(0, arrow_model_material)
+	default_arrow_line_model.set_surface_override_material(0, arrow_model_material)
 
 
 func spawn(target_tile, new_order):
@@ -135,58 +138,6 @@ func get_killed():
 	tile = null
 	
 	model_material.albedo_color = Color.DARK_RED
-
-
-func spawn_arrow(target):
-	var target_position_on_map = get_vector3_on_map(target.position - position)
-	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
-	var hit_direction = hit_distance.sign()
-	
-	var arrow_model = default_arrow_model.duplicate()
-	#arrow_model.hide()
-	var arrow_line_model = default_arrow_line_model.duplicate()
-	#arrow_line_model.hide()
-	
-	arrow_model.position = get_vector3_on_map(Vector3.ZERO)
-	arrow_line_model.position = get_vector3_on_map(Vector3.ZERO)
-	
-	# hardcoded because rotations suck
-	if hit_direction == Vector2i(1, 0):
-		#print('DOWN (LEFT)')
-		arrow_model.rotation_degrees.y = -90
-		arrow_line_model.rotation_degrees.y = -90
-		#pipe-half-section.rotation_degrees.y = -180
-	if hit_direction == Vector2i(-1, 0):
-		#print('UP (RIGHT)')
-		arrow_model.rotation_degrees.y = 90
-		arrow_line_model.rotation_degrees.y = 90
-		#pipe-half-section.rotation_degrees.y = 0
-	if hit_direction == Vector2i(0, 1):
-		#print('RIGHT (DOWN)')
-		arrow_model.rotation_degrees.y = 0
-		arrow_line_model.rotation_degrees.y = 0
-		#pipe-half-section.rotation_degrees.y = -90
-	if hit_direction == Vector2i(0, -1):
-		#print('LEFT (UP)')
-		arrow_model.rotation_degrees.y = 180
-		arrow_line_model.rotation_degrees.y = 180
-		#pipe-half-section.rotation_degrees.y = 90
-	
-	var position_offset = Vector3(hit_direction.y, 0, hit_direction.x)
-	arrow_model.position = target_position_on_map - position_offset * 0.3
-	
-	add_child(arrow_model)
-	
-	var distance = 0.5
-	while abs(hit_distance.y) > distance + 0.5 or abs(hit_distance.x) > distance + 0.5:
-		arrow_line_model.position = get_vector3_on_map(position_offset * distance)
-		add_child(arrow_line_model.duplicate())
-		distance += 0.5
-
-
-func clear_arrows():
-	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
-		child.queue_free()
 
 
 func look_at_y(target_position):

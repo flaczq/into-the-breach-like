@@ -669,25 +669,26 @@ func _on_tile_hovered(tile, is_hovered):
 		
 		if tile.player:
 			tile_info.text += '\n' + 'HEALTH: ' + str(tile.player.health) + '\n'
-			tile_info.text += '\n' + 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+			tile_info.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
 			tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
 			tile_info.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
 			tile_info.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
 		
 		if tile.enemy:
-			tile_info.text += '\n' + 'HEALTH: ' + str(tile.enemy.health) + '\n'
-			tile_info.text += '\n' + 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+			tile_info.text += '\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+			tile_info.text += 'HEALTH: ' + str(tile.enemy.health) + '\n'
+			tile_info.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
 			tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
 			tile_info.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
 			tile_info.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
 		
 		if tile.civilian:
 			tile_info.text += '\n' + 'HEALTH: ' + str(tile.civilian.health) + '\n'
-			tile_info.text += '\n' + 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
+			tile_info.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
 	else:
 		tile_info.text = ''
 	
-	# highlight tiles while player is hovered
+	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
 		if selected_player.current_phase == PhaseType.MOVE:
 			#for other_tile in map.tiles.filter(func(current_tile): return current_tile != tile):
@@ -711,6 +712,9 @@ func _on_tile_hovered(tile, is_hovered):
 		elif selected_player.current_phase == PhaseType.ACTION:
 			if is_hovered:
 				selected_player.look_at_y(tile.position)
+				selected_player.spawn_arrow(tile)
+			else:
+				selected_player.clear_arrows()
 	
 	recalculate_enemies_planned_actions_for_action_direction_line()
 
@@ -732,6 +736,8 @@ func _on_tile_clicked(tile):
 			
 			recalculate_enemies_planned_actions_for_action_direction_line()
 		elif selected_player.current_phase == PhaseType.ACTION:
+			selected_player.clear_arrows()
+		
 			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
 			if first_occupied_tile_in_line:
 				tile = first_occupied_tile_in_line

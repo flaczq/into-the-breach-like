@@ -686,11 +686,15 @@ mesh = SubResource("ArrayMesh_8fxn6")
 
 [node name="Indicators" type="Node3D" parent="." groups=["ASSETS_INDICATORS"]]
 
-[node name="ArrowSign" type="MeshInstance3D" parent="Indicators" groups=["ASSETS_ARROW"]]
-transform = Transform3D(1.74497, 49.9695, -2.18557e-06, -7.62753e-08, -2.18424e-06, -50, -49.9695, 1.74497, 9.55343e-14, 0, 0.5, 0)
+[node name="ArrowSignContainer" type="Node3D" parent="Indicators" groups=["ASSETS_ARROW"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="ArrowSign" type="MeshInstance3D" parent="Indicators/ArrowSignContainer"]
+transform = Transform3D(50, 0, 0, 0, -2.18557e-06, -50, 0, 50, -2.18557e-06, 0, 0, 0)
 mesh = SubResource("ArrayMesh_b1x4s")
+skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_adqhn")
 
 [node name="doormat" type="MeshInstance3D" parent="Indicators" groups=["ASSETS_ARROW"]]
-transform = Transform3D(-7.43094e-09, 0, 0.17, 0, 0.17, 0, -0.17, 0, -7.43094e-09, 0, 0.5, 0)
+transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_5ix2i")

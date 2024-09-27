@@ -24,14 +24,14 @@ func _ready():
 	for assets_group in assets.get_children():
 		if assets_group.is_in_group('ASSETS_INDICATORS'):
 			for assets_child in assets_group.get_children():
-				if assets_child.name == 'ArrowSign':
+				if assets_child.name == 'ArrowSignContainer':
 					default_arrow_model = assets_child
 				elif assets_child.name == 'doormat':
 					default_arrow_line_model = assets_child
 	
 	var arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = Color.LIME_GREEN
-	default_arrow_model.set_surface_override_material(0, arrow_model_material)
+	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
 	default_arrow_line_model.set_surface_override_material(0, arrow_model_material)
 
 

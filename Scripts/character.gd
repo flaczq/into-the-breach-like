@@ -15,7 +15,7 @@ var is_alive: bool = true
 var state_type: StateType = StateType.NONE
 
 var assets: Node
-var default_arrow_model: MeshInstance3D
+var default_arrow_model: Node3D
 var default_arrow_line_model: MeshInstance3D
 var health: int
 var damage: int
@@ -70,7 +70,7 @@ func spawn_arrow(target):
 	
 	arrow_model.position = get_vector3_on_map(Vector3.ZERO)
 	arrow_line_model.position = get_vector3_on_map(Vector3.ZERO)
-	
+		
 	# hardcoded because rotations suck
 	if direction == HitDirection.DOWN_LEFT:
 		arrow_model.rotation_degrees.y = -90
@@ -102,11 +102,9 @@ func spawn_arrow(target):
 		arrow_line_model.rotation_degrees.y = -135
 	
 	var position_offset = Vector3(hit_direction.y, 0, hit_direction.x)
-	arrow_model.position = get_vector3_on_map(position_offset * 0.3 - target_position_on_map)
-	
-	add_child(arrow_model)
-	
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
+		arrow_model.position = get_vector3_on_map(position_offset * 0.3 - target_position_on_map)
+	
 		var default_distance
 		if action_direction == ActionDirection.HORIZONTAL_LINE:
 			default_distance = 0.6
@@ -119,6 +117,12 @@ func spawn_arrow(target):
 			arrow_line_model.position = arrow_model.position + position_offset * distance
 			add_child(arrow_line_model.duplicate())
 			distance += default_distance
+	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
+		var arrow_model_position = position_offset * 0.3 - target_position_on_map
+		arrow_model.rotation_degrees.z = -60
+		arrow_model.position = Vector3(arrow_model_position.x, 1.0, arrow_model_position.z)
+	
+	add_child(arrow_model)
 
 
 func clear_arrows():

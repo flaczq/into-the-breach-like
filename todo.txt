@@ -6,6 +6,8 @@
    - zaczynasz z jednym graczem, potem ratujesz kolejnego (albo i nie) - mapy tworzą historyjkę
 5. walczysz z kosmitami i przejmujesz ich umiejętności
 
+poprawić: - gdy kilku przeciwników celuje w jedno miejsce i jeden z nich zostanie popchnięty - znika tile_targeted
+
 pociski
 
 menu:

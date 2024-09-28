@@ -66,7 +66,7 @@ func _input(event):
 		game_state_manager.shoot_button.set_pressed_no_signal(false)
 		game_state_manager.action_button.set_pressed_no_signal(false)
 		
-		game_state_manager.recalculate_enemies_planned_actions_for_action_direction_line()
+		game_state_manager.recalculate_enemies_planned_actions()
 	
 	# !DEBUG!
 	# SAVE RANDOM MAP

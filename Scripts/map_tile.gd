@@ -213,7 +213,7 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 			print('ttile ' + str(coords) + ' -> used action on empty tile, nothing happens')
 
 
-func indicate():
+func on_mouse_entered():
 	#models.indicator_solid.hide()
 	#models.indicator_dashed.hide()
 	models.indicator_corners.show()

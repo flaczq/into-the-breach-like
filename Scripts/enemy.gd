@@ -2,9 +2,14 @@ extends Character
 
 @onready var model = $Skeleton_Head
 
+const FLASHING_SHADER = preload("res://Other/flashing_shader.gdshader")
+
 var model_material: StandardMaterial3D
+var arrow_model_material: StandardMaterial3D
+var arrow_shader_material: ShaderMaterial
 var planned_tile: Node3D
 var order: int
+var highlight_tween: Tween
 
 
 func _ready():
@@ -20,8 +25,12 @@ func _ready():
 				elif assets_child.name == 'doormat':
 					default_arrow_line_model = assets_child
 	
-	var arrow_model_material = StandardMaterial3D.new()
+	arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = Color.RED
+	
+	arrow_shader_material = ShaderMaterial.new()
+	arrow_shader_material.set_shader(FLASHING_SHADER)
+	
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
 	default_arrow_line_model.set_surface_override_material(0, arrow_model_material)
 
@@ -72,11 +81,7 @@ func move(tiles_path, forced):
 
 
 func plan_action(target_tile):
-	clear_arrows()
-	
-	if planned_tile:
-		planned_tile.set_planned_enemy_action(false)
-		planned_tile = null
+	reset_planned_tile()
 	
 	if is_alive:
 		planned_tile = target_tile
@@ -133,16 +138,36 @@ func get_killed():
 	is_alive = false
 	print('enemy ' + str(tile.coords) + ' -> dead!')
 	
-	clear_arrows()
-	
-	if planned_tile:
-		planned_tile.set_planned_enemy_action(false)
-		planned_tile = null
+	reset_planned_tile()
 	
 	tile.set_enemy(null)
 	tile = null
 	
 	model_material.albedo_color = Color.DARK_RED
+
+
+func reset_planned_tile():
+	clear_arrows()
+	
+	if planned_tile:
+		planned_tile.set_planned_enemy_action(false)
+		planned_tile = null
+
+
+func toggle_highlight(new_is_highlighted):
+	if highlight_tween:
+		highlight_tween.kill()
+	
+	if new_is_highlighted:
+		highlight_tween = create_tween().set_loops()
+		highlight_tween.tween_property(arrow_model_material, 'albedo_color', Color.PINK, 0.3)
+		highlight_tween.tween_interval(0.1)
+		highlight_tween.tween_property(arrow_model_material, 'albedo_color', Color.RED, 0.3)
+		#arrow_model_material.albedo_color = Color.YELLOW
+		#arrow_model_material.set_next_pass(arrow_shader_material)
+	else:
+		arrow_model_material.albedo_color = Color.RED
+		#arrow_model_material.set_next_pass(null)
 
 
 func look_at_y(target_position):

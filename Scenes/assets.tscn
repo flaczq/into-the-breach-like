@@ -621,18 +621,17 @@ shadow_mesh = SubResource("ArrayMesh_bt5rq")
 [node name="Assets" type="Node3D"]
 
 [node name="Tiles" type="Node3D" parent="." groups=["ASSETS_TILES"]]
-visible = false
 
 [node name="floor-thick" type="MeshInstance3D" parent="Tiles"]
 mesh = SubResource("ArrayMesh_v32f8")
 
 [node name="TileHighlighted" type="MeshInstance3D" parent="Tiles"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ih35y")
 
 [node name="TileTargeted" type="MeshInstance3D" parent="Tiles"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_cuku6")
 
@@ -673,7 +672,6 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.2, 0)
 mesh = SubResource("ArrayMesh_bgdcb")
 
 [node name="Trees" type="Node3D" parent="." groups=["ASSETS_TREES"]]
-visible = false
 
 [node name="tree" type="MeshInstance3D" parent="Trees"]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.2, 0)

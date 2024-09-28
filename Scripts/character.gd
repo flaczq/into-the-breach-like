@@ -113,15 +113,17 @@ func spawn_arrow(target):
 		
 		var distance = default_distance
 		while absi(hit_distance.y) > distance + default_distance or absi(hit_distance.x) > distance + default_distance:
-			#arrow_line_model.position = get_vector3_on_map(-1 * position_offset * distance)
 			arrow_line_model.position = arrow_model.position + position_offset * distance
+			arrow_line_model.show()
 			add_child(arrow_line_model.duplicate())
+			
 			distance += default_distance
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		var arrow_model_position = position_offset * 0.3 - target_position_on_map
 		arrow_model.rotation_degrees.z = -60
 		arrow_model.position = Vector3(arrow_model_position.x, 1.0, arrow_model_position.z)
 	
+	arrow_model.show()
 	add_child(arrow_model)
 
 

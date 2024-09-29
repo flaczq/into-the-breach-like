@@ -14,9 +14,9 @@ signal action_slow_down(character: Character)
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
 
-var assets: Node
 var default_arrow_model: Node3D
 var default_arrow_line_model: MeshInstance3D
+var default_bullet_model: Node3D
 var health: int
 var damage: int
 var move_distance: int
@@ -33,7 +33,16 @@ func _ready():
 	# to move properly among available positions
 	position = Vector3.ZERO
 	
-	assets = assets_scene.instantiate()
+	var assets = assets_scene.instantiate()
+	for assets_group in assets.get_children():
+		if assets_group.is_in_group('ASSETS_BULLETS'):
+			for assets_child in assets_group.get_children():
+				if assets_child.name == 'ArrowSignContainer':
+					default_arrow_model = assets_child
+				elif assets_child.name == 'doormat':
+					default_arrow_line_model = assets_child
+				elif assets_child.name == 'weapon-sword':
+					default_bullet_model = assets_child
 
 
 func init(character_init_data):
@@ -64,9 +73,7 @@ func spawn_arrow(target):
 	var direction = get_direction(hit_direction)
 	
 	var arrow_model = default_arrow_model.duplicate()
-	#arrow_model.hide()
 	var arrow_line_model = default_arrow_line_model.duplicate()
-	#arrow_line_model.hide()
 	
 	arrow_model.position = get_vector3_on_map(Vector3.ZERO)
 	arrow_line_model.position = get_vector3_on_map(Vector3.ZERO)
@@ -75,19 +82,15 @@ func spawn_arrow(target):
 	if direction == HitDirection.DOWN_LEFT:
 		arrow_model.rotation_degrees.y = -90
 		arrow_line_model.rotation_degrees.y = -90
-		#pipe-half-section.rotation_degrees.y = 0
 	elif direction == HitDirection.UP_RIGHT:
 		arrow_model.rotation_degrees.y = 90
 		arrow_line_model.rotation_degrees.y = 90
-		#pipe-half-section.rotation_degrees.y = -180
 	elif direction == HitDirection.RIGHT_DOWN:
 		arrow_model.rotation_degrees.y = 0
 		arrow_line_model.rotation_degrees.y = 0
-		#pipe-half-section.rotation_degrees.y = 90
 	elif direction == HitDirection.LEFT_UP:
 		arrow_model.rotation_degrees.y = 180
 		arrow_line_model.rotation_degrees.y = 180
-		#pipe-half-section.rotation_degrees.y = -90
 	elif direction == HitDirection.DOWN:
 		arrow_model.rotation_degrees.y = -45
 		arrow_line_model.rotation_degrees.y = -45
@@ -130,3 +133,49 @@ func spawn_arrow(target):
 func clear_arrows():
 	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
 		child.queue_free()
+
+
+func spawn_bullet(target):
+	var target_position_on_map = get_vector3_on_map(position - target.position)
+	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
+	var hit_direction = hit_distance.sign()
+	var direction = get_direction(hit_direction)
+	
+	var bullet_model = default_bullet_model.duplicate()
+	
+	bullet_model.position = get_vector3_on_map(Vector3.ZERO)
+	
+	# hardcoded because rotations suck
+	if direction == HitDirection.DOWN_LEFT:
+		bullet_model.rotation_degrees.y = 90
+	elif direction == HitDirection.UP_RIGHT:
+		bullet_model.rotation_degrees.y = 90
+	elif direction == HitDirection.RIGHT_DOWN:
+		bullet_model.rotation_degrees.y = 90
+	elif direction == HitDirection.LEFT_UP:
+		bullet_model.rotation_degrees.y = 90
+	elif direction == HitDirection.DOWN:
+		bullet_model.rotation_degrees.y = -45
+	elif direction == HitDirection.UP:
+		bullet_model.rotation_degrees.y = 135
+	elif direction == HitDirection.RIGHT:
+		bullet_model.rotation_degrees.y = 45
+	elif direction == HitDirection.LEFT:
+		bullet_model.rotation_degrees.y = -135
+	
+	bullet_model.show()
+	add_child(bullet_model)
+	
+	# constant speed of 8 tiles per second
+	var duration = target_position_on_map.length() / 8.0
+	var position_tween = create_tween()
+	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
+		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration)
+	else:
+		position_tween.tween_property(bullet_model, 'position', Vector3(-1 * target_position_on_map.x / 4, 1.5, -1 * target_position_on_map.z / 4), duration / 3)
+		position_tween.tween_property(bullet_model, 'position', Vector3(-2 * target_position_on_map.x / 4, 2.5, -2 * target_position_on_map.z / 4), duration / 3)
+		position_tween.tween_property(bullet_model, 'position', Vector3(-3 * target_position_on_map.x / 4, 1.5, -3 * target_position_on_map.z / 4), duration / 3)
+		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration / 3)
+	await position_tween.finished
+	
+	bullet_model.queue_free()

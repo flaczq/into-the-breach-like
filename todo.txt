@@ -7,7 +7,6 @@
 5. walczysz z kosmitami i przejmujesz ich umiejętności
 
 ++++++++++++++++DEMO++++++++++++++++
-+ pociski
 + menu
 + 3 mapy
 + wybór umiejętności

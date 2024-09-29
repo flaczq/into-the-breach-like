@@ -21,16 +21,9 @@ func _ready():
 	
 	model_material = StandardMaterial3D.new()
 	
-	for assets_group in assets.get_children():
-		if assets_group.is_in_group('ASSETS_INDICATORS'):
-			for assets_child in assets_group.get_children():
-				if assets_child.name == 'ArrowSignContainer':
-					default_arrow_model = assets_child
-				elif assets_child.name == 'doormat':
-					default_arrow_line_model = assets_child
-	
 	var arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = Color.LIME_GREEN
+	
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
 	default_arrow_line_model.set_surface_override_material(0, arrow_model_material)
 
@@ -118,6 +111,32 @@ func move(tiles_path, forced):
 					clicked()
 
 
+func execute_action(target_tile):
+	if current_phase != PhaseType.ACTION:
+		return
+	
+	reset_tiles()
+	
+	await spawn_bullet(target_tile)
+	
+	await target_tile.get_shot(0, action_type, tile.coords)
+	
+	after_action()
+
+
+func shoot(target_tile):
+	if current_phase != PhaseType.ACTION:
+		return
+	
+	reset_tiles()
+	
+	await spawn_bullet(target_tile)
+	
+	await target_tile.get_shot(damage, ActionType.NONE, tile.coords)
+	
+	after_action()
+
+
 func after_action():
 	#reset_tiles()
 	
@@ -133,29 +152,6 @@ func after_action():
 	elif not is_clicked:
 		# click again if actions are available
 		clicked()
-
-
-func execute_action(target_tile):
-	if current_phase != PhaseType.ACTION:
-		return
-	
-	reset_tiles()
-	
-	# FIXME: dodaj obrażenia dla action_type
-	await target_tile.get_shot(0, action_type, tile.coords)
-	
-	after_action()
-
-
-func shoot(target_tile):
-	if current_phase != PhaseType.ACTION:
-		return
-	
-	reset_tiles()
-	
-	await target_tile.get_shot(damage, ActionType.NONE, tile.coords)
-	
-	after_action()
 
 
 func get_shot(taken_damage, action_type, origin_tile_coords):

@@ -172,10 +172,8 @@ func spawn_bullet(target):
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
 		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration)
 	else:
-		position_tween.tween_property(bullet_model, 'position', Vector3(-1 * target_position_on_map.x / 4, 1.5, -1 * target_position_on_map.z / 4), duration / 3)
-		position_tween.tween_property(bullet_model, 'position', Vector3(-2 * target_position_on_map.x / 4, 2.5, -2 * target_position_on_map.z / 4), duration / 3)
-		position_tween.tween_property(bullet_model, 'position', Vector3(-3 * target_position_on_map.x / 4, 1.5, -3 * target_position_on_map.z / 4), duration / 3)
-		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration / 3)
+		position_tween.tween_property(bullet_model, 'position', Vector3(-1 * target_position_on_map.x / 2, 1.0, -1 * target_position_on_map.z / 2), duration / 2)
+		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration / 2)
 	await position_tween.finished
 	
 	bullet_model.queue_free()

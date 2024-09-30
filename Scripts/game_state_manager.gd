@@ -18,7 +18,7 @@ const LEVELS_DATA: Array = [
 		# 4x4
 		'map_scene': 0,
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 3},
 		],
 		'enemies': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
@@ -257,7 +257,7 @@ func start_turn():
 		
 		var target_tile_for_movement = target_tiles_for_movement.pick_random()
 		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
-		await civilian.move(tiles_path, false)
+		await civilian.move(tiles_path, false, null)
 		
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
 	
@@ -273,7 +273,7 @@ func start_turn():
 			print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
 		
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
-		await enemy.move(tiles_path, false)
+		await enemy.move(tiles_path, false, null)
 	
 		# enemy could have moved in front of the other enemy's attack line
 		recalculate_enemies_planned_actions()
@@ -373,6 +373,11 @@ func level_won():
 func level_lost():
 	level_end_label.text = 'LEVEL LOST'
 	level_end_popup.show()
+	
+	# still in tutorial
+	if level < 5:
+		# TODO achievements
+		print('achievement unlocked: you are a game journalist now')
 
 
 func reset_ui():
@@ -753,7 +758,7 @@ func _on_tile_clicked(tile):
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
 		if selected_player.current_phase == PhaseType.MOVE:
 			var tiles_path = calculate_tiles_path(selected_player, tile)
-			await selected_player.move(tiles_path, false)
+			await selected_player.move(tiles_path, false, null)
 			
 			recalculate_enemies_planned_actions()
 		elif selected_player.current_phase == PhaseType.ACTION:
@@ -840,11 +845,12 @@ func _on_character_action_push_back(character, origin_tile_coords):
 	# character can be pushed back into other character or (in)destructible tile
 	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTRUCTIBLE and tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + push_direction)
 	if target_tiles.is_empty():
+		var outside_tile_position = character.tile.position + Vector3(push_direction.y, 0, push_direction.x)
 		# pushed outside of the map
-		await character.move([character.tile], true)
+		await character.move([character.tile], true, outside_tile_position)
 	else:
 		var target_tile = target_tiles.front()
-		await character.move([target_tile], true)
+		await character.move([target_tile], true, null)
 		
 		if character.is_alive and character.tile:
 			if character.tile.health_type == TileHealthType.DESTROYED:
@@ -871,10 +877,10 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTRUCTIBLE and tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + pull_direction)
 	if target_tiles.is_empty():
 		# pulled outside of the map - is this even possible?
-		await character.move([character.tile], true)
+		await character.move([character.tile], true, null)
 	else:
 		var target_tile = target_tiles.front()
-		await character.move([target_tile], true)
+		await character.move([target_tile], true, null)
 		
 		if character.is_alive and character.tile:
 			if character.tile.health_type == TileHealthType.DESTROYED:

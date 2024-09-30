@@ -58,7 +58,7 @@ func spawn(target_tile):
 	#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(moves_per_turn) + ' MOVE(S) / ' + str(actions_per_turn) + ' ACTION(S)')
 
 
-func move(tiles_path, forced):
+func move(tiles_path, forced, outside_tile_position):
 	if not forced and current_phase != PhaseType.MOVE:
 		return
 	
@@ -69,15 +69,16 @@ func move(tiles_path, forced):
 	var target_tile = tiles_path.back()
 	if target_tile == tile:
 		if forced:
-			#player was pushed/pulled into wall
 			print('playe ' + str(tile.coords) + ' -> pushed into the wall')
-			await get_shot(1, ActionType.NONE, target_tile.coords)
+			await forced_into_occupied_tile(outside_tile_position)
 		else:
 			print('playe ' + str(tile.coords) + ' -> is not moving')
 	else:
 		if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
+			print('playe ' + str(tile.coords) + ' -> pushed into other character or destructible tile')
 			get_shot(1, ActionType.NONE, target_tile.coords)
-			await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
+			
+			await forced_into_occupied_tile(target_tile)
 		else:
 			tile.set_player(null)
 			tile = tiles_path.back()

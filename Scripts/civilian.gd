@@ -18,7 +18,7 @@ func spawn(target_tile):
 	position = Vector3(tile.position.x, 0.0, tile.position.z)
 
 
-func move(tiles_path, forced):
+func move(tiles_path, forced, outside_tile_position):
 	if is_alive:
 		if not forced and state_type == StateType.MISS_ACTION:
 			print('civil ' + str(tile.coords) + ' -> missed action=move')
@@ -32,15 +32,16 @@ func move(tiles_path, forced):
 		var target_tile = tiles_path.back()
 		if target_tile == tile:
 			if forced:
-				#civilian was pushed/pulled into wall
 				print('civil ' + str(tile.coords) + ' -> pushed into the wall')
-				await get_shot(1, ActionType.NONE, target_tile.coords)
+				await forced_into_occupied_tile(outside_tile_position)
 			else:
 				print('civil ' + str(tile.coords) + ' -> is not moving')
 		else:
 			if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
+				print('civil ' + str(tile.coords) + ' -> forced into other character or destructible tile')
 				get_shot(1, ActionType.NONE, target_tile.coords)
-				await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
+	
+				await forced_into_occupied_tile(target_tile)
 			else:
 				tile.set_civilian(null)
 				tile = target_tile

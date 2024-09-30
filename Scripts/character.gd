@@ -66,6 +66,22 @@ func apply_action_type(action_type, origin_tile_coords):
 		_: print('no action')
 
 
+func forced_into_occupied_tile(target_tile):
+	# remember position to bounce back to
+	var origin_position = position
+	var duration = 0.4
+	var position_tween = create_tween()
+	position_tween.tween_property(self, 'position', target_tile.position, duration)
+	await position_tween.finished
+	
+	target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
+	
+	# TODO hit the wall sprite
+	position_tween = create_tween()
+	position_tween.tween_property(self, 'position', origin_position, duration)
+	await position_tween.finished
+
+
 func spawn_arrow(target):
 	var target_position_on_map = get_vector3_on_map(position - target.position)
 	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
@@ -133,6 +149,14 @@ func spawn_arrow(target):
 func clear_arrows():
 	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
 		child.queue_free()
+
+
+func toggle_arrows(new_is_toggled):
+	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
+		if new_is_toggled:
+			child.show()
+		else:
+			child.hide()
 
 
 func spawn_bullet(target):

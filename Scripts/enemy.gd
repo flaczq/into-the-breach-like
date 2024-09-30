@@ -36,7 +36,9 @@ func spawn(target_tile, new_order):
 	order = new_order
 
 
-func move(tiles_path, forced):
+func move(tiles_path, forced, outside_tile_position):
+	toggle_arrows(false)
+	
 	if is_alive:
 		if not forced and state_type == StateType.SLOW_DOWN:
 			print('enemy ' + str(tile.coords) + ' -> slowed down')
@@ -45,15 +47,16 @@ func move(tiles_path, forced):
 		var target_tile = tiles_path.back()
 		if target_tile == tile:
 			if forced:
-				#enemy was pushed/pulled into wall
 				print('enemy ' + str(tile.coords) + ' -> pushed into the wall')
-				await get_shot(1, ActionType.NONE, target_tile.coords)
+				await forced_into_occupied_tile(outside_tile_position)
 			else:
 				print('enemy ' + str(tile.coords) + ' -> is not moving')
 		else:
 			if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
+				print('enemy ' + str(tile.coords) + ' -> pushed into other character or destructible tile')
 				get_shot(1, ActionType.NONE, target_tile.coords)
-				await target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
+				
+				await forced_into_occupied_tile(target_tile)
 			else:
 				#if forced:
 				clear_arrows()
@@ -70,6 +73,8 @@ func move(tiles_path, forced):
 					var position_tween = create_tween()
 					position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
 					await position_tween.finished
+	
+	toggle_arrows(true)
 
 
 func plan_action(target_tile):

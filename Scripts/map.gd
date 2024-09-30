@@ -8,7 +8,7 @@ const OUTLINE_SHADER = preload("res://Other/outline_shader.gdshader")
 
 var tiles: Array[Node] = []
 var assets_tiles: Array[MeshInstance3D] = []
-var assets_trees: Array[MeshInstance3D] = []
+var assets_destructibles: Array[MeshInstance3D] = []
 # random map generation
 var rmg: bool = false
 
@@ -24,8 +24,8 @@ func _ready():
 		if assets_child.is_in_group('ASSETS_TILES'):
 			assets_tiles.append_array(assets_child.get_children())
 		
-		if assets_child.is_in_group('ASSETS_TREES'):
-			assets_trees.append_array(assets_child.get_children())
+		if assets_child.is_in_group('ASSETS_DESTRUCTIBLES'):
+			assets_destructibles.append_array(assets_child.get_children())
 
 
 func spawn(file_path, level):
@@ -113,10 +113,11 @@ func get_models_by_tile_type(tile_type):
 		TileType.TREE:
 			#models.tile_texture = TILE_1
 			models.tile_default_color = Color.DARK_GREEN
-			models.asset = assets_trees.filter(func(asset_tree): return asset_tree.name == 'Trees_004').front().duplicate()
+			models.asset = assets_destructibles.filter(func(assets_destructible): return assets_destructible.name == 'Trees_004').front().duplicate()
 		TileType.MOUNTAIN:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color.FIREBRICK
+			models.asset = assets_destructibles.filter(func(assets_destructible): return assets_destructible.name == 'Barrel').front().duplicate()
 		TileType.WATER:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color.DODGER_BLUE

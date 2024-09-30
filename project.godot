@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Saving the Tiles"
-run/main_scene="res://Scenes/main.tscn"
+run/main_scene="res://Scenes/menu.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Global="*res://Scripts/global.gd"
 
 [display]
 

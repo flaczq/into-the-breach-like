@@ -110,8 +110,6 @@ const LEVELS_DATA: Array = [
 ]
 const MAPS_FILE_PATH: String = 'res://Data/maps.txt'
 
-var tutorial: bool = false
-
 var level: int
 var max_levels: int
 var current_turn: int
@@ -126,7 +124,7 @@ var civilians: Array[Node3D]
 
 
 func _ready():
-	if tutorial:
+	if Global.tutorial:
 		level = 1
 	else:
 		level = 5
@@ -843,11 +841,11 @@ func _on_character_action_push_back(character, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
 	# character can be pushed back into other character or (in)destructible tile
-	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTRUCTIBLE and tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + push_direction)
+	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + push_direction)
 	if target_tiles.is_empty():
-		var outside_tile_position = character.tile.position + Vector3(push_direction.y, 0, push_direction.x)
+		var outside_tile = {'position': character.tile.position + Vector3(push_direction.y, 0, push_direction.x)}
 		# pushed outside of the map
-		await character.move([character.tile], true, outside_tile_position)
+		await character.move([character.tile], true, outside_tile)
 	else:
 		var target_tile = target_tiles.front()
 		await character.move([target_tile], true, null)
@@ -874,10 +872,11 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var pull_direction = hit_direction
 	# character can be pulled front into other character or (in)destructible tile
-	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.DESTRUCTIBLE and tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + pull_direction)
+	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + pull_direction)
 	if target_tiles.is_empty():
+		var outside_tile = {'position': character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)}
 		# pulled outside of the map - is this even possible?
-		await character.move([character.tile], true, null)
+		await character.move([character.tile], true, outside_tile)
 	else:
 		var target_tile = target_tiles.front()
 		await character.move([target_tile], true, null)

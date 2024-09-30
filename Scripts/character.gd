@@ -66,7 +66,7 @@ func apply_action_type(action_type, origin_tile_coords):
 		_: print('no action')
 
 
-func forced_into_occupied_tile(target_tile):
+func forced_into_occupied_tile(target_tile, is_outside):
 	# remember position to bounce back to
 	var origin_position = position
 	var duration = 0.4
@@ -74,7 +74,8 @@ func forced_into_occupied_tile(target_tile):
 	position_tween.tween_property(self, 'position', target_tile.position, duration)
 	await position_tween.finished
 	
-	target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
+	if not is_outside:
+		target_tile.get_shot(1, ActionType.NONE, target_tile.coords)
 	
 	# TODO hit the wall sprite
 	position_tween = create_tween()

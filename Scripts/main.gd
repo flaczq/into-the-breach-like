@@ -29,20 +29,20 @@ func _input(event):
 		return
 	
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
-		if is_close(camera_3d.rotation_degrees.x, -40):
-			camera_3d.rotation_degrees.x = -50
-			camera_3d.position.y = 19.2
-		elif is_close(camera_3d.rotation_degrees.x, -30):
-			camera_3d.rotation_degrees.x = -40
-			camera_3d.position.y = 13.2
-	
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN):
 		if is_close(camera_3d.rotation_degrees.x, -50):
 			camera_3d.rotation_degrees.x = -40
 			camera_3d.position.y = 13.2
 		elif is_close(camera_3d.rotation_degrees.x, -40):
 			camera_3d.rotation_degrees.x = -30
 			camera_3d.position.y = 9
+	
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN):
+		if is_close(camera_3d.rotation_degrees.x, -40):
+			camera_3d.rotation_degrees.x = -50
+			camera_3d.position.y = 19.2
+		elif is_close(camera_3d.rotation_degrees.x, -30):
+			camera_3d.rotation_degrees.x = -40
+			camera_3d.position.y = 13.2
 	
 	# UNCLICK PLAYER
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):

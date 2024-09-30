@@ -11,6 +11,9 @@ var is_hovered: bool = false
 var is_player_clicked: bool = false
 var is_player_hovered: bool = false
 var is_planned_enemy_action: bool = false
+var can_spawn_player: bool = false
+var can_spawn_enemy: bool = false
+var can_spawn_civilian: bool = false
 
 var models: Dictionary
 var model_material: StandardMaterial3D
@@ -75,6 +78,8 @@ func init(tile_init_data):
 	add_child(models.indicator_dashed)
 	add_child(models.indicator_corners)
 	if models.has('asset'):
+		#models.asset.rotation_degrees.y = randi_range(0, 180)
+		models.asset.show()
 		add_child(models.asset)
 	
 	toggle_tile_models()

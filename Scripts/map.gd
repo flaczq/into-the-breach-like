@@ -7,8 +7,7 @@ const TILE_5 = preload("res://Assets/loafbrr.basic-platforming-pack/Tiles/Textur
 const OUTLINE_SHADER = preload("res://Other/outline_shader.gdshader")
 
 var tiles: Array[Node] = []
-var assets_tiles: Array[MeshInstance3D] = []
-var assets_destructibles: Array[MeshInstance3D] = []
+var assets: Array[Node] = []
 # random map generation
 var rmg: bool = false
 
@@ -19,13 +18,8 @@ func _ready():
 	for child in get_children().filter(func(child): return child.is_in_group('TILES')):
 		tiles.push_back(child)
 	
-	var assets = assets_scene.instantiate()
-	for assets_child in assets.get_children():
-		if assets_child.is_in_group('ASSETS_TILES'):
-			assets_tiles.append_array(assets_child.get_children())
-		
-		if assets_child.is_in_group('ASSETS_DESTRUCTIBLES'):
-			assets_destructibles.append_array(assets_child.get_children())
+	var assets_instance = assets_scene.instantiate()
+	assets = assets_instance.get_children()
 
 
 func spawn(file_path, level):
@@ -60,6 +54,7 @@ func convert_tile_type_initial_to_enum(tile_type_initial):
 		'G': return TileType.GRASS
 		'T': return TileType.TREE
 		'M': return TileType.MOUNTAIN
+		'V': return TileType.VOLCANO
 		'W': return TileType.WATER
 		'L': return TileType.LAVA
 		_:
@@ -73,6 +68,7 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 		TileType.GRASS: return 'G'
 		TileType.TREE: return 'T'
 		TileType.MOUNTAIN: return 'M'
+		TileType.VOLCANO: return 'V'
 		TileType.WATER: return 'W'
 		TileType.LAVA: return 'L'
 		_:
@@ -83,41 +79,44 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 func get_models_by_tile_type(tile_type):
 	var models = {'tile_shader': OUTLINE_SHADER}
 	
-	MeshInstance3D
-	for assets_tile in assets_tiles:
+	for asset in assets:
 		# has to be duplicated to make them unique
-		if assets_tile.name == 'ground_grass':
-			models.tile = assets_tile.duplicate()
-		elif assets_tile.name == 'TileHighlighted':
-			models.tile_highlighted = assets_tile.duplicate()
-		elif assets_tile.name == 'TileTargeted':
-			models.tile_targeted = assets_tile.duplicate()
-		elif assets_tile.name == 'TileDamaged':
-			models.tile_damaged = assets_tile.duplicate()
-		elif assets_tile.name == 'TileDestroyed':
-			models.tile_destroyed = assets_tile.duplicate()
-		elif assets_tile.name == 'indicator-square-a':
-			models.indicator_solid = assets_tile.duplicate()
-		elif assets_tile.name == 'indicator-square-b':
-			models.indicator_dashed = assets_tile.duplicate()
-		elif assets_tile.name == 'indicator-square-c':
-			models.indicator_corners = assets_tile.duplicate()
+		if asset.name == 'ground_grass':
+			models.tile = asset.duplicate()
+		elif asset.name == 'TileHighlighted':
+			models.tile_highlighted = asset.duplicate()
+		elif asset.name == 'TileTargeted':
+			models.tile_targeted = asset.duplicate()
+		elif asset.name == 'TileDamaged':
+			models.tile_damaged = asset.duplicate()
+		elif asset.name == 'TileDestroyed':
+			models.tile_destroyed = asset.duplicate()
+		elif asset.name == 'indicator-square-a':
+			models.indicator_solid = asset.duplicate()
+		elif asset.name == 'indicator-square-b':
+			models.indicator_dashed = asset.duplicate()
+		elif asset.name == 'indicator-square-c':
+			models.indicator_corners = asset.duplicate()
 	
 	match tile_type:
 		TileType.PLAIN:
 			#models.tile_texture = TILE_5
-			models.tile_default_color = Color.PALE_GOLDENROD
+			models.tile_default_color = Color('e3cdaa')#light brown
 		TileType.GRASS:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color.SEA_GREEN
 		TileType.TREE:
 			#models.tile_texture = TILE_1
-			models.tile_default_color = Color.DARK_GREEN
-			models.asset = assets_destructibles.filter(func(assets_destructible): return assets_destructible.name == 'Trees_004').front().duplicate()
+			models.tile_default_color = Color('60b30a')#green
+			models.asset = assets.filter(func(asset): return asset.name == 'tree').front().duplicate()
 		TileType.MOUNTAIN:
 			#models.tile_texture = TILE_5
-			models.tile_default_color = Color.FIREBRICK
-			models.asset = assets_destructibles.filter(func(assets_destructible): return assets_destructible.name == 'Barrel').front().duplicate()
+			models.tile_default_color = Color('4e3214')#dark brown
+			models.asset = assets.filter(func(asset): return asset.name == 'mountain').front().duplicate()
+		TileType.VOLCANO:
+			#models.tile_texture = TILE_5
+			models.tile_default_color = Color('4e3214')#dark brown
+			models.asset = assets.filter(func(asset): return asset.name == 'volcano').front().duplicate()
 		TileType.WATER:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color.DODGER_BLUE
@@ -138,6 +137,7 @@ func get_health_type_by_tile_type(tile_type):
 		TileType.GRASS: return TileHealthType.HEALTHY
 		TileType.TREE: return TileHealthType.DESTRUCTIBLE
 		TileType.MOUNTAIN: return TileHealthType.INDESTRUCTIBLE
+		TileType.VOLCANO: return TileHealthType.INDESTRUCTIBLE
 		TileType.WATER: return TileHealthType.INDESTRUCTIBLE
 		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE
 		_:
@@ -163,3 +163,10 @@ func get_available_tiles():
 
 func get_occupied_tiles():
 	return tiles.filter(func(tile): return not tile.is_free())
+
+
+func get_spawnable_tiles(tiles_coords):
+	if tiles_coords.is_empty():
+		return get_available_tiles()
+	
+	return get_available_tiles().filter(func(tile): return tiles_coords.has(tile.coords))

@@ -16,9 +16,9 @@ extends Util
 const LEVELS_DATA: Array = [
 	{
 		# 4x4
-		'map_scene': 0,
+		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(2, 1), Vector2i(3, 1)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)]},
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 3},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
 		'enemies': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
@@ -27,83 +27,80 @@ const LEVELS_DATA: Array = [
 		'max_turns': 5
 	},
 	{
-		'map_scene': 0,
+		'map': {'scene': 0, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 3},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
-		'civilians': [
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-		],
+		'civilians': [],
 		'max_turns': 5
 	},
 	{
 		# 6x6
-		'map_scene': 1,
+		'map': {'scene': 1, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 5},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 5},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
+			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
 		],
 		'max_turns': 5
 	},
 	{
-		'map_scene': 1,
+		'map': {'scene': 1, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 5},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 3, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 5},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.PULL_FRONT, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT, 'action_distance': 5},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
+			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
 		],
 		'max_turns': 5
 	},
 	{
 		# 8x8
-		'map_scene': 2,
+		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
-			{'scene': 0, 'health': 3, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 4, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
+			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
+			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
 		],
 		'max_turns': 5
 	},
 	{
-		'map_scene': 2,
+		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.GIVE_SHIELD},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.GIVE_SHIELD},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 4, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 3, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT},
+			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT},
 		],
 		'civilians': [
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 3, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
+			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 		],
 		'max_turns': 5
 	},
@@ -162,7 +159,7 @@ func init_game_state(current_level_data):
 
 
 func init_map(current_level_data):
-	map = map_scenes[current_level_data.map_scene].instantiate()
+	map = map_scenes[current_level_data.map.scene].instantiate()
 	add_sibling(map)
 	map.spawn(MAPS_FILE_PATH, level)
 	
@@ -175,22 +172,22 @@ func init_players(current_level_data):
 	players = []
 	
 	for current_level_player in current_level_data.players:
-		var current_player = player_scenes[current_level_player.scene].instantiate()
-		add_sibling(current_player)
-		current_player.init(current_level_player)
-		var spawn_tile = map.get_available_tiles().pick_random()
-		current_player.spawn(spawn_tile)
+		var player_instance = player_scenes[current_level_player.scene].instantiate()
+		add_sibling(player_instance)
+		player_instance.init(current_level_player)
+		var spawn_tile = map.get_spawnable_tiles(current_level_data.map.spawn_player_coords).pick_random()
+		player_instance.spawn(spawn_tile)
 		
-		current_player.connect('hovered_event', _on_player_hovered)
-		current_player.connect('clicked_event', _on_player_clicked)
-		current_player.connect('action_push_back', _on_character_action_push_back)
-		current_player.connect('action_pull_front', _on_character_action_pull_front)
-		current_player.connect('action_miss_action', _on_character_action_miss_action)
-		current_player.connect('action_hit_ally', _on_character_action_hit_ally)
-		current_player.connect('action_give_shield', _on_character_action_give_shield)
-		current_player.connect('action_slow_down', _on_character_action_slow_down)
+		player_instance.connect('hovered_event', _on_player_hovered)
+		player_instance.connect('clicked_event', _on_player_clicked)
+		player_instance.connect('action_push_back', _on_character_action_push_back)
+		player_instance.connect('action_pull_front', _on_character_action_pull_front)
+		player_instance.connect('action_miss_action', _on_character_action_miss_action)
+		player_instance.connect('action_hit_ally', _on_character_action_hit_ally)
+		player_instance.connect('action_give_shield', _on_character_action_give_shield)
+		player_instance.connect('action_slow_down', _on_character_action_slow_down)
 		
-		players.push_back(current_player)
+		players.push_back(player_instance)
 
 
 func init_enemies(current_level_data):
@@ -198,20 +195,20 @@ func init_enemies(current_level_data):
 	
 	var order = 1
 	for current_level_enemy in current_level_data.enemies:
-		var current_enemy = enemy_scenes[current_level_enemy.scene].instantiate()
-		add_sibling(current_enemy)
-		current_enemy.init(current_level_enemy)
-		var spawn_tile = map.get_available_tiles().pick_random()
-		current_enemy.spawn(spawn_tile, order)
+		var enemy_instance = enemy_scenes[current_level_enemy.scene].instantiate()
+		add_sibling(enemy_instance)
+		enemy_instance.init(current_level_enemy)
+		var spawn_tile = map.get_spawnable_tiles(current_level_data.map.spawn_enemy_coords).pick_random()
+		enemy_instance.spawn(spawn_tile, order)
 		
-		current_enemy.connect('action_push_back', _on_character_action_push_back)
-		current_enemy.connect('action_pull_front', _on_character_action_pull_front)
-		current_enemy.connect('action_miss_action', _on_character_action_miss_action)
-		current_enemy.connect('action_hit_ally', _on_character_action_hit_ally)
-		current_enemy.connect('action_give_shield', _on_character_action_give_shield)
-		current_enemy.connect('action_slow_down', _on_character_action_slow_down)
+		enemy_instance.connect('action_push_back', _on_character_action_push_back)
+		enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
+		enemy_instance.connect('action_miss_action', _on_character_action_miss_action)
+		enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
+		enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
+		enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
 		
-		enemies.push_back(current_enemy)
+		enemies.push_back(enemy_instance)
 		
 		order += 1
 
@@ -220,20 +217,20 @@ func init_civilians(current_level_data):
 	civilians = []
 	
 	for current_level_civilian in current_level_data.civilians:
-		var current_civilian = civilian_scenes[current_level_civilian.scene].instantiate()
-		add_sibling(current_civilian)
-		current_civilian.init(current_level_civilian)
-		var spawn_tile = map.get_available_tiles().pick_random()
-		current_civilian.spawn(spawn_tile)
+		var civilian_instance = civilian_scenes[current_level_civilian.scene].instantiate()
+		add_sibling(civilian_instance)
+		civilian_instance.init(current_level_civilian)
+		var spawn_tile = map.get_spawnable_tiles(current_level_data.map.spawn_civilian_coords).pick_random()
+		civilian_instance.spawn(spawn_tile)
 		
-		current_civilian.connect('action_push_back', _on_character_action_push_back)
-		current_civilian.connect('action_pull_front', _on_character_action_pull_front)
-		current_civilian.connect('action_miss_action', _on_character_action_miss_action)
-		current_civilian.connect('action_hit_ally', _on_character_action_hit_ally)
-		current_civilian.connect('action_give_shield', _on_character_action_give_shield)
-		current_civilian.connect('action_slow_down', _on_character_action_slow_down)
+		civilian_instance.connect('action_push_back', _on_character_action_push_back)
+		civilian_instance.connect('action_pull_front', _on_character_action_pull_front)
+		civilian_instance.connect('action_miss_action', _on_character_action_miss_action)
+		civilian_instance.connect('action_hit_ally', _on_character_action_hit_ally)
+		civilian_instance.connect('action_give_shield', _on_character_action_give_shield)
+		civilian_instance.connect('action_slow_down', _on_character_action_slow_down)
 		
-		civilians.push_back(current_civilian)
+		civilians.push_back(civilian_instance)
 
 
 func start_turn():

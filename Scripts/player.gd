@@ -3,9 +3,8 @@ extends Character
 signal hovered_event(player: Node3D, is_hovered: bool)
 signal clicked_event(player: Node3D, is_clicked: bool)
 
-@onready var model = $King_Head
+@onready var model = $Tank
 
-var model_material: StandardMaterial3D
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0
 var actions_per_turn: int = 1
@@ -14,6 +13,8 @@ var current_phase: PhaseType = PhaseType.WAIT
 #var is_hovered: bool = false
 var is_clicked: bool = false
 var is_ghost: bool = false
+
+var model_material: StandardMaterial3D
 
 
 func _ready():

@@ -151,9 +151,9 @@ func clear_arrows():
 		child.queue_free()
 
 
-func toggle_arrows(new_is_toggled):
+func toggle_arrows(is_toggled):
 	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
-		if new_is_toggled:
+		if is_toggled:
 			child.show()
 		else:
 			child.hide()

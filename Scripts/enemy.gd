@@ -153,11 +153,11 @@ func reset_planned_tile():
 		planned_tile = null
 
 
-func toggle_highlight(new_is_highlighted):
+func toggle_highlight(is_toggled):
 	if highlight_tween:
 		highlight_tween.kill()
 	
-	if new_is_highlighted:
+	if is_toggled:
 		highlight_tween = create_tween().set_loops()
 		highlight_tween.tween_property(arrow_model_material, 'albedo_color', Color.PINK, 0.3)
 		highlight_tween.tween_interval(0.1)

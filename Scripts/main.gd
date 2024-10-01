@@ -2,8 +2,9 @@ extends Util
 
 @onready var game_state_manager = $GameStateManager
 @onready var camera_3d = $Camera3D
+@onready var menu = $/root/Menu
 
-const RANDOM_MAPS_FILE_PATH: String = 'res://Data/random_maps.txt'
+const RANDOM_MAPS_FILE_PATH = 'res://Data/random_maps.txt'
 
 var key_pressed: bool = false
 
@@ -61,7 +62,7 @@ func _input(event):
 			#tile.is_clicked = false
 			tile.ghost = null
 			
-			tile.toggle_tile_models()
+			tile.reset_tile_models()
 		
 		game_state_manager.shoot_button.set_pressed_no_signal(false)
 		game_state_manager.action_button.set_pressed_no_signal(false)
@@ -79,17 +80,14 @@ func _input(event):
 		var map_dimension = sqrt(game_state_manager.map.tiles.size())
 		for tile in game_state_manager.map.tiles:
 			var index = map_dimension * (tile.coords.x - 1) + (tile.coords.y - 1)
-			if index > 0 and int(index) % game_state_manager.map.get_side_dimension() == 0:
+			if index > 0 and int(index) % int(game_state_manager.map.get_side_dimension()) == 0:
 				content += '\n'
 			
 			content += game_state_manager.map.convert_tile_type_enum_to_initial(tile.tile_type)
 		
 		content += '\nX->STOP\n'
 		file.store_string(content)
-	
-	# RESTART GAME
-	if Input.is_key_pressed(KEY_R):
-		get_tree().reload_current_scene()
+		print('MAP SAVED')
 	
 	# LOG TILES
 	if Input.is_key_pressed(KEY_T):
@@ -114,3 +112,9 @@ func _input(event):
 	# LOG PLANNED ENEMY ACTION TILES
 	if Input.is_key_pressed(KEY_A):
 		print('planned enemy action tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.is_planned_enemy_action).map(func(tile): return tile.coords)))
+
+
+func _on_exit_button_pressed():
+	menu.toggle_visibility(true)
+	
+	queue_free()

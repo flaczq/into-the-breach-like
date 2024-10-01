@@ -20,6 +20,7 @@ var model_material: StandardMaterial3D
 var shader_material: ShaderMaterial
 var tile_type: TileType
 var health_type: TileHealthType
+var info: String
 var coords: Vector2i
 var player: Node3D
 var ghost: Node3D
@@ -78,14 +79,18 @@ func init(tile_init_data):
 	add_child(models.indicator_dashed)
 	add_child(models.indicator_corners)
 	if models.has('asset'):
+		if TILE_INFO.has(models.asset.name):
+			info = TILE_INFO.get(models.asset.name)
+		
+		models.asset.name = models.asset.name + '_' + str(randi())
 		#models.asset.rotation_degrees.y = randi_range(0, 180)
 		models.asset.show()
 		add_child(models.asset)
 	
-	toggle_tile_models()
+	reset_tile_models()
 
 
-func toggle_tile_models():
+func reset_tile_models():
 	models.tile_highlighted.hide()
 	models.tile_targeted.hide()
 	models.tile_damaged.hide()
@@ -140,41 +145,41 @@ func is_free():
 	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
 
 
-func toggle_shader(new_is_shader):
-	if new_is_shader:
+func toggle_shader(is_toggled):
+	if is_toggled:
 		model_material.set_next_pass(shader_material)
 	else:
 		model_material.set_next_pass(null)
 
 
-func toggle_player_hovered(new_is_player_hovered):
-	is_player_hovered = new_is_player_hovered
+func toggle_player_hovered(is_toggled):
+	is_player_hovered = is_toggled
 	
-	toggle_tile_models()
+	reset_tile_models()
 	
-	#if new_is_player_hovered:
+	#if is_player_hovered:
 		#toggle_shader(true)
 	#else:
-		#toggle_tile_models()
+		#reset_tile_models()
 		#toggle_shader(false)
 
 
-func toggle_player_clicked(new_is_player_clicked):
-	is_player_clicked = new_is_player_clicked
+func toggle_player_clicked(is_toggled):
+	is_player_clicked = is_toggled
 	
-	toggle_tile_models()
+	reset_tile_models()
 	
 	#if is_player_clicked:
 		#toggle_shader(true)
 	#else:
-		#toggle_tile_models()
+		#reset_tile_models()
 		#toggle_shader(false)
 
 
 func set_planned_enemy_action(new_is_planned_enemy_action):
 	is_planned_enemy_action = new_is_planned_enemy_action
 	
-	toggle_tile_models()
+	reset_tile_models()
 
 
 func get_shot(taken_damage, action_type, origin_tile_coords):
@@ -198,17 +203,17 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 				if models.asset and not models.asset.is_queued_for_deletion():
 					models.asset.queue_free()
 		
-				toggle_tile_models()
+				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> healthy tile')
 			elif health_type == TileHealthType.HEALTHY:
 				health_type = TileHealthType.DAMAGED
 				
-				toggle_tile_models()
+				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> damaged tile')
 			elif health_type == TileHealthType.DAMAGED:
 				health_type = TileHealthType.DESTROYED
 				
-				toggle_tile_models()
+				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> destroyed')
 			elif health_type == TileHealthType.DESTROYED:
 				print('ttile ' + str(coords) + ' -> already destroyed, nothing happens')
@@ -219,9 +224,10 @@ func get_shot(taken_damage, action_type, origin_tile_coords):
 
 
 func on_mouse_entered():
-	#models.indicator_solid.hide()
-	#models.indicator_dashed.hide()
-	models.indicator_corners.show()
+	if models:
+		#models.indicator_solid.hide()
+		#models.indicator_dashed.hide()
+		models.indicator_corners.show()
 	#position.y = 0.15
 
 
@@ -229,12 +235,11 @@ func _on_area_3d_mouse_entered():
 	if is_player_clicked:
 		is_hovered = true
 		
-		toggle_tile_models()
+		reset_tile_models()
 		
 		#hovered_event.emit(self, true)
 	else:
-		if models:
-			models.indicator_corners.show()
+		on_mouse_entered()
 		
 		if player:
 			player.on_mouse_entered()
@@ -246,7 +251,7 @@ func _on_area_3d_mouse_exited():
 	if is_player_clicked:
 		is_hovered = false
 		
-		toggle_tile_models()
+		reset_tile_models()
 		
 		#hovered_event.emit(self, false)
 	else:

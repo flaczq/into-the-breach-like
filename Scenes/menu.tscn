@@ -1,19 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=2 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
-[ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_omxyq"]
 
 [node name="Menu" type="Node3D"]
 script = ExtResource("1_ybquj")
-main_scene = ExtResource("2_omxyq")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="UI" type="Control" parent="CanvasLayer"]
-custom_minimum_size = Vector2(1280, 720)
 layout_mode = 3
-anchors_preset = 0
-mouse_filter = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1

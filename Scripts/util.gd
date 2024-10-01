@@ -10,6 +10,26 @@ enum TileType {PLAIN, GRASS, TREE, MOUNTAIN, VOLCANO, WATER, LAVA}
 enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE, INDESTRUCTIBLE}
 enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LEFT}
 
+const TILE_INFO = {
+	'sign_1': 'TUTORIAL HINT #1:\nTake advantage of seeing your enemy\'s attack',
+	'sign_2': 'TUTORIAL HINT #2:\nSome obstacles may be destructible',
+	'sign_3': 'TUTORIAL HINT #3:\nSometimes using an action instead of shooting is necessary to save a civilian',
+	'sign_4': 'TUTORIAL HINT #4:\nEnemies always use their actions while dealing damage',
+}
+
+
+func toggle_visibility(is_toggled):
+	if is_toggled:
+		show()
+	else:
+		hide()
+	
+	for child in get_children():
+		if is_toggled:
+			child.show()
+		else:
+			child.hide()
+
 
 func push_unique_to_array(array, item):
 	if not array.has(item):

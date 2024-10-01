@@ -5,18 +5,20 @@ extends Util
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
 
-@onready var game_info = $"../CanvasLayer/UI/GameInfo"
-@onready var tile_info = $"../CanvasLayer/UI/PlayerInfoContainer/TileInfo"
+@onready var canvas_layer = $"../CanvasLayer"
+@onready var game_info_label = $"../CanvasLayer/UI/GameInfoLabel"
+@onready var tile_info_label = $"../CanvasLayer/UI/PlayerInfoContainer/TileInfoLabel"
 @onready var end_turn_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton"
 @onready var shoot_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton"
 @onready var action_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton"
 @onready var level_end_popup = $"../CanvasLayer/UI/LevelEndPopup"
 @onready var level_end_label = $"../CanvasLayer/UI/LevelEndPopup/LevelEndLabel"
 
+const PROGRESS = preload("res://Scenes/progress.tscn")
 const LEVELS_DATA: Array = [
 	{
 		# 4x4
-		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(2, 1), Vector2i(3, 1)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)]},
+		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(2, 1), Vector2i(3, 1), Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
@@ -27,7 +29,7 @@ const LEVELS_DATA: Array = [
 		'max_turns': 5
 	},
 	{
-		'map': {'scene': 0, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
+		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(1, 1), Vector2i(1, 2), Vector2i(2, 1), Vector2i(2, 2), Vector2i(3, 1), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
@@ -41,10 +43,10 @@ const LEVELS_DATA: Array = [
 		# 6x6
 		'map': {'scene': 1, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
 		],
 		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 5},
 		],
 		'civilians': [
 			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
@@ -106,6 +108,8 @@ const LEVELS_DATA: Array = [
 	},
 ]
 const MAPS_FILE_PATH: String = 'res://Data/maps.txt'
+
+var progress_scene: Node = PROGRESS.instantiate()
 
 var level: int
 var max_levels: int
@@ -330,9 +334,9 @@ func next_turn():
 	current_turn += 1
 	
 	# UI
-	game_info.text = 'LEVEL: ' + str(level) + '\n'
-	game_info.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info.text += 'POINTS: ' + str(points)
+	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
+	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
+	game_info_label.text += 'POINTS: ' + str(points)
 	
 	start_turn()
 
@@ -376,10 +380,10 @@ func level_lost():
 
 
 func reset_ui():
-	game_info.text = 'LEVEL: ' + str(level) + '\n'
-	game_info.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info.text += 'POINTS: ' + str(points)
-	tile_info.text = ''
+	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
+	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
+	game_info_label.text += 'POINTS: ' + str(points)
+	tile_info_label.text = ''
 
 
 func calculate_tiles_for_movement(active, character):
@@ -665,7 +669,7 @@ func _on_tile_hovered(tile, is_hovered):
 		# reset other tiles
 		if current_tile != tile:
 			current_tile.is_hovered = false
-			current_tile.toggle_tile_models()
+			current_tile.reset_tile_models()
 	
 	for current_enemy in enemies:
 		current_enemy.toggle_highlight(false)
@@ -673,36 +677,40 @@ func _on_tile_hovered(tile, is_hovered):
 	# UI
 	if is_hovered:
 		# info about hovered tile
-		tile_info.text = 'COORDS: ' + str(tile.coords) + '\n'
-		tile_info.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n'
-		tile_info.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type])
+		tile_info_label.text = 'COORDS: ' + str(tile.coords) + '\n'
+		tile_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n'
+		tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type])
 		
 		if tile.player:
-			tile_info.text += '\n' + 'HEALTH: ' + str(tile.player.health) + '\n'
-			tile_info.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
-			tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
-			tile_info.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
-			tile_info.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
+			tile_info_label.text += '\n' + 'HEALTH: ' + str(tile.player.health) + '\n'
+			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
+			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
+			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
 		
 		if tile.enemy:
-			tile_info.text += '\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
-			tile_info.text += 'HEALTH: ' + str(tile.enemy.health) + '\n'
-			tile_info.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
-			tile_info.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
-			tile_info.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
-			tile_info.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
+			tile_info_label.text += '\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+			tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '\n'
+			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
+			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
+			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
 		
 		if tile.civilian:
-			tile_info.text += '\n' + 'HEALTH: ' + str(tile.civilian.health) + '\n'
-			tile_info.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
+			tile_info_label.text += '\n' + 'HEALTH: ' + str(tile.civilian.health) + '\n'
+			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
+		
+		# kinda hardcoded but maybe it will be fine..?
+		if tile.info:
+			tile_info_label.text += '\n' + tile.info
 	else:
-		tile_info.text = ''
+		tile_info_label.text = ''
 	
 	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
 		if selected_player.current_phase == PhaseType.MOVE:
 			#for other_tile in map.tiles.filter(func(current_tile): return current_tile != tile):
-				#other_tile.toggle_tile_models()
+				#other_tile.reset_tile_models()
 			
 			if is_hovered:
 				var tiles_path = calculate_tiles_path(selected_player, tile)
@@ -719,10 +727,10 @@ func _on_tile_hovered(tile, is_hovered):
 				var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
 				if first_occupied_tile_in_line and first_occupied_tile_in_line != tile:
 					tile.is_hovered = false
-					tile.toggle_tile_models()
+					tile.reset_tile_models()
 				
 					first_occupied_tile_in_line.is_hovered = true
-					first_occupied_tile_in_line.toggle_tile_models()
+					first_occupied_tile_in_line.reset_tile_models()
 				else:
 					first_occupied_tile_in_line = tile
 				
@@ -832,6 +840,8 @@ func _on_player_clicked(player, is_clicked):
 		for tile in map.tiles:
 			#tile.toggle_player_hovered(false)
 			tile.toggle_player_clicked(false)
+	
+	player.tile.on_mouse_entered()
 
 
 func _on_character_action_push_back(character, origin_tile_coords):
@@ -936,7 +946,19 @@ func _on_action_button_toggled(toggled_on):
 
 func _on_level_end_popup_gui_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		# FIXME level won animation
+		for tile in map.tiles:
+			var flying_tile_tween = create_tween()
+			flying_tile_tween.tween_property(tile, 'position:y', 6, 0.2)
+			await flying_tile_tween.finished
+		
 		level_end_popup.hide()
 		level_end_label.text = ''
 		
-		next_level()
+		get_parent().toggle_visibility(false)
+		
+		if not progress_scene or progress_scene.is_queued_for_deletion():
+			progress_scene = PROGRESS.instantiate()
+		
+		get_tree().root.add_child(progress_scene)
+		#next_level()

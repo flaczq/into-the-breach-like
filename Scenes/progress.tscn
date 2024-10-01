@@ -1,0 +1,63 @@
+[gd_scene load_steps=5 format=3 uid="uid://8bvhgfxla8ng"]
+
+[ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u7n8s"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_c3o0l"]
+device = -1
+keycode = 32
+unicode = 32
+
+[sub_resource type="Shortcut" id="Shortcut_57jbp"]
+events = [SubResource("InputEventKey_c3o0l")]
+
+[node name="Progress" type="Node3D"]
+script = ExtResource("1_2mc5y")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -104.0
+offset_bottom = 31.0
+grow_horizontal = 0
+
+[node name="MainButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_u7n8s")
+shortcut = SubResource("Shortcut_57jbp")
+text = "MAIN"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ProgressLabel" type="Label" parent="CanvasLayer/UI/HBoxContainer"]
+layout_mode = 2
+text = "You've collected 0 alien parts.
+Now you can choose which action to learn from alien species!"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainButton" to="." method="_on_main_button_pressed"]

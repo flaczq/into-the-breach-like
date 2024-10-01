@@ -25,6 +25,7 @@ func _ready():
 func spawn(file_path, level):
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	var map_level_tiles = file.get_as_text().get_slice(str(level - 1) + '->START', 1).get_slice(str(level - 1) + '->STOP', 0).strip_escapes()
+	var map_level_tile_assets = file.get_as_text().get_slice(str(level - 1) + '->ASSETS_START', 1).get_slice(str(level - 1) + '->ASSETS_STOP', 0).strip_escapes()
 	
 	var map_dimension = get_side_dimension()
 	for tile in tiles:
@@ -36,8 +37,10 @@ func spawn(file_path, level):
 		else:
 			map_level_tile = convert_tile_type_initial_to_enum(map_level_tiles[index])
 		
-		var models = get_models_by_tile_type(map_level_tile)
-		var health_type = get_health_type_by_tile_type(map_level_tile)
+		var asset_filename = convert_asset_initial_to_filename(map_level_tile_assets[index])
+		
+		var models = get_models_by_tile_type(map_level_tile, asset_filename, level)
+		var health_type = get_health_type_by_tile_type(map_level_tile, asset_filename)
 		var init_data = {
 			'models': models,
 			'tile_type': map_level_tile,
@@ -76,7 +79,16 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 			return 'P'
 
 
-func get_models_by_tile_type(tile_type):
+func convert_asset_initial_to_filename(asset_initial):
+	match asset_initial:
+		'0': return null
+		'S': return 'small-sign1_001'
+		_:
+			print('unknown asset: ' + asset_initial)
+			return null
+
+
+func get_models_by_tile_type(tile_type, asset_filename, level):
 	var models = {'tile_shader': OUTLINE_SHADER}
 	
 	for asset in assets:
@@ -97,6 +109,21 @@ func get_models_by_tile_type(tile_type):
 			models.indicator_dashed = asset.duplicate()
 		elif asset.name == 'indicator-square-c':
 			models.indicator_corners = asset.duplicate()
+		
+		# additional asset has priority over standard tile asset
+		if asset_filename:
+			if asset.name == asset_filename:
+				models.asset = asset.duplicate()
+				models.asset.name = 'sign_' + str(level)
+		elif tile_type == TileType.TREE:
+			if asset.name == 'tree':
+				models.asset = asset.duplicate()
+		elif tile_type == TileType.MOUNTAIN:
+			if asset.name == 'mountain':
+				models.asset = asset.duplicate()
+		elif tile_type == TileType.VOLCANO:
+			if asset.name == 'volcano':
+				models.asset = asset.duplicate()
 	
 	match tile_type:
 		TileType.PLAIN:
@@ -108,15 +135,12 @@ func get_models_by_tile_type(tile_type):
 		TileType.TREE:
 			#models.tile_texture = TILE_1
 			models.tile_default_color = Color('60b30a')#green
-			models.asset = assets.filter(func(asset): return asset.name == 'tree').front().duplicate()
 		TileType.MOUNTAIN:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color('4e3214')#dark brown
-			models.asset = assets.filter(func(asset): return asset.name == 'mountain').front().duplicate()
 		TileType.VOLCANO:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color('4e3214')#dark brown
-			models.asset = assets.filter(func(asset): return asset.name == 'volcano').front().duplicate()
 		TileType.WATER:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color.DODGER_BLUE
@@ -131,7 +155,11 @@ func get_models_by_tile_type(tile_type):
 	return models
 
 
-func get_health_type_by_tile_type(tile_type):
+func get_health_type_by_tile_type(tile_type, asset_filename):
+	# all additional assets are destructible
+	if asset_filename:
+		return TileHealthType.DESTRUCTIBLE
+	
 	match tile_type:
 		TileType.PLAIN: return TileHealthType.HEALTHY
 		TileType.GRASS: return TileHealthType.HEALTHY

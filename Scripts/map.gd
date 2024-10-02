@@ -2,9 +2,11 @@ extends Util
 
 @export var assets_scene: PackedScene
 
-const TILE_1 = preload("res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile1.png")
-const TILE_5 = preload("res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile5.png")
-const OUTLINE_SHADER = preload("res://Other/outline_shader.gdshader")
+const TUTORIAL_MAPS_FILE_PATH: String = 'res://Data/tutorial_maps.txt'
+const ABC_MAPS_FILE_PATH: String = 'res://Data/abc_maps.txt'
+const TILE_1: Resource = preload('res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile1.png')
+const TILE_5: Resource = preload('res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile5.png')
+const OUTLINE_SHADER: Resource = preload('res://Other/outline_shader.gdshader')
 
 var tiles: Array[Node] = []
 var assets: Array[Node] = []
@@ -22,10 +24,12 @@ func _ready():
 	assets = assets_instance.get_children()
 
 
-func spawn(file_path, level):
+func spawn(map_type, level):
+	var file_path = get_map_file_path(map_type)
 	var file = FileAccess.open(file_path, FileAccess.READ)
-	var map_level_tiles = file.get_as_text().get_slice(str(level - 1) + '->START', 1).get_slice(str(level - 1) + '->STOP', 0).strip_escapes()
-	var map_level_tile_assets = file.get_as_text().get_slice(str(level - 1) + '->ASSETS_START', 1).get_slice(str(level - 1) + '->ASSETS_STOP', 0).strip_escapes()
+	var map_level = get_map_level(map_type, level)
+	var map_level_tiles = file.get_as_text().get_slice(str(map_level) + '->START', 1).get_slice(str(map_level) + '->STOP', 0).strip_escapes()
+	var map_level_tile_assets = file.get_as_text().get_slice(str(map_level) + '->ASSETS_START', 1).get_slice(str(map_level) + '->ASSETS_STOP', 0).strip_escapes()
 	
 	var map_dimension = get_side_dimension()
 	for tile in tiles:
@@ -39,7 +43,7 @@ func spawn(file_path, level):
 		
 		var asset_filename = convert_asset_initial_to_filename(map_level_tile_assets[index])
 		
-		var models = get_models_by_tile_type(map_level_tile, asset_filename, level)
+		var models = get_models_by_tile_type(map_level_tile, asset_filename, map_level)
 		var health_type = get_health_type_by_tile_type(map_level_tile, asset_filename)
 		var init_data = {
 			'models': models,
@@ -49,6 +53,23 @@ func spawn(file_path, level):
 		
 		tile.reset()
 		tile.init(init_data)
+
+
+func get_map_file_path(map_type):
+	match map_type:
+		MapType.TUTORIAL: return TUTORIAL_MAPS_FILE_PATH
+		MapType.ABC: return ABC_MAPS_FILE_PATH
+		_:
+			print('unknown map type: ' + map_type)
+			return TUTORIAL_MAPS_FILE_PATH
+
+
+func get_map_level(map_type, level):
+	if map_type == MapType.TUTORIAL:
+		return level
+	
+	# FIXME
+	return randi_range(1, 2)
 
 
 func convert_tile_type_initial_to_enum(tile_type_initial):

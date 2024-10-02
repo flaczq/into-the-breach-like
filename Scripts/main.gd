@@ -10,14 +10,12 @@ var key_pressed: bool = false
 
 
 func _ready():
-	print('!STARTED')
-	
 	var default_maps = get_children().filter(func(child): return child.is_in_group('MAPS'))
 	if default_maps:
 		for default_map in default_maps:
 			default_map.queue_free()
 	
-	game_state_manager.init()
+	game_state_manager.progress()
 
 
 func _process(delta):
@@ -26,7 +24,8 @@ func _process(delta):
 
 
 func _input(event):
-	if key_pressed:
+	# only during level
+	if key_pressed or not game_state_manager.is_visible():
 		return
 	
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
@@ -114,7 +113,7 @@ func _input(event):
 		print('planned enemy action tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.is_planned_enemy_action).map(func(tile): return tile.coords)))
 
 
-func _on_exit_button_pressed():
+func _on_main_menu_button_pressed():
 	menu.toggle_visibility(true)
 	
 	queue_free()

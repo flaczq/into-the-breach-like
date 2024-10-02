@@ -34,30 +34,87 @@ offset_left = -104.0
 offset_bottom = 31.0
 grow_horizontal = 0
 
-[node name="MainButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
+[node name="MainMenuButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_u7n8s")
 shortcut = SubResource("Shortcut_57jbp")
-text = "MAIN"
+text = "MAIN MENU"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
+[node name="ProgressContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -257.5
+offset_top = -42.0
+offset_right = 257.5
+offset_bottom = 42.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 100
 
-[node name="ProgressLabel" type="Label" parent="CanvasLayer/UI/HBoxContainer"]
+[node name="ActionsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="ActionsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
 layout_mode = 2
 text = "You've collected 0 alien parts.
-Now you can choose which action to learn from alien species!"
+After collecting 3 alien parts, you can choose which action to learn!"
 horizontal_alignment = 1
 
-[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainButton" to="." method="_on_main_button_pressed"]
+[node name="ActionsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 50
+
+[node name="Action1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
+layout_mode = 2
+disabled = true
+text = "ACTION 1"
+
+[node name="Action2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
+layout_mode = 2
+disabled = true
+text = "ACTION 2"
+
+[node name="Action3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
+layout_mode = 2
+disabled = true
+text = "ACTION 3"
+
+[node name="MapsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="MapsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/MapsContainer"]
+layout_mode = 2
+text = "Choose next map type:"
+horizontal_alignment = 1
+
+[node name="MapsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/MapsContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 50
+
+[node name="Map1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons"]
+layout_mode = 2
+text = "MAP TYPE 1"
+
+[node name="Map2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons"]
+layout_mode = 2
+text = "MAP TYPE 2"
+
+[node name="Map3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons"]
+layout_mode = 2
+text = "MAP TYPE 3"
+
+[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action1Button" to="." method="_on_action_button_pressed" binds= [0]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action2Button" to="." method="_on_action_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action3Button" to="." method="_on_action_button_pressed" binds= [2]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons/Map1Button" to="." method="_on_map_type_button_pressed" binds= [0]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons/Map2Button" to="." method="_on_map_type_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons/Map3Button" to="." method="_on_map_type_button_pressed" binds= [2]]

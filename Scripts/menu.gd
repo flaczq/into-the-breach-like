@@ -2,7 +2,7 @@ extends Util
 
 @onready var tutorial_check_button = $CanvasLayer/UI/VBoxContainer/TutorialCheckButton
 
-const MAIN = preload("res://Scenes/main.tscn")
+const MAIN: Resource = preload('res://Scenes/main.tscn')
 
 var main_scene: Node = MAIN.instantiate()
 
@@ -15,6 +15,7 @@ func _on_start_button_pressed():
 	toggle_visibility(false)
 	
 	if not main_scene or main_scene.is_queued_for_deletion():
+		print_rich('[color=red]main scene not instantiated[/color]')
 		main_scene = MAIN.instantiate()
 	
 	get_tree().root.add_child(main_scene)

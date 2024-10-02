@@ -5,20 +5,20 @@ extends Util
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
 
-@onready var canvas_layer = $"../CanvasLayer"
-@onready var game_info_label = $"../CanvasLayer/UI/GameInfoLabel"
-@onready var tile_info_label = $"../CanvasLayer/UI/PlayerInfoContainer/TileInfoLabel"
-@onready var end_turn_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton"
-@onready var shoot_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton"
-@onready var action_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton"
-@onready var level_end_popup = $"../CanvasLayer/UI/LevelEndPopup"
-@onready var level_end_label = $"../CanvasLayer/UI/LevelEndPopup/LevelEndLabel"
+@onready var canvas_layer = $'../CanvasLayer'
+@onready var game_info_label = $'../CanvasLayer/UI/GameInfoLabel'
+@onready var tile_info_label = $'../CanvasLayer/UI/PlayerInfoContainer/TileInfoLabel'
+@onready var end_turn_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton'
+@onready var shoot_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton'
+@onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
+@onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
+@onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
-const PROGRESS = preload("res://Scenes/progress.tscn")
-const LEVELS_DATA: Array = [
+const PROGRESS: Resource = preload('res://Scenes/progress.tscn')
+const TUTORIAL_LEVELS_DATA: Array = [
 	{
 		# 4x4
-		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(2, 1), Vector2i(3, 1), Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
+		'map': {'type': MapType.TUTORIAL, 'scene': 0, 'max_turns': 5, 'spawn_player_coords': [Vector2i(2, 1), Vector2i(3, 1), Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
@@ -26,10 +26,9 @@ const LEVELS_DATA: Array = [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
 		'civilians': [],
-		'max_turns': 5
 	},
 	{
-		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(1, 1), Vector2i(1, 2), Vector2i(2, 1), Vector2i(2, 2), Vector2i(3, 1), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
+		'map': {'type': MapType.TUTORIAL, 'scene': 0, 'max_turns': 5, 'spawn_player_coords': [Vector2i(1, 1), Vector2i(1, 2), Vector2i(2, 1), Vector2i(2, 2), Vector2i(3, 1), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
@@ -37,11 +36,10 @@ const LEVELS_DATA: Array = [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
 		'civilians': [],
-		'max_turns': 5
 	},
 	{
 		# 6x6
-		'map': {'scene': 1, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
+		'map': {'type': MapType.TUTORIAL, 'scene': 1, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
 		],
@@ -51,10 +49,9 @@ const LEVELS_DATA: Array = [
 		'civilians': [
 			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
 		],
-		'max_turns': 5
 	},
 	{
-		'map': {'scene': 1, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
+		'map': {'type': MapType.TUTORIAL, 'scene': 1, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 5},
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
@@ -66,11 +63,10 @@ const LEVELS_DATA: Array = [
 		'civilians': [
 			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
 		],
-		'max_turns': 5
 	},
 	{
 		# 8x8
-		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
+		'map': {'type': MapType.TUTORIAL, 'scene': 2, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
@@ -85,10 +81,9 @@ const LEVELS_DATA: Array = [
 			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
 			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
 		],
-		'max_turns': 5
 	},
 	{
-		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
+		'map': {'type': MapType.TUTORIAL, 'scene': 2, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.GIVE_SHIELD},
@@ -104,12 +99,14 @@ const LEVELS_DATA: Array = [
 			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
 		],
-		'max_turns': 5
 	},
 ]
-const MAPS_FILE_PATH: String = 'res://Data/maps.txt'
 
 var progress_scene: Node = PROGRESS.instantiate()
+var max_tutorial_levels: int = TUTORIAL_LEVELS_DATA.size()
+var players: Array[Node3D] = []
+var enemies: Array[Node3D] = []
+var civilians: Array[Node3D] = []
 
 var level: int
 var max_levels: int
@@ -119,23 +116,42 @@ var undos: Array
 var points: int
 var selected_player: Node3D
 var map: Node3D
-var players: Array[Node3D]
-var enemies: Array[Node3D]
-var civilians: Array[Node3D]
 
 
 func _ready():
+	# next_level() will increase level number
 	if Global.tutorial:
-		level = 1
+		level = 0
 	else:
-		level = 5
+		level = 6
 	
-	max_levels = LEVELS_DATA.size()
+	# FIXME
+	max_levels = 99#TUTORIAL_LEVELS_DATA.size()
 	points = 0
 
 
-func init():
-	var current_level_data = LEVELS_DATA[level - 1]
+func progress():
+	# level not increased yet
+	if level < max_tutorial_levels:
+		next_level(MapType.TUTORIAL)
+	else:
+		get_parent().toggle_visibility(false)
+		
+		if not progress_scene or progress_scene.is_queued_for_deletion():
+			print_rich('[color=red]progress scene not instantiated[/color]')
+			progress_scene = PROGRESS.instantiate()
+		
+		get_tree().root.add_child(progress_scene)
+
+
+func init(map_type):
+	# level was already increased
+	var current_level_data# = generate_level_data()
+	if map_type == MapType.TUTORIAL:
+		current_level_data = TUTORIAL_LEVELS_DATA[level - 1]
+	else:
+		# TODO random level data of map_type
+		assert(false, 'no random level data of ' + str(map_type))
 	
 	init_game_state(current_level_data)
 	init_map(current_level_data)
@@ -148,7 +164,7 @@ func init():
 
 func init_game_state(current_level_data):
 	current_turn = 1
-	max_turns = current_level_data.max_turns
+	max_turns = current_level_data.map.max_turns
 	# TODO
 	undos = []
 	selected_player = null
@@ -165,7 +181,7 @@ func init_game_state(current_level_data):
 func init_map(current_level_data):
 	map = map_scenes[current_level_data.map.scene].instantiate()
 	add_sibling(map)
-	map.spawn(MAPS_FILE_PATH, level)
+	map.spawn(current_level_data.map.type, level)
 	
 	for tile in map.tiles:
 		tile.connect('hovered_event', _on_tile_hovered)
@@ -341,8 +357,9 @@ func next_turn():
 	start_turn()
 
 
-func next_level():
-	map.queue_free()
+func next_level(map_type):
+	if map:
+		map.queue_free()
 	
 	for player in players:
 		player.queue_free()
@@ -355,7 +372,7 @@ func next_level():
 	
 	level += 1
 	
-	init()
+	init(map_type)
 
 
 func level_won():
@@ -364,7 +381,7 @@ func level_won():
 	if level < max_levels:
 		level_end_label.text = 'LEVEL WON'
 		level_end_popup.show()
-		#next_level()
+		#next_level(MapType.TUTORIAL)
 	else:
 		print('WINNER WINNER!!!')
 
@@ -374,9 +391,9 @@ func level_lost():
 	level_end_popup.show()
 	
 	# still in tutorial
-	if level < 5:
+	if level <= max_tutorial_levels:
 		# TODO achievements
-		print('achievement unlocked: you are a game journalist now')
+		print('achievement unlocked: you\'re a game journalist now')
 
 
 func reset_ui():
@@ -955,10 +972,4 @@ func _on_level_end_popup_gui_input(event):
 		level_end_popup.hide()
 		level_end_label.text = ''
 		
-		get_parent().toggle_visibility(false)
-		
-		if not progress_scene or progress_scene.is_queued_for_deletion():
-			progress_scene = PROGRESS.instantiate()
-		
-		get_tree().root.add_child(progress_scene)
-		#next_level()
+		progress()

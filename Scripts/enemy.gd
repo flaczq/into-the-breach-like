@@ -2,7 +2,7 @@ extends Character
 
 @onready var model = $Skeleton_Head
 
-const FLASHING_SHADER = preload("res://Other/flashing_shader.gdshader")
+const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
 var model_material: StandardMaterial3D
 var arrow_model_material: StandardMaterial3D

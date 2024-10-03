@@ -12,6 +12,7 @@ extends Util
 @onready var end_turn_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton'
 @onready var shoot_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton'
 @onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
+@onready var undo_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton"
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
@@ -27,9 +28,9 @@ var level: int
 var max_levels: int
 var current_turn: int
 var max_turns: int
-var undos: Array
 var points: int
 var selected_player: Node3D
+var undo: Dictionary
 
 
 func _ready():
@@ -71,15 +72,15 @@ func init(level_type):
 func init_game_state(level_data):
 	current_turn = 1
 	max_turns = level_data.config.max_turns
-	# TODO
-	undos = []
 	selected_player = null
+	undo = {}
 	
 	# UI
 	reset_ui()
 	end_turn_button.set_disabled(true)
 	shoot_button.set_disabled(true)
 	action_button.set_disabled(true)
+	undo_button.set_disabled(true)
 	level_end_label.text = ''
 	level_end_popup.hide()
 
@@ -224,6 +225,8 @@ func end_turn():
 	end_turn_button.set_disabled(true)
 	shoot_button.set_pressed_no_signal(false)
 	action_button.set_pressed_no_signal(false)
+	undo = {}
+	undo_button.set_disabled(true)
 	
 	for player in players.filter(func(player): return player.is_alive):
 		#player.reset_phase()
@@ -681,7 +684,16 @@ func _on_tile_clicked(tile):
 	
 	# highlighted tile is clicked while player is selected
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
+		# clear undo if next move/action is performed
+		if undo.has('player') and undo.has('last_tile'):
+			undo = {}
+			undo_button.set_disabled(true)
+		
 		if selected_player.current_phase == PhaseType.MOVE:
+			# remember player's last tile for ability to undo
+			undo = {'player': selected_player, 'last_tile': selected_player.tile}
+			undo_button.set_disabled(false)
+			
 			var tiles_path = calculate_tiles_path(selected_player, tile)
 			await selected_player.move(tiles_path, false, null)
 			
@@ -864,6 +876,23 @@ func _on_action_button_toggled(toggled_on):
 		#shoot_button.set_pressed_no_signal(false)
 	
 	on_shoot_action_button_toggled(toggled_on)
+
+
+func _on_undo_button_pressed():
+	if undo.has('player') and undo.has('last_tile'):
+		var undo_player = players.filter(func(player): return player == undo.player).front()
+		var undo_tile = map.tiles.filter(func(tile): return tile == undo.last_tile).front()
+		undo_player.position = undo_tile.position
+		undo_player.tile.set_player(null)
+		undo_player.tile = undo_tile
+		undo_tile.set_player(undo_player)
+		
+		undo = {}
+		undo_button.set_disabled(true)
+		
+		undo_player.start_turn()
+		
+		recalculate_enemies_planned_actions()
 
 
 func _on_level_end_popup_gui_input(event):

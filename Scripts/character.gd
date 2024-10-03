@@ -14,6 +14,8 @@ signal action_slow_down(character: Character)
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
 
+var model: Node3D
+var model_material: StandardMaterial3D
 var default_arrow_model: Node3D
 var default_arrow_line_model: MeshInstance3D
 var default_bullet_model: Node3D
@@ -32,6 +34,8 @@ func _ready():
 	
 	# to move properly among available positions
 	position = Vector3.ZERO
+	
+	model_material = StandardMaterial3D.new()
 	
 	var assets_instance = assets_scene.instantiate()
 	for asset in assets_instance.get_children():
@@ -201,3 +205,9 @@ func spawn_bullet(target):
 	await position_tween.finished
 	
 	bullet_model.queue_free()
+
+
+func look_at_y(target_position):
+	model.look_at(target_position, Vector3.UP, true)
+	model.rotation_degrees.x = 0
+	model.rotation_degrees.z = 0

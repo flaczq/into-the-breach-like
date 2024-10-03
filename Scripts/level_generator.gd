@@ -1,7 +1,7 @@
 extends Util
 
 const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
-const ABC_LEVELS_FILE_PATH: String = 'res://Data/abc_levels.txt'
+const KILL_ENEMIES_LEVELS_FILE_PATH: String = 'res://Data/kill_enemies_levels.txt'
 const TUTORIAL_LEVELS_DATA = [
 	{
 		# 4x4
@@ -75,7 +75,6 @@ const TUTORIAL_LEVELS_DATA = [
 		],
 	},
 	{
-		'aaaaa': '5',
 		'config': {'level': '6', 'level_type': LevelType.TUTORIAL, 'tiles': 'PPPMGGGGPPPMPGGGPPPMPPGGPPPMPPGGPMMMMMMPPPPMPPPPPPPMPPPPPMMPMMPP', 'tiles_assets': '0000000000000000000000000000000000000000000000000000000000000000', 'max_turns': 5},
 		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
@@ -124,7 +123,7 @@ func generate_data(level_type, level):
 func get_level_file_path(level_type):
 	match level_type:
 		LevelType.TUTORIAL: return TUTORIAL_LEVELS_FILE_PATH
-		LevelType.ABC: return ABC_LEVELS_FILE_PATH
+		LevelType.KILL_ENEMIES: return KILL_ENEMIES_LEVELS_FILE_PATH
 		_:
 			print('unknown level type: ' + level_type)
 			return TUTORIAL_LEVELS_FILE_PATH

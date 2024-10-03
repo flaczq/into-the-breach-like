@@ -1,14 +1,10 @@
 extends Character
 
-@onready var model = $Princess_Head
-
-var model_material: StandardMaterial3D
-
 
 func _ready():
 	super()
 	
-	model_material = StandardMaterial3D.new()
+	model = $Princess_Head
 
 
 func spawn(target_tile):
@@ -85,9 +81,3 @@ func get_killed():
 	tile = null
 	
 	model_material.albedo_color = Color.DARK_RED
-
-
-func look_at_y(target_position):
-	model.look_at(target_position, Vector3.UP, true)
-	model.rotation_degrees.x = 0
-	model.rotation_degrees.z = 0

@@ -3,8 +3,6 @@ extends Character
 signal hovered_event(player: Node3D, is_hovered: bool)
 signal clicked_event(player: Node3D, is_clicked: bool)
 
-@onready var model = $Tank
-
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0
 var actions_per_turn: int = 1
@@ -14,13 +12,11 @@ var current_phase: PhaseType = PhaseType.WAIT
 var is_clicked: bool = false
 var is_ghost: bool = false
 
-var model_material: StandardMaterial3D
-
 
 func _ready():
 	super()
 	
-	model_material = StandardMaterial3D.new()
+	model = $Tank
 	
 	var arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = Color.LIME_GREEN
@@ -82,7 +78,7 @@ func move(tiles_path, forced, outside_tile):
 			await forced_into_occupied_tile(target_tile, false)
 		else:
 			tile.set_player(null)
-			tile = tiles_path.back()
+			tile = target_tile
 			
 			reset_tiles()
 			
@@ -184,12 +180,6 @@ func get_killed():
 	tile = null
 	
 	model_material.albedo_color = Color.DARK_RED
-
-
-func look_at_y(target_position):
-	model.look_at(target_position, Vector3.UP, true)
-	model.rotation_degrees.x = 0
-	model.rotation_degrees.z = 0
 
 
 func start_turn():

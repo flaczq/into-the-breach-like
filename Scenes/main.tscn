@@ -131,6 +131,11 @@ button_group = ExtResource("8_t76ir")
 shortcut = SubResource("Shortcut_8tcml")
 text = "ACTION"
 
+[node name="UndoButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+layout_mode = 2
+disabled = true
+text = "UNDO"
+
 [node name="LevelEndPopup" type="ColorRect" parent="CanvasLayer/UI"]
 visible = false
 layout_mode = 1
@@ -162,4 +167,5 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton" to="GameStateManager" method="_on_end_turn_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton" to="GameStateManager" method="_on_shoot_button_toggled"]
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton" to="GameStateManager" method="_on_action_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton" to="GameStateManager" method="_on_undo_button_pressed"]
 [connection signal="gui_input" from="CanvasLayer/UI/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

@@ -1,0 +1,18 @@
+#ENEMIES FOR LEVEL GENERATOR
+
+1->START
+TTTTTTTT
+TPPPPPPT
+TPPPPPPT
+TPPPPPPT
+TPPPPPPT
+TPPPPPPT
+TPPPPPPT
+TTTTTTTT
+1->STOP
+
+'enemies': [
+	{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
+	{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
+	{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
+],

@@ -1,10 +1,7 @@
 extends Character
 
-@onready var model = $Skeleton_Head
-
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
-var model_material: StandardMaterial3D
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
 var planned_tile: Node3D
@@ -15,7 +12,7 @@ var highlight_tween: Tween
 func _ready():
 	super()
 	
-	model_material = StandardMaterial3D.new()
+	model = $Skeleton_Head
 	
 	arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = Color.RED
@@ -167,9 +164,3 @@ func toggle_highlight(is_toggled):
 	else:
 		arrow_model_material.albedo_color = Color.RED
 		#arrow_model_material.set_next_pass(null)
-
-
-func look_at_y(target_position):
-	model.look_at(target_position, Vector3.UP, true)
-	model.rotation_degrees.x = 0
-	model.rotation_degrees.z = 0

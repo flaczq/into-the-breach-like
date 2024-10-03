@@ -13,9 +13,10 @@ func _on_action_button_pressed(action):
 	print('you chose action: ' + str(action+1))
 
 
-func _on_map_type_button_pressed(map_type):
-	print('you chose map type: ' + MapType.keys()[map_type])
+func _on_level_type_button_pressed(level_type):
+	print('you chose level type: ' + LevelType.keys()[level_type])
 	game_state_manager.get_parent().toggle_visibility(true)
-	game_state_manager.next_level(map_type)
+	game_state_manager.next_level()
+	game_state_manager.init(level_type)
 	
 	queue_free()

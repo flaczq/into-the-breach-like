@@ -9,7 +9,7 @@ enum PhaseType {MOVE, ACTION, WAIT}
 enum TileType {PLAIN, GRASS, TREE, MOUNTAIN, VOLCANO, WATER, LAVA}
 enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE, INDESTRUCTIBLE}
 enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LEFT}
-enum MapType {ABC, DEF, GHI, TUTORIAL = -1}
+enum LevelType {ABC, DEF, GHI, TUTORIAL = -1}
 
 const TILE_INFO = {
 	'sign_1': 'TUTORIAL HINT #1:\nTake advantage of seeing your enemy\'s attack',

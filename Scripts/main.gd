@@ -4,7 +4,7 @@ extends Util
 @onready var camera_3d = $Camera3D
 @onready var menu = $/root/Menu
 
-const RANDOM_MAPS_FILE_PATH = 'res://Data/random_maps.txt'
+const RANDOM_LEVELS_FILE_PATH = 'res://Data/random_levels.txt'
 
 var key_pressed: bool = false
 
@@ -72,7 +72,7 @@ func _input(event):
 	# SAVE RANDOM MAP
 	if Input.is_key_pressed(KEY_S):
 		key_pressed = true
-		var file = FileAccess.open(RANDOM_MAPS_FILE_PATH, FileAccess.READ_WRITE)
+		var file = FileAccess.open(RANDOM_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
 		var content = file.get_as_text()
 		content += '\nX->START\n'
 		

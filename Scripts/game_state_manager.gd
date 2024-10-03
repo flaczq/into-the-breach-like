@@ -4,8 +4,9 @@ extends Util
 @export var player_scenes: Array[PackedScene] = []
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
+@export var progress_scene: PackedScene
 
-@onready var canvas_layer = $'../CanvasLayer'
+@onready var level_generator = $"../LevelGenerator"
 @onready var game_info_label = $'../CanvasLayer/UI/GameInfoLabel'
 @onready var tile_info_label = $'../CanvasLayer/UI/PlayerInfoContainer/TileInfoLabel'
 @onready var end_turn_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton'
@@ -14,96 +15,10 @@ extends Util
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
-const PROGRESS: Resource = preload('res://Scenes/progress.tscn')
-const TUTORIAL_LEVELS_DATA: Array = [
-	{
-		# 4x4
-		'map': {'type': MapType.TUTORIAL, 'scene': 0, 'max_turns': 5, 'spawn_player_coords': [Vector2i(2, 1), Vector2i(3, 1), Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
-		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
-		],
-		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
-		],
-		'civilians': [],
-	},
-	{
-		'map': {'type': MapType.TUTORIAL, 'scene': 0, 'max_turns': 5, 'spawn_player_coords': [Vector2i(1, 1), Vector2i(1, 2), Vector2i(2, 1), Vector2i(2, 2), Vector2i(3, 1), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
-		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
-		],
-		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 3},
-		],
-		'civilians': [],
-	},
-	{
-		# 6x6
-		'map': {'type': MapType.TUTORIAL, 'scene': 1, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
-		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
-		],
-		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 5},
-		],
-		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-		],
-	},
-	{
-		'map': {'type': MapType.TUTORIAL, 'scene': 1, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
-		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.NONE, 'action_distance': 5},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 5},
-		],
-		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 5},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT, 'action_distance': 5},
-		],
-		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-		],
-	},
-	{
-		# 8x8
-		'map': {'type': MapType.TUTORIAL, 'scene': 2, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
-		'players': [
-			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
-		],
-		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
-		],
-		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-		],
-	},
-	{
-		'map': {'type': MapType.TUTORIAL, 'scene': 2, 'max_turns': 5, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
-		'players': [
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.GIVE_SHIELD},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT},
-		],
-		'enemies': [
-			{'scene': 0, 'health': 2, 'damage': 2, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.PUSH_BACK},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PULL_FRONT},
-		],
-		'civilians': [
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-			{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE},
-		],
-	},
-]
+# FIXME hardcoded
+const MAX_TUTORIAL_LEVELS: int = 6
 
-var progress_scene: Node = PROGRESS.instantiate()
-var max_tutorial_levels: int = TUTORIAL_LEVELS_DATA.size()
+var map: Node3D = null
 var players: Array[Node3D] = []
 var enemies: Array[Node3D] = []
 var civilians: Array[Node3D] = []
@@ -115,7 +30,6 @@ var max_turns: int
 var undos: Array
 var points: int
 var selected_player: Node3D
-var map: Node3D
 
 
 func _ready():
@@ -126,45 +40,37 @@ func _ready():
 		level = 6
 	
 	# FIXME
-	max_levels = 99#TUTORIAL_LEVELS_DATA.size()
+	max_levels = 9#TUTORIAL_LEVELS_DATA.size()
 	points = 0
 
 
 func progress():
 	# level not increased yet
-	if level < max_tutorial_levels:
-		next_level(MapType.TUTORIAL)
+	if level < MAX_TUTORIAL_LEVELS:
+		next_level()
+		init(LevelType.TUTORIAL)
 	else:
 		get_parent().toggle_visibility(false)
 		
-		if not progress_scene or progress_scene.is_queued_for_deletion():
-			print_rich('[color=red]progress scene not instantiated[/color]')
-			progress_scene = PROGRESS.instantiate()
-		
-		get_tree().root.add_child(progress_scene)
+		get_tree().root.add_child(progress_scene.instantiate())
 
 
-func init(map_type):
+func init(level_type):
 	# level was already increased
-	var current_level_data# = generate_level_data()
-	if map_type == MapType.TUTORIAL:
-		current_level_data = TUTORIAL_LEVELS_DATA[level - 1]
-	else:
-		# TODO random level data of map_type
-		assert(false, 'no random level data of ' + str(map_type))
+	var level_data = level_generator.generate_data(level_type, level)
 	
-	init_game_state(current_level_data)
-	init_map(current_level_data)
-	init_players(current_level_data)
-	init_enemies(current_level_data)
-	init_civilians(current_level_data)
+	init_game_state(level_data)
+	init_map(level_data)
+	init_players(level_data)
+	init_enemies(level_data)
+	init_civilians(level_data)
 	
 	start_turn()
 
 
-func init_game_state(current_level_data):
+func init_game_state(level_data):
 	current_turn = 1
-	max_turns = current_level_data.map.max_turns
+	max_turns = level_data.config.max_turns
 	# TODO
 	undos = []
 	selected_player = null
@@ -178,24 +84,24 @@ func init_game_state(current_level_data):
 	level_end_popup.hide()
 
 
-func init_map(current_level_data):
-	map = map_scenes[current_level_data.map.scene].instantiate()
+func init_map(level_data):
+	map = map_scenes[level_data.map.scene].instantiate()
 	add_sibling(map)
-	map.spawn(current_level_data.map.type, level)
+	map.spawn(level_data)
 	
 	for tile in map.tiles:
 		tile.connect('hovered_event', _on_tile_hovered)
 		tile.connect('clicked_event', _on_tile_clicked)
 
 
-func init_players(current_level_data):
+func init_players(level_data):
 	players = []
 	
-	for current_level_player in current_level_data.players:
+	for current_level_player in level_data.players:
 		var player_instance = player_scenes[current_level_player.scene].instantiate()
 		add_sibling(player_instance)
 		player_instance.init(current_level_player)
-		var spawn_tile = map.get_spawnable_tiles(current_level_data.map.spawn_player_coords).pick_random()
+		var spawn_tile = map.get_spawnable_tiles(level_data.map.spawn_player_coords).pick_random()
 		player_instance.spawn(spawn_tile)
 		
 		player_instance.connect('hovered_event', _on_player_hovered)
@@ -210,15 +116,15 @@ func init_players(current_level_data):
 		players.push_back(player_instance)
 
 
-func init_enemies(current_level_data):
+func init_enemies(level_data):
 	enemies = []
 	
 	var order = 1
-	for current_level_enemy in current_level_data.enemies:
+	for current_level_enemy in level_data.enemies:
 		var enemy_instance = enemy_scenes[current_level_enemy.scene].instantiate()
 		add_sibling(enemy_instance)
 		enemy_instance.init(current_level_enemy)
-		var spawn_tile = map.get_spawnable_tiles(current_level_data.map.spawn_enemy_coords).pick_random()
+		var spawn_tile = map.get_spawnable_tiles(level_data.map.spawn_enemy_coords).pick_random()
 		enemy_instance.spawn(spawn_tile, order)
 		
 		enemy_instance.connect('action_push_back', _on_character_action_push_back)
@@ -233,14 +139,14 @@ func init_enemies(current_level_data):
 		order += 1
 
 
-func init_civilians(current_level_data):
+func init_civilians(level_data):
 	civilians = []
 	
-	for current_level_civilian in current_level_data.civilians:
+	for current_level_civilian in level_data.civilians:
 		var civilian_instance = civilian_scenes[current_level_civilian.scene].instantiate()
 		add_sibling(civilian_instance)
 		civilian_instance.init(current_level_civilian)
-		var spawn_tile = map.get_spawnable_tiles(current_level_data.map.spawn_civilian_coords).pick_random()
+		var spawn_tile = map.get_spawnable_tiles(level_data.map.spawn_civilian_coords).pick_random()
 		civilian_instance.spawn(spawn_tile)
 		
 		civilian_instance.connect('action_push_back', _on_character_action_push_back)
@@ -296,7 +202,7 @@ func start_turn():
 		var tiles_for_action = calculate_tiles_for_action(true, enemy)
 		var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, alive_civilians + alive_players)
 		if not target_tile_for_action:
-			# no friendly fire prefered
+			# no friendly fire preferred
 			# TODO uwzględnij że przy _LINE wróg zasłaniać wybrany tile
 			var no_ff_tiles = tiles_for_action.filter(func(tile): return not tile.enemy)
 			if no_ff_tiles.is_empty():
@@ -357,7 +263,7 @@ func next_turn():
 	start_turn()
 
 
-func next_level(map_type):
+func next_level():
 	if map:
 		map.queue_free()
 	
@@ -371,8 +277,6 @@ func next_level(map_type):
 		civilian.queue_free()
 	
 	level += 1
-	
-	init(map_type)
 
 
 func level_won():
@@ -381,7 +285,8 @@ func level_won():
 	if level < max_levels:
 		level_end_label.text = 'LEVEL WON'
 		level_end_popup.show()
-		#next_level(MapType.TUTORIAL)
+		#next_level()
+		#init(LevelType.TUTORIAL)
 	else:
 		print('WINNER WINNER!!!')
 
@@ -391,7 +296,7 @@ func level_lost():
 	level_end_popup.show()
 	
 	# still in tutorial
-	if level <= max_tutorial_levels:
+	if level <= MAX_TUTORIAL_LEVELS:
 		# TODO achievements
 		print('achievement unlocked: you\'re a game journalist now')
 
@@ -964,6 +869,21 @@ func _on_action_button_toggled(toggled_on):
 func _on_level_end_popup_gui_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		# FIXME level won animation
+		for player in players:
+			var flying_tile_tween = create_tween()
+			flying_tile_tween.tween_property(player, 'position:y', 6, 0.5)
+			await flying_tile_tween.finished
+	
+		for enemy in enemies:
+			var flying_tile_tween = create_tween()
+			flying_tile_tween.tween_property(enemy, 'position:y', 6, 0.5)
+			await flying_tile_tween.finished
+		
+		for civilian in civilians:
+			var flying_tile_tween = create_tween()
+			flying_tile_tween.tween_property(civilian, 'position:y', 6, 0.5)
+			await flying_tile_tween.finished
+		
 		for tile in map.tiles:
 			var flying_tile_tween = create_tween()
 			flying_tile_tween.tween_property(tile, 'position:y', 6, 0.2)

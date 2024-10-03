@@ -85,36 +85,36 @@ layout_mode = 2
 disabled = true
 text = "ACTION 3"
 
-[node name="MapsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
+[node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
 layout_mode = 2
 theme_override_constants/separation = 50
 
-[node name="MapsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/MapsContainer"]
+[node name="LevelsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer"]
 layout_mode = 2
-text = "Choose next map type:"
+text = "Choose next level type:"
 horizontal_alignment = 1
 
-[node name="MapsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/MapsContainer"]
+[node name="LevelsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 50
 
-[node name="Map1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons"]
+[node name="LevelType1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
-text = "MAP TYPE 1"
+text = "LEVEL TYPE 1"
 
-[node name="Map2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons"]
+[node name="LevelType2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
-text = "MAP TYPE 2"
+text = "LEVEL TYPE 2"
 
-[node name="Map3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons"]
+[node name="LevelType3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
-text = "MAP TYPE 3"
+text = "LEVEL TYPE 3"
 
 [connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action1Button" to="." method="_on_action_button_pressed" binds= [0]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action2Button" to="." method="_on_action_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action3Button" to="." method="_on_action_button_pressed" binds= [2]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons/Map1Button" to="." method="_on_map_type_button_pressed" binds= [0]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons/Map2Button" to="." method="_on_map_type_button_pressed" binds= [1]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/MapsContainer/MapsButtons/Map3Button" to="." method="_on_map_type_button_pressed" binds= [2]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [0]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [2]]

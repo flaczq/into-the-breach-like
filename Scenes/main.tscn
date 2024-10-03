@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=19 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://b60h1emnunq1s" path="res://Scenes/civilian.tscn" id="6_thiki"]
 [ext_resource type="Script" path="res://Scripts/util.gd" id="7_gp40j"]
 [ext_resource type="ButtonGroup" uid="uid://by0pbsfufftxo" path="res://Other/shoot_action_button_group.tres" id="8_t76ir"]
+[ext_resource type="PackedScene" uid="uid://8bvhgfxla8ng" path="res://Scenes/progress.tscn" id="9_ey5p0"]
+[ext_resource type="Script" path="res://Scripts/level_generator.gd" id="9_le872"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oi1vl"]
 
@@ -40,9 +42,14 @@ map_scenes = Array[PackedScene]([ExtResource("4_22mq3"), ExtResource("4_wpjf0"),
 player_scenes = Array[PackedScene]([ExtResource("3_yn7e4")])
 enemy_scenes = Array[PackedScene]([ExtResource("3_nwkag")])
 civilian_scenes = Array[PackedScene]([ExtResource("6_thiki")])
+progress_scene = ExtResource("9_ey5p0")
+
+[node name="LevelGenerator" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+script = ExtResource("9_le872")
 
 [node name="Util" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
 script = ExtResource("7_gp40j")
 
 [node name="Camera3D" type="Camera3D" parent="."]

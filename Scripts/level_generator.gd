@@ -6,7 +6,7 @@ const TUTORIAL_LEVELS_DATA = [
 	{
 		# 4x4
 		'config': {'level': '1', 'level_type': LevelType.TUTORIAL, 'tiles': 'TTTTPPPPPPPPMMMM', 'tiles_assets': '0000S00000000000', 'max_turns': 5},
-		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(2, 1), Vector2i(3, 1), Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
+		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],

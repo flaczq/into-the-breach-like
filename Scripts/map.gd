@@ -33,14 +33,14 @@ func spawn(level_data):
 			asset_filename = null
 		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.config.level)
 		var health_type = get_health_type_by_tile_type(tile_type, asset_filename)
-		var init_data = {
+		var tile_init_data = {
 			'models': models,
 			'tile_type': tile_type,
 			'health_type': health_type,
 		};
 		
 		tile.reset()
-		tile.init(init_data)
+		tile.init(tile_init_data)
 
 
 func convert_tile_type_initial_to_enum(tile_type_initial):
@@ -189,4 +189,8 @@ func get_spawnable_tiles(tiles_coords):
 	if tiles_coords.is_empty():
 		return get_available_tiles()
 	
-	return get_available_tiles().filter(func(tile): return tiles_coords.has(tile.coords))
+	var spawnable_tiles = get_available_tiles().filter(func(tile): return tiles_coords.has(tile.coords))
+	if spawnable_tiles.is_empty():
+		return get_available_tiles()
+	
+	return spawnable_tiles

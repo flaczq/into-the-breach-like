@@ -35,6 +35,7 @@ func _ready():
 	# to move properly among available positions
 	position = Vector3.ZERO
 	
+	model = get_children().filter(func(child): return child.is_visible() and child is MeshInstance3D).front()
 	model_material = StandardMaterial3D.new()
 	
 	var assets_instance = assets_scene.instantiate()
@@ -48,6 +49,7 @@ func _ready():
 
 
 func init(character_init_data):
+	#model = get_node(character_init_data.model_path)
 	health = character_init_data.health
 	damage = character_init_data.damage
 	move_distance = character_init_data.move_distance
@@ -88,8 +90,8 @@ func forced_into_occupied_tile(target_tile, is_outside):
 func spawn_arrow(target):
 	var target_position_on_map = get_vector3_on_map(position - target.position)
 	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
-	var hit_direction = hit_distance.sign()
-	var direction = get_direction(hit_direction)
+	var origin_to_target_sign = hit_distance.sign()
+	var hit_direction = get_hit_direction(origin_to_target_sign)
 	
 	var arrow_model = default_arrow_model.duplicate()
 	var arrow_line_model = default_arrow_line_model.duplicate()
@@ -97,33 +99,33 @@ func spawn_arrow(target):
 	arrow_model.position = get_vector3_on_map(Vector3.ZERO)
 	arrow_line_model.position = get_vector3_on_map(Vector3.ZERO)
 		
-	# hardcoded because rotations suck
-	if direction == HitDirection.DOWN_LEFT:
+	# hardcoded because rotations suck b4llz
+	if hit_direction == HitDirection.DOWN_LEFT:
 		arrow_model.rotation_degrees.y = -90
 		arrow_line_model.rotation_degrees.y = -90
-	elif direction == HitDirection.UP_RIGHT:
+	elif hit_direction == HitDirection.UP_RIGHT:
 		arrow_model.rotation_degrees.y = 90
 		arrow_line_model.rotation_degrees.y = 90
-	elif direction == HitDirection.RIGHT_DOWN:
+	elif hit_direction == HitDirection.RIGHT_DOWN:
 		arrow_model.rotation_degrees.y = 0
 		arrow_line_model.rotation_degrees.y = 0
-	elif direction == HitDirection.LEFT_UP:
+	elif hit_direction == HitDirection.LEFT_UP:
 		arrow_model.rotation_degrees.y = 180
 		arrow_line_model.rotation_degrees.y = 180
-	elif direction == HitDirection.DOWN:
+	elif hit_direction == HitDirection.DOWN:
 		arrow_model.rotation_degrees.y = -45
 		arrow_line_model.rotation_degrees.y = -45
-	elif direction == HitDirection.UP:
+	elif hit_direction == HitDirection.UP:
 		arrow_model.rotation_degrees.y = 135
 		arrow_line_model.rotation_degrees.y = 135
-	elif direction == HitDirection.RIGHT:
+	elif hit_direction == HitDirection.RIGHT:
 		arrow_model.rotation_degrees.y = 45
 		arrow_line_model.rotation_degrees.y = 45
-	elif direction == HitDirection.LEFT:
+	elif hit_direction == HitDirection.LEFT:
 		arrow_model.rotation_degrees.y = -135
 		arrow_line_model.rotation_degrees.y = -135
 	
-	var position_offset = Vector3(hit_direction.y, 0, hit_direction.x)
+	var position_offset = Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
 	var arrow_model_position = get_vector3_on_map(position_offset * 0.5 - target_position_on_map)
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
 		arrow_model.position = arrow_model_position
@@ -166,29 +168,29 @@ func toggle_arrows(is_toggled):
 func spawn_bullet(target):
 	var target_position_on_map = get_vector3_on_map(position - target.position)
 	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
-	var hit_direction = hit_distance.sign()
-	var direction = get_direction(hit_direction)
+	var origin_to_target_sign = hit_distance.sign()
+	var hit_direction = get_hit_direction(origin_to_target_sign)
 	
 	var bullet_model = default_bullet_model.duplicate()
 	
 	bullet_model.position = get_vector3_on_map(Vector3.ZERO)
 	
-	# hardcoded because rotations suck
-	if direction == HitDirection.DOWN_LEFT:
+	# hardcoded because rotations suck b4llz
+	if hit_direction == HitDirection.DOWN_LEFT:
 		bullet_model.rotation_degrees.y = 90
-	elif direction == HitDirection.UP_RIGHT:
+	elif hit_direction == HitDirection.UP_RIGHT:
 		bullet_model.rotation_degrees.y = 90
-	elif direction == HitDirection.RIGHT_DOWN:
+	elif hit_direction == HitDirection.RIGHT_DOWN:
 		bullet_model.rotation_degrees.y = 90
-	elif direction == HitDirection.LEFT_UP:
+	elif hit_direction == HitDirection.LEFT_UP:
 		bullet_model.rotation_degrees.y = 90
-	elif direction == HitDirection.DOWN:
+	elif hit_direction == HitDirection.DOWN:
 		bullet_model.rotation_degrees.y = -45
-	elif direction == HitDirection.UP:
+	elif hit_direction == HitDirection.UP:
 		bullet_model.rotation_degrees.y = 135
-	elif direction == HitDirection.RIGHT:
+	elif hit_direction == HitDirection.RIGHT:
 		bullet_model.rotation_degrees.y = 45
-	elif direction == HitDirection.LEFT:
+	elif hit_direction == HitDirection.LEFT:
 		bullet_model.rotation_degrees.y = -135
 	
 	bullet_model.show()

@@ -45,20 +45,20 @@ func is_close(value, target):
 	return absf(value - target) < 0.1
 
 
-func get_direction(hit_direction):
-	if hit_direction == Vector2i(-1, 0):
+func get_hit_direction(origin_to_target_sign):
+	if origin_to_target_sign == Vector2i(-1, 0):
 		return HitDirection.DOWN_LEFT
-	if hit_direction == Vector2i(1, 0):
+	if origin_to_target_sign == Vector2i(1, 0):
 		return HitDirection.UP_RIGHT
-	if hit_direction == Vector2i(0, -1):
+	if origin_to_target_sign == Vector2i(0, -1):
 		return HitDirection.RIGHT_DOWN
-	if hit_direction == Vector2i(0, 1):
+	if origin_to_target_sign == Vector2i(0, 1):
 		return HitDirection.LEFT_UP
-	if hit_direction == Vector2i(-1, -1):
+	if origin_to_target_sign == Vector2i(-1, -1):
 		return HitDirection.DOWN
-	if hit_direction == Vector2i(1, 1):
+	if origin_to_target_sign == Vector2i(1, 1):
 		return HitDirection.UP
-	if hit_direction == Vector2i(1, -1):
+	if origin_to_target_sign == Vector2i(1, -1):
 		return HitDirection.RIGHT
-	if hit_direction == Vector2i(-1, 1):
+	if origin_to_target_sign == Vector2i(-1, 1):
 		return HitDirection.LEFT

@@ -16,7 +16,7 @@ var is_ghost: bool = false
 func _ready():
 	super()
 	
-	model = $Tank
+	#model = $Tank
 	
 	var arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = Color.LIME_GREEN

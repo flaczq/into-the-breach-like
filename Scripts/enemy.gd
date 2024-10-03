@@ -12,7 +12,7 @@ var highlight_tween: Tween
 func _ready():
 	super()
 	
-	model = $Skeleton_Head
+	#model = $Skeleton_Head
 	
 	arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = Color.RED

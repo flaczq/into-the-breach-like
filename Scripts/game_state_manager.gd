@@ -197,19 +197,19 @@ func start_turn():
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
 		await enemy.move(tiles_path, false, null)
 	
-		# enemy could have moved in front of the other enemy's attack line
+		# enemy shouldn't but could have moved in front of the other enemy's attack line
 		recalculate_enemies_planned_actions()
 		
 		var tiles_for_action = calculate_tiles_for_action(true, enemy)
 		var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, alive_civilians + alive_players)
 		if not target_tile_for_action:
 			# no friendly fire preferred
-			# TODO uwzględnij że przy _LINE wróg zasłaniać wybrany tile
 			var no_ff_tiles = tiles_for_action.filter(func(tile): return not tile.enemy)
 			if no_ff_tiles.is_empty():
 				target_tile_for_action = tiles_for_action.pick_random()
 			else:
 				target_tile_for_action = no_ff_tiles.pick_random()
+			print('enemy ' + str(enemy.tile.coords) + ' -> random action: ' + str(target_tile_for_action.coords))
 		
 		enemy.plan_action(target_tile_for_action)
 	
@@ -425,23 +425,23 @@ func calculate_tiles_for_action(active, character):
 			var occupied_tiles = tiles_for_action.filter(func(tile): return tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE or tile.player or tile.enemy or tile.civilian)
 			if not occupied_tiles.is_empty():
 				for occupied_tile in occupied_tiles:
-					var hit_direction = (character.tile.coords - occupied_tile.coords).sign()
-					var direction = get_direction(hit_direction)
-					if direction == HitDirection.DOWN_LEFT:
+					var origin_to_target_sign = (character.tile.coords - occupied_tile.coords).sign()
+					var hit_direction = get_hit_direction(origin_to_target_sign)
+					if hit_direction == HitDirection.DOWN_LEFT:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
-					elif direction == HitDirection.UP_RIGHT:
+					elif hit_direction == HitDirection.UP_RIGHT:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
-					elif direction == HitDirection.RIGHT_DOWN:
+					elif hit_direction == HitDirection.RIGHT_DOWN:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y <= occupied_tile.coords.y)
-					elif direction == HitDirection.LEFT_UP:
+					elif hit_direction == HitDirection.LEFT_UP:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y >= occupied_tile.coords.y)
-					elif direction == HitDirection.DOWN:
+					elif hit_direction == HitDirection.DOWN:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
-					elif direction == HitDirection.UP:
+					elif hit_direction == HitDirection.UP:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
-					elif direction == HitDirection.RIGHT:
+					elif hit_direction == HitDirection.RIGHT:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y >= occupied_tile.coords.x - occupied_tile.coords.y)
-					elif direction == HitDirection.LEFT:
+					elif hit_direction == HitDirection.LEFT:
 						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
 	else:
 		tiles_for_action = map.tiles
@@ -483,7 +483,19 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_c
 				target_tile_for_movement = null
 		
 		if target_tile_for_movement:
-			return target_tile_for_movement
+			# exlude tiles in front of the other enemy's attack line
+			if origin_character.is_in_group('ENEMIES'):
+				for other_enemy in enemies.filter(func(enemy): return enemy != origin_character and enemy.planned_tile and (enemy.action_direction == ActionDirection.HORIZONTAL_LINE or enemy.action_direction == ActionDirection.VERTICAL_LINE)):
+					var other_enemy_to_planned_sign = (other_enemy.tile.coords - other_enemy.planned_tile.coords).sign()
+					var target_tile_to_other_enemy_planned_sign = (target_tile_for_movement.coords - other_enemy.planned_tile.coords).sign()
+					var target_tile_to_other_enemy_sign = (target_tile_for_movement.coords - other_enemy.tile.coords).sign()
+					if get_hit_direction(other_enemy_to_planned_sign) == get_hit_direction(target_tile_to_other_enemy_planned_sign) and get_hit_direction(target_tile_to_other_enemy_planned_sign) != get_hit_direction(target_tile_to_other_enemy_sign):
+						target_characters_for_movement = []
+						target_tile_for_movement = null
+						break;
+			
+			if target_tile_for_movement:
+				return target_tile_for_movement
 	
 	return null
 

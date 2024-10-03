@@ -4,13 +4,10 @@
 3. 3 kosmitów żołnierzy, kilku cywilów, jeśli przeżyją to zwiększają się morale np. 20%, czyli co 5 cywil chce zostać żołnierzem
 4. - cute, scary, w lesie namioty z dziećmi, których musisz bronić przed wilkami (zabierają dzieci i trzeba ich uderzyć bez obrażeń, żeby dziecko upadło);
    - zaczynasz z jednym graczem, potem ratujesz kolejnego (albo i nie) - mapy tworzą historyjkę
-5. walczysz z kosmitami i przejmujesz ich umiejętności
+--==>> 5. walczysz z kosmitami i przejmujesz ich umiejętności
 
 ++++++++++++++++DEMO++++++++++++++++
-+ menu
 + 3 mapy
-+ wybór umiejętności
-+ ai żeby nie było ff _LINE
 + ostateczne? grafiki
 + UI
 ++++++++++++++++++++++++++++++++++++

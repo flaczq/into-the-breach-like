@@ -3,12 +3,12 @@
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_gdtvm"]
-[ext_resource type="PackedScene" uid="uid://d3kikj28cfn8h" path="res://Scenes/enemy.tscn" id="3_nwkag"]
-[ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player.tscn" id="3_yn7e4"]
 [ext_resource type="PackedScene" uid="uid://bysqedydgeakv" path="res://Scenes/map4x4.tscn" id="4_22mq3"]
 [ext_resource type="PackedScene" uid="uid://cxidqolshdlac" path="res://Scenes/map6x6.tscn" id="4_wpjf0"]
-[ext_resource type="PackedScene" uid="uid://b60h1emnunq1s" path="res://Scenes/civilian.tscn" id="6_thiki"]
+[ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player1.tscn" id="6_vfyg3"]
 [ext_resource type="Script" path="res://Scripts/util.gd" id="7_gp40j"]
+[ext_resource type="PackedScene" uid="uid://d3kikj28cfn8h" path="res://Scenes/enemy1.tscn" id="7_ptp77"]
+[ext_resource type="PackedScene" uid="uid://b60h1emnunq1s" path="res://Scenes/civilian1.tscn" id="8_g8h8s"]
 [ext_resource type="ButtonGroup" uid="uid://by0pbsfufftxo" path="res://Other/shoot_action_button_group.tres" id="8_t76ir"]
 [ext_resource type="PackedScene" uid="uid://8bvhgfxla8ng" path="res://Scenes/progress.tscn" id="9_ey5p0"]
 [ext_resource type="Script" path="res://Scripts/level_generator.gd" id="9_le872"]
@@ -35,23 +35,6 @@ events = [SubResource("InputEventKey_comoe")]
 [node name="Main" type="Node3D"]
 script = ExtResource("1_h8ron")
 
-[node name="GameStateManager" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
-script = ExtResource("2_23un4")
-map_scenes = Array[PackedScene]([ExtResource("4_22mq3"), ExtResource("4_wpjf0"), ExtResource("2_gdtvm")])
-player_scenes = Array[PackedScene]([ExtResource("3_yn7e4")])
-enemy_scenes = Array[PackedScene]([ExtResource("3_nwkag")])
-civilian_scenes = Array[PackedScene]([ExtResource("6_thiki")])
-progress_scene = ExtResource("9_ey5p0")
-
-[node name="LevelGenerator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-script = ExtResource("9_le872")
-
-[node name="Util" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
-script = ExtResource("7_gp40j")
-
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.45452, 0.541675, 0, 0.766045, 0.642788, -0.707107, -0.45452, 0.541675, 12, 13.2, 12)
 fov = 21.0
@@ -63,6 +46,23 @@ shadow_enabled = true
 shadow_normal_bias = 0.0
 
 [node name="Map8x8" parent="." instance=ExtResource("2_gdtvm")]
+
+[node name="Util" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+script = ExtResource("7_gp40j")
+
+[node name="LevelGenerator" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+script = ExtResource("9_le872")
+
+[node name="GameStateManager" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+script = ExtResource("2_23un4")
+map_scenes = Array[PackedScene]([ExtResource("4_22mq3"), ExtResource("4_wpjf0"), ExtResource("2_gdtvm")])
+player_scenes = Array[PackedScene]([ExtResource("6_vfyg3")])
+enemy_scenes = Array[PackedScene]([ExtResource("7_ptp77")])
+civilian_scenes = Array[PackedScene]([ExtResource("8_g8h8s")])
+progress_scene = ExtResource("9_ey5p0")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

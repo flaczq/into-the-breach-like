@@ -4,7 +4,7 @@ extends Character
 func _ready():
 	super()
 	
-	model = $Princess_Head
+	#model = $Princess_Head
 
 
 func spawn(target_tile):

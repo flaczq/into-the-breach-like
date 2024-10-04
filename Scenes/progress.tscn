@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://8bvhgfxla8ng"]
+[gd_scene load_steps=6 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
+[ext_resource type="Texture2D" uid="uid://dn1jhwham62ap" path="res://Icons/tank.png" id="2_qgw78"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u7n8s"]
 
@@ -55,6 +56,44 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 100
 
+[node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="PlayersLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/PlayersContainer"]
+layout_mode = 2
+text = "Select player to start:"
+horizontal_alignment = 1
+
+[node name="PlayersButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/PlayersContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 50
+
+[node name="Player1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/PlayersContainer/PlayersButtons"]
+layout_mode = 2
+text = "PLAYER 1"
+icon = ExtResource("2_qgw78")
+icon_alignment = 1
+vertical_icon_alignment = 2
+expand_icon = true
+
+[node name="Player2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/PlayersContainer/PlayersButtons"]
+layout_mode = 2
+text = "PLAYER 2"
+icon = ExtResource("2_qgw78")
+icon_alignment = 1
+vertical_icon_alignment = 2
+expand_icon = true
+
+[node name="Player3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/PlayersContainer/PlayersButtons"]
+layout_mode = 2
+text = "PLAYER 3"
+icon = ExtResource("2_qgw78")
+icon_alignment = 1
+vertical_icon_alignment = 2
+expand_icon = true
+
 [node name="ActionsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
 layout_mode = 2
 theme_override_constants/separation = 50
@@ -62,7 +101,7 @@ theme_override_constants/separation = 50
 [node name="ActionsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
 layout_mode = 2
 text = "You've collected 0 alien parts.
-After collecting 3 alien parts, you can choose which action to learn!"
+After collecting 3 alien parts, you can select which action to learn!"
 horizontal_alignment = 1
 
 [node name="ActionsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
@@ -91,7 +130,7 @@ theme_override_constants/separation = 50
 
 [node name="LevelsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer"]
 layout_mode = 2
-text = "Choose next level type:"
+text = "Select next level type:"
 horizontal_alignment = 1
 
 [node name="LevelsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer"]
@@ -112,6 +151,9 @@ layout_mode = 2
 text = "LEVEL TYPE 3"
 
 [connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/PlayersContainer/PlayersButtons/Player1Button" to="." method="_on_player_button_pressed" binds= [0]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/PlayersContainer/PlayersButtons/Player2Button" to="." method="_on_player_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/PlayersContainer/PlayersButtons/Player3Button" to="." method="_on_player_button_pressed" binds= [2]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action1Button" to="." method="_on_action_button_pressed" binds= [0]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action2Button" to="." method="_on_action_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action3Button" to="." method="_on_action_button_pressed" binds= [2]]

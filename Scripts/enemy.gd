@@ -65,7 +65,7 @@ func move(tiles_path, forced, outside_tile):
 				var duration = 0.4 / tiles_path.size()
 				for next_tile in tiles_path:
 					if not forced:
-						look_at_y(next_tile.position)
+						look_at_y(next_tile)
 					
 					var position_tween = create_tween()
 					position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
@@ -83,7 +83,7 @@ func plan_action(target_tile):
 		
 		spawn_arrow(planned_tile)
 		
-		look_at_y(planned_tile.position)
+		look_at_y(planned_tile)
 		
 		#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 

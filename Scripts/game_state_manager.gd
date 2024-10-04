@@ -23,6 +23,7 @@ var map: Node3D = null
 var players: Array[Node3D] = []
 var enemies: Array[Node3D] = []
 var civilians: Array[Node3D] = []
+var level_end_clicked: bool = false
 
 var level: int
 var max_levels: int
@@ -654,7 +655,7 @@ func _on_tile_hovered(tile, is_hovered):
 				for next_tile in tiles_path:
 					next_tile.on_mouse_entered()
 				
-				selected_player.look_at_y(tile.position)
+				selected_player.look_at_y(tile)
 				selected_player.is_ghost = true
 				tile.ghost = selected_player
 			
@@ -671,7 +672,7 @@ func _on_tile_hovered(tile, is_hovered):
 				else:
 					first_occupied_tile_in_line = tile
 				
-				selected_player.look_at_y(first_occupied_tile_in_line.position)
+				selected_player.look_at_y(first_occupied_tile_in_line)
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
 			else:
 				selected_player.clear_arrows()
@@ -909,6 +910,11 @@ func _on_undo_button_pressed():
 
 func _on_level_end_popup_gui_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if level_end_clicked:
+			return
+		
+		level_end_clicked = true
+		
 		# FIXME level won animation
 		for player in players:
 			var flying_tile_tween = create_tween()
@@ -934,3 +940,5 @@ func _on_level_end_popup_gui_input(event):
 		level_end_label.text = ''
 		
 		progress()
+		
+		level_end_clicked = false

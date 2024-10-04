@@ -209,7 +209,19 @@ func spawn_bullet(target):
 	bullet_model.queue_free()
 
 
-func look_at_y(target_position):
-	model.look_at(target_position, Vector3.UP, true)
+func look_at_y(target):
+	model.look_at(target.position, Vector3.UP, true)
 	model.rotation_degrees.x = 0
 	model.rotation_degrees.z = 0
+	# smooth rotation has bug: which side to turn by
+	#var dummy = Node3D.new()
+	#dummy.hide()
+	#add_child(dummy)
+#
+	#dummy.global_transform.origin = model.global_transform.origin
+	#dummy.look_at(target.position, Vector3.UP, true)
+#
+	#var rotation_tween = create_tween()
+	#rotation_tween.tween_property(model, 'rotation_degrees:y', rotation, 0.1)
+	#
+	#dummy.queue_free()

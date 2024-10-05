@@ -12,11 +12,6 @@ func _on_main_menu_button_pressed():
 	queue_free()
 
 
-func _on_player_button_pressed(player_type):
-	print('you selected player type: ' + PlayerType.keys()[player_type])
-	selected_player_type = player_type
-
-
 func _on_action_button_pressed(action_type):
 	print('you selected action type: ' + ActionType.keys()[action_type])
 	selected_action_type = action_type

@@ -1,7 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=7 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_0ykcs"]
+[ext_resource type="Texture2D" uid="uid://dn1jhwham62ap" path="res://Icons/tank.png" id="3_wbc5l"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5okir"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_c3o0l"]
+device = -1
+keycode = 32
+unicode = 32
+
+[sub_resource type="Shortcut" id="Shortcut_fmudf"]
+events = [SubResource("InputEventKey_c3o0l")]
 
 [node name="Menu" type="Node3D"]
 script = ExtResource("1_ybquj")
@@ -17,7 +28,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+[node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -104.0
+offset_bottom = 31.0
+grow_horizontal = 0
+
+[node name="MainMenuButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5okir")
+shortcut = SubResource("Shortcut_fmudf")
+text = "MAIN MENU"
+
+[node name="MenuContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -25,20 +51,74 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -62.5
-offset_top = -29.0
+offset_top = -33.0
 offset_right = 62.5
-offset_bottom = 29.0
+offset_bottom = 33.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="StartButton" type="Button" parent="CanvasLayer/UI/VBoxContainer"]
+[node name="StartButton" type="Button" parent="CanvasLayer/UI/MenuContainer"]
 layout_mode = 2
 text = "START"
 
-[node name="TutorialCheckButton" type="CheckButton" parent="CanvasLayer/UI/VBoxContainer"]
+[node name="TutorialCheckButton" type="CheckButton" parent="CanvasLayer/UI/MenuContainer"]
 layout_mode = 2
 button_pressed = true
 text = "TUTORIAL"
 
-[connection signal="pressed" from="CanvasLayer/UI/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/UI/VBoxContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
+[node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -63.5
+offset_right = 170.0
+offset_bottom = 63.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+
+[node name="PlayersLabel" type="Label" parent="CanvasLayer/UI/PlayersContainer"]
+layout_mode = 2
+text = "Select player to start:"
+horizontal_alignment = 1
+
+[node name="PlayersButtons" type="HBoxContainer" parent="CanvasLayer/UI/PlayersContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 50
+
+[node name="Player1Button" type="Button" parent="CanvasLayer/UI/PlayersContainer/PlayersButtons"]
+layout_mode = 2
+text = "PLAYER 1"
+icon = ExtResource("3_wbc5l")
+icon_alignment = 1
+vertical_icon_alignment = 2
+expand_icon = true
+
+[node name="Player2Button" type="Button" parent="CanvasLayer/UI/PlayersContainer/PlayersButtons"]
+layout_mode = 2
+text = "PLAYER 2"
+icon = ExtResource("3_wbc5l")
+icon_alignment = 1
+vertical_icon_alignment = 2
+expand_icon = true
+
+[node name="Player3Button" type="Button" parent="CanvasLayer/UI/PlayersContainer/PlayersButtons"]
+layout_mode = 2
+text = "PLAYER 3"
+icon = ExtResource("3_wbc5l")
+icon_alignment = 1
+vertical_icon_alignment = 2
+expand_icon = true
+
+[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/MenuContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/UI/MenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player1Button" to="." method="_on_player_button_pressed" binds= [0]]
+[connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player2Button" to="." method="_on_player_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player3Button" to="." method="_on_player_button_pressed" binds= [2]]

@@ -41,9 +41,8 @@ fov = 21.0
 size = 8.604
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.766045, 0.556671, -0.321394, 0, 0.5, 0.866026, 0.642788, -0.663414, 0.383022, 0, 5, 0)
+transform = Transform3D(0.766045, 0.503749, -0.399266, 0, 0.621148, 0.783694, 0.642788, -0.600344, 0.475827, 0, 5, 0)
 shadow_enabled = true
-shadow_normal_bias = 0.0
 
 [node name="Map8x8" parent="." instance=ExtResource("2_gdtvm")]
 

@@ -114,6 +114,7 @@ func _input(event):
 
 
 func _on_main_menu_button_pressed():
+	menu._on_main_menu_button_pressed()
 	menu.toggle_visibility(true)
 	
 	queue_free()

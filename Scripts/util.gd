@@ -9,15 +9,8 @@ enum PhaseType {MOVE, ACTION, WAIT}
 enum TileType {PLAIN, GRASS, TREE, MOUNTAIN, VOLCANO, WATER, LAVA}
 enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE, INDESTRUCTIBLE}
 enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LEFT}
-enum LevelType {KILL_ENEMIES, SAVE_CIVILIANS, SURVIVE_TIL_LAST_TURN, TUTORIAL = -1}
+enum LevelType {KILL_ENEMIES, SAVE_CIVILIANS, SURVIVE_TIL_LAST_TURN, TUTORIAL = -1, TEST = -2}
 enum PlayerType {FIRST, SECOND, THIRD, DEFAULT = -1}
-
-const TILE_INFO = {
-	'sign_1': 'TUTORIAL HINT #1:\nTake advantage of seeing your enemy\'s attack',
-	'sign_2': 'TUTORIAL HINT #2:\nSome obstacles may be destructible',
-	'sign_3': 'TUTORIAL HINT #3:\nSometimes using an action instead of shooting is necessary to save a civilian',
-	'sign_4': 'TUTORIAL HINT #4:\nEnemies always use their actions while dealing damage',
-}
 
 
 func toggle_visibility(is_toggled):

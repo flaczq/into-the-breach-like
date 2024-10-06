@@ -9,6 +9,8 @@ extends Util
 
 
 func _ready():
+	TranslationServer.set_locale('en')
+	
 	player_buttons.hide()
 	menu_container.show()
 	players_container.hide()
@@ -17,6 +19,8 @@ func _ready():
 
 
 func start():
+	Global.test = false
+	
 	toggle_visibility(false)
 	
 	get_tree().root.add_child(main_scene.instantiate())
@@ -26,6 +30,15 @@ func _on_main_menu_button_pressed():
 	player_buttons.hide()
 	menu_container.show()
 	players_container.hide()
+
+
+# TODO delete on release !!!
+func _on_test_button_pressed():
+	Global.test = true
+	
+	toggle_visibility(false)
+	
+	get_tree().root.add_child(main_scene.instantiate())
 
 
 func _on_start_button_pressed():
@@ -44,3 +57,10 @@ func _on_tutorial_check_button_toggled(toggled_on):
 func _on_player_button_pressed(player_type):
 	print('you selected player type: ' + PlayerType.keys()[player_type])
 	start()
+
+
+func _on_language_check_button_toggled(toggled_on):
+	if toggled_on:
+		TranslationServer.set_locale('pl')
+	else:
+		TranslationServer.set_locale('en')

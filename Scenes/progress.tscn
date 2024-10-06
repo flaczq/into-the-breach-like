@@ -38,7 +38,7 @@ grow_horizontal = 0
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_u7n8s")
 shortcut = SubResource("Shortcut_57jbp")
-text = "MAIN MENU"
+text = "MAIN_MENU"
 
 [node name="ProgressContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1

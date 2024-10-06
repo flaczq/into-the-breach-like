@@ -21,7 +21,7 @@ func _ready():
 	arrow_shader_material.set_shader(FLASHING_SHADER)
 	
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
-	default_arrow_line_model.set_surface_override_material(0, arrow_model_material)
+	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
 
 
 func spawn(target_tile, new_order):

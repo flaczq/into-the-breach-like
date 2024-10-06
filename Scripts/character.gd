@@ -17,7 +17,7 @@ var state_type: StateType = StateType.NONE
 var model: Node3D
 var model_material: StandardMaterial3D
 var default_arrow_model: Node3D
-var default_arrow_line_model: MeshInstance3D
+var default_arrow_sphere_model: MeshInstance3D
 var default_bullet_model: Node3D
 var health: int
 var damage: int
@@ -42,10 +42,11 @@ func _ready():
 	for asset in assets_instance.get_children():
 		if asset.name == 'ArrowSignContainer':
 			default_arrow_model = asset
-		elif asset.name == 'doormat':
-			default_arrow_line_model = asset
-		elif asset.name == 'weapon-sword':
+		elif asset.name == 'sphere':
+			default_arrow_sphere_model = asset
 			default_bullet_model = asset
+		#elif asset.name == 'sphere':
+			#default_bullet_model = asset
 
 
 func init(character_init_data):
@@ -94,36 +95,36 @@ func spawn_arrow(target):
 	var hit_direction = get_hit_direction(origin_to_target_sign)
 	
 	var arrow_model = default_arrow_model.duplicate()
-	var arrow_line_model = default_arrow_line_model.duplicate()
+	var arrow_sphere_model = default_arrow_sphere_model.duplicate()
 	
 	arrow_model.position = get_vector3_on_map(Vector3.ZERO)
-	arrow_line_model.position = get_vector3_on_map(Vector3.ZERO)
+	arrow_sphere_model.position = get_vector3_on_map(Vector3.ZERO)
 		
 	# hardcoded because rotations suck b4llz
 	if hit_direction == HitDirection.DOWN_LEFT:
 		arrow_model.rotation_degrees.y = -90
-		arrow_line_model.rotation_degrees.y = -90
+		#arrow_sphere_model.rotation_degrees.y = -90
 	elif hit_direction == HitDirection.UP_RIGHT:
 		arrow_model.rotation_degrees.y = 90
-		arrow_line_model.rotation_degrees.y = 90
+		#arrow_sphere_model.rotation_degrees.y = 90
 	elif hit_direction == HitDirection.RIGHT_DOWN:
 		arrow_model.rotation_degrees.y = 0
-		arrow_line_model.rotation_degrees.y = 0
+		#arrow_sphere_model.rotation_degrees.y = 0
 	elif hit_direction == HitDirection.LEFT_UP:
 		arrow_model.rotation_degrees.y = 180
-		arrow_line_model.rotation_degrees.y = 180
+		#arrow_sphere_model.rotation_degrees.y = 180
 	elif hit_direction == HitDirection.DOWN:
 		arrow_model.rotation_degrees.y = -45
-		arrow_line_model.rotation_degrees.y = -45
+		#arrow_sphere_model.rotation_degrees.y = -45
 	elif hit_direction == HitDirection.UP:
 		arrow_model.rotation_degrees.y = 135
-		arrow_line_model.rotation_degrees.y = 135
+		#arrow_sphere_model.rotation_degrees.y = 135
 	elif hit_direction == HitDirection.RIGHT:
 		arrow_model.rotation_degrees.y = 45
-		arrow_line_model.rotation_degrees.y = 45
+		#arrow_sphere_model.rotation_degrees.y = 45
 	elif hit_direction == HitDirection.LEFT:
 		arrow_model.rotation_degrees.y = -135
-		arrow_line_model.rotation_degrees.y = -135
+		#arrow_sphere_model.rotation_degrees.y = -135
 	
 	var position_offset = Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
 	var arrow_model_position = get_vector3_on_map(position_offset * 0.5 - target_position_on_map)
@@ -138,14 +139,25 @@ func spawn_arrow(target):
 		
 		var distance = default_distance * 1.3
 		while absi(hit_distance.y) > distance + default_distance * 1.3 or absi(hit_distance.x) > distance + default_distance * 1.3:
-			arrow_line_model.position = arrow_model.position + position_offset * distance
-			arrow_line_model.show()
-			add_child(arrow_line_model.duplicate())
+			arrow_sphere_model.position = arrow_model.position + position_offset * distance
+			arrow_sphere_model.show()
+			add_child(arrow_sphere_model.duplicate())
 			
 			distance += default_distance
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
-		arrow_model.rotation_degrees.z = -60
-		arrow_model.position = Vector3(arrow_model_position.x, 1.0, arrow_model_position.z)
+		# bezier ftw!
+		var origin_position = get_vector3_on_map(Vector3.ZERO)
+		var target_position = get_vector3_on_map(-1 * target_position_on_map)
+		var control_1 = Vector3(origin_position.x, 3.0, origin_position.z)
+		var control_2 = Vector3(target_position.x, 3.0, target_position.z)
+		var amount = roundi((target_position - origin_position).length()) + 3
+		for i in range(1, amount):
+			arrow_sphere_model.position = origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount + 1))
+			arrow_sphere_model.show()
+			add_child(arrow_sphere_model.duplicate())
+		
+		arrow_model.rotation_degrees.z = -75
+		arrow_model.position = origin_position.bezier_interpolate(control_1, control_2, target_position, amount / float(amount + 1))
 	
 	arrow_model.show()
 	arrow_model.get_child(0).show()
@@ -202,8 +214,15 @@ func spawn_bullet(target):
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
 		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration)
 	else:
-		position_tween.tween_property(bullet_model, 'position', Vector3(-1 * target_position_on_map.x / 2, 1.0, -1 * target_position_on_map.z / 2), duration / 2)
-		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration / 2)
+		# bezier ftw!
+		var origin_position = get_vector3_on_map(Vector3.ZERO)
+		var target_position = get_vector3_on_map(-1 * target_position_on_map)
+		var control_1 = Vector3(origin_position.x, 3.0, origin_position.z)
+		var control_2 = Vector3(target_position.x, 3.0, target_position.z)
+		# more = smoother
+		var amount = roundi((target_position - origin_position).length()) + 3
+		for i in range(1, amount + 1):
+			position_tween.tween_property(bullet_model, 'position', origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount)), duration / amount)#.set_ease(Tween.EASE_OUT_IN).set_trans(Tween.TRANS_CUBIC)
 	await position_tween.finished
 	
 	bullet_model.queue_free()

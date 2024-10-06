@@ -79,8 +79,8 @@ func init(tile_init_data):
 	add_child(models.indicator_dashed)
 	add_child(models.indicator_corners)
 	if models.has('asset'):
-		if TILE_INFO.has(models.asset.name):
-			info = TILE_INFO.get(models.asset.name)
+		if tr(models.asset.name) != models.asset.name:
+			info = tr(models.asset.name)
 		
 		models.asset.name = models.asset.name + '_' + str(randi())
 		#models.asset.rotation_degrees.y = randi_range(0, 180)

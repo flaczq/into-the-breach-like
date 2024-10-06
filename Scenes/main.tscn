@@ -103,7 +103,7 @@ layout_mode = 2
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_oi1vl")
 shortcut = SubResource("Shortcut_mhvaf")
-text = "MAIN MENU"
+text = "MAIN_MENU"
 
 [node name="EndTurnButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
 layout_mode = 2

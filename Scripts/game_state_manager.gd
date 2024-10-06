@@ -36,7 +36,7 @@ var undo: Dictionary
 
 func _ready():
 	# next_level() will increase level number
-	if Global.tutorial:
+	if Global.test or Global.tutorial:
 		level = 0
 	else:
 		level = 6
@@ -48,7 +48,10 @@ func _ready():
 
 func progress():
 	# level not increased yet
-	if level < MAX_TUTORIAL_LEVELS:
+	if Global.test:
+		next_level()
+		init(LevelType.TEST)
+	elif level < MAX_TUTORIAL_LEVELS:
 		next_level()
 		init(LevelType.TUTORIAL)
 	else:
@@ -615,7 +618,8 @@ func _on_tile_hovered(tile, is_hovered):
 	# UI
 	if is_hovered:
 		# info about hovered tile
-		tile_info_label.text = 'COORDS: ' + str(tile.coords) + '\n'
+		tile_info_label.text = 'POSITION: ' + str(tile.position) + '\n'
+		tile_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
 		tile_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n'
 		tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type])
 		

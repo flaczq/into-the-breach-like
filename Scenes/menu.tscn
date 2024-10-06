@@ -41,7 +41,7 @@ grow_horizontal = 0
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_5okir")
 shortcut = SubResource("Shortcut_fmudf")
-text = "MAIN MENU"
+text = "MAIN_MENU"
 
 [node name="MenuContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
@@ -57,6 +57,10 @@ offset_bottom = 33.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="TestButton" type="Button" parent="CanvasLayer/UI/MenuContainer"]
+layout_mode = 2
+text = "! TEST !"
+
 [node name="StartButton" type="Button" parent="CanvasLayer/UI/MenuContainer"]
 layout_mode = 2
 text = "START"
@@ -65,6 +69,10 @@ text = "START"
 layout_mode = 2
 button_pressed = true
 text = "TUTORIAL"
+
+[node name="LanguageCheckButton" type="CheckButton" parent="CanvasLayer/UI/MenuContainer"]
+layout_mode = 2
+text = "ENGLISH/POLISH"
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 visible = false
@@ -117,8 +125,10 @@ vertical_icon_alignment = 2
 expand_icon = true
 
 [connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/MenuContainer/TestButton" to="." method="_on_test_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/MenuContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/MenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
+[connection signal="toggled" from="CanvasLayer/UI/MenuContainer/LanguageCheckButton" to="." method="_on_language_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player1Button" to="." method="_on_player_button_pressed" binds= [0]]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player2Button" to="." method="_on_player_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player3Button" to="." method="_on_player_button_pressed" binds= [2]]

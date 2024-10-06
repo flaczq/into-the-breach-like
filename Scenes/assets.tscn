@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=3 uid="uid://d0dm54nlu3hbr"]
+[gd_scene load_steps=70 format=3 uid="uid://d0dm54nlu3hbr"]
 
 [ext_resource type="Texture2D" uid="uid://o8jtnohtfapr" path="res://Assets/Prototype/Textures/colormap.png" id="4_3o06n"]
 [ext_resource type="Texture2D" uid="uid://1v2hwuehojpn" path="res://Assets/loafbrr.basic-platforming-pack/props/Pallete3.png" id="4_abx10"]
@@ -918,6 +918,8 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_4by2l")
 
+[sub_resource type="SphereMesh" id="SphereMesh_tx8n1"]
+
 [node name="Assets" type="Node3D"]
 
 [node name="floor-thick" type="MeshInstance3D" parent="."]
@@ -988,7 +990,7 @@ visible = false
 mesh = SubResource("ArrayMesh_bgdcb")
 
 [node name="ArrowSignContainer" type="Node3D" parent="." groups=["ASSETS_ARROW"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.006)
 
 [node name="ArrowSign" type="MeshInstance3D" parent="ArrowSignContainer"]
 transform = Transform3D(50, 0, 0, 0, -2.18557e-06, -50, 0, 50, -2.18557e-06, 0, 0, 0)
@@ -1035,3 +1037,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_7jcjy")
 transform = Transform3D(0.8, 0, 0, 0, -3.49691e-08, -0.8, 0, 0.8, -3.49691e-08, 0, 0.2, 0)
 visible = false
 mesh = SubResource("ArrayMesh_0df47")
+
+[node name="sphere" type="MeshInstance3D" parent="." groups=["ASSETS_ARROW"]]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.5, 0)
+mesh = SubResource("SphereMesh_tx8n1")

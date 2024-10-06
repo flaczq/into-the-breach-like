@@ -2,6 +2,21 @@ extends Util
 
 const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
 const KILL_ENEMIES_LEVELS_FILE_PATH: String = 'res://Data/kill_enemies_levels.txt'
+const TEST_LEVELS_DATA = [
+	{
+		# 8x8
+		'config': {'level': '1', 'level_type': LevelType.TEST, 'tiles': 'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP', 'tiles_assets': '0000000000000000000000000000000000000000000000000000000000000000', 'max_turns': 5},
+		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
+		'players': [
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.GIVE_SHIELD, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.SLOW_DOWN, 'action_distance': 7},
+		],
+		'enemies': [],
+		'civilians': [],
+	}
+]
 const TUTORIAL_LEVELS_DATA = [
 	{
 		# 4x4
@@ -97,6 +112,9 @@ const TUTORIAL_LEVELS_DATA = [
 
 
 func generate_data(level_type, level):
+	if level_type == LevelType.TEST:
+		return TEST_LEVELS_DATA[level - 1]
+	
 	var file_path = get_level_file_path(level_type)
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	var current_level = calculate_level_for_level_type(level_type, level)

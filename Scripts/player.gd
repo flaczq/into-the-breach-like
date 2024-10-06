@@ -22,7 +22,7 @@ func _ready():
 	arrow_model_material.albedo_color = Color.LIME_GREEN
 	
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
-	default_arrow_line_model.set_surface_override_material(0, arrow_model_material)
+	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
 
 
 #func _input(event):
@@ -91,7 +91,7 @@ func move(tiles_path, forced, outside_tile):
 					look_at_y(next_tile)
 				
 				var position_tween = create_tween()
-				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
+				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
 				await position_tween.finished
 			
 			if not forced:

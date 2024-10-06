@@ -106,7 +106,7 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 		if asset_filename:
 			if asset.name == asset_filename:
 				models.asset = asset.duplicate()
-				models.asset.name = 'sign_' + level
+				models.asset.name = 'SIGN_' + level
 		elif tile_type == TileType.TREE:
 			if asset.name == 'tree':
 				models.asset = asset.duplicate()

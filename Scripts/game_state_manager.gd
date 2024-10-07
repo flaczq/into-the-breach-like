@@ -183,7 +183,7 @@ func start_turn():
 		
 		var target_tile_for_movement = target_tiles_for_movement.pick_random()
 		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
-		await civilian.move(tiles_path, false, null)
+		await civilian.move(tiles_path)
 		
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
 	
@@ -199,7 +199,7 @@ func start_turn():
 			print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
 		
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
-		await enemy.move(tiles_path, false, null)
+		await enemy.move(tiles_path)
 	
 		# enemy shouldn't but could have moved in front of the other enemy's attack line
 		recalculate_enemies_planned_actions()
@@ -341,7 +341,7 @@ func calculate_tiles_for_movement(active, character):
 					# characters can move through other characters of the same type
 					var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
 					if not occupied_by_characters and not tiles_for_movement.has(tile):
-						if is_tile_adjacent(tile, origin_tile, true):
+						if is_tile_adjacent(tile, origin_tile):
 							push_unique_to_array(tiles_for_movement, tile)
 							push_unique_to_array(temp_origin_tiles, tile)
 						elif is_tile_adjacent(tile, origin_tile, not character.can_fly):
@@ -356,7 +356,7 @@ func calculate_tiles_for_movement(active, character):
 	return tiles_for_movement.filter(func(tile): return not tile.player and not tile.enemy and not tile.civilian)
 
 
-func is_tile_adjacent(tile, origin_tile, check_for_movement):
+func is_tile_adjacent(tile, origin_tile, check_for_movement = true):
 	if check_for_movement and (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE):
 		return false
 	
@@ -609,6 +609,7 @@ func _on_tile_hovered(tile, is_hovered):
 	
 	for current_tile in map.tiles:
 		current_tile.ghost = null
+		current_tile.toggle_shader(false)
 		
 		# reset other tiles
 		if current_tile != tile:
@@ -685,10 +686,17 @@ func _on_tile_hovered(tile, is_hovered):
 				selected_player.clear_arrows()
 	
 	if is_hovered:
+		# highlight attack arrows of hovered enemy
 		if tile.enemy:
 			tile.enemy.toggle_highlight(true)
+			
+			if tile.enemy.planned_tile:
+				tile.enemy.planned_tile.toggle_shader(true)
 		
+		# highlight attack arrows of hovered planned target
 		if tile.is_planned_enemy_action:
+			tile.toggle_shader(true)
+			
 			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
 				current_enemy.toggle_highlight(true)
 
@@ -715,7 +723,7 @@ func _on_tile_clicked(tile):
 			undo_button.set_disabled(false)
 			
 			var tiles_path = calculate_tiles_path(selected_player, tile)
-			await selected_player.move(tiles_path, false, null)
+			await selected_player.move(tiles_path, false)
 			
 			recalculate_enemies_planned_actions()
 		elif selected_player.current_phase == PhaseType.ACTION:
@@ -806,10 +814,10 @@ func _on_character_action_push_back(character, origin_tile_coords):
 	if target_tiles.is_empty():
 		var outside_tile = {'position': character.tile.position + Vector3(push_direction.y, 0, push_direction.x)}
 		# pushed outside of the map
-		await character.move([character.tile], true, outside_tile)
+		await character.move([character.tile], true)
 	else:
 		var target_tile = target_tiles.front()
-		await character.move([target_tile], true, null)
+		await character.move([target_tile], true)
 		
 		if character.is_alive and character.tile:
 			if character.tile.health_type == TileHealthType.DESTROYED:
@@ -837,10 +845,10 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 	if target_tiles.is_empty():
 		var outside_tile = {'position': character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)}
 		# pulled outside of the map - is this even possible?
-		await character.move([character.tile], true, outside_tile)
+		await character.move([character.tile], true)
 	else:
 		var target_tile = target_tiles.front()
-		await character.move([target_tile], true, null)
+		await character.move([target_tile], true)
 		
 		if character.is_alive and character.tile:
 			if character.tile.health_type == TileHealthType.DESTROYED:

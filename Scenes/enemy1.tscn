@@ -42,6 +42,7 @@ _surfaces = [{
 blend_shape_mode = 0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_8eurk"]
+resource_local_to_scene = true
 resource_name = "Skeleton_Head_Skull_LP_UV_Check_0_004"
 _surfaces = [{
 "aabb": AABB(-0.722556, -0.765696, -0.797238, 1.42029, 1.33336, 1.41317),
@@ -79,7 +80,7 @@ shadow_mesh = SubResource("ArrayMesh_cro0a")
 script = ExtResource("1_hqvdf")
 assets_scene = ExtResource("2_usem4")
 
-[node name="Skeleton_Head" type="MeshInstance3D" parent="."]
+[node name="Skeleton_Head" type="MeshInstance3D" parent="." groups=["MODELS"]]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_8eurk")
 

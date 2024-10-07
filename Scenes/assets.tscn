@@ -498,6 +498,11 @@ shadow_mesh = SubResource("ArrayMesh_1ritj")
 albedo_color = Color(0.796078, 0, 0.235294, 1)
 emission = Color(1, 0, 0, 1)
 
+[sub_resource type="SphereMesh" id="SphereMesh_tx8n1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l7r3e"]
+albedo_color = Color(0.796078, 0, 0.235294, 1)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dylpp"]
 resource_name = "colormap"
 cull_mode = 2
@@ -880,11 +885,6 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_4by2l")
 
-[sub_resource type="SphereMesh" id="SphereMesh_tx8n1"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l7r3e"]
-albedo_color = Color(0.796078, 0, 0.235294, 1)
-
 [node name="Assets" type="Node3D"]
 
 [node name="floor-thick" type="MeshInstance3D" parent="."]
@@ -894,16 +894,15 @@ skeleton = NodePath("")
 
 [node name="TileHighlighted" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
+visible = false
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ih35y")
 skeleton = NodePath("")
 
 [node name="TileTargeted" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
-visible = false
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_cuku6")
-skeleton = NodePath("")
 
 [node name="TileDamaged" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.208, 0)
@@ -962,6 +961,11 @@ mesh = SubResource("ArrayMesh_b1x4s")
 skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_adqhn")
 
+[node name="sphere" type="MeshInstance3D" parent="." groups=["ASSETS_ARROW"]]
+transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0.5, 0)
+mesh = SubResource("SphereMesh_tx8n1")
+surface_material_override/0 = SubResource("StandardMaterial3D_l7r3e")
+
 [node name="weapon-sword" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 visible = false
@@ -996,8 +1000,3 @@ surface_material_override/0 = SubResource("StandardMaterial3D_7jcjy")
 transform = Transform3D(0.8, 0, 0, 0, -3.49691e-08, -0.8, 0, 0.8, -3.49691e-08, 0, 0.2, 0)
 visible = false
 mesh = SubResource("ArrayMesh_0df47")
-
-[node name="sphere" type="MeshInstance3D" parent="." groups=["ASSETS_ARROW"]]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.5, 0)
-mesh = SubResource("SphereMesh_tx8n1")
-surface_material_override/0 = SubResource("StandardMaterial3D_l7r3e")

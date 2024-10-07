@@ -6,15 +6,24 @@ extends Util
 @onready var menu_container = $CanvasLayer/UI/MenuContainer
 @onready var tutorial_check_button = $CanvasLayer/UI/MenuContainer/TutorialCheckButton
 @onready var options_container = $CanvasLayer/UI/OptionsContainer
+@onready var language_option_button = $CanvasLayer/UI/OptionsContainer/LanguageOptionButton
+@onready var aa_check_box = $CanvasLayer/UI/OptionsContainer/AACheckBox
 @onready var players_container = $CanvasLayer/UI/PlayersContainer
 @onready var version_label = $CanvasLayer/UI/VersionLabel
 
 
 func _ready():
 	TranslationServer.set_locale('en')
+	version_label.text = ProjectSettings.get_setting('application/config/version')
 	
 	tutorial_check_button.set_pressed(Global.tutorial)
-	version_label.text = ProjectSettings.get_setting('application/config/version')
+	_on_tutorial_check_button_toggled(Global.tutorial)
+	
+	language_option_button.select(Global.language)
+	_on_language_option_button_item_selected(Global.language)
+	
+	aa_check_box.set_pressed(Global.aa)
+	_on_aa_check_box_toggled(Global.aa)
 	
 	_on_main_menu_button_pressed()
 
@@ -67,8 +76,16 @@ func _on_player_button_pressed(player_type):
 	start()
 
 
-func _on_language_check_button_toggled(toggled_on):
-	if toggled_on:
-		TranslationServer.set_locale('pl')
+func _on_language_option_button_item_selected(index):
+	Global.language = index
+	
+	TranslationServer.set_locale(Global.Language.keys()[Global.language].to_lower())
+
+
+func _on_aa_check_box_toggled(toggled_on):
+	Global.aa = toggled_on
+	
+	if Global.aa:
+		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_8X)
 	else:
-		TranslationServer.set_locale('en')
+		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)

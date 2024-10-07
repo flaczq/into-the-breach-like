@@ -18,7 +18,11 @@ var is_ghost: bool = false
 func _ready():
 	super()
 	
+	set_models()
 	#model = $Tank
+	
+	for model in models:
+		model.get_mesh().surface_set_material(model.get_mesh().get_surface_count() - 1, model.get_mesh().surface_get_material(model.get_mesh().get_surface_count() - 1).duplicate())
 	
 	var arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.albedo_color = ARROW_DEFAULT_COLOR
@@ -48,6 +52,15 @@ func _ready():
 				#print('cannot next phase, has to next turn')
 
 
+func set_models(parent = self):
+	for child in parent.get_children().filter(func(child): return child.is_visible()):
+		if child is MeshInstance3D and child.is_in_group('MODELS'):
+			models.append(child)
+		
+		if child.get_child_count() > 0:
+			set_models(child)
+
+
 func spawn(target_tile):
 	tile = target_tile
 	tile.set_player(self)
@@ -57,7 +70,7 @@ func spawn(target_tile):
 	#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(moves_per_turn) + ' MOVE(S) / ' + str(actions_per_turn) + ' ACTION(S)')
 
 
-func move(tiles_path, forced, outside_tile):
+func move(tiles_path, forced = false, outside_tile = null):
 	if not forced and current_phase != PhaseType.MOVE:
 		return
 	
@@ -67,7 +80,7 @@ func move(tiles_path, forced, outside_tile):
 	
 	var target_tile = tiles_path.back()
 	if target_tile == tile:
-		if forced:
+		if forced and outside_tile:
 			print('playe ' + str(tile.coords) + ' -> pushed into the wall')
 			await forced_into_occupied_tile(outside_tile, true)
 		else:
@@ -75,9 +88,9 @@ func move(tiles_path, forced, outside_tile):
 	else:
 		if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
 			print('playe ' + str(tile.coords) + ' -> pushed into other character or destructible tile')
-			get_shot(1, ActionType.NONE, target_tile.coords)
+			get_shot(1)
 			
-			await forced_into_occupied_tile(target_tile, false)
+			await forced_into_occupied_tile(target_tile)
 		else:
 			tile.set_player(null)
 			tile = target_tile
@@ -132,7 +145,7 @@ func shoot(target_tile):
 	
 	await spawn_bullet(target_tile)
 	
-	await target_tile.get_shot(damage, ActionType.NONE, tile.coords)
+	await target_tile.get_shot(damage)
 	
 	after_action()
 
@@ -154,26 +167,6 @@ func after_action():
 		clicked()
 
 
-func get_shot(taken_damage, action_type, origin_tile_coords):
-	if state_type == StateType.GIVE_SHIELD:
-		taken_damage = 0
-		print('playe ' + str(tile.coords) + ' -> was given shield')
-		state_type = StateType.NONE
-	
-	health -= taken_damage
-	
-	apply_action_type(action_type, origin_tile_coords)
-	
-	model.set_surface_override_material(0, model_material)
-	var color_tween = create_tween()
-	color_tween.tween_property(model_material, 'albedo_color', model_material.albedo_color, 1.0).from(Color.RED)
-	await color_tween.finished
-	model.set_surface_override_material(0, null)
-	
-	if health <= 0 and is_alive:
-		get_killed()
-
-
 func get_killed():
 	is_alive = false
 	print('playe ' + str(tile.coords) + ' -> dead!')
@@ -181,7 +174,8 @@ func get_killed():
 	tile.set_player(null)
 	tile = null
 	
-	model_material.albedo_color = Color.DARK_RED
+	for model in models:
+		model.get_active_material(model.get_mesh().get_surface_count() - 1).albedo_color = Color.DARK_RED
 
 
 func start_turn():
@@ -242,9 +236,11 @@ func clicked():
 	clicked_event.emit(self, is_clicked)
 	
 	if is_clicked:
-		position.y = 0.15
+		#position.y = 0.15
+		toggle_shader(true, ARROW_DEFAULT_COLOR, 3.0)
 	else:
-		position.y = 0.0
+		#position.y = 0.0
+		toggle_shader(false)
 		
 		hovered_event.emit(self, true)
 

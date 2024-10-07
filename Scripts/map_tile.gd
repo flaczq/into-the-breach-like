@@ -182,7 +182,7 @@ func set_planned_enemy_action(new_is_planned_enemy_action):
 	reset_tile_models()
 
 
-func get_shot(taken_damage, action_type, origin_tile_coords):
+func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = null):
 	if player:
 		await player.get_shot(taken_damage, action_type, origin_tile_coords)
 	elif enemy:

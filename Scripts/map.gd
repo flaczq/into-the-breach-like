@@ -4,6 +4,7 @@ extends Util
 
 const TILE_1: Resource = preload('res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile1.png')
 const TILE_5: Resource = preload('res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile5.png')
+const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 const OUTLINE_SHADER: Resource = preload('res://Other/outline_shader.gdshader')
 
 var tiles: Array[Node3D] = []
@@ -81,7 +82,7 @@ func convert_asset_initial_to_filename(asset_initial):
 
 
 func get_models_by_tile_type(tile_type, asset_filename, level):
-	var models = {'tile_shader': OUTLINE_SHADER}
+	var models = {'tile_shader': FLASHING_SHADER}
 	
 	for asset in assets:
 		# has to be duplicated to make them unique

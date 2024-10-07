@@ -44,6 +44,7 @@ shortcut = SubResource("Shortcut_fmudf")
 text = "MAIN_MENU"
 
 [node name="MenuContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -75,7 +76,6 @@ button_pressed = true
 text = "TUTORIAL"
 
 [node name="OptionsContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -89,9 +89,19 @@ offset_bottom = 15.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LanguageCheckButton" type="CheckButton" parent="CanvasLayer/UI/OptionsContainer"]
+[node name="LanguageOptionButton" type="OptionButton" parent="CanvasLayer/UI/OptionsContainer"]
 layout_mode = 2
-text = "ENGLISH/POLISH"
+item_count = 2
+selected = 0
+popup/item_0/text = "ENGLISH"
+popup/item_0/id = 0
+popup/item_1/text = "POLISH"
+popup/item_1/id = 1
+
+[node name="AACheckBox" type="CheckBox" parent="CanvasLayer/UI/OptionsContainer"]
+layout_mode = 2
+button_pressed = true
+text = "ANTI-ALIASING"
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 visible = false
@@ -161,7 +171,8 @@ text = "1.0"
 [connection signal="pressed" from="CanvasLayer/UI/MenuContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/MenuContainer/OptionsButton" to="." method="_on_options_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/MenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
-[connection signal="toggled" from="CanvasLayer/UI/OptionsContainer/LanguageCheckButton" to="." method="_on_language_check_button_toggled"]
+[connection signal="item_selected" from="CanvasLayer/UI/OptionsContainer/LanguageOptionButton" to="." method="_on_language_option_button_item_selected"]
+[connection signal="toggled" from="CanvasLayer/UI/OptionsContainer/AACheckBox" to="." method="_on_aa_check_box_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player1Button" to="." method="_on_player_button_pressed" binds= [0]]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player2Button" to="." method="_on_player_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player3Button" to="." method="_on_player_button_pressed" binds= [2]]

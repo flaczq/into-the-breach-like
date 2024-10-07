@@ -287,6 +287,9 @@ func next_level():
 
 
 func level_won():
+	if Global.test:
+		return
+	
 	points += civilians.filter(func(civilian): return civilian.is_alive).size()
 	
 	if level < max_levels:

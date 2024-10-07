@@ -9,9 +9,9 @@ const TEST_LEVELS_DATA = [
 		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_DOT, 'action_type': ActionType.GIVE_SHIELD, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.GIVE_SHIELD, 'action_distance': 7},
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7},
-			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.VERTICAL_LINE, 'action_type': ActionType.SLOW_DOWN, 'action_distance': 7},
+			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.SLOW_DOWN, 'action_distance': 7},
 		],
 		'enemies': [],
 		'civilians': [],

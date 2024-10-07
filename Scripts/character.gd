@@ -89,8 +89,8 @@ func forced_into_occupied_tile(target_tile, is_outside):
 
 
 func spawn_arrow(target):
-	var target_position_on_map = get_vector3_on_map(position - target.position)
-	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
+	var position_to_target = get_vector3_on_map(position - target.position)
+	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
 	
@@ -127,7 +127,7 @@ func spawn_arrow(target):
 		#arrow_sphere_model.rotation_degrees.y = -135
 	
 	var position_offset = Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
-	var arrow_model_position = get_vector3_on_map(position_offset * 0.5 - target_position_on_map)
+	var arrow_model_position = get_vector3_on_map(position_offset * 0.5 - position_to_target)
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
 		arrow_model.position = arrow_model_position
 	
@@ -147,10 +147,11 @@ func spawn_arrow(target):
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		# bezier ftw!
 		var origin_position = get_vector3_on_map(Vector3.ZERO)
-		var target_position = get_vector3_on_map(-1 * target_position_on_map)
-		var control_1 = Vector3(origin_position.x, 3.0, origin_position.z)
-		var control_2 = Vector3(target_position.x, 3.0, target_position.z)
-		var amount = roundi((target_position - origin_position).length()) + 3
+		var target_position = get_vector3_on_map(-1 * position_to_target)
+		var position_difference = target_position - origin_position
+		var control_1 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
+		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
+		var amount = maxi(2 * roundi(position_difference.length()), 6)
 		for i in range(1, amount):
 			arrow_sphere_model.position = origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount + 1))
 			arrow_sphere_model.show()
@@ -178,8 +179,8 @@ func toggle_arrows(is_toggled):
 
 
 func spawn_bullet(target):
-	var target_position_on_map = get_vector3_on_map(position - target.position)
-	var hit_distance = Vector2i(target_position_on_map.z, target_position_on_map.x)
+	var position_to_target = get_vector3_on_map(position - target.position)
+	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
 	
@@ -208,21 +209,27 @@ func spawn_bullet(target):
 	bullet_model.show()
 	add_child(bullet_model)
 	
-	# constant speed of 8 tiles per second
-	var duration = target_position_on_map.length() / 8.0
 	var position_tween = create_tween()
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
-		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * target_position_on_map), duration)
+		# constant speed of 8 tiles per second
+		var duration = position_to_target.length() / 12.0
+		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * position_to_target), duration)
 	else:
 		# bezier ftw!
 		var origin_position = get_vector3_on_map(Vector3.ZERO)
-		var target_position = get_vector3_on_map(-1 * target_position_on_map)
-		var control_1 = Vector3(origin_position.x, 3.0, origin_position.z)
-		var control_2 = Vector3(target_position.x, 3.0, target_position.z)
+		var target_position = get_vector3_on_map(-1 * position_to_target)
+		var position_difference = target_position - origin_position
+		var control_1 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
+		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		# more = smoother
-		var amount = roundi((target_position - origin_position).length()) + 3
+		var amount = maxi(2 * roundi(position_difference.length()), 6)
+		#var duration = position_difference.length() / (amount * 12.0)
 		for i in range(1, amount + 1):
-			position_tween.tween_property(bullet_model, 'position', origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount)), duration / amount)#.set_ease(Tween.EASE_OUT_IN).set_trans(Tween.TRANS_CUBIC)
+			var duration = position_difference.length() / (amount * 12.0)
+			# manually slowing down the bullet in the middle
+			if i > amount * 2/6 and i < amount * 4/6:
+				duration *= 1.2
+			position_tween.tween_property(bullet_model, 'position', origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount)), duration)
 	await position_tween.finished
 	
 	bullet_model.queue_free()

@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Saving the Tiles"
+config/version="0.1-alpha.20241007"
 run/main_scene="res://Scenes/menu.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"

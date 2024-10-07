@@ -1,6 +1,8 @@
 extends Character
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
+const ARROW_DEFAULT_COLOR: Color = Color('cb003c')
+const ARROW_HIGHLIGHTED_COLOR: Color = Color('ffa3ac')#ffa3ac
 
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
@@ -15,7 +17,7 @@ func _ready():
 	#model = $Skeleton_Head
 	
 	arrow_model_material = StandardMaterial3D.new()
-	arrow_model_material.albedo_color = Color.RED
+	arrow_model_material.albedo_color = ARROW_DEFAULT_COLOR
 	
 	arrow_shader_material = ShaderMaterial.new()
 	arrow_shader_material.set_shader(FLASHING_SHADER)
@@ -151,16 +153,22 @@ func reset_planned_tile():
 
 
 func toggle_highlight(is_toggled):
+	# MAYBE show arrows only when hovered
+	#for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
+		#if is_toggled:
+			#child.show()
+		#else:
+			#child.hide()
 	if highlight_tween:
 		highlight_tween.kill()
 	
 	if is_toggled:
 		highlight_tween = create_tween().set_loops()
-		highlight_tween.tween_property(arrow_model_material, 'albedo_color', Color.PINK, 0.3)
+		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ARROW_HIGHLIGHTED_COLOR, 0.3)
 		highlight_tween.tween_interval(0.1)
-		highlight_tween.tween_property(arrow_model_material, 'albedo_color', Color.RED, 0.3)
+		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ARROW_DEFAULT_COLOR, 0.3)
 		#arrow_model_material.albedo_color = Color.YELLOW
 		#arrow_model_material.set_next_pass(arrow_shader_material)
 	else:
-		arrow_model_material.albedo_color = Color.RED
+		arrow_model_material.albedo_color = ARROW_DEFAULT_COLOR
 		#arrow_model_material.set_next_pass(null)

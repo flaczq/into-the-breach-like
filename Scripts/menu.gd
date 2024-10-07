@@ -5,17 +5,18 @@ extends Util
 @onready var player_buttons = $CanvasLayer/UI/PlayerButtons
 @onready var menu_container = $CanvasLayer/UI/MenuContainer
 @onready var tutorial_check_button = $CanvasLayer/UI/MenuContainer/TutorialCheckButton
+@onready var options_container = $CanvasLayer/UI/OptionsContainer
 @onready var players_container = $CanvasLayer/UI/PlayersContainer
+@onready var version_label = $CanvasLayer/UI/VersionLabel
 
 
 func _ready():
 	TranslationServer.set_locale('en')
 	
-	player_buttons.hide()
-	menu_container.show()
-	players_container.hide()
-	
 	tutorial_check_button.set_pressed(Global.tutorial)
+	version_label.text = ProjectSettings.get_setting('application/config/version')
+	
+	_on_main_menu_button_pressed()
 
 
 func start():
@@ -29,6 +30,7 @@ func start():
 func _on_main_menu_button_pressed():
 	player_buttons.hide()
 	menu_container.show()
+	options_container.hide()
 	players_container.hide()
 
 
@@ -48,6 +50,12 @@ func _on_start_button_pressed():
 		player_buttons.show()
 		menu_container.hide()
 		players_container.show()
+
+
+func _on_options_button_pressed():
+	player_buttons.show()
+	menu_container.hide()
+	options_container.show()
 
 
 func _on_tutorial_check_button_toggled(toggled_on):

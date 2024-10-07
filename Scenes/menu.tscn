@@ -65,12 +65,31 @@ text = "! TEST !"
 layout_mode = 2
 text = "START"
 
+[node name="OptionsButton" type="Button" parent="CanvasLayer/UI/MenuContainer"]
+layout_mode = 2
+text = "MENU_OPTIONS"
+
 [node name="TutorialCheckButton" type="CheckButton" parent="CanvasLayer/UI/MenuContainer"]
 layout_mode = 2
 button_pressed = true
 text = "TUTORIAL"
 
-[node name="LanguageCheckButton" type="CheckButton" parent="CanvasLayer/UI/MenuContainer"]
+[node name="OptionsContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -89.5
+offset_top = -15.5
+offset_right = 89.5
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LanguageCheckButton" type="CheckButton" parent="CanvasLayer/UI/OptionsContainer"]
 layout_mode = 2
 text = "ENGLISH/POLISH"
 
@@ -124,11 +143,25 @@ icon_alignment = 1
 vertical_icon_alignment = 2
 expand_icon = true
 
+[node name="VersionLabel" type="Label" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "1.0"
+
 [connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/MenuContainer/TestButton" to="." method="_on_test_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/MenuContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/MenuContainer/OptionsButton" to="." method="_on_options_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/MenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
-[connection signal="toggled" from="CanvasLayer/UI/MenuContainer/LanguageCheckButton" to="." method="_on_language_check_button_toggled"]
+[connection signal="toggled" from="CanvasLayer/UI/OptionsContainer/LanguageCheckButton" to="." method="_on_language_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player1Button" to="." method="_on_player_button_pressed" binds= [0]]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player2Button" to="." method="_on_player_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/PlayersButtons/Player3Button" to="." method="_on_player_button_pressed" binds= [2]]

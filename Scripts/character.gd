@@ -146,11 +146,11 @@ func spawn_arrow(target):
 		var amount = roundi(1.5 * position_difference.length())
 		if position_difference.length() > 1:
 			for i in range(1, amount):
-				arrow_sphere_model.position = origin_position.lerp(target_position, i / float(amount + 0.5))
+				arrow_sphere_model.position = origin_position.lerp(target_position, i / float(amount + 1.0))
 				arrow_sphere_model.show()
 				add_child(arrow_sphere_model.duplicate())
 		
-		arrow_model.position = origin_position.lerp(target_position, amount / float(amount + 0.5))
+		arrow_model.position = origin_position.lerp(target_position, amount / float(amount + 1.0))
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		# bezier ftw!
 		var control_1 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
@@ -263,9 +263,10 @@ func get_killed():
 	pass
 
 
-func toggle_outline(is_toggled):
+func toggle_outline(is_toggled, outline_color = Color.BLACK):
 	for model_outline in model_outlines:
 		if is_toggled:
+			model_outline.get_active_material(0).albedo_color = outline_color
 			model_outline.show()
 		else:
 			model_outline.hide()

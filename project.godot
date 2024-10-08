@@ -28,3 +28,7 @@ window/size/viewport_height=720
 [internationalization]
 
 locale/translations=PackedStringArray("res://I18n/text.en.translation", "res://I18n/text.pl.translation")
+
+[rendering]
+
+anti_aliasing/quality/use_taa=true

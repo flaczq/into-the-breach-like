@@ -606,10 +606,16 @@ func on_shoot_action_button_toggled(toggled_on):
 func _on_tile_hovered(tile, is_hovered):
 	for current_player in players:
 		current_player.is_ghost = false
+		
+		if current_player != selected_player:
+			current_player.toggle_outline(false)
 	
 	for current_tile in map.tiles:
 		current_tile.ghost = null
 		current_tile.toggle_shader(false)
+		
+		if not is_hovered:
+			current_tile.toggle_asset_outline(false)
 		
 		# reset other tiles
 		if current_tile != tile:
@@ -619,6 +625,9 @@ func _on_tile_hovered(tile, is_hovered):
 	for current_enemy in enemies:
 		current_enemy.toggle_highlight(false)
 		current_enemy.toggle_outline(false)
+	
+	for current_civilian in civilians:
+		current_civilian.toggle_outline(false)
 	
 	# UI
 	if is_hovered:
@@ -690,18 +699,41 @@ func _on_tile_hovered(tile, is_hovered):
 		# highlight attack arrows of hovered enemy
 		if tile.enemy:
 			tile.enemy.toggle_highlight(true)
-			tile.enemy.toggle_outline(true)
+			tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
 			
 			if tile.enemy.planned_tile:
 				tile.enemy.planned_tile.toggle_shader(true)
+				
+				if tile.enemy.planned_tile.player:
+					tile.enemy.planned_tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+				
+				if tile.enemy.planned_tile.enemy:
+					tile.enemy.planned_tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+				
+				if tile.enemy.planned_tile.civilian:
+					tile.enemy.planned_tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
+				
+				tile.enemy.planned_tile.toggle_asset_outline(true)
 		
 		# highlight attack arrows of hovered planned target
 		if tile.is_planned_enemy_action:
 			tile.toggle_shader(true)
 			
+			# find enemy whose planned tile is hovered
 			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
 				current_enemy.toggle_highlight(true)
-				current_enemy.toggle_outline(true)
+				current_enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+				
+			if tile.player:
+				tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+			
+			if tile.enemy:
+				tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+			
+			if tile.civilian:
+				tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
+			
+			tile.toggle_asset_outline(true)
 
 
 func _on_tile_clicked(tile):

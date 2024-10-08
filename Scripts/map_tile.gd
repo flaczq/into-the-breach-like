@@ -86,6 +86,8 @@ func init(tile_init_data):
 		#models.asset.rotation_degrees.y = randi_range(0, 180)
 		models.asset.show()
 		add_child(models.asset)
+		
+		toggle_asset_outline(false)
 	
 	reset_tile_models()
 
@@ -97,8 +99,10 @@ func reset_tile_models():
 	models.tile_destroyed.hide()
 	
 	if is_player_clicked:
+		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.75)
 		models.tile_highlighted.show()
 	elif is_player_hovered:
+		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.5)
 		models.tile_highlighted.show()
 	
 	if health_type == TileHealthType.DESTROYED:
@@ -111,16 +115,18 @@ func reset_tile_models():
 	
 	if is_player_clicked and is_hovered:
 		# last (target) tile in path
-		#models.indicator_solid.show()
+		#models.indicator_solid.hide()
 		models.indicator_dashed.show()
 		#models.indicator_corners.hide()
 		#position.y = 0.2
+		toggle_asset_outline(true)
 	elif health_type == TileHealthType.DESTROYED:
 		position.y = -0.2
 	else:
 		models.indicator_solid.hide()
 		models.indicator_dashed.hide()
 		models.indicator_corners.hide()
+		#toggle_asset_outline(false)
 		#position.y = 0
 
 func reset():
@@ -141,6 +147,19 @@ func set_civilian(new_civilian):
 	civilian = new_civilian
 
 
+func get_character():
+	if player:
+		return player
+		
+	if enemy:
+		return enemy
+		
+	if civilian:
+		return civilian
+		
+	return null
+
+
 func is_free():
 	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
 
@@ -150,6 +169,14 @@ func toggle_shader(is_toggled):
 		model_material.set_next_pass(shader_material)
 	else:
 		model_material.set_next_pass(null)
+
+
+func toggle_asset_outline(is_outlined):
+	if models.has('asset_outline'):
+		if is_outlined:
+			models.asset_outline.show()
+		else:
+			models.asset_outline.hide()
 
 
 func toggle_player_hovered(is_toggled):
@@ -202,7 +229,7 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 				# destroy required asset for destructible tile
 				if models.asset and not models.asset.is_queued_for_deletion():
 					models.asset.queue_free()
-		
+				
 				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> healthy tile')
 			elif health_type == TileHealthType.HEALTHY:
@@ -225,9 +252,10 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 
 func on_mouse_entered():
 	if models:
-		#models.indicator_solid.hide()
-		#models.indicator_dashed.hide()
-		models.indicator_corners.show()
+		if not is_player_clicked or not is_hovered:
+			#models.indicator_solid.hide()
+			#models.indicator_dashed.hide()
+			models.indicator_corners.show()
 	#position.y = 0.15
 
 

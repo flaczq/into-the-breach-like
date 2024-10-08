@@ -118,6 +118,11 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 			if asset.name == 'volcano':
 				models.asset = asset.duplicate()
 	
+	if models.has('asset'):
+		for child in models.asset.get_children():
+			if child.is_in_group('MODEL_OUTLINES'):
+				models.asset_outline = child
+	
 	match tile_type:
 		TileType.PLAIN:
 			#models.tile_texture = TILE_5

@@ -3,8 +3,6 @@ extends Character
 signal hovered_event(player: Node3D, is_hovered: bool)
 signal clicked_event(player: Node3D, is_clicked: bool)
 
-const ARROW_DEFAULT_COLOR: Color = Color('005fcd')
-
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0
 var actions_per_turn: int = 1
@@ -21,7 +19,9 @@ func _ready():
 	#model = $Tank
 	
 	var arrow_model_material = StandardMaterial3D.new()
-	arrow_model_material.albedo_color = ARROW_DEFAULT_COLOR
+	arrow_model_material.no_depth_test = true
+	arrow_model_material.disable_receive_shadows = true
+	arrow_model_material.albedo_color = PLAYER_ARROW_COLOR
 	
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
 	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
@@ -223,10 +223,10 @@ func clicked():
 	
 	if is_clicked:
 		#position.y = 0.15
-		toggle_outline(true)
+		toggle_outline(true, PLAYER_ARROW_COLOR)
 	else:
 		#position.y = 0.0
-		toggle_outline(false)
+		toggle_outline(false, PLAYER_ARROW_COLOR)
 		
 		hovered_event.emit(self, true)
 

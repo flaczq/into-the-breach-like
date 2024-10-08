@@ -12,6 +12,12 @@ enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LE
 enum LevelType {KILL_ENEMIES, SAVE_CIVILIANS, SURVIVE_TIL_LAST_TURN, TUTORIAL = -1, TEST = -2}
 enum PlayerType {FIRST, SECOND, THIRD, DEFAULT = -1}
 
+const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
+const PLAYER_ARROW_COLOR: Color = Color('005fcd')
+const ENEMY_ARROW_COLOR: Color = Color('cb003c')
+const ENEMY_ARROW_HIGHLIGHTED_COLOR: Color = Color('ffa3ac')#ffa3ac
+const CIVILIAN_ARROW_COLOR: Color = Color('fff700')
+
 
 func toggle_visibility(is_toggled):
 	if is_toggled:

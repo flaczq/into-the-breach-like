@@ -618,6 +618,7 @@ func _on_tile_hovered(tile, is_hovered):
 	
 	for current_enemy in enemies:
 		current_enemy.toggle_highlight(false)
+		current_enemy.toggle_outline(false)
 	
 	# UI
 	if is_hovered:
@@ -689,6 +690,7 @@ func _on_tile_hovered(tile, is_hovered):
 		# highlight attack arrows of hovered enemy
 		if tile.enemy:
 			tile.enemy.toggle_highlight(true)
+			tile.enemy.toggle_outline(true)
 			
 			if tile.enemy.planned_tile:
 				tile.enemy.planned_tile.toggle_shader(true)
@@ -699,6 +701,7 @@ func _on_tile_hovered(tile, is_hovered):
 			
 			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
 				current_enemy.toggle_highlight(true)
+				current_enemy.toggle_outline(true)
 
 
 func _on_tile_clicked(tile):

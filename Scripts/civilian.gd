@@ -4,11 +4,7 @@ extends Character
 func _ready():
 	super()
 	
-	models.append_array(get_children().filter(func(child): return child.is_visible() and child is MeshInstance3D and child.is_in_group('MODELS')))
 	#model = $Princess_Head
-	
-	for model in models:
-		model.get_mesh().surface_set_material(model.get_mesh().get_surface_count() - 1, model.get_mesh().surface_get_material(model.get_mesh().get_surface_count() - 1).duplicate())
 
 
 func spawn(target_tile):
@@ -64,5 +60,4 @@ func get_killed():
 	tile.set_civilian(null)
 	tile = null
 	
-	for model in models:
-		model.get_active_material(model.get_mesh().get_surface_count() - 1).albedo_color = Color.DARK_RED
+	model.get_active_material(0).albedo_color = Color.DARK_RED

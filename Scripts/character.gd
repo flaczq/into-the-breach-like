@@ -11,13 +11,11 @@ signal action_hit_ally(character: Character)
 signal action_give_shield(character: Character)
 signal action_slow_down(character: Character)
 
-const OUTLINE_SHADER: Resource = preload('res://Other/outline_shader.gdshader')
-
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
-var models: Array[Node] = []
+var model_outlines: Array[Node] = []
 
-var shader_material: ShaderMaterial
+var model: MeshInstance3D
 var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
 var default_bullet_model: Node3D
@@ -37,8 +35,12 @@ func _ready():
 	# to move properly among available positions
 	position = Vector3.ZERO
 	
-	shader_material = ShaderMaterial.new()
-	shader_material.set_shader(OUTLINE_SHADER)
+	model = get_children().filter(func(child): return child.is_visible() and child is MeshInstance3D).front()
+	model.show()
+	
+	set_model_outlines()
+	for model_outline in model_outlines:
+		model_outline.hide()
 	
 	var assets_instance = assets_scene.instantiate()
 	for asset in assets_instance.get_children():
@@ -73,28 +75,13 @@ func apply_action_type(action_type, origin_tile_coords = null):
 		_: print('no action')
 
 
-func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = null):
-	if state_type == StateType.GIVE_SHIELD:
-		taken_damage = 0
-		print('playe ' + str(tile.coords) + ' -> was given shield')
-		state_type = StateType.NONE
-	
-	health -= taken_damage
-	
-	apply_action_type(action_type, origin_tile_coords)
-	
-	var color_tween = create_tween()
-	for model in models:
-		color_tween.parallel().tween_property(model.get_active_material(model.get_mesh().get_surface_count() - 1), 'albedo_color', model.get_active_material(model.get_mesh().get_surface_count() - 1).albedo_color, 1.0).from(Color.RED)
-	await color_tween.finished
-	
-	if health <= 0 and is_alive:
-		get_killed()
-
-
-func get_killed():
-	# implemented in subclasses 
-	pass
+func set_model_outlines(parent = model):
+	for child in parent.get_children():
+		if child.is_in_group('MODEL_OUTLINES'):
+			model_outlines.append(child)
+		
+		if child.get_child_count() > 0:
+			set_model_outlines(child)
 
 
 func forced_into_occupied_tile(target_tile, is_outside = false):
@@ -112,16 +99,6 @@ func forced_into_occupied_tile(target_tile, is_outside = false):
 	position_tween = create_tween()
 	position_tween.tween_property(self, 'position', origin_position, duration)
 	await position_tween.finished
-
-
-func toggle_shader(is_toggled, outline_color = null, outline_width = null):
-	for model in models:
-		if is_toggled:
-			shader_material.set_shader_parameter('outline_color', outline_color)
-			shader_material.set_shader_parameter('outline_width', outline_width)
-			model.get_active_material(model.get_mesh().get_surface_count() - 1).set_next_pass(shader_material)
-		else:
-			model.get_active_material(model.get_mesh().get_surface_count() - 1).set_next_pass(null)
 
 
 func spawn_arrow(target):
@@ -263,11 +240,41 @@ func spawn_bullet(target):
 	bullet_model.queue_free()
 
 
+func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = null):
+	if state_type == StateType.GIVE_SHIELD:
+		taken_damage = 0
+		print('playe ' + str(tile.coords) + ' -> was given shield')
+		state_type = StateType.NONE
+	
+	health -= taken_damage
+	
+	apply_action_type(action_type, origin_tile_coords)
+	
+	var color_tween = create_tween()
+	color_tween.tween_property(model.get_active_material(0), 'albedo_color', model.get_active_material(0).albedo_color, 1.0).from(Color.RED)
+	await color_tween.finished
+	
+	if health <= 0 and is_alive:
+		get_killed()
+
+
+func get_killed():
+	# implemented in subclasses 
+	pass
+
+
+func toggle_outline(is_toggled):
+	for model_outline in model_outlines:
+		if is_toggled:
+			model_outline.show()
+		else:
+			model_outline.hide()
+
+
 func look_at_y(target):
-	# only parent
-	models[0].look_at(target.position, Vector3.UP, true)
-	models[0].rotation_degrees.x = 0
-	models[0].rotation_degrees.z = 0
+	model.look_at(target.position, Vector3.UP, true)
+	model.rotation_degrees.x = 0
+	model.rotation_degrees.z = 0
 	# smooth rotation has bug: which side to turn by
 	#var dummy = Node3D.new()
 	#dummy.hide()

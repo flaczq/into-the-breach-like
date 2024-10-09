@@ -36,7 +36,6 @@ func _ready():
 	# coords from name int values: x-axis = position.z, y-axis = position.x
 	coords = Vector2i(int(name.substr(4, 1)), int(name.substr(5, 1)))
 	
-	# create new materials for each tile to make them unique
 	model_material = StandardMaterial3D.new()
 	shader_material = ShaderMaterial.new()
 
@@ -51,13 +50,14 @@ func init(tile_init_data):
 	
 	# setup model with texture/shader/color
 	shader_material.set_shader(models.tile_shader)
-	#toggle_shader(false)
+	toggle_shader(false)
+	
 	if models.has('tile_texture'):
 		model_material.set_texture(0, models.tile_texture)
 	elif models.has('tile_default_color'):
 		model_material.albedo_color = models.tile_default_color
 	
-	# has to be done like this to make tiles unique
+	# surface: 0 = ground, 1 = grass
 	models.tile.set_surface_override_material(1, model_material)
 	
 	models.tile.show()
@@ -172,7 +172,7 @@ func toggle_shader(is_toggled):
 
 
 func toggle_asset_outline(is_outlined):
-	if models.has('asset_outline'):
+	if models.has('asset_outline') and not models.asset_outline.is_queued_for_deletion():
 		if is_outlined:
 			models.asset_outline.show()
 		else:
@@ -183,24 +183,12 @@ func toggle_player_hovered(is_toggled):
 	is_player_hovered = is_toggled
 	
 	reset_tile_models()
-	
-	#if is_player_hovered:
-		#toggle_shader(true)
-	#else:
-		#reset_tile_models()
-		#toggle_shader(false)
 
 
 func toggle_player_clicked(is_toggled):
 	is_player_clicked = is_toggled
 	
 	reset_tile_models()
-	
-	#if is_player_clicked:
-		#toggle_shader(true)
-	#else:
-		#reset_tile_models()
-		#toggle_shader(false)
 
 
 func set_planned_enemy_action(new_is_planned_enemy_action):

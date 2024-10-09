@@ -612,7 +612,7 @@ func _on_tile_hovered(tile, is_hovered):
 	
 	for current_tile in map.tiles:
 		current_tile.ghost = null
-		current_tile.toggle_shader(false)
+		#current_tile.toggle_shader(false)
 		
 		if not is_hovered:
 			current_tile.toggle_asset_outline(false)
@@ -623,7 +623,7 @@ func _on_tile_hovered(tile, is_hovered):
 			current_tile.reset_tile_models()
 	
 	for current_enemy in enemies:
-		current_enemy.toggle_highlight(false)
+		current_enemy.toggle_arrow_highlight(false)
 		current_enemy.toggle_outline(false)
 	
 	for current_civilian in civilians:
@@ -692,17 +692,22 @@ func _on_tile_hovered(tile, is_hovered):
 				
 				selected_player.look_at_y(first_occupied_tile_in_line)
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
+				
+				# FIXME targeting the enemy/player/civilian
+				if first_occupied_tile_in_line.enemy:
+					#show_health_with_damage_inflicted()
+					print('enemy ' + str(first_occupied_tile_in_line.coords) + ' -> with health ' + str(first_occupied_tile_in_line.enemy.health) + ' will be damaged to health ' + str(first_occupied_tile_in_line.enemy.health - selected_player.damage))
 			else:
 				selected_player.clear_arrows()
 	
 	if is_hovered:
-		# highlight attack arrows of hovered enemy
+		# outline hovered enemy and highlight his attack arrows
 		if tile.enemy:
-			tile.enemy.toggle_highlight(true)
+			tile.enemy.toggle_arrow_highlight(true)
 			tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
 			
 			if tile.enemy.planned_tile:
-				tile.enemy.planned_tile.toggle_shader(true)
+				#tile.enemy.planned_tile.toggle_shader(true)
 				
 				if tile.enemy.planned_tile.player:
 					tile.enemy.planned_tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
@@ -717,13 +722,13 @@ func _on_tile_hovered(tile, is_hovered):
 		
 		# highlight attack arrows of hovered planned target
 		if tile.is_planned_enemy_action:
-			tile.toggle_shader(true)
+			#tile.toggle_shader(true)
 			
 			# find enemy whose planned tile is hovered
 			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
-				current_enemy.toggle_highlight(true)
+				current_enemy.toggle_arrow_highlight(true)
 				current_enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
-				
+			
 			if tile.player:
 				tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
 			

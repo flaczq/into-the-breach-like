@@ -85,7 +85,6 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 	var models = {'tile_shader': FLASHING_SHADER}
 	
 	for asset in assets:
-		# has to be duplicated to make them unique
 		if asset.name == 'ground_grass':
 			models.tile = asset.duplicate()
 		elif asset.name == 'TileHighlighted':

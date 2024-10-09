@@ -134,7 +134,7 @@ func reset_planned_tile():
 		planned_tile = null
 
 
-func toggle_highlight(is_toggled):
+func toggle_arrow_highlight(is_toggled):
 	# MAYBE show arrows only when hovered
 	#for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW') and child.name != 'ArrowSignContainer'):
 		#if is_toggled:

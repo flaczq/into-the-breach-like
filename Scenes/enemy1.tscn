@@ -78,7 +78,7 @@ shadow_mesh = SubResource("ArrayMesh_cro0a")
 shading_mode = 0
 albedo_color = Color(0.796078, 0, 0.235294, 1)
 proximity_fade_enabled = true
-proximity_fade_distance = 0.2
+proximity_fade_distance = 0.3
 distance_fade_min_distance = 0.1
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_fp2bs"]

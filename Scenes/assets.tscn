@@ -1071,14 +1071,13 @@ visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_udi50")
 
-[node name="small-sign1_001" type="MeshInstance3D" parent="."]
+[node name="sign" type="MeshInstance3D" parent="."]
 transform = Transform3D(-3.0598e-10, -0.007, 3.0598e-10, 0, -3.0598e-10, -0.007, 0.007, -3.0598e-10, 1.33748e-17, 0, 0.2, 0)
-visible = false
 mesh = SubResource("ArrayMesh_61eyk")
 skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_7jcjy")
 
-[node name="small-sign1_001_outline" type="MeshInstance3D" parent="small-sign1_001" groups=["MODEL_OUTLINES"]]
+[node name="sign_outline" type="MeshInstance3D" parent="sign" groups=["MODEL_OUTLINES"]]
 visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_gyft3")

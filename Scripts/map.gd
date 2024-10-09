@@ -54,7 +54,7 @@ func convert_tile_type_initial_to_enum(tile_type_initial):
 		'W': return TileType.WATER
 		'L': return TileType.LAVA
 		_:
-			print('unknown tile type: ' + tile_type_initial)
+			print('unknown tile type initial: ' + tile_type_initial)
 			return TileType.PLAIN
 
 
@@ -68,17 +68,28 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 		TileType.WATER: return 'W'
 		TileType.LAVA: return 'L'
 		_:
-			print('unknown tile type: ' + str(tile_type_enum))
+			print('unknown tile type enum: ' + str(tile_type_enum))
 			return 'P'
 
 
 func convert_asset_initial_to_filename(asset_initial):
 	match asset_initial:
 		'0': return null
-		'S': return 'small-sign1_001'
+		'S': return 'sign'
 		_:
-			print('unknown asset: ' + asset_initial)
+			print('unknown asset initial: ' + asset_initial)
 			return null
+
+
+func convert_asset_filename_to_initial(asset_filename):
+	if not asset_filename:
+		return '0'
+	
+	if asset_filename.begins_with('sign'):
+		return 'S'
+	
+	print('default asset used or unknown asset filename: ' + asset_filename)
+	return '0'
 
 
 func get_models_by_tile_type(tile_type, asset_filename, level):
@@ -106,7 +117,7 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 		if asset_filename:
 			if asset.name == asset_filename:
 				models.asset = asset.duplicate()
-				models.asset.name = 'SIGN_' + level
+				#models.asset.name += '_' + level
 		elif tile_type == TileType.TREE:
 			if asset.name == 'tree':
 				models.asset = asset.duplicate()
@@ -131,7 +142,7 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 			models.tile_default_color = Color.SEA_GREEN
 		TileType.TREE:
 			#models.tile_texture = TILE_1
-			models.tile_default_color = Color('60b30a')#green
+			models.tile_default_color = Color('66ff3e')#green
 		TileType.MOUNTAIN:
 			#models.tile_texture = TILE_5
 			models.tile_default_color = Color('4e3214')#dark brown

@@ -36,7 +36,7 @@ var undo: Dictionary
 
 func _ready():
 	# next_level() will increase level number
-	if Global.test or Global.tutorial:
+	if Global.tutorial:
 		level = 0
 	else:
 		level = 6
@@ -48,10 +48,7 @@ func _ready():
 
 func progress():
 	# level not increased yet
-	if Global.test:
-		next_level()
-		init(LevelType.TEST)
-	elif level < MAX_TUTORIAL_LEVELS:
+	if level < MAX_TUTORIAL_LEVELS:
 		next_level()
 		init(LevelType.TUTORIAL)
 	else:
@@ -287,9 +284,6 @@ func next_level():
 
 
 func level_won():
-	if Global.test:
-		return
-	
 	points += civilians.filter(func(civilian): return civilian.is_alive).size()
 	
 	if level < max_levels:
@@ -693,10 +687,17 @@ func _on_tile_hovered(tile, is_hovered):
 				selected_player.look_at_y(first_occupied_tile_in_line)
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
 				
-				# FIXME targeting the enemy/player/civilian
+				if first_occupied_tile_in_line.player:
+					first_occupied_tile_in_line.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+				
 				if first_occupied_tile_in_line.enemy:
-					#show_health_with_damage_inflicted()
+					first_occupied_tile_in_line.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+					#TODO !!!!!!!!!! show_health_with_damage_inflicted()
 					print('enemy ' + str(first_occupied_tile_in_line.coords) + ' -> with health ' + str(first_occupied_tile_in_line.enemy.health) + ' will be damaged to health ' + str(first_occupied_tile_in_line.enemy.health - selected_player.damage))
+				
+				if first_occupied_tile_in_line.civilian:
+					first_occupied_tile_in_line.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
+				
 			else:
 				selected_player.clear_arrows()
 	

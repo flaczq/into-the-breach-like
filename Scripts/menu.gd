@@ -1,6 +1,7 @@
 extends Util
 
 @export var main_scene: PackedScene
+@export var editor_scene: PackedScene
 
 @onready var player_buttons = $CanvasLayer/UI/PlayerButtons
 @onready var menu_container = $CanvasLayer/UI/MenuContainer
@@ -22,14 +23,14 @@ func _ready():
 	language_option_button.select(Global.language)
 	_on_language_option_button_item_selected(Global.language)
 	
-	aa_check_box.set_pressed(Global.aa)
-	_on_aa_check_box_toggled(Global.aa)
+	aa_check_box.set_pressed(Global.antialiasing)
+	_on_aa_check_box_toggled(Global.antialiasing)
 	
 	_on_main_menu_button_pressed()
 
 
 func start():
-	Global.test = false
+	Global.engine_mode = Global.EngineMode.GAME
 	
 	toggle_visibility(false)
 	
@@ -44,12 +45,12 @@ func _on_main_menu_button_pressed():
 
 
 # TODO delete on release !!!
-func _on_test_button_pressed():
-	Global.test = true
+func _on_editor_button_pressed():
+	Global.engine_mode = Global.EngineMode.EDITOR
 	
 	toggle_visibility(false)
 	
-	get_tree().root.add_child(main_scene.instantiate())
+	get_tree().root.add_child(editor_scene.instantiate())
 
 
 func _on_start_button_pressed():
@@ -83,9 +84,9 @@ func _on_language_option_button_item_selected(index):
 
 
 func _on_aa_check_box_toggled(toggled_on):
-	Global.aa = toggled_on
+	Global.antialiasing = toggled_on
 	
-	if Global.aa:
+	if Global.antialiasing:
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_8X)
 	else:
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)

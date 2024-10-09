@@ -36,6 +36,8 @@ func _ready():
 	position = Vector3.ZERO
 	
 	model = get_children().filter(func(child): return child.is_visible() and child is MeshInstance3D).front()
+	# make materials unique
+	model.mesh.surface_set_material(0, model.get_active_material(0).duplicate())
 	model.show()
 	
 	set_model_outlines()

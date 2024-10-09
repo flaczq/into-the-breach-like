@@ -1,10 +1,8 @@
 extends Util
 
-@onready var game_state_manager = $GameStateManager
-@onready var camera_3d = $Camera3D
 @onready var menu = $/root/Menu
-
-const RANDOM_LEVELS_FILE_PATH = 'res://Data/random_levels.txt'
+@onready var camera_3d = $Camera3D
+@onready var game_state_manager = $GameStateManager
 
 var key_pressed: bool = false
 
@@ -67,50 +65,6 @@ func _input(event):
 		game_state_manager.action_button.set_pressed_no_signal(false)
 		
 		game_state_manager.recalculate_enemies_planned_actions()
-	
-	# !DEBUG!
-	# SAVE RANDOM MAP
-	if Input.is_key_pressed(KEY_S):
-		key_pressed = true
-		var file = FileAccess.open(RANDOM_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
-		var content = file.get_as_text()
-		content += '\nX->START\n'
-		
-		var map_dimension = sqrt(game_state_manager.map.tiles.size())
-		for tile in game_state_manager.map.tiles:
-			var index = map_dimension * (tile.coords.x - 1) + (tile.coords.y - 1)
-			if index > 0 and int(index) % int(game_state_manager.map.get_side_dimension()) == 0:
-				content += '\n'
-			
-			content += game_state_manager.map.convert_tile_type_enum_to_initial(tile.tile_type)
-		
-		content += '\nX->STOP\n'
-		file.store_string(content)
-		print('MAP SAVED')
-	
-	# LOG TILES
-	if Input.is_key_pressed(KEY_T):
-		print('tiles: ' + str(game_state_manager.map.tiles.map(func(tile): return str(tile.coords) + ' ' + str(TileHealthType.keys()[tile.health_type]))))
-	
-	# LOG DESTROYED TILES
-	#if Input.is_key_pressed(KEY_D):
-		#print('destroyed tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.health_type == TileHealthType.DESTROYED).map(func(tile): return tile.coords)))
-	
-	# LOG PLAYERS TILES
-	if Input.is_key_pressed(KEY_P):
-		print('players tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.player).map(func(tile): return tile.coords)))
-	
-	# LOG ENEMIES TILES
-	if Input.is_key_pressed(KEY_E):
-		print('enemies tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.enemy).map(func(tile): return tile.coords)))
-	
-	# LOG CIVILIANS TILES
-	if Input.is_key_pressed(KEY_C):
-		print('civilians tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.civilian).map(func(tile): return tile.coords)))
-	
-	# LOG PLANNED ENEMY ACTION TILES
-	if Input.is_key_pressed(KEY_A):
-		print('planned enemy action tiles: ' + str(game_state_manager.map.tiles.filter(func(tile): return tile.is_planned_enemy_action).map(func(tile): return tile.coords)))
 
 
 func _on_main_menu_button_pressed():

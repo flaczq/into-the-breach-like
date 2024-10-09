@@ -1,11 +1,10 @@
 extends Util
 
-const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
 const KILL_ENEMIES_LEVELS_FILE_PATH: String = 'res://Data/kill_enemies_levels.txt'
 const TEST_LEVELS_DATA = [
 	{
 		# 8x8
-		'config': {'level': '1', 'level_type': LevelType.TEST, 'tiles': 'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP', 'tiles_assets': '0000000000000000000000000000000000000000000000000000000000000000', 'max_turns': 5},
+		'config': {'level': '1', 'level_type': 'LevelType.TEST', 'tiles': 'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP', 'tiles_assets': '0000000000000000000000000000000000000000000000000000000000000000', 'max_turns': 5},
 		'map': {'scene': 2, 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 9, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7},
@@ -112,22 +111,19 @@ const TUTORIAL_LEVELS_DATA = [
 
 
 func generate_data(level_type, level):
-	if level_type == LevelType.TEST:
-		return TEST_LEVELS_DATA[level - 1]
+	if level_type == LevelType.TUTORIAL:
+		return TUTORIAL_LEVELS_DATA[level - 1]
 	
 	var file_path = get_level_file_path(level_type)
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	var current_level = calculate_level_for_level_type(level_type, level)
-	var file_text = file.get_as_text()
-	var tiles = file_text.get_slice(current_level + '->START', 1).get_slice(current_level + '->STOP', 0).strip_escapes()
+	var content = file.get_as_text()
+	var tiles = content.get_slice(current_level + '->START', 1).get_slice(current_level + '->STOP', 0).strip_escapes()
 	var tiles_assets
-	if file_text.contains(current_level + '->ASSETS_START'):
-		tiles_assets = file_text.get_slice(current_level + '->ASSETS_START', 1).get_slice(current_level + '->ASSETS_STOP', 0).strip_escapes()
+	if content.contains(current_level + '->ASSETS_START'):
+		tiles_assets = content.get_slice(current_level + '->ASSETS_START', 1).get_slice(current_level + '->ASSETS_STOP', 0).strip_escapes()
 	else:
 		tiles_assets = null
-	
-	if level_type == LevelType.TUTORIAL:
-		return TUTORIAL_LEVELS_DATA[level - 1]
 	
 	# TODO
 	var temp = TUTORIAL_LEVELS_DATA[5].duplicate()
@@ -140,11 +136,11 @@ func generate_data(level_type, level):
 
 func get_level_file_path(level_type):
 	match level_type:
-		LevelType.TUTORIAL: return TUTORIAL_LEVELS_FILE_PATH
+		#LevelType.TUTORIAL: return TUTORIAL_LEVELS_FILE_PATH
 		LevelType.KILL_ENEMIES: return KILL_ENEMIES_LEVELS_FILE_PATH
 		_:
 			print('unknown level type: ' + level_type)
-			return TUTORIAL_LEVELS_FILE_PATH
+			return KILL_ENEMIES_LEVELS_FILE_PATH
 
 
 func calculate_level_for_level_type(level_type, level):

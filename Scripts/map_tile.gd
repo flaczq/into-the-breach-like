@@ -1,12 +1,10 @@
 extends Util
 
 signal hovered_event(tile: Node3D, is_hovered: bool)
-#signal clicked_event(tile: Node3D, is_clicked: bool)
 signal clicked_event(tile: Node3D)
 
 @onready var area_3d = $Area3D
 
-#var is_clicked: bool = false
 var is_hovered: bool = false
 var is_player_clicked: bool = false
 var is_player_hovered: bool = false
@@ -80,7 +78,7 @@ func init(tile_init_data):
 	add_child(models.indicator_corners)
 	if models.has('asset'):
 		if tr(models.asset.name) != models.asset.name:
-			info = tr(models.asset.name)
+			info = tr(models.asset.name.to_upper())
 		
 		models.asset.name = models.asset.name + '_' + str(randi())
 		#models.asset.rotation_degrees.y = randi_range(0, 180)
@@ -158,6 +156,17 @@ func get_character():
 		return civilian
 		
 	return null
+
+
+func set_character(character):
+	if character.is_in_group('PLAYERS'):
+		set_player(character)
+	elif character.is_in_group('ENEMIES'):
+		set_enemy(character)
+	elif character.is_in_group('CIVILIANS'):
+		set_civilian(character)
+	else:
+		printerr('unknown character ' + str(character))
 
 
 func is_free():
@@ -282,7 +291,4 @@ func _on_area_3d_mouse_exited():
 
 func _on_area_3d_input_event(camera, event, position, normal, shape_idx):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		#is_clicked = not is_clicked
-		
-		#clicked_event.emit(self, is_clicked)
 		clicked_event.emit(self)

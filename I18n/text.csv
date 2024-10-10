@@ -1,7 +1,7 @@
 keys,en,pl
 MAIN_MENU,MAIN MENU,MENU GŁÓWNE
 MENU_OPTIONS,OPTIONS,USTAWIENIA
-SIGN_1,TUTORIAL HINT #1:\nTake advantage of seeing enemy attack,TODO
-SIGN_2,TUTORIAL HINT #2:\nSome obstacles may be destructible,TODO
-SIGN_3,TUTORIAL HINT #3:\nSometimes using an action instead of shooting is necessary to save a civilian,TODO
-SIGN_4,TUTORIAL HINT #4:\nEnemies always use their actions while dealing damage,TODO
+SIGN_TUTORIAL_1,TUTORIAL HINT #1:\nTake advantage of seeing enemy attack,TODO
+SIGN_TUTORIAL_2,TUTORIAL HINT #2:\nSome obstacles may be destructible,TODO
+SIGN_TUTORIAL_3,TUTORIAL HINT #3:\nSometimes using an action instead of shooting is necessary to save a civilian,TODO
+SIGN_TUTORIAL_4,TUTORIAL HINT #4:\nEnemies always use their actions while dealing damage,TODO

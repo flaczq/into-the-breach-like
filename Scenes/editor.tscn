@@ -161,110 +161,171 @@ grow_vertical = 0
 
 [node name="PlayButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
+disabled = true
 text = "PLAY"
 
-[node name="SaveButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
+[node name="ResetButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
-text = "SAVE"
-
-[node name="LoadButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
-layout_mode = 2
-text = "LOAD"
+text = "RESET"
 
 [node name="DeleteButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
+disabled = true
 toggle_mode = true
 text = "DELETE"
 
-[node name="MapsOptionButton" type="OptionButton" parent="CanvasLayer/UI/EditorContainer"]
+[node name="SaveButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
-expand_icon = true
-item_count = 4
-selected = 0
-fit_to_longest_item = false
-popup/item_0/text = "MAPS"
-popup/item_0/id = 0
-popup/item_0/separator = true
-popup/item_1/text = "4x4"
-popup/item_1/id = 1
-popup/item_2/text = "6x6"
-popup/item_2/id = 2
-popup/item_3/text = "8x8"
-popup/item_3/id = 3
+disabled = true
+text = "SAVE"
 
-[node name="TilesOptionButton" type="OptionButton" parent="CanvasLayer/UI/EditorContainer"]
+[node name="LoadMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
+disabled = true
+text = "LOAD"
+flat = false
+item_count = 1
+popup/item_0/text = "abc"
+popup/item_0/id = 0
+
+[node name="MapsMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
+layout_mode = 2
+text = "MAPS"
+flat = false
 expand_icon = true
 item_count = 3
-selected = 0
-fit_to_longest_item = false
-popup/item_0/text = "TILES"
+popup/item_0/text = "4x4"
 popup/item_0/id = 0
-popup/item_0/separator = true
-popup/item_1/text = "PLAIN"
+popup/item_1/text = "6x6"
+popup/item_1/id = 1
+popup/item_2/text = "8x8"
+popup/item_2/id = 2
+
+[node name="TilesMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
+layout_mode = 2
+disabled = true
+text = "TILES"
+flat = false
+expand_icon = true
+item_count = 7
+popup/item_0/text = "PLAIN"
+popup/item_0/id = 0
+popup/item_1/text = "GRASS"
 popup/item_1/id = 1
 popup/item_2/text = "TREE"
 popup/item_2/id = 2
+popup/item_2/disabled = true
+popup/item_3/text = "MOUNTAIN"
+popup/item_3/id = 3
+popup/item_4/text = "VOLCANO"
+popup/item_4/id = 4
+popup/item_4/disabled = true
+popup/item_5/text = "WATER"
+popup/item_5/id = 5
+popup/item_6/text = "LAVA"
+popup/item_6/id = 6
 
-[node name="AssetsOptionButton" type="OptionButton" parent="CanvasLayer/UI/EditorContainer"]
+[node name="AssetsMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
-expand_icon = true
-item_count = 2
-selected = 0
-fit_to_longest_item = false
-popup/item_0/text = "ASSETS"
-popup/item_0/id = 0
-popup/item_0/separator = true
-popup/item_1/text = "SIGN"
-popup/item_1/id = 1
-
-[node name="PlayersOptionButton" type="OptionButton" parent="CanvasLayer/UI/EditorContainer"]
-layout_mode = 2
+disabled = true
+text = "ASSETS"
+flat = false
 expand_icon = true
 item_count = 4
-selected = 0
-fit_to_longest_item = false
-popup/item_0/text = "PLAYERS"
+popup/item_0/text = "TREE"
 popup/item_0/id = 0
-popup/item_0/separator = true
-popup/item_1/text = "PLAYER 1"
+popup/item_1/text = "MOUNTAIN"
 popup/item_1/id = 1
-popup/item_2/text = "PLAYER 2"
+popup/item_2/text = "VOLCANO"
 popup/item_2/id = 2
-popup/item_3/text = "PLAYER 3"
+popup/item_3/text = "SIGN"
 popup/item_3/id = 3
 
-[node name="EnemiesOptionButton" type="OptionButton" parent="CanvasLayer/UI/EditorContainer"]
+[node name="PlayersMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
+disabled = true
+text = "PLAYERS"
+flat = false
 expand_icon = true
-item_count = 4
-selected = 0
-fit_to_longest_item = false
-popup/item_0/text = "ENEMIES"
+item_count = 3
+popup/item_0/text = "PLAYER 1"
 popup/item_0/id = 0
-popup/item_0/separator = true
-popup/item_1/text = "ENEMY 1"
+popup/item_1/text = "PLAYER 2"
 popup/item_1/id = 1
-popup/item_2/text = "ENEMY 2"
+popup/item_2/text = "PLAYER 3"
 popup/item_2/id = 2
-popup/item_3/text = "ENEMY 3"
-popup/item_3/id = 3
 
-[node name="CiviliansOptionButton" type="OptionButton" parent="CanvasLayer/UI/EditorContainer"]
+[node name="EnemiesMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
+disabled = true
+text = "ENEMIES"
+flat = false
 expand_icon = true
-item_count = 4
-selected = 0
-fit_to_longest_item = false
-popup/item_0/text = "CIVILIANS"
+item_count = 3
+popup/item_0/text = "ENEMY 1"
 popup/item_0/id = 0
-popup/item_0/separator = true
-popup/item_1/text = "CIVILIAN 1"
+popup/item_1/text = "ENEMY 2"
 popup/item_1/id = 1
-popup/item_2/text = "CIVILIAN 2"
+popup/item_2/text = "ENEMY 3"
 popup/item_2/id = 2
-popup/item_3/text = "CIVILIAN 3"
-popup/item_3/id = 3
+
+[node name="CiviliansMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
+layout_mode = 2
+disabled = true
+text = "CIVILIANS"
+flat = false
+expand_icon = true
+item_count = 3
+popup/item_0/text = "CIVILIAN 1"
+popup/item_0/id = 0
+popup/item_1/text = "CIVILIAN 2"
+popup/item_1/id = 1
+popup/item_2/text = "CIVILIAN 3"
+popup/item_2/id = 2
+
+[node name="EditorSelectedContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -119.0
+offset_top = -31.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="SelectedTileMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorSelectedContainer"]
+layout_mode = 2
+disabled = true
+text = "NO TILE SELECTED"
+flat = false
+item_count = 3
+popup/item_0/text = "CAN SPAWN PLAYER"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+popup/item_1/text = "CAN SPAWN ENEMY"
+popup/item_1/checkable = 1
+popup/item_1/id = 1
+popup/item_2/text = "CAN SPAWN CIVILIAN"
+popup/item_2/checkable = 1
+popup/item_2/id = 2
+
+[node name="SelectedCharacterMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorSelectedContainer"]
+layout_mode = 2
+disabled = true
+text = "NO CHARACTER SELECTED"
+flat = false
+item_count = 3
+popup/item_0/text = "CAN SPAWN PLAYER"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+popup/item_1/text = "CAN SPAWN ENEMY"
+popup/item_1/checkable = 1
+popup/item_1/id = 1
+popup/item_2/text = "CAN SPAWN CIVILIAN"
+popup/item_2/checkable = 1
+popup/item_2/id = 2
 
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton" to="GameStateManager" method="_on_end_turn_button_pressed"]
@@ -272,12 +333,6 @@ popup/item_3/id = 3
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton" to="GameStateManager" method="_on_action_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton" to="GameStateManager" method="_on_undo_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/EditorContainer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/UI/EditorContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/UI/EditorContainer/LoadButton" to="." method="_on_load_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/EditorContainer/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/EditorContainer/DeleteButton" to="." method="_on_delete_button_toggled"]
-[connection signal="item_selected" from="CanvasLayer/UI/EditorContainer/MapsOptionButton" to="." method="_on_maps_option_button_item_selected"]
-[connection signal="item_selected" from="CanvasLayer/UI/EditorContainer/TilesOptionButton" to="." method="_on_tiles_option_button_item_selected"]
-[connection signal="item_selected" from="CanvasLayer/UI/EditorContainer/AssetsOptionButton" to="." method="_on_assets_option_button_item_selected"]
-[connection signal="item_selected" from="CanvasLayer/UI/EditorContainer/PlayersOptionButton" to="." method="_on_players_option_button_item_selected"]
-[connection signal="item_selected" from="CanvasLayer/UI/EditorContainer/EnemiesOptionButton" to="." method="_on_enemies_option_button_item_selected"]
-[connection signal="item_selected" from="CanvasLayer/UI/EditorContainer/CiviliansOptionButton" to="." method="_on_civilians_option_button_item_selected"]
+[connection signal="pressed" from="CanvasLayer/UI/EditorContainer/SaveButton" to="." method="_on_save_button_pressed"]

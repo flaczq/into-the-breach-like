@@ -27,12 +27,8 @@ func spawn(level_data):
 		# file content index based on coords
 		var index = map_dimension * (tile.coords.x - 1) + (tile.coords.y - 1)
 		var tile_type = convert_tile_type_initial_to_enum(level_data.config.tiles[index])
-		var asset_filename
-		if level_data.config.tiles_assets:
-			asset_filename = convert_asset_initial_to_filename(level_data.config.tiles_assets[index])
-		else:
-			asset_filename = null
-		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.config.level)
+		var asset_filename = convert_asset_initial_to_filename(level_data.config.tiles_assets[index])
+		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.config.level_type, level_data.config.level)
 		var health_type = get_health_type_by_tile_type(tile_type, asset_filename)
 		var tile_init_data = {
 			'models': models,
@@ -75,7 +71,10 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 func convert_asset_initial_to_filename(asset_initial):
 	match asset_initial:
 		'0': return null
-		'S': return 'sign'
+		'T': return 'tree'
+		'M': return 'mountain'
+		'V': return 'volcano'
+		'S': return 'SIGN'
 		_:
 			print('unknown asset initial: ' + asset_initial)
 			return null
@@ -85,14 +84,23 @@ func convert_asset_filename_to_initial(asset_filename):
 	if not asset_filename:
 		return '0'
 	
-	if asset_filename.begins_with('sign'):
+	if asset_filename.begins_with('tree'):
+		return 'T'
+	
+	if asset_filename.begins_with('mountain'):
+		return 'M'
+	
+	if asset_filename.begins_with('volcano'):
+		return 'V'
+	
+	if asset_filename.begins_with('SIGN'):
 		return 'S'
 	
 	print('default asset used or unknown asset filename: ' + asset_filename)
 	return '0'
 
 
-func get_models_by_tile_type(tile_type, asset_filename, level):
+func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 	var models = {'tile_shader': FLASHING_SHADER}
 	
 	for asset in assets:
@@ -113,20 +121,9 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 		elif asset.name == 'indicator-square-c':
 			models.indicator_corners = asset.duplicate()
 		
-		# additional asset has priority over standard tile asset
-		if asset_filename:
-			if asset.name == asset_filename:
-				models.asset = asset.duplicate()
-				#models.asset.name += '_' + level
-		elif tile_type == TileType.TREE:
-			if asset.name == 'tree':
-				models.asset = asset.duplicate()
-		elif tile_type == TileType.MOUNTAIN:
-			if asset.name == 'mountain':
-				models.asset = asset.duplicate()
-		elif tile_type == TileType.VOLCANO:
-			if asset.name == 'volcano':
-				models.asset = asset.duplicate()
+		if asset_filename and asset.name == asset_filename:
+			models.asset = asset.duplicate()
+			#models.asset.name += '_' + LevelType.keys()[level_type] + '_' + level
 	
 	if models.has('asset'):
 		for child in models.asset.get_children():
@@ -139,7 +136,7 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 			models.tile_default_color = Color('e3cdaa')#light brown
 		TileType.GRASS:
 			#models.tile_texture = TILE_5
-			models.tile_default_color = Color.SEA_GREEN
+			models.tile_default_color = Color('66ff3e')#green
 		TileType.TREE:
 			#models.tile_texture = TILE_1
 			models.tile_default_color = Color('66ff3e')#green
@@ -151,14 +148,14 @@ func get_models_by_tile_type(tile_type, asset_filename, level):
 			models.tile_default_color = Color('4e3214')#dark brown
 		TileType.WATER:
 			#models.tile_texture = TILE_5
-			models.tile_default_color = Color.DODGER_BLUE
+			models.tile_default_color = Color('3a8aff')#blue
 		TileType.LAVA:
 			#models.tile_texture = TILE_5
-			models.tile_default_color = Color.ORANGE
+			models.tile_default_color = Color('c54700')#orange
 		_:
 			print('unknown tile type: ' + str(tile_type))
 			#models.tile_texture = TILE_5
-			models.tile_default_color = Color.PALE_GOLDENROD
+			models.tile_default_color = Color('e3cdaa')
 	
 	return models
 
@@ -172,8 +169,8 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 		TileType.PLAIN: return TileHealthType.HEALTHY
 		TileType.GRASS: return TileHealthType.HEALTHY
 		TileType.TREE: return TileHealthType.DESTRUCTIBLE
-		TileType.MOUNTAIN: return TileHealthType.INDESTRUCTIBLE
-		TileType.VOLCANO: return TileHealthType.INDESTRUCTIBLE
+		TileType.MOUNTAIN: return TileHealthType.DESTRUCTIBLE
+		TileType.VOLCANO: return TileHealthType.DESTRUCTIBLE
 		TileType.WATER: return TileHealthType.INDESTRUCTIBLE
 		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE
 		_:

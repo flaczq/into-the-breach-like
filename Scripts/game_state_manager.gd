@@ -50,17 +50,16 @@ func progress():
 	# level not increased yet
 	if level < MAX_TUTORIAL_LEVELS:
 		next_level()
-		init(LevelType.TUTORIAL)
+		# level was already increased
+		var level_data = level_generator.generate_data(LevelType.TUTORIAL, level)
+		init(level_data)
 	else:
 		get_parent().toggle_visibility(false)
 		
 		get_tree().root.add_child(progress_scene.instantiate())
 
 
-func init(level_type):
-	# level was already increased
-	var level_data = level_generator.generate_data(level_type, level)
-	
+func init(level_data):
 	init_game_state(level_data)
 	init_map(level_data)
 	init_players(level_data)
@@ -72,7 +71,7 @@ func init(level_type):
 
 func init_game_state(level_data):
 	current_turn = 1
-	max_turns = level_data.config.max_turns
+	max_turns = level_data.map.max_turns
 	selected_player = null
 	undo = {}
 	
@@ -270,6 +269,7 @@ func next_turn():
 func next_level():
 	if map:
 		map.queue_free()
+		map = null
 	
 	for player in players:
 		player.queue_free()
@@ -279,6 +279,10 @@ func next_level():
 	
 	for civilian in civilians:
 		civilian.queue_free()
+	
+	enemies = []
+	players = []
+	civilians = []
 	
 	level += 1
 

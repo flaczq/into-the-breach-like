@@ -26,9 +26,9 @@ func spawn(level_data):
 	for tile in tiles:
 		# file content index based on coords
 		var index = map_dimension * (tile.coords.x - 1) + (tile.coords.y - 1)
-		var tile_type = convert_tile_type_initial_to_enum(level_data.config.tiles[index])
-		var asset_filename = convert_asset_initial_to_filename(level_data.config.tiles_assets[index])
-		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.config.level_type, level_data.config.level)
+		var tile_type = convert_tile_type_initial_to_enum(level_data.map.tiles[index])
+		var asset_filename = convert_asset_initial_to_filename(level_data.map.tiles_assets[index])
+		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.map.level_type, level_data.map.level)
 		var health_type = get_health_type_by_tile_type(tile_type, asset_filename)
 		var tile_init_data = {
 			'models': models,
@@ -202,7 +202,8 @@ func get_spawnable_tiles(tiles_coords):
 	if tiles_coords.is_empty():
 		return get_available_tiles()
 	
-	var spawnable_tiles = get_available_tiles().filter(func(tile): return tiles_coords.has(tile.coords))
+	var vector2i_tiles_coords = tiles_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
+	var spawnable_tiles = get_available_tiles().filter(func(tile): return vector2i_tiles_coords.has(tile.coords))
 	if spawnable_tiles.is_empty():
 		return get_available_tiles()
 	

@@ -182,7 +182,7 @@ func toggle_shader(is_toggled):
 
 
 func toggle_asset_outline(is_outlined):
-	if models.has('asset_outline') and not models.asset_outline.is_queued_for_deletion():
+	if models.has('asset_outline') and models.asset_outline and not models.asset_outline.is_queued_for_deletion():
 		if is_outlined:
 			models.asset_outline.show()
 		else:

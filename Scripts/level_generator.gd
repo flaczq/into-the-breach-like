@@ -1,11 +1,10 @@
 extends Util
 
-const KILL_ENEMIES_LEVELS_FILE_PATH: String = 'res://Data/kill_enemies_levels.txt'
+const SAVED_LEVELS_FILE_PATH: String = 'res://Data/saved_levels.txt'
 const TUTORIAL_LEVELS_DATA = [
 	{
 		# 4x4
-		'config': {'level': '1', 'level_type': LevelType.TUTORIAL, 'tiles': 'GGGGPPPPPPPPMMMM', 'tiles_assets': 'TTTTS0000000MMMM', 'max_turns': 5},
-		'map': {'scene': 0, 'spawn_player_coords': [Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': []},
+		'map': {'scene': 0, 'level': '1', 'level_type': LevelType.TUTORIAL, 'tiles': 'GGGGPPPPPPPPMMMM', 'tiles_assets': 'TTTTS0000000MMMM', 'spawn_player_coords': [Vector2i(2, 2), Vector2i(3, 2)], 'spawn_enemy_coords': [Vector2i(2, 4), Vector2i(3, 4)], 'spawn_civilian_coords': [], 'max_turns': 5},
 		'players': [
 			{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 3},
 		],
@@ -96,32 +95,19 @@ const TUTORIAL_LEVELS_DATA = [
 
 
 func generate_data(level_type, level):
-	if level_type == LevelType.TUTORIAL:
-		return TUTORIAL_LEVELS_DATA[level - 1]
-	
-	var file_path = get_level_file_path(level_type)
-	var file = FileAccess.open(file_path, FileAccess.READ)
+	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
 	var current_level = calculate_level_for_level_type(level_type, level)
 	var content = file.get_as_text()
-	var tiles = content.get_slice(current_level + '>TILES_START', 1).get_slice(current_level + '>TILES_STOP', 0).strip_escapes()
-	var tiles_assets = content.get_slice(current_level + '->ASSETS_START', 1).get_slice(current_level + '->ASSETS_STOP', 0).strip_escapes()
-	
-	# TODO
-	var temp = TUTORIAL_LEVELS_DATA[5].duplicate()
-	var temp_config = temp.config.duplicate()
-	temp_config.tiles = tiles
-	temp_config.tiles_assets = tiles_assets
-	temp.config = temp_config
-	return temp
+	var level_data_string = content.get_slice(current_level + '->START', 1).get_slice(current_level + '->STOP', 0)#.strip_escapes()
+	var level_data = parse_data(level_data_string)
+	return level_data
 
 
-func get_level_file_path(level_type):
-	match level_type:
-		#LevelType.TUTORIAL: return TUTORIAL_LEVELS_FILE_PATH
-		LevelType.KILL_ENEMIES: return KILL_ENEMIES_LEVELS_FILE_PATH
-		_:
-			print('unknown level type: ' + level_type)
-			return KILL_ENEMIES_LEVELS_FILE_PATH
+func parse_data(level_data_string):
+	var json = JSON.new()
+	var parse_status = json.parse(level_data_string)
+	assert(parse_status == OK, json.get_error_message() + ' in ' + level_data_string.split('\n')[json.get_error_line()])
+	return json.data
 
 
 func calculate_level_for_level_type(level_type, level):

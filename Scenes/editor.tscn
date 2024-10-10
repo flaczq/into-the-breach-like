@@ -102,11 +102,12 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -267.0
+offset_left = -106.0
 offset_bottom = 171.0
 grow_horizontal = 0
 
 [node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
+visible = false
 layout_mode = 2
 text = "ONLY SHOWS INFO
 WHEN PLAYING"
@@ -162,6 +163,7 @@ grow_vertical = 0
 [node name="PlayButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
 disabled = true
+toggle_mode = true
 text = "PLAY"
 
 [node name="ResetButton" type="Button" parent="CanvasLayer/UI/EditorContainer"]
@@ -187,6 +189,9 @@ flat = false
 item_count = 1
 popup/item_0/text = "abc"
 popup/item_0/id = 0
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/UI/EditorContainer"]
+layout_mode = 2
 
 [node name="MapsMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
@@ -242,6 +247,7 @@ popup/item_3/text = "SIGN"
 popup/item_3/id = 3
 
 [node name="PlayersMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
+visible = false
 layout_mode = 2
 disabled = true
 text = "PLAYERS"
@@ -256,6 +262,7 @@ popup/item_2/text = "PLAYER 3"
 popup/item_2/id = 2
 
 [node name="EnemiesMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
+visible = false
 layout_mode = 2
 disabled = true
 text = "ENEMIES"
@@ -270,6 +277,7 @@ popup/item_2/text = "ENEMY 3"
 popup/item_2/id = 2
 
 [node name="CiviliansMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
+visible = false
 layout_mode = 2
 disabled = true
 text = "CIVILIANS"
@@ -283,7 +291,7 @@ popup/item_1/id = 1
 popup/item_2/text = "CIVILIAN 3"
 popup/item_2/id = 2
 
-[node name="EditorSelectedContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+[node name="AlsoEditorContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -295,7 +303,7 @@ offset_top = -31.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="SelectedTileMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorSelectedContainer"]
+[node name="SelectedTileMenuButton" type="MenuButton" parent="CanvasLayer/UI/AlsoEditorContainer"]
 layout_mode = 2
 disabled = true
 text = "NO TILE SELECTED"
@@ -311,28 +319,76 @@ popup/item_2/text = "CAN SPAWN CIVILIAN"
 popup/item_2/checkable = 1
 popup/item_2/id = 2
 
-[node name="SelectedCharacterMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorSelectedContainer"]
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/UI/AlsoEditorContainer"]
+layout_mode = 2
+
+[node name="LevelTypesMenuButton" type="MenuButton" parent="CanvasLayer/UI/AlsoEditorContainer"]
 layout_mode = 2
 disabled = true
-text = "NO CHARACTER SELECTED"
+text = "LEVEL TYPES"
 flat = false
-item_count = 3
-popup/item_0/text = "CAN SPAWN PLAYER"
-popup/item_0/checkable = 1
+expand_icon = true
+item_count = 4
+popup/item_0/text = "TUTORIAL"
+popup/item_0/checkable = 2
 popup/item_0/id = 0
-popup/item_1/text = "CAN SPAWN ENEMY"
-popup/item_1/checkable = 1
+popup/item_1/text = "KILL_ENEMIES"
+popup/item_1/checkable = 2
 popup/item_1/id = 1
-popup/item_2/text = "CAN SPAWN CIVILIAN"
-popup/item_2/checkable = 1
+popup/item_2/text = "SAVE_CIVILIANS"
+popup/item_2/checkable = 2
 popup/item_2/id = 2
+popup/item_3/text = "SURVIVE_TIL_LAST_TURN"
+popup/item_3/checkable = 2
+popup/item_3/id = 3
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer/UI/AlsoEditorContainer"]
+layout_mode = 2
+placeholder_text = "MAX TURNS"
+alignment = 1
+max_length = 2
+context_menu_enabled = false
+virtual_keyboard_enabled = false
+clear_button_enabled = true
+shortcut_keys_enabled = false
+middle_mouse_paste_enabled = false
+selecting_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="LevelEndPopup" type="ColorRect" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="LevelEndLabel" type="Label" parent="CanvasLayer/UI/LevelEndPopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -67.5
+offset_top = -11.5
+offset_right = 67.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "LEVEL WON/LOST"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton" to="GameStateManager" method="_on_end_turn_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton" to="GameStateManager" method="_on_shoot_button_toggled"]
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton" to="GameStateManager" method="_on_action_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton" to="GameStateManager" method="_on_undo_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/UI/EditorContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/UI/EditorContainer/PlayButton" to="." method="_on_play_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/EditorContainer/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/EditorContainer/DeleteButton" to="." method="_on_delete_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/EditorContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="text_submitted" from="CanvasLayer/UI/AlsoEditorContainer/LineEdit" to="." method="_on_line_edit_text_submitted"]

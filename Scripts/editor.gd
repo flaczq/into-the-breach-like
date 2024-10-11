@@ -12,17 +12,16 @@ extends Util
 @onready var editor_label = $CanvasLayer/UI/EditorLabel
 @onready var editor_container = $CanvasLayer/UI/EditorContainer
 @onready var play_button = $CanvasLayer/UI/EditorContainer/PlayButton
+@onready var reset_button = $CanvasLayer/UI/EditorContainer/ResetButton
 @onready var delete_button = $CanvasLayer/UI/EditorContainer/DeleteButton
 @onready var save_button = $CanvasLayer/UI/EditorContainer/SaveButton
 @onready var load_menu_button = $CanvasLayer/UI/EditorContainer/LoadMenuButton
 @onready var maps_menu_button = $CanvasLayer/UI/EditorContainer/MapsMenuButton
 @onready var tiles_menu_button = $CanvasLayer/UI/EditorContainer/TilesMenuButton
 @onready var assets_menu_button = $CanvasLayer/UI/EditorContainer/AssetsMenuButton
-#@onready var players_menu_button = $CanvasLayer/UI/EditorContainer/PlayersMenuButton
-#@onready var enemies_menu_button = $CanvasLayer/UI/EditorContainer/EnemiesMenuButton
-#@onready var civilians_menu_button = $CanvasLayer/UI/EditorContainer/CiviliansMenuButton
-@onready var also_editor_container = $CanvasLayer/UI/AlsoEditorContainer
-@onready var level_types_menu_button = $CanvasLayer/UI/AlsoEditorContainer/LevelTypesMenuButton
+@onready var players_menu_button = $CanvasLayer/UI/EditorContainer/PlayersMenuButton
+@onready var enemies_menu_button = $CanvasLayer/UI/EditorContainer/EnemiesMenuButton
+@onready var civilians_menu_button = $CanvasLayer/UI/EditorContainer/CiviliansMenuButton
 @onready var selected_tile_menu_button = $CanvasLayer/UI/AlsoEditorContainer/SelectedTileMenuButton
 
 const SAVED_LEVELS_FILE_PATH = 'res://Data/saved_levels.txt'
@@ -47,14 +46,19 @@ func _ready():
 	maps_menu_button.get_popup().connect('id_pressed', _on_maps_item_clicked)
 	tiles_menu_button.get_popup().connect('id_pressed', _on_tiles_item_clicked)
 	assets_menu_button.get_popup().connect('id_pressed', _on_assets_item_clicked)
-	level_types_menu_button.get_popup().connect('id_pressed', _on_level_types_item_clicked)
-	#players_menu_button.get_popup().connect('id_pressed', _on_players_item_clicked)
-	#enemies_menu_button.get_popup().connect('id_pressed', _on_enemies_item_clicked)
-	#civilians_menu_button.get_popup().connect('id_pressed', _on_civilians_item_clicked)
+	players_menu_button.get_popup().connect('id_pressed', _on_players_item_clicked)
+	enemies_menu_button.get_popup().connect('id_pressed', _on_enemies_item_clicked)
+	civilians_menu_button.get_popup().connect('id_pressed', _on_civilians_item_clicked)
 	selected_tile_menu_button.get_popup().connect('id_pressed', _on_selected_tile_item_clicked)
 	selected_tile_menu_button.get_popup().set_hide_on_checkable_item_selection(false)
 	
 	init()
+	
+	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
+	var content = file.get_as_text()
+	var level = content.count('->START')
+	if level > 0:
+		load_menu_button.get_popup().set_hide_on_checkable_item_selection(false)
 
 
 func _process(delta):
@@ -117,25 +121,24 @@ func _input(event):
 
 
 func init():
-	editor_label.text = 'NOTHING'
-	selected_tile_menu_button.text = 'NO TILE SELECTED'
+	reset()
+	
 	play_button.set_disabled(true)
+	reset_button.set_disabled(true)
 	delete_button.set_disabled(true)
 	save_button.set_disabled(true)
 	load_menu_button.set_disabled(true)
 	maps_menu_button.set_disabled(false)
 	tiles_menu_button.set_disabled(true)
 	assets_menu_button.set_disabled(true)
-	#players_menu_button.set_disabled(true)
-	#enemies_menu_button.set_disabled(true)
-	#civilians_menu_button.set_disabled(true)
-	level_types_menu_button.set_disabled(true)
-	selected_tile_menu_button.set_disabled(true)
+	players_menu_button.set_disabled(true)
+	enemies_menu_button.set_disabled(true)
+	civilians_menu_button.set_disabled(true)
 	level_data = {
 		'map': {'scene': -1, 'level': -1, 'level_type': -1, 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': [], 'max_turns': -1},
-		'players': [{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3}],
-		'enemies': [{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3}],
-		'civilians': [{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0}]
+		'players': [],
+		'enemies': [],
+		'civilians': []
 	}
 
 
@@ -143,7 +146,7 @@ func reset():
 	delete_button.set_pressed_no_signal(false)
 	selected_tile_menu_button.set_disabled(true)
 	
-	editor_label.text = 'NOTHING'
+	editor_label.text = 'nothing'
 	selected_tile_menu_button.text = 'NO TILE SELECTED'
 	is_deleting = false
 	tile_to_placed = {}
@@ -151,6 +154,25 @@ func reset():
 	selected_asset = null
 	selected = null
 
+
+func calculate_level_data(level = -1):
+	if level >= 0:
+		level_data.map.level = level
+	level_data.map.tiles = ''
+	level_data.map.tiles_assets = ''
+	#level_data.map.max_turns = 3
+	
+	for tile in map.tiles:
+		level_data.map.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
+		
+		if tile.models.has('asset'):
+			level_data.map.tiles_assets += map.convert_asset_filename_to_initial(tile.models.asset.name)
+		else:
+			level_data.map.tiles_assets += map.convert_asset_filename_to_initial(null)
+	
+	level_data.players = [{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3}]
+	level_data.enemies = [{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3}]
+	#level_data.civilians = [{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0}]
 
 
 func _on_main_menu_button_pressed():
@@ -161,25 +183,27 @@ func _on_main_menu_button_pressed():
 
 
 func _on_play_button_toggled(toggled_on):
-	_on_save_button_pressed()
-	
 	reset()
 	
+	reset_button.set_disabled(toggled_on)
+	delete_button.set_disabled(toggled_on)
+	save_button.set_disabled(toggled_on)
+	load_menu_button.set_disabled(toggled_on)
+	tiles_menu_button.set_disabled(toggled_on)
+	assets_menu_button.set_disabled(toggled_on)
+	players_menu_button.set_disabled(toggled_on)
+	enemies_menu_button.set_disabled(toggled_on)
+	civilians_menu_button.set_disabled(toggled_on)
+	
 	if toggled_on:
-		#editor_label.hide()
-		#editor_container.hide()
-		#also_editor_container.hide()
-		
-		editor_label.text = 'PLAYING'
+		editor_label.text = '* playing *'
 		
 		map.hide()
+		calculate_level_data()
 		
 		game_state_manager.init(level_data)
 	else:
-		editor_label.show()
-		editor_container.show()
-		also_editor_container.show()
-		
+		# reset map for playing
 		game_state_manager.next_level()
 		
 		map.show()
@@ -199,42 +223,28 @@ func _on_reset_button_pressed():
 
 
 func _on_save_button_pressed():
-	editor_label.text = 'SAVING'
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
 	var content = file.get_as_text()
 	var level = content.count('->START') + 1
 	
-	level_data.map.tiles = ''
-	level_data.map.tiles_assets = ''
-	
-	for tile in map.tiles:
-		var index = map.get_side_dimension() * (tile.coords.x - 1) + (tile.coords.y - 1)
-		#if index > 0 and int(index) % int(map.get_side_dimension()) == 0:
-			#content += '\n'
-		
-		level_data.map.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
-		
-		if tile.models.has('asset'):
-			level_data.map.tiles_assets += map.convert_asset_filename_to_initial(tile.models.asset.name)
-		else:
-			level_data.map.tiles_assets += map.convert_asset_filename_to_initial(null)
-	
-	level_data.map.level = level
+	calculate_level_data(level)
 	
 	content += '\n' + str(level) + '->START\n'
-	content += JSON.stringify(level_data, '\t')
+	# make it pretty
+	#content += JSON.stringify(level_data, '\t')
+	content += str(level_data)
 	content += '\n' + str(level) + '->STOP\n'
 	
 	file.store_string(content)
-	editor_label.text = 'MAP ' + str(level) + ' SAVED'
+	editor_label.text = 'map "' + str(level) + '" saved'
 
 
 func _on_delete_button_toggled(toggled_on):
 	is_deleting = toggled_on
 	if is_deleting:
-		editor_label.text = 'DELETING'
+		editor_label.text = 'deleting'
 	else:
-		editor_label.text = 'NOTHING'
+		editor_label.text = 'nothing'
 	
 	tile_to_placed = {}
 	selected_tile = null
@@ -243,23 +253,27 @@ func _on_delete_button_toggled(toggled_on):
 
 
 func _on_load_item_clicked(id):
-	# TODO
-	print(id)
+	pass
+	#var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
+	#var content = file.get_as_text()
+	#var level_data_string = content.get_slice(str(id + 1) + '->START', 1).get_slice(str(id + 1) + '->STOP', 0).strip_escapes()
+	# TODO -> na podstawie level_data_string utworzyć mapę + tiles + assets + spawn
 
 
 func _on_maps_item_clicked(id):
 	is_deleting = false
 	
 	play_button.set_disabled(false)
+	reset_button.set_disabled(false)
 	save_button.set_disabled(false)
 	delete_button.set_disabled(false)
+	delete_button.set_pressed_no_signal(false)
 	maps_menu_button.set_disabled(true)
 	tiles_menu_button.set_disabled(false)
 	assets_menu_button.set_disabled(false)
-	#players_menu_button.set_disabled(false)
-	#enemies_menu_button.set_disabled(false)
-	#civilians_menu_button.set_disabled(false)
-	level_types_menu_button.set_disabled(false)
+	players_menu_button.set_disabled(false)
+	enemies_menu_button.set_disabled(false)
+	civilians_menu_button.set_disabled(false)
 	
 	map = map_scenes[id].instantiate()
 	add_child(map)
@@ -279,10 +293,11 @@ func _on_maps_item_clicked(id):
 		tile.models = {'tile': tile_asset}
 		tile.add_child(tile.models.tile)
 	
-	editor_label.text = 'PLACED ' + map.name
+	editor_label.text = 'placed "' + map.name + '"'
 
 
 func _on_tiles_item_clicked(id):
+	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	selected_tile = null
 	selected_asset = null
@@ -297,10 +312,11 @@ func _on_tiles_item_clicked(id):
 		5: tile_to_placed = {'color': Color('3a8aff'), 'tile_type': TileType.WATER}
 		6: tile_to_placed = {'color': Color('c54700'), 'tile_type': TileType.LAVA}
 	
-	editor_label.text = 'TILE TO PLACED ' + TileType.keys()[tile_to_placed.tile_type]
+	editor_label.text = 'placing tile "' + TileType.keys()[tile_to_placed.tile_type] + '"'
 
 
 func _on_assets_item_clicked(id):
+	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	tile_to_placed = {}
 	selected_tile = null
@@ -311,58 +327,49 @@ func _on_assets_item_clicked(id):
 		0: selected_asset = assets.filter(func(asset): return asset.name == 'tree').front().duplicate()
 		1: selected_asset = assets.filter(func(asset): return asset.name == 'mountain').front().duplicate()
 		2: selected_asset = assets.filter(func(asset): return asset.name == 'volcano').front().duplicate()
-		3: selected_asset = assets.filter(func(asset): return asset.name == 'SIGN').front().duplicate()
+		3: selected_asset = assets.filter(func(asset): return asset.name == 'sign').front().duplicate()
 	
-	editor_label.text = 'ASSET TO PLACED ' + selected_asset.name
+	editor_label.text = 'placing asset "' + selected_asset.name + '"'
+
+# not used
+func _on_players_item_clicked(id):
+	delete_button.set_pressed_no_signal(false)
+	is_deleting = false
+	tile_to_placed = {}
+	selected_tile = null
+	selected_asset = null
+	
+	var player_instance = player_scenes[id].instantiate()
+	selected = player_instance
+	
+	editor_label.text = 'placing "' + selected.name + '"'
+
+# not used
+func _on_enemies_item_clicked(id):
+	delete_button.set_pressed_no_signal(false)
+	is_deleting = false
+	tile_to_placed = {}
+	selected_tile = null
+	selected_asset = null
+	
+	var enemy_instance = enemy_scenes[id].instantiate()
+	selected = enemy_instance
+	
+	editor_label.text = 'placing "' + selected.name + '"'
 
 
-func _on_level_types_item_clicked(id):
-	level_types_menu_button.get_popup().set_item_checked(0, false)
-	level_types_menu_button.get_popup().set_item_checked(1, false)
-	level_types_menu_button.get_popup().set_item_checked(2, false)
-	level_types_menu_button.get_popup().set_item_checked(3, false)
-	level_types_menu_button.get_popup().set_item_checked(id, not level_types_menu_button.get_popup().is_item_checked(id))
-	level_data.map.level_type = id - 1
-
-
-func _on_line_edit_text_submitted(new_text):
-	level_data.map.max_turns = int(new_text)
-
-
-#func _on_players_item_clicked(id):
-	#is_deleting = false
-	#tile_to_placed = {}
-	#selected_tile = null
-	#selected_asset = null
-	#
-	#var player_instance = player_scenes[id].instantiate()
-	#selected = player_instance
-	#
-	#editor_label.text = 'TO PLACED ' + selected.name
-
-
-#func _on_enemies_item_clicked(id):
-	#is_deleting = false
-	#tile_to_placed = {}
-	#selected_tile = null
-	#selected_asset = null
-	#
-	#var enemy_instance = enemy_scenes[id].instantiate()
-	#selected = enemy_instance
-	#
-	#editor_label.text = 'TO PLACED ' + selected.name
-
-
-#func _on_civilians_item_clicked(id):
-	#is_deleting = false
-	#tile_to_placed = {}
-	#selected_tile = null
-	#selected_asset = null
-	#
-	#var civilian_instance = civilian_scenes[id].instantiate()
-	#selected = civilian_instance
-	#
-	#editor_label.text = 'TO PLACED ' + selected.name
+# not used
+func _on_civilians_item_clicked(id):
+	delete_button.set_pressed_no_signal(false)
+	is_deleting = false
+	tile_to_placed = {}
+	selected_tile = null
+	selected_asset = null
+	
+	var civilian_instance = civilian_scenes[id].instantiate()
+	selected = civilian_instance
+	
+	editor_label.text = 'placing "' + selected.name + '"'
 
 
 func _on_selected_tile_item_clicked(id):
@@ -405,19 +412,19 @@ func _on_editor_tile_clicked(tile):
 	if not tile_to_placed.is_empty():
 		tile.tile_type = tile_to_placed.tile_type
 		tile.model_material.albedo_color = tile_to_placed.color
-		editor_label.text = 'CHANGED TILE TYPE TO ' + TileType.keys()[tile_to_placed.tile_type] + ' ON TILE ' + str(tile.coords)
+		editor_label.text = 'changed tile ' + str(tile.coords) + ' type to "' + TileType.keys()[tile_to_placed.tile_type] + '"'
 	elif selected or selected_asset:
 		if character:
 			selected = character
 			tile_to_placed = {}
 			selected_asset = null
-			editor_label.text = 'SELECTED ' + selected.name
+			editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
 			new_selected = false
 		elif tile.models.has('asset'):
 			selected = null
 			tile_to_placed = {}
 			selected_asset = tile.models.asset
-			editor_label.text = 'SELECTED ASSET ' + selected_asset.name
+			editor_label.text = 'selected asset "' + selected_asset.name + '" from tile ' + str(tile.coords)
 			new_selected = false
 		else:
 			if selected:
@@ -430,9 +437,7 @@ func _on_editor_tile_clicked(tile):
 				selected.tile = tile
 				tile.set_character(selected)
 				selected.position = Vector3(tile.position.x, 0.0, tile.position.z)
-				editor_label.text = 'PLACED ' + selected.name + ' ON TILE ' + str(tile.coords)
-				#if first_time:
-					#selected = null
+				editor_label.text = 'placed "' + selected.name + '" on tile ' + str(tile.coords)
 				new_selected = false
 			elif selected_asset:
 				if selected_asset.has_meta('tile'):
@@ -445,27 +450,25 @@ func _on_editor_tile_clicked(tile):
 				
 				selected_asset.set_meta('tile', tile)
 				tile.models.asset = selected_asset
-				editor_label.text = 'PLACED ASSET ' + selected_asset.name + ' ON TILE ' + str(tile.coords)
+				editor_label.text = 'placed asset "' + selected_asset.name + '" on tile ' + str(tile.coords)
 				if new_selected:
-					selected_asset = assets.filter(func(asset): return asset.name == selected_asset.name).front().duplicate()
-				else:
-					selected_asset = null
+					selected_asset = assets.filter(func(asset): return selected_asset.name.begins_with(asset.name)).front().duplicate()
 	else:
 		if character:
 			if is_deleting:
-				editor_label.text = 'DELETED ' + character.name + ' FROM TILE ' + str(tile.coords)
+				editor_label.text = 'deleted "' + character.name + '" from tile ' + str(tile.coords)
 				character.queue_free()
 				tile.reset()
 			else:
 				selected = character
-				editor_label.text = 'SELECTED ' + selected.name
+				editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
 		elif tile.models.has('asset'):
 			if is_deleting:
-				editor_label.text = 'DELETED ASSET ' + tile.models.asset.name + ' FROM TILE ' + str(tile.coords)
+				editor_label.text = 'deleted asset "' + tile.models.asset.name + '" from tile ' + str(tile.coords)
 				tile.models.asset.queue_free()
 				tile.models.erase('asset')
 			else:
 				selected_asset = tile.models.asset
-				editor_label.text = 'SELECTED ASSET ' + selected_asset.name
+				editor_label.text = 'selected asset "' + selected_asset.name + '" from tile ' + str(tile.coords)
 		
 		new_selected = false

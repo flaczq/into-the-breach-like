@@ -93,6 +93,7 @@ grow_horizontal = 0
 
 [node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "TILE TYPE: PLAIN
 ACTION TYPE: NONE"
 

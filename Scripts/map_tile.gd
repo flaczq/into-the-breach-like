@@ -77,11 +77,10 @@ func init(tile_init_data):
 	add_child(models.indicator_dashed)
 	add_child(models.indicator_corners)
 	if models.has('asset'):
-		print(models.asset.name)
-		if tr(models.asset.name) != models.asset.name:
-			info = tr(models.asset.name)
+		# translation exists
+		if tr(models.asset.name.to_upper()) != models.asset.name.to_upper():
+			info = tr(models.asset.name.to_upper())
 		
-		models.asset.name = models.asset.name + '_' + str(randi())
 		#models.asset.rotation_degrees.y = randi_range(0, 180)
 		models.asset.show()
 		add_child(models.asset)
@@ -171,7 +170,7 @@ func set_character(character):
 
 
 func is_free():
-	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE and not player and not enemy and not civilian
+	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE and not player and not enemy and not civilian
 
 
 func toggle_shader(is_toggled):
@@ -182,7 +181,7 @@ func toggle_shader(is_toggled):
 
 
 func toggle_asset_outline(is_outlined):
-	if models.has('asset_outline') and models.asset_outline and not models.asset_outline.is_queued_for_deletion():
+	if models.has('asset_outline') and models.asset_outline != null and not models.asset_outline.is_queued_for_deletion():
 		if is_outlined:
 			models.asset_outline.show()
 		else:
@@ -223,9 +222,8 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 			
 			if health_type == TileHealthType.DESTRUCTIBLE:
 				health_type = TileHealthType.HEALTHY
-				
 				# destroy required asset for destructible tile
-				if models.asset and not models.asset.is_queued_for_deletion():
+				if models.has('asset') and models.asset != null and not models.asset.is_queued_for_deletion():
 					models.asset.queue_free()
 				
 				reset_tile_models()
@@ -244,6 +242,8 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 				print('ttile ' + str(coords) + ' -> already destroyed, nothing happens')
 			elif health_type == TileHealthType.INDESTRUCTIBLE:
 				print('ttile ' + str(coords) + ' -> indestructible, nothing happens')
+			elif health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
+				print('ttile ' + str(coords) + ' -> indestructible walkable, nothing happens')
 		else:
 			print('ttile ' + str(coords) + ' -> used action on empty tile, nothing happens')
 

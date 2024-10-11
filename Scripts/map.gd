@@ -74,7 +74,7 @@ func convert_asset_initial_to_filename(asset_initial):
 		'T': return 'tree'
 		'M': return 'mountain'
 		'V': return 'volcano'
-		'S': return 'SIGN'
+		'S': return 'sign'
 		_:
 			print('unknown asset initial: ' + asset_initial)
 			return null
@@ -93,7 +93,7 @@ func convert_asset_filename_to_initial(asset_filename):
 	if asset_filename.begins_with('volcano'):
 		return 'V'
 	
-	if asset_filename.begins_with('SIGN'):
+	if asset_filename.begins_with('sign'):
 		return 'S'
 	
 	print('default asset used or unknown asset filename: ' + asset_filename)
@@ -123,7 +123,10 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 		
 		if asset_filename and asset.name == asset_filename:
 			models.asset = asset.duplicate()
-			#models.asset.name += '_' + LevelType.keys()[level_type] + '_' + level
+			
+			# change name for custom translations
+			if models.asset.name == 'sign' and level_type == LevelType.TUTORIAL:
+				models.asset.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
 	
 	if models.has('asset'):
 		for child in models.asset.get_children():
@@ -161,18 +164,22 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 
 
 func get_health_type_by_tile_type(tile_type, asset_filename):
-	# all additional assets are destructible
+	# hardcoded
 	if asset_filename:
-		return TileHealthType.DESTRUCTIBLE
+		if asset_filename == 'tree' or asset_filename == 'sign':
+			return TileHealthType.DESTRUCTIBLE
+		
+		if asset_filename == 'mountain' or asset_filename == 'volcano':
+			return TileHealthType.INDESTRUCTIBLE
 	
 	match tile_type:
 		TileType.PLAIN: return TileHealthType.HEALTHY
 		TileType.GRASS: return TileHealthType.HEALTHY
-		TileType.TREE: return TileHealthType.DESTRUCTIBLE
-		TileType.MOUNTAIN: return TileHealthType.DESTRUCTIBLE
-		TileType.VOLCANO: return TileHealthType.DESTRUCTIBLE
-		TileType.WATER: return TileHealthType.INDESTRUCTIBLE
-		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE
+		TileType.TREE: return TileHealthType.HEALTHY
+		TileType.MOUNTAIN: return TileHealthType.INDESTRUCTIBLE
+		TileType.VOLCANO: return TileHealthType.INDESTRUCTIBLE
+		TileType.WATER: return TileHealthType.INDESTRUCTIBLE_WALKABLE
+		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE_WALKABLE
 		_:
 			print('unknown tile type: ' + str(tile_type))
 			return TileHealthType.HEALTHY
@@ -192,10 +199,6 @@ func get_vertical_diagonal_dimension(coords):
 
 func get_available_tiles():
 	return tiles.filter(func(tile): return tile.is_free())
-
-
-func get_occupied_tiles():
-	return tiles.filter(func(tile): return not tile.is_free())
 
 
 func get_spawnable_tiles(tiles_coords):

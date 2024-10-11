@@ -854,12 +854,12 @@ func _on_player_clicked(player, is_clicked):
 func _on_character_action_push_back(character, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
-	# character can be pushed back into other character or (in)destructible tile
-	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + push_direction)
+	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
+	var target_tiles = map.tiles.filter(func(tile): return tile.coords == character.tile.coords + push_direction)
 	if target_tiles.is_empty():
 		var outside_tile = {'position': character.tile.position + Vector3(push_direction.y, 0, push_direction.x)}
 		# pushed outside of the map
-		await character.move([character.tile], true)
+		await character.move([character.tile], true, outside_tile)
 	else:
 		var target_tile = target_tiles.front()
 		await character.move([target_tile], true)
@@ -885,12 +885,12 @@ func _on_character_action_push_back(character, origin_tile_coords):
 func _on_character_action_pull_front(character, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var pull_direction = hit_direction
-	# character can be pulled front into other character or (in)destructible tile
-	var target_tiles = map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE and tile.coords == character.tile.coords + pull_direction)
+	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
+	var target_tiles = map.tiles.filter(func(tile): return tile.coords == character.tile.coords + pull_direction)
 	if target_tiles.is_empty():
 		var outside_tile = {'position': character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)}
 		# pulled outside of the map - is this even possible?
-		await character.move([character.tile], true)
+		await character.move([character.tile], true, outside_tile)
 	else:
 		var target_tile = target_tiles.front()
 		await character.move([target_tile], true)

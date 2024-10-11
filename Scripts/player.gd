@@ -23,7 +23,11 @@ func _ready():
 	arrow_model_material.disable_receive_shadows = true
 	arrow_model_material.albedo_color = PLAYER_ARROW_COLOR
 	
+	# draw player arrow on top of enemy arrow
+	# player arrow 1.2 > player sphere 1.1 > enemy arrow 1.0 > enemy sphere 0.9
+	default_arrow_model.get_child(0).set_sorting_offset(1.2)
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
+	default_arrow_sphere_model.set_sorting_offset(1.1)
 	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
 
 
@@ -69,14 +73,14 @@ func move(tiles_path, forced = false, outside_tile = null):
 	if target_tile == tile:
 		if forced and outside_tile:
 			print('playe ' + str(tile.coords) + ' -> pushed into the wall')
+			get_shot(1)
 			await forced_into_occupied_tile(outside_tile, true)
 		else:
 			print('playe ' + str(tile.coords) + ' -> is not moving')
 	else:
-		if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
-			print('playe ' + str(tile.coords) + ' -> pushed into other character or destructible tile')
+		if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
+			print('playe ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 			get_shot(1)
-			
 			await forced_into_occupied_tile(target_tile)
 		else:
 			tile.set_player(null)
@@ -118,7 +122,6 @@ func execute_action(target_tile):
 	reset_tiles()
 	
 	await spawn_bullet(target_tile)
-	
 	await target_tile.get_shot(0, action_type, tile.coords)
 	
 	after_action()
@@ -131,7 +134,6 @@ func shoot(target_tile):
 	reset_tiles()
 	
 	await spawn_bullet(target_tile)
-	
 	await target_tile.get_shot(damage)
 	
 	after_action()

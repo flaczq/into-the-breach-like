@@ -149,10 +149,17 @@ func spawn_arrow(target):
 		if position_difference.length() > 1:
 			for i in range(1, amount):
 				arrow_sphere_model.position = origin_position.lerp(target_position, i / float(amount + 1.0))
+				# distinguish player arrow spheres by showing them higher
+				if is_in_group('PLAYERS'):
+					arrow_sphere_model.position.y += 0.1
+				
 				arrow_sphere_model.show()
 				add_child(arrow_sphere_model.duplicate())
 		
 		arrow_model.position = origin_position.lerp(target_position, amount / float(amount + 1.0))
+		# distinguish player arrow by showing it higher
+		if is_in_group('PLAYERS'):
+			arrow_model.position.y += 0.1
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		# bezier ftw!
 		var control_1 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)

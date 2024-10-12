@@ -197,7 +197,7 @@ func start_turn():
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
 		await enemy.move(tiles_path)
 	
-		# enemy shouldn't but could have moved in front of the other enemy's attack line
+		# enemy shouldn't but could have moved in front of the other enemy attack line
 		recalculate_enemies_planned_actions()
 		
 		var tiles_for_action = calculate_tiles_for_action(true, enemy)
@@ -488,7 +488,7 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_c
 				target_tile_for_movement = null
 		
 		if target_tile_for_movement:
-			# exlude tiles in front of the other enemy's attack line
+			# exlude tiles in front of the other enemy attack line
 			if origin_character.is_in_group('ENEMIES'):
 				for other_enemy in enemies.filter(func(enemy): return enemy != origin_character and enemy.planned_tile and (enemy.action_direction == ActionDirection.HORIZONTAL_LINE or enemy.action_direction == ActionDirection.VERTICAL_LINE)):
 					var other_enemy_to_planned_sign = (other_enemy.tile.coords - other_enemy.planned_tile.coords).sign()

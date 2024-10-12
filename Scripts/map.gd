@@ -2,8 +2,6 @@ extends Util
 
 @export var assets_scene: PackedScene
 
-const TILE_1: Resource = preload('res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile1.png')
-const TILE_5: Resource = preload('res://Assets/loafbrr.basic-platforming-pack/Tiles/Textures/tile5.png')
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 const OUTLINE_SHADER: Resource = preload('res://Other/outline_shader.gdshader')
 
@@ -21,11 +19,9 @@ func _ready():
 
 
 func spawn(level_data):
-	var map_dimension = get_side_dimension()
-	
 	for tile in tiles:
 		# file content index based on coords
-		var index = map_dimension * (tile.coords.x - 1) + (tile.coords.y - 1)
+		var index = get_side_dimension() * (tile.coords.x - 1) + (tile.coords.y - 1)
 		var tile_type = convert_tile_type_initial_to_enum(level_data.map.tiles[index])
 		var asset_filename = convert_asset_initial_to_filename(level_data.map.tiles_assets[index])
 		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.map.level_type, level_data.map.level)
@@ -50,7 +46,7 @@ func convert_tile_type_initial_to_enum(tile_type_initial):
 		'W': return TileType.WATER
 		'L': return TileType.LAVA
 		_:
-			print('unknown tile type initial: ' + tile_type_initial)
+			print('[convert_tile_type_initial_to_enum] -> unknown tile type initial: ' + tile_type_initial)
 			return TileType.PLAIN
 
 
@@ -64,10 +60,11 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 		TileType.WATER: return 'W'
 		TileType.LAVA: return 'L'
 		_:
-			print('unknown tile type enum: ' + str(tile_type_enum))
+			print('[convert_tile_type_enum_to_initial] -> unknown tile type enum: ' + str(tile_type_enum))
 			return 'P'
 
 
+# maybe change this to enum?
 func convert_asset_initial_to_filename(asset_initial):
 	match asset_initial:
 		'0': return null
@@ -76,7 +73,7 @@ func convert_asset_initial_to_filename(asset_initial):
 		'V': return 'volcano'
 		'S': return 'sign'
 		_:
-			print('unknown asset initial: ' + asset_initial)
+			print('[convert_asset_initial_to_filename] -> unknown asset initial: ' + asset_initial)
 			return null
 
 
@@ -96,7 +93,7 @@ func convert_asset_filename_to_initial(asset_filename):
 	if asset_filename.begins_with('sign'):
 		return 'S'
 	
-	print('default asset used or unknown asset filename: ' + asset_filename)
+	print('[convert_asset_filename_to_initial] -> default asset used or unknown asset filename: ' + asset_filename)
 	return '0'
 
 
@@ -133,34 +130,30 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 			if child.is_in_group('MODEL_OUTLINES'):
 				models.asset_outline = child
 	
-	match tile_type:
-		TileType.PLAIN:
-			#models.tile_texture = TILE_5
-			models.tile_default_color = Color('e3cdaa')#light brown
-		TileType.GRASS:
-			#models.tile_texture = TILE_5
-			models.tile_default_color = Color('66ff3e')#green
-		TileType.TREE:
-			#models.tile_texture = TILE_1
-			models.tile_default_color = Color('66ff3e')#green
-		TileType.MOUNTAIN:
-			#models.tile_texture = TILE_5
-			models.tile_default_color = Color('4e3214')#dark brown
-		TileType.VOLCANO:
-			#models.tile_texture = TILE_5
-			models.tile_default_color = Color('4e3214')#dark brown
-		TileType.WATER:
-			#models.tile_texture = TILE_5
-			models.tile_default_color = Color('3a8aff')#blue
-		TileType.LAVA:
-			#models.tile_texture = TILE_5
-			models.tile_default_color = Color('c54700')#orange
-		_:
-			print('unknown tile type: ' + str(tile_type))
-			#models.tile_texture = TILE_5
-			models.tile_default_color = Color('e3cdaa')
+	models.tile_default_color = get_color_by_tile_type(tile_type)
 	
 	return models
+
+
+func get_color_by_tile_type(tile_type):
+	match tile_type:
+		TileType.PLAIN:
+			return Color('e3cdaa')#light brown
+		TileType.GRASS:
+			return Color('66ff3e')#green
+		TileType.TREE:
+			return Color('66ff3e')#green
+		TileType.MOUNTAIN:
+			return Color('4e3214')#dark brown
+		TileType.VOLCANO:
+			return Color('4e3214')#dark brown
+		TileType.WATER:
+			return Color('3a8aff')#blue
+		TileType.LAVA:
+			return Color('c54700')#orange
+		_:
+			print('[get_color_by_tile_type] -> unknown tile type: ' + str(tile_type))
+			return Color('e3cdaa')
 
 
 func get_health_type_by_tile_type(tile_type, asset_filename):
@@ -181,7 +174,7 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 		TileType.WATER: return TileHealthType.INDESTRUCTIBLE_WALKABLE
 		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE_WALKABLE
 		_:
-			print('unknown tile type: ' + str(tile_type))
+			print('[get_health_type_by_tile_type] -> unknown tile type: ' + str(tile_type))
 			return TileHealthType.HEALTHY
 
 

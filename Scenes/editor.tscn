@@ -204,7 +204,14 @@ popup/item_1/id = 1
 popup/item_2/text = "8x8"
 popup/item_2/id = 2
 
-[node name="TilesMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
+[node name="TilesContainer" type="HBoxContainer" parent="CanvasLayer/UI/EditorContainer"]
+layout_mode = 2
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="CanvasLayer/UI/EditorContainer/TilesContainer"]
+layout_mode = 2
+text = "CUSTOM TILE"
+
+[node name="TilesMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer/TilesContainer"]
 layout_mode = 2
 disabled = true
 text = "TILES"
@@ -353,3 +360,5 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/UI/EditorContainer/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/EditorContainer/DeleteButton" to="." method="_on_delete_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/EditorContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="about_to_popup" from="CanvasLayer/UI/EditorContainer/LoadMenuButton" to="." method="_on_load_menu_button_about_to_popup"]
+[connection signal="color_changed" from="CanvasLayer/UI/EditorContainer/TilesContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]

@@ -8,6 +8,8 @@ var key_pressed: bool = false
 
 
 func _ready():
+	Global.engine_mode = Global.EngineMode.GAME
+	
 	var default_maps = get_children().filter(func(child): return child.is_in_group('MAPS'))
 	if default_maps:
 		for default_map in default_maps:
@@ -23,7 +25,10 @@ func _process(delta):
 
 func _input(event):
 	# only during level
-	if key_pressed or not game_state_manager.is_visible():
+	if Global.engine_mode != Global.EngineMode.GAME:
+		return
+	
+	if key_pressed:
 		return
 	
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
@@ -67,8 +72,13 @@ func _input(event):
 		game_state_manager.recalculate_enemies_planned_actions()
 
 
-func _on_main_menu_button_pressed():
-	menu._on_main_menu_button_pressed()
-	menu.toggle_visibility(true)
+func show_back():
+	Global.engine_mode = Global.EngineMode.GAME
 	
-	queue_free()
+	toggle_visibility(true)
+
+
+func _on_in_game_menu_button_pressed():
+	toggle_visibility(false)
+	
+	menu.show_in_game_menu(self)

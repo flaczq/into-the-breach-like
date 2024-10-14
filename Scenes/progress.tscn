@@ -34,11 +34,11 @@ offset_left = -104.0
 offset_bottom = 31.0
 grow_horizontal = 0
 
-[node name="MainMenuButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
+[node name="MenuButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_u7n8s")
 shortcut = SubResource("Shortcut_57jbp")
-text = "MAIN_MENU"
+text = "MENU"
 
 [node name="ProgressContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
@@ -111,7 +111,7 @@ text = "LEVEL TYPE 2"
 layout_mode = 2
 text = "LEVEL TYPE 3"
 
-[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action1Button" to="." method="_on_action_button_pressed" binds= [0]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action2Button" to="." method="_on_action_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action3Button" to="." method="_on_action_button_pressed" binds= [2]]

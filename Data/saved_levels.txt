@@ -1,5 +1,9 @@
 #SAVED LEVELS
 
 1->START
-{ "map": { "scene": 0, "level": 1, "level_type": -1, "tiles": "GGGGPPPPPPPPMMMM", "tiles_assets": "TTTTS0000000MMMM", "spawn_player_coords": [{ "x": 2, "y": 2 }, { "x": 3, "y": 2 }], "spawn_enemy_coords": [{ "x": 2, "y": 4 }, { "x": 3, "y": 4 }], "spawn_civilian_coords": [], "max_turns": -1 }, "players": [{ "scene": 0, "health": 2, "damage": 1, "move_distance": 2, "can_fly": false, "action_direction": 0, "action_type": -1, "action_distance": 3 }], "enemies": [{ "scene": 0, "health": 2, "damage": 1, "move_distance": 2, "can_fly": false, "action_direction": 0, "action_type": -1, "action_distance": 3 }], "civilians": [] }
+{ "map": { "scene": 0, "level": 1, "level_type": -1, "tiles": "GGGGPPPPPPPPMMMM", "tiles_assets": "TTTTS0000000MMMM", "spawn_player_coords": [{ "x": 2, "y": 2 }, { "x": 3, "y": 2 }], "spawn_enemy_coords": [{ "x": 2, "y": 4 }, { "x": 3, "y": 4 }], "spawn_civilian_coords": [], "max_turns": -1 }, "players": [], "enemies": [], "civilians": [] }
 1->STOP
+
+2->START
+{ "map": { "scene": 2, "level": 2, "level_type": -1, "tiles": "MMWWMMGMMGGWGGGGGGGGGGGGGGGGGGGWGGGGGGGWGGGGGGWWMGGGGWWWMMGGMWWW", "tiles_assets": "MM00MMTMM00000000000000000000000T0000000T0000000M0000000MMTTM000", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [], "max_turns": -1 }, "players": [], "enemies": [], "civilians": [] }
+2->STOP

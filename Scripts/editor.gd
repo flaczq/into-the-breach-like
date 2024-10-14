@@ -41,6 +41,8 @@ var selected: Node3D
 
 
 func _ready():
+	Global.engine_mode = Global.EngineMode.EDITOR
+	
 	assets.append_array(assets_scene.instantiate().get_children())
 	
 	load_menu_button.get_popup().connect('id_pressed', _on_load_id_pressed)
@@ -63,7 +65,10 @@ func _process(delta):
 
 
 func _input(event):
-	if key_pressed or not map:
+	if Global.engine_mode != Global.EngineMode.EDITOR:
+		return
+	
+	if key_pressed:
 		return
 	
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
@@ -156,6 +161,9 @@ func calculate_level_data(level = -1):
 		level_data.map.level = level
 	level_data.map.tiles = ''
 	level_data.map.tiles_assets = ''
+	level_data.players = []
+	level_data.enemies = []
+	level_data.civilians = []
 	#level_data.map.max_turns = 3
 	
 	for tile in map.tiles:
@@ -166,14 +174,35 @@ func calculate_level_data(level = -1):
 		else:
 			level_data.map.tiles_assets += map.convert_asset_filename_to_initial(null)
 	
-	level_data.players = [{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3}]
-	level_data.enemies = [{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3}]
-	#level_data.civilians = [{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0}]
+	var players_i = 0
+	var enemies_i = 0
+	var civilians_i = 0
+	for child in get_children():
+		# !!! CHANGE CHARACTER VALUES HERE !!!
+		if child.is_in_group('PLAYERS'):
+			if players_i == 0:
+				level_data.players.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+			else:
+				level_data.players.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+			players_i += 1
+		
+		if child.is_in_group('ENEMIES'):
+			if enemies_i == 0:
+				level_data.enemies.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+			else:
+				level_data.enemies.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+			enemies_i += 1
+		
+		if child.is_in_group('CIVILIANS'):
+			if civilians_i == 0:
+				level_data.civilians.push_back({'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
+			else:
+				level_data.civilians.push_back({'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
+			civilians_i += 1
 
 
 func _on_main_menu_button_pressed():
 	menu._on_main_menu_button_pressed()
-	menu.toggle_visibility(true)
 	
 	queue_free()
 
@@ -194,15 +223,38 @@ func _on_play_button_toggled(toggled_on):
 	if toggled_on:
 		editor_label.text = '* playing *'
 		
-		map.hide()
 		calculate_level_data()
+		
+		map.hide()
+		
+		for child in get_children():
+			if child.is_in_group('PLAYERS'):
+				child.hide()
+			
+			if child.is_in_group('ENEMIES'):
+				child.hide()
+			
+			if child.is_in_group('CIVILIANS'):
+				child.hide()
 		
 		game_state_manager.init(level_data)
 	else:
+		Global.engine_mode = Global.EngineMode.EDITOR
+		
 		# reset map for playing
 		game_state_manager.next_level()
 		
 		map.show()
+		
+		for child in get_children():
+			if child.is_in_group('PLAYERS'):
+				child.show()
+			
+			if child.is_in_group('ENEMIES'):
+				child.show()
+			
+			if child.is_in_group('CIVILIANS'):
+				child.show()
 
 
 func _on_reset_button_pressed():
@@ -329,7 +381,7 @@ func _on_color_picker_button_color_changed(color):
 	selected_asset = null
 	selected = null
 	
-	# mock, just for checking the color
+	# mock, just for checking how the color looks on tile
 	tile_to_placed = {'color': color, 'tile_type': TileType.PLAIN}
 
 
@@ -341,14 +393,6 @@ func _on_tiles_id_pressed(id):
 	selected = null
 	
 	tile_to_placed = {'color': map.get_color_by_tile_type(id), 'tile_type': id}
-	#match id:
-		#0: tile_to_placed = {'color': Color('e3cdaa'), 'tile_type': TileType.PLAIN}
-		#1: tile_to_placed = {'color': Color('66ff3e'), 'tile_type': TileType.GRASS}
-		#2: tile_to_placed = {'color': Color('66ff3e'), 'tile_type': TileType.TREE}
-		#3: tile_to_placed = {'color': Color('4e3214'), 'tile_type': TileType.MOUNTAIN}
-		#4: tile_to_placed = {'color': Color('4e3214'), 'tile_type': TileType.VOLCANO}
-		#5: tile_to_placed = {'color': Color('3a8aff'), 'tile_type': TileType.WATER}
-		#6: tile_to_placed = {'color': Color('c54700'), 'tile_type': TileType.LAVA}
 	
 	editor_label.text = 'placing tile "' + TileType.keys()[tile_to_placed.tile_type] + '"'
 

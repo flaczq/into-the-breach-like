@@ -252,7 +252,6 @@ popup/item_3/text = "SIGN"
 popup/item_3/id = 3
 
 [node name="PlayersMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
-visible = false
 layout_mode = 2
 disabled = true
 text = "PLAYERS"
@@ -267,7 +266,6 @@ popup/item_2/text = "PLAYER 3"
 popup/item_2/id = 2
 
 [node name="EnemiesMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
-visible = false
 layout_mode = 2
 disabled = true
 text = "ENEMIES"
@@ -282,7 +280,6 @@ popup/item_2/text = "ENEMY 3"
 popup/item_2/id = 2
 
 [node name="CiviliansMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
-visible = false
 layout_mode = 2
 disabled = true
 text = "CIVILIANS"

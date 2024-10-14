@@ -49,17 +49,23 @@ func _ready():
 func progress():
 	# level not increased yet
 	if level < MAX_TUTORIAL_LEVELS:
-		next_level()
-		# level was already increased
-		var level_data = level_generator.generate_data(LevelType.TUTORIAL, level)
-		init(level_data)
+		init_by_level_type(LevelType.TUTORIAL)
 	else:
 		get_parent().toggle_visibility(false)
 		
 		get_tree().root.add_child(progress_scene.instantiate())
 
 
+func init_by_level_type(level_type):
+	next_level()
+	# level was already increased
+	var level_data = level_generator.generate_data(level_type, level)
+	init(level_data)
+
+
 func init(level_data):
+	Global.engine_mode = Global.EngineMode.GAME
+	
 	init_game_state(level_data)
 	init_map(level_data)
 	init_players(level_data)

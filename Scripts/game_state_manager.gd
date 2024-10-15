@@ -36,19 +36,16 @@ var undo: Dictionary
 
 func _ready():
 	# next_level() will increase level number
-	if Global.tutorial:
-		level = 0
-	else:
-		level = 6
+	level = 0
 	
 	# FIXME
-	max_levels = 9#TUTORIAL_LEVELS_DATA.size()
+	max_levels = 9
 	points = 0
 
 
 func progress():
 	# level not increased yet
-	if level < MAX_TUTORIAL_LEVELS:
+	if Global.tutorial and level < MAX_TUTORIAL_LEVELS:
 		init_by_level_type(LevelType.TUTORIAL)
 	else:
 		get_parent().toggle_visibility(false)
@@ -310,7 +307,7 @@ func level_lost():
 	level_end_popup.show()
 	
 	# still in tutorial
-	if level <= MAX_TUTORIAL_LEVELS:
+	if Global.tutorial:
 		# TODO achievements
 		print('achievement unlocked: you\'re a game journalist now')
 

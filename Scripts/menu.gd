@@ -148,6 +148,7 @@ func _on_aa_check_box_toggled(toggled_on):
 
 
 func _on_player_button_pressed(player_type):
-	# TODO
-	print('you selected player type: ' + PlayerType.keys()[player_type])
+	print('you selected player type: ' + Global.PlayerType.keys()[player_type])
+	Global.current_player_types.push_back(player_type)
+	
 	start()

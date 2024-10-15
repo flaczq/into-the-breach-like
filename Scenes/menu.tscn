@@ -67,6 +67,7 @@ layout_mode = 2
 text = "EXIT"
 
 [node name="InGameMenuContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -133,7 +134,6 @@ button_pressed = true
 text = "ANTI-ALIASING"
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -168,6 +168,7 @@ expand_icon = true
 
 [node name="Player2Button" type="Button" parent="CanvasLayer/UI/PlayersContainer/PlayersButtons"]
 layout_mode = 2
+disabled = true
 text = "PLAYER 2"
 icon = ExtResource("3_wbc5l")
 icon_alignment = 1
@@ -176,6 +177,7 @@ expand_icon = true
 
 [node name="Player3Button" type="Button" parent="CanvasLayer/UI/PlayersContainer/PlayersButtons"]
 layout_mode = 2
+disabled = true
 text = "PLAYER 3"
 icon = ExtResource("3_wbc5l")
 icon_alignment = 1

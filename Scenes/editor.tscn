@@ -131,6 +131,7 @@ shortcut = SubResource("Shortcut_mhvaf")
 text = "END TURN"
 
 [node name="ShootButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+visible = false
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_l1dh4")
 disabled = true
@@ -242,7 +243,7 @@ disabled = true
 text = "ASSETS"
 flat = false
 expand_icon = true
-item_count = 4
+item_count = 5
 popup/item_0/text = "TREE"
 popup/item_0/id = 0
 popup/item_1/text = "MOUNTAIN"
@@ -251,6 +252,8 @@ popup/item_2/text = "VOLCANO"
 popup/item_2/id = 2
 popup/item_3/text = "SIGN"
 popup/item_3/id = 3
+popup/item_4/text = "INDICATOR CROSS"
+popup/item_4/id = 4
 
 [node name="PlayersMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2

@@ -3,7 +3,8 @@ extends Util
 @export var main_scene: PackedScene
 @export var editor_scene: PackedScene
 
-@onready var menu_container = $CanvasLayer/UI/MainMenuContainer
+@onready var main_menu_container = $CanvasLayer/UI/MainMenuContainer
+@onready var editor_button = $CanvasLayer/UI/MainMenuContainer/EditorButton
 @onready var tutorial_check_button = $CanvasLayer/UI/MainMenuContainer/TutorialCheckButton
 @onready var in_game_menu_container = $CanvasLayer/UI/InGameMenuContainer
 @onready var options_container = $CanvasLayer/UI/OptionsContainer
@@ -30,7 +31,11 @@ func _ready():
 	aa_check_box.set_pressed(Global.antialiasing)
 	_on_aa_check_box_toggled(Global.antialiasing)
 	
-	menu_container.show()
+	main_menu_container.show()
+	if Global.build_mode == Global.BuildMode.DEBUG:
+		editor_button.show()
+	else:
+		editor_button.hide()
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
@@ -52,7 +57,7 @@ func show_in_game_menu(new_last_screen):
 	
 	last_screen = new_last_screen
 	
-	menu_container.hide()
+	main_menu_container.hide()
 	in_game_menu_container.show()
 	options_container.hide()
 	players_container.hide()
@@ -70,7 +75,7 @@ func _on_start_button_pressed():
 	if Global.tutorial:
 		start()
 	else:
-		menu_container.hide()
+		main_menu_container.hide()
 		in_game_menu_container.hide()
 		options_container.hide()
 		players_container.show()
@@ -81,7 +86,7 @@ func _on_tutorial_check_button_toggled(toggled_on):
 
 
 func _on_options_button_pressed():
-	menu_container.hide()
+	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.show()
 	players_container.hide()
@@ -107,7 +112,7 @@ func _on_save_button_pressed():
 func _on_main_menu_button_pressed():
 	Global.engine_mode = Global.EngineMode.MENU
 	
-	menu_container.show()
+	main_menu_container.show()
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
@@ -122,10 +127,10 @@ func _on_main_menu_button_pressed():
 func _on_back_button_pressed():
 	if get_node_or_null('/root/Main'):
 		# in game
-		menu_container.hide()
+		main_menu_container.hide()
 		in_game_menu_container.show()
 	else:
-		menu_container.show()
+		main_menu_container.show()
 		in_game_menu_container.hide()
 	
 	options_container.hide()

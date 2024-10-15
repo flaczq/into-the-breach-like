@@ -23,6 +23,7 @@ var map: Node3D = null
 var players: Array[Node3D] = []
 var enemies: Array[Node3D] = []
 var civilians: Array[Node3D] = []
+var level_events: Array[int] = []
 var level_end_clicked: bool = false
 
 var level: int
@@ -74,9 +75,10 @@ func init(level_data):
 
 func init_game_state(level_data):
 	current_turn = 1
-	max_turns = level_data.map.max_turns
+	max_turns = (level_data.map.max_turns) if (level_data.map.max_turns) else (-1)
 	selected_player = null
 	undo = {}
+	level_events = (level_data.map.level_events) if (level_data.map.level_events) else ([])
 	
 	# UI
 	reset_ui()
@@ -164,6 +166,16 @@ func init_civilians(level_data):
 
 
 func start_turn():
+	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓
+	# ┃┓┣┫┃┃┃┣   ┃┃┃┣┫┓┃┃  ┃ ┃┃┃┃┃┃
+	# ┗┛┛┗┛ ┗┗┛  ┛ ┗┛┗┗┛┗  ┗┛┗┛┗┛┣┛
+	
+	# TODO environment actions: missles into indicators, lava flames, falling rocks
+	for level_event in level_events:
+		print(LevelEvent.keys()[level_event])
+		#if level_event == LevelEvent.MINES:
+			#...
+	
 	var alive_civilians = civilians.filter(func(civilian): return civilian.is_alive)
 	var alive_enemies = enemies.filter(func(enemy): return enemy.is_alive)
 	var alive_players = players.filter(func(player): return player.is_alive)
@@ -173,17 +185,11 @@ func start_turn():
 		if tiles_for_movement.is_empty():
 			tiles_for_movement.push_back(civilian.tile)
 		
-		var target_tiles_for_movement
-		if tiles_for_movement.size() == 1:
-			target_tiles_for_movement = tiles_for_movement
-		else:
-			# prefer to move if possible
-			target_tiles_for_movement = tiles_for_movement.filter(func(tile): return tile != civilian.tile)
-		
+		# prefer to move if possible
+		var target_tiles_for_movement = (tiles_for_movement) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile): return tile != civilian.tile))
 		var target_tile_for_movement = target_tiles_for_movement.pick_random()
 		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
 		await civilian.move(tiles_path)
-		
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
 	
 	# sort by order
@@ -191,11 +197,15 @@ func start_turn():
 	for enemy in alive_enemies:
 		var tiles_for_movement = calculate_tiles_for_movement(true, enemy)
 		tiles_for_movement.push_back(enemy.tile)
-			
-		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, alive_civilians + alive_players)
+		
+		var target_tiles = alive_civilians.map(func(alive_civilian): return alive_civilian.tile)
+		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, target_tiles)
 		if not target_tile_for_movement:
-			target_tile_for_movement = tiles_for_movement.pick_random()
-			print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
+			target_tiles = alive_players.map(func(alive_player): return alive_player.tile)
+			target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, target_tiles)
+			if not target_tile_for_movement:
+				target_tile_for_movement = tiles_for_movement.pick_random()
+				print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
 		
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
 		await enemy.move(tiles_path)
@@ -328,11 +338,7 @@ func calculate_tiles_for_movement(active, character):
 		
 		# don't even ask how this works
 		var origin_tiles = [character.tile]
-		var move_distance
-		if character.state_type == StateType.SLOW_DOWN:
-			move_distance = 1
-		else:
-			move_distance = character.move_distance
+		var move_distance = (1) if (character.state_type == StateType.SLOW_DOWN) else (character.move_distance)
 		
 		while i <= move_distance:
 			var temp_origin_tiles = []
@@ -457,8 +463,8 @@ func calculate_tiles_for_action(active, character):
 	return tiles_for_action
 
 
-func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_character, target_characters):
-	var target_characters_for_movement = []
+func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_character, target_tiles):
+	var valid_tiles_for_movement = []
 	var target_tile_for_movement = null
 	
 	# make it random
@@ -471,23 +477,23 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_c
 	
 	for tile_for_movement in tiles_for_movement:
 		if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.HORIZONTAL_DOT:
-			target_characters_for_movement = target_characters.filter(func(target_character): return (target_character.tile.coords.x == tile_for_movement.coords.x and absi(target_character.tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_distance) or (target_character.tile.coords.y == tile_for_movement.coords.y and absi(target_character.tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_distance))
-			if not target_characters_for_movement.is_empty():
+			valid_tiles_for_movement = target_tiles.filter(func(target_tile): return (target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_distance) or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_distance))
+			if not valid_tiles_for_movement.is_empty():
 				target_tile_for_movement = tile_for_movement
 		elif origin_character.action_direction == ActionDirection.VERTICAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_DOT:
 			var max_range = mini(map.get_side_dimension(), origin_character.action_distance)
 			for i in range(1, max_range + 1):
-				var valid_target_characters = target_characters.filter(func(target_character): return abs(target_character.tile.coords - tile_for_movement.coords) == Vector2i(i, i))
-				if not valid_target_characters.is_empty():
-					target_characters_for_movement.append_array(valid_target_characters)
+				var valid_tiles = target_tiles.filter(func(target_tile): return abs(target_tile.coords - tile_for_movement.coords) == Vector2i(i, i))
+				if not valid_tiles.is_empty():
+					valid_tiles_for_movement.append_array(valid_tiles)
 		
-			if not target_characters_for_movement.is_empty():
+			if not valid_tiles_for_movement.is_empty():
 				target_tile_for_movement = tile_for_movement
 		
 		# exclude tiles behind occupied tiles
 		if target_tile_for_movement and (origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE):
-			if target_characters_for_movement.all(func(target_character): return target_character.tile != calculate_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_character.tile.coords)):
-				target_characters_for_movement = []
+			if valid_tiles_for_movement.all(func(target_tile): return target_tile != calculate_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_tile.coords)):
+				valid_tiles_for_movement = []
 				target_tile_for_movement = null
 		
 		if target_tile_for_movement:
@@ -498,7 +504,7 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_c
 					var target_tile_to_other_enemy_planned_sign = (target_tile_for_movement.coords - other_enemy.planned_tile.coords).sign()
 					var target_tile_to_other_enemy_sign = (target_tile_for_movement.coords - other_enemy.tile.coords).sign()
 					if get_hit_direction(other_enemy_to_planned_sign) == get_hit_direction(target_tile_to_other_enemy_planned_sign) and get_hit_direction(target_tile_to_other_enemy_planned_sign) != get_hit_direction(target_tile_to_other_enemy_sign):
-						target_characters_for_movement = []
+						valid_tiles_for_movement = []
 						target_tile_for_movement = null
 						break;
 			
@@ -610,6 +616,7 @@ func _on_tile_hovered(tile, is_hovered):
 		
 		if current_player != selected_player:
 			current_player.toggle_outline(false)
+			current_player.toggle_health_bar(false)
 	
 	for current_tile in map.tiles:
 		current_tile.ghost = null
@@ -626,40 +633,61 @@ func _on_tile_hovered(tile, is_hovered):
 	for current_enemy in enemies:
 		current_enemy.toggle_arrow_highlight(false)
 		current_enemy.toggle_outline(false)
+		current_enemy.toggle_health_bar(false)
 	
 	for current_civilian in civilians:
 		current_civilian.toggle_outline(false)
+		current_civilian.toggle_health_bar(false)
 	
 	# UI
 	if is_hovered:
-		# info about hovered tile
-		tile_info_label.text = 'POSITION: ' + str(tile.position) + '\n'
-		tile_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
-		tile_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n'
-		tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type])
+		# ┏┳┓•┓ ┏┓  •┳┓┏┓┏┓
+		#  ┃ ┓┃ ┣   ┓┃┃┣ ┃┃
+		#  ┻ ┗┗┛┗┛  ┗┛┗┻ ┗┛
+		if Global.build_mode == Global.BuildMode.DEBUG:
+			tile_info_label.text = 'POSITION: ' + str(tile.position) + '\n'
+			tile_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
+			tile_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n\n'
+			
+			tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
+			tile_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
+			
+			if tile.player:
+				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
+				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+				tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
+				tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
+				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
+			elif tile.enemy:
+				tile_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+				tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
+				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+				tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
+				tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
+				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
+			elif tile.civilian:
+				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
+				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
+		else:
+			tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
+			tile_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 		
-		if tile.player:
-			tile_info_label.text += '\n' + 'HEALTH: ' + str(tile.player.health) + '\n'
-			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
-			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
-			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
-			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
-		
-		if tile.enemy:
-			tile_info_label.text += '\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
-			tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '\n'
-			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
-			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
-			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
-			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
-		
-		if tile.civilian:
-			tile_info_label.text += '\n' + 'HEALTH: ' + str(tile.civilian.health) + '\n'
-			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
+			if tile.player:
+				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
+				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
+			elif tile.enemy:
+				tile_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+				tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
+				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
+			elif tile.civilian:
+				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
+				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
 		
 		# kinda hardcoded but maybe it will be fine..?
 		if tile.info:
-			tile_info_label.text += '\n' + tile.info
+			tile_info_label.text += '\n\n' + tile.info
 	else:
 		tile_info_label.text = ''
 	
@@ -696,15 +724,17 @@ func _on_tile_hovered(tile, is_hovered):
 				
 				if first_occupied_tile_in_line.player:
 					first_occupied_tile_in_line.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+					first_occupied_tile_in_line.player.toggle_health_bar(true)
 				
 				if first_occupied_tile_in_line.enemy:
 					first_occupied_tile_in_line.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+					first_occupied_tile_in_line.enemy.toggle_health_bar(true)
 					#TODO !!!!!!!!!! show_health_with_damage_inflicted()
 					print('enemy ' + str(first_occupied_tile_in_line.coords) + ' -> with health ' + str(first_occupied_tile_in_line.enemy.health) + ' will be damaged to health ' + str(first_occupied_tile_in_line.enemy.health - selected_player.damage))
 				
 				if first_occupied_tile_in_line.civilian:
 					first_occupied_tile_in_line.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
-				
+					first_occupied_tile_in_line.civilian.toggle_health_bar(true)
 			else:
 				selected_player.clear_arrows()
 	
@@ -713,18 +743,22 @@ func _on_tile_hovered(tile, is_hovered):
 		if tile.enemy:
 			tile.enemy.toggle_arrow_highlight(true)
 			tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+			tile.enemy.toggle_health_bar(true)
 			
 			if tile.enemy.planned_tile:
 				#tile.enemy.planned_tile.toggle_shader(true)
 				
 				if tile.enemy.planned_tile.player:
 					tile.enemy.planned_tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+					tile.enemy.planned_tile.player.toggle_health_bar(true)
 				
 				if tile.enemy.planned_tile.enemy:
 					tile.enemy.planned_tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+					tile.enemy.planned_tile.enemy.toggle_health_bar(true)
 				
 				if tile.enemy.planned_tile.civilian:
 					tile.enemy.planned_tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
+					tile.enemy.planned_tile.civilian.toggle_health_bar(true)
 				
 				tile.enemy.planned_tile.toggle_asset_outline(true)
 		
@@ -736,15 +770,19 @@ func _on_tile_hovered(tile, is_hovered):
 			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
 				current_enemy.toggle_arrow_highlight(true)
 				current_enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+				current_enemy.toggle_health_bar(true)
 			
 			if tile.player:
 				tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+				tile.player.toggle_health_bar(true)
 			
 			if tile.enemy:
 				tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+				tile.enemy.toggle_health_bar(true)
 			
 			if tile.civilian:
 				tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
+				tile.civilian.toggle_health_bar(true)
 			
 			tile.toggle_asset_outline(true)
 
@@ -825,10 +863,11 @@ func _on_player_clicked(player, is_clicked):
 	
 	if is_clicked:
 		selected_player = player
+		selected_player.toggle_health_bar(true)
 		
 		# UI
 		shoot_button.set_disabled(false)
-		action_button.set_disabled(selected_player.action_type == ActionType.NONE)
+		action_button.set_disabled(false)
 		#if not action_button.is_pressed() and selected_player.current_phase == PhaseType.ACTION:
 			#shoot_button.set_pressed_no_signal(true)
 		
@@ -841,6 +880,7 @@ func _on_player_clicked(player, is_clicked):
 			#for tile_for_action in tiles_for_action:
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
+		selected_player.toggle_health_bar(false)
 		selected_player = null
 		
 		# UI

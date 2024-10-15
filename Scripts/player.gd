@@ -31,27 +31,6 @@ func _ready():
 	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
 
 
-#func _input(event):
-	## NEXT PHASE
-	#if Input.is_key_pressed(KEY_ENTER):
-		#if is_alive and is_clicked:
-			#if state_type == StateType.MISS_ACTION:
-				#return
-			#
-			#if current_phase == PhaseType.MOVE:
-				#reset_tiles()
-				#
-				#current_phase = PhaseType.ACTION
-				#print(str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(actions_per_turn) + ' ACTION(S)')
-			#elif current_phase == PhaseType.ACTION:
-				#reset_tiles()
-				#
-				#current_phase = PhaseType.WAIT
-				#print(str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase])
-			#elif current_phase == PhaseType.WAIT:
-				#print('cannot next phase, has to next turn')
-
-
 func spawn(target_tile):
 	tile = target_tile
 	tile.set_player(self)
@@ -122,7 +101,7 @@ func execute_action(target_tile):
 	reset_tiles()
 	
 	await spawn_bullet(target_tile)
-	await target_tile.get_shot(0, action_type, tile.coords)
+	await target_tile.get_shot(damage, action_type, tile.coords)
 	
 	after_action()
 
@@ -162,6 +141,18 @@ func get_killed():
 	
 	tile.set_player(null)
 	tile = null
+
+
+func toggle_health_bar(is_toggled):
+	pass
+	# FIXME change to 3D, because in 2D it looks bad when moving camera
+	#if health_bar:
+		#if is_toggled:
+			#var top_model_position = Vector3(model.global_position.x, model.global_position.y + 1.0, model.global_position.z + 0.5)
+			#health_bar.position = get_viewport().get_camera_3d().unproject_position(top_model_position)
+			#health_bar.show()
+		#else:
+			#health_bar.hide()
 
 
 func start_turn():

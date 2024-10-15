@@ -59,3 +59,15 @@ func get_killed():
 	
 	tile.set_civilian(null)
 	tile = null
+
+
+func toggle_health_bar(is_toggled):
+	pass
+	# FIXME change to 3D, because in 2D it looks bad when moving camera
+	#if health_bar:
+		#if is_toggled:
+			#var top_model_position = Vector3(model.global_position.x, model.global_position.y + 0.9, model.global_position.z + 0.5)
+			#health_bar.position = get_viewport().get_camera_3d().unproject_position(top_model_position)
+			#health_bar.show()
+		#else:
+			#health_bar.hide()

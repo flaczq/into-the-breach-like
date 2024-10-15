@@ -70,51 +70,52 @@ func _input(event):
 	if key_pressed:
 		return
 	
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
-		if is_close(camera_3d.rotation_degrees.x, -50):
-			camera_3d.rotation_degrees.x = -40
-			camera_3d.position.y = 13.2
-		elif is_close(camera_3d.rotation_degrees.x, -40):
-			camera_3d.rotation_degrees.x = -30
-			camera_3d.position.y = 9
+	if map:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
+			if is_close(camera_3d.rotation_degrees.x, -50):
+				camera_3d.rotation_degrees.x = -40
+				camera_3d.position.y = 13.2
+			elif is_close(camera_3d.rotation_degrees.x, -40):
+				camera_3d.rotation_degrees.x = -30
+				camera_3d.position.y = 9
+		
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN):
+			if is_close(camera_3d.rotation_degrees.x, -40):
+				camera_3d.rotation_degrees.x = -50
+				camera_3d.position.y = 19.2
+			elif is_close(camera_3d.rotation_degrees.x, -30):
+				camera_3d.rotation_degrees.x = -40
+				camera_3d.position.y = 13.2
 	
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN):
-		if is_close(camera_3d.rotation_degrees.x, -40):
-			camera_3d.rotation_degrees.x = -50
-			camera_3d.position.y = 19.2
-		elif is_close(camera_3d.rotation_degrees.x, -30):
-			camera_3d.rotation_degrees.x = -40
-			camera_3d.position.y = 13.2
-	
-	# LOG LEVEL DATA
-	if Input.is_key_pressed(KEY_L):
-		key_pressed = true
-		print(level_data)
-	
-	# LOG TILES
-	if Input.is_key_pressed(KEY_T):
-		key_pressed = true
-		print('tiles: ' + str(map.tiles.map(func(tile): return str(tile.coords) + ' ' + str(TileHealthType.keys()[tile.health_type]))))
-	
-	# LOG PLAYERS TILES
-	if Input.is_key_pressed(KEY_P):
-		key_pressed = true
-		print('players tiles: ' + str(map.tiles.filter(func(tile): return tile.player).map(func(tile): return tile.coords)))
-	
-	# LOG ENEMIES TILES
-	if Input.is_key_pressed(KEY_E):
-		key_pressed = true
-		print('enemies tiles: ' + str(map.tiles.filter(func(tile): return tile.enemy).map(func(tile): return tile.coords)))
-	
-	# LOG CIVILIANS TILES
-	if Input.is_key_pressed(KEY_C):
-		key_pressed = true
-		print('civilians tiles: ' + str(map.tiles.filter(func(tile): return tile.civilian).map(func(tile): return tile.coords)))
-	
-	# LOG ASSETS TILES
-	if Input.is_key_pressed(KEY_A):
-		key_pressed = true
-		print('assets tiles: ' + str(map.tiles.filter(func(tile): return tile.models.has('asset')).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
+		# LOG LEVEL DATA
+		if Input.is_key_pressed(KEY_L):
+			key_pressed = true
+			print(level_data)
+		
+		# LOG TILES
+		if Input.is_key_pressed(KEY_T):
+			key_pressed = true
+			print('tiles: ' + str(map.tiles.map(func(tile): return str(tile.coords) + ' ' + str(TileHealthType.keys()[tile.health_type]))))
+		
+		# LOG PLAYERS TILES
+		if Input.is_key_pressed(KEY_P):
+			key_pressed = true
+			print('players tiles: ' + str(map.tiles.filter(func(tile): return tile.player).map(func(tile): return tile.coords)))
+		
+		# LOG ENEMIES TILES
+		if Input.is_key_pressed(KEY_E):
+			key_pressed = true
+			print('enemies tiles: ' + str(map.tiles.filter(func(tile): return tile.enemy).map(func(tile): return tile.coords)))
+		
+		# LOG CIVILIANS TILES
+		if Input.is_key_pressed(KEY_C):
+			key_pressed = true
+			print('civilians tiles: ' + str(map.tiles.filter(func(tile): return tile.civilian).map(func(tile): return tile.coords)))
+		
+		# LOG ASSETS TILES
+		if Input.is_key_pressed(KEY_A):
+			key_pressed = true
+			print('assets tiles: ' + str(map.tiles.filter(func(tile): return tile.models.has('asset')).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
 	
 	if Global.engine_mode != Global.EngineMode.EDITOR:
 		return
@@ -140,7 +141,7 @@ func init():
 	enemies_menu_button.set_disabled(true)
 	civilians_menu_button.set_disabled(true)
 	level_data = {
-		'map': {'scene': -1, 'level': -1, 'level_type': -1, 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': [], 'max_turns': -1}
+		'map': {'scene': -1, 'level': -1, 'level_type': -1, 'level_events': [], 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []}
 	}
 
 
@@ -160,6 +161,7 @@ func reset():
 func calculate_level_data(level = -1):
 	if level >= 0:
 		level_data.map.level = level
+	level_data.map.level_events = []
 	level_data.map.tiles = ''
 	level_data.map.tiles_assets = ''
 	level_data.players = []
@@ -179,21 +181,25 @@ func calculate_level_data(level = -1):
 	var enemies_i = 0
 	var civilians_i = 0
 	for child in get_children():
-		# !!! CHANGE CHARACTER VALUES HERE !!!
+		# ┏┓┓┏┏┓┳┓┏┓┏┓┏┳┓┏┓┳┓  ┓┏┏┓┓ ┳┳┏┓┏┓
+		# ┃ ┣┫┣┫┣┫┣┫┃  ┃ ┣ ┣┫  ┃┃┣┫┃ ┃┃┣ ┗┓
+		# ┗┛┛┗┛┗┛┗┛┗┗┛ ┻ ┗┛┛┗  ┗┛┛┗┗┛┗┛┗┛┗┛
 		if child.is_in_group('PLAYERS'):
 			var player_scene = int(child.name.substr(6, 1)) - 1
 			if players_i == 0:
-				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': 0, 'action_distance': 3})
+				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7})
+			elif players_i == 1:
+				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
 			else:
-				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7})
 			players_i += 1
 		
 		if child.is_in_group('ENEMIES'):
 			var enemy_scene = int(child.name.substr(5, 1)) - 1
 			if enemies_i == 0:
-				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
 			else:
-				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
 			enemies_i += 1
 		
 		if child.is_in_group('CIVILIANS'):
@@ -420,6 +426,7 @@ func _on_assets_id_pressed(id):
 		1: selected_asset = assets.filter(func(asset): return asset.name == 'mountain').front().duplicate()
 		2: selected_asset = assets.filter(func(asset): return asset.name == 'volcano').front().duplicate()
 		3: selected_asset = assets.filter(func(asset): return asset.name == 'sign').front().duplicate()
+		4: selected_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 	
 	editor_label.text = 'placing asset "' + selected_asset.name + '"'
 

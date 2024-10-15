@@ -1,8 +1,10 @@
 extends Util
 
 class_name Character
-
 @export var assets_scene: PackedScene
+
+@onready var camera_3d = $Camera3D
+@onready var health_bar = $HealthProgressBar
 
 signal action_push_back(character: Character, origin_tile_coords: Vector2i)
 signal action_pull_front(character: Character, origin_tile_coords: Vector2i)
@@ -19,6 +21,7 @@ var model: MeshInstance3D
 var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
 var default_bullet_model: Node3D
+var max_health: int
 var health: int
 var damage: int
 var move_distance: int
@@ -44,6 +47,9 @@ func _ready():
 	for model_outline in model_outlines:
 		model_outline.hide()
 	
+	if health_bar:
+		health_bar.hide()
+	
 	var assets_instance = assets_scene.instantiate()
 	for asset in assets_instance.get_children():
 		if asset.name == 'ArrowSignContainer':
@@ -57,6 +63,7 @@ func _ready():
 
 func init(character_init_data):
 	#model = get_node(character_init_data.model_path)
+	max_health = character_init_data.health
 	health = character_init_data.health
 	damage = character_init_data.damage
 	move_distance = character_init_data.move_distance
@@ -236,13 +243,8 @@ func spawn_bullet(target):
 		var amount = maxi(2 * roundi(position_difference.length()), 6)
 		var duration = position_difference.length() / (amount * 10.0)
 		for i in range(1, amount + 1):
-			var current_duration
 			# manually slowing down the bullet in the top part of the trajectory
-			if i > amount * 2/6 and i < amount * 4/6:
-				current_duration = duration * 1.2
-			else:
-				current_duration = duration
-			
+			var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)
 			position_tween.tween_property(bullet_model, 'position', origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount)), current_duration)
 	await position_tween.finished
 	

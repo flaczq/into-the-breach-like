@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://b60h1emnunq1s"]
+[gd_scene load_steps=15 format=3 uid="uid://b60h1emnunq1s"]
 
 [ext_resource type="Script" path="res://Scripts/civilian.gd" id="1_0y823"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_wduy7"]
+[ext_resource type="StyleBox" uid="uid://bpkofwngvli4v" path="res://Other/health_bar_style_box_flat.tres" id="3_kn01m"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ada2h"]
 resource_name = "skin"
@@ -190,6 +191,9 @@ _surfaces = [{
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6k62g"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dnuse"]
+bg_color = Color(0, 1, 0, 1)
+
 [node name="Civilian1" type="Node3D" groups=["CIVILIANS"]]
 script = ExtResource("1_0y823")
 assets_scene = ExtResource("2_wduy7")
@@ -208,3 +212,24 @@ mesh = SubResource("ArrayMesh_3nevw")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("BoxShape3D_6k62g")
 disabled = true
+
+[node name="HealthProgressBar" type="ProgressBar" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -5.0
+offset_right = 40.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/background = ExtResource("3_kn01m")
+theme_override_styles/fill = SubResource("StyleBoxFlat_dnuse")
+max_value = 3.0
+step = 1.0
+value = 2.0
+show_percentage = false

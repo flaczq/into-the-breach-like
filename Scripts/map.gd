@@ -72,6 +72,7 @@ func convert_asset_initial_to_filename(asset_initial):
 		'M': return 'mountain'
 		'V': return 'volcano'
 		'S': return 'sign'
+		'I': return 'indicator-special-cross'
 		_:
 			print('[convert_asset_initial_to_filename] -> unknown asset initial: ' + asset_initial)
 			return null
@@ -92,6 +93,9 @@ func convert_asset_filename_to_initial(asset_filename):
 	
 	if asset_filename.begins_with('sign'):
 		return 'S'
+	
+	if asset_filename.begins_with('indicator-special-cross'):
+		return 'I'
 	
 	print('[convert_asset_filename_to_initial] -> default asset used or unknown asset filename: ' + asset_filename)
 	return '0'

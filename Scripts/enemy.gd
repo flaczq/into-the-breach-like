@@ -1,7 +1,8 @@
 extends Character
 
-const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
+@onready var progress_bar = $ProgressBar
 
+const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
@@ -96,7 +97,7 @@ func plan_action(target_tile):
 func execute_planned_action():
 	clear_arrows()
 	
-	var temp_planned_tile
+	var temp_planned_tile = null
 	if planned_tile:
 		# remember planned tile to be able to unset it before shooting
 		temp_planned_tile = planned_tile
@@ -131,6 +132,18 @@ func reset_planned_tile():
 	if planned_tile:
 		planned_tile.set_planned_enemy_action(false)
 		planned_tile = null
+
+
+func toggle_health_bar(is_toggled):
+	pass
+	# FIXME change to 3D, because in 2D it looks bad when moving camera
+	#if health_bar:
+		#if is_toggled:
+			#var top_model_position = Vector3(model.global_position.x, model.global_position.y + 0.9, model.global_position.z + 0.5)
+			#health_bar.position = get_viewport().get_camera_3d().unproject_position(top_model_position)
+			#health_bar.show()
+		#else:
+			#health_bar.hide()
 
 
 func toggle_arrow_highlight(is_toggled):

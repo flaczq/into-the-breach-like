@@ -115,6 +115,7 @@ shortcut = SubResource("Shortcut_mhvaf")
 text = "END TURN"
 
 [node name="ShootButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+visible = false
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_l1dh4")
 disabled = true

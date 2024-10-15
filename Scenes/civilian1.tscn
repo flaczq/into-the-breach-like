@@ -194,7 +194,7 @@ _surfaces = [{
 script = ExtResource("1_0y823")
 assets_scene = ExtResource("2_wduy7")
 
-[node name="Princess_Head" type="MeshInstance3D" parent="." groups=["MODELS"]]
+[node name="Princess_Head" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_pmast")
 

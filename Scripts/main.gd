@@ -24,7 +24,6 @@ func _process(delta):
 
 
 func _input(event):
-	# only during level
 	if Global.engine_mode != Global.EngineMode.GAME:
 		return
 	

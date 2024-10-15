@@ -268,8 +268,10 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 
 
 func get_killed():
-	# implemented in subclasses 
-	pass
+	is_alive = false
+	
+	model.scale.y /= 2
+	model.position.y /= 2
 
 
 func toggle_outline(is_toggled, outline_color = Color.BLACK):

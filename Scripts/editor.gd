@@ -1,16 +1,18 @@
 extends Util
 
+@export var assets_scene: PackedScene
 @export var map_scenes: Array[PackedScene] = []
 @export var player_scenes: Array[PackedScene] = []
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
-@export var assets_scene: PackedScene
 
 @onready var menu = $/root/Menu
 @onready var camera_3d = $Camera3D
 @onready var level_generator = $LevelGenerator
 @onready var game_state_manager = $GameStateManager
 @onready var editor_label = $CanvasLayer/UI/EditorLabel
+@onready var end_turn_button = $CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton
+@onready var undo_button = $CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton
 @onready var editor_container = $CanvasLayer/UI/EditorContainer
 @onready var play_button = $CanvasLayer/UI/EditorContainer/PlayButton
 @onready var reset_button = $CanvasLayer/UI/EditorContainer/ResetButton
@@ -65,9 +67,6 @@ func _process(delta):
 
 
 func _input(event):
-	if Global.engine_mode != Global.EngineMode.EDITOR:
-		return
-	
 	if key_pressed:
 		return
 	
@@ -86,9 +85,6 @@ func _input(event):
 		elif is_close(camera_3d.rotation_degrees.x, -30):
 			camera_3d.rotation_degrees.x = -40
 			camera_3d.position.y = 13.2
-	
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
-		reset()
 	
 	# LOG LEVEL DATA
 	if Input.is_key_pressed(KEY_L):
@@ -119,11 +115,19 @@ func _input(event):
 	if Input.is_key_pressed(KEY_A):
 		key_pressed = true
 		print('assets tiles: ' + str(map.tiles.filter(func(tile): return tile.models.has('asset')).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
+	
+	if Global.engine_mode != Global.EngineMode.EDITOR:
+		return
+	
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+		reset()
 
 
 func init():
 	reset()
 	
+	end_turn_button.set_disabled(true)
+	undo_button.set_disabled(true)
 	play_button.set_disabled(true)
 	reset_button.set_disabled(true)
 	delete_button.set_disabled(true)
@@ -136,10 +140,7 @@ func init():
 	enemies_menu_button.set_disabled(true)
 	civilians_menu_button.set_disabled(true)
 	level_data = {
-		'map': {'scene': -1, 'level': -1, 'level_type': -1, 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': [], 'max_turns': -1},
-		'players': [],
-		'enemies': [],
-		'civilians': []
+		'map': {'scene': -1, 'level': -1, 'level_type': -1, 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': [], 'max_turns': -1}
 	}
 
 
@@ -180,24 +181,27 @@ func calculate_level_data(level = -1):
 	for child in get_children():
 		# !!! CHANGE CHARACTER VALUES HERE !!!
 		if child.is_in_group('PLAYERS'):
+			var player_scene = int(child.name.substr(6, 1)) - 1
 			if players_i == 0:
-				level_data.players.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': 0, 'action_distance': 3})
 			else:
-				level_data.players.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
 			players_i += 1
 		
 		if child.is_in_group('ENEMIES'):
+			var enemy_scene = int(child.name.substr(5, 1)) - 1
 			if enemies_i == 0:
-				level_data.enemies.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
 			else:
-				level_data.enemies.push_back({'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
+				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 2, 'can_fly': false, 'action_direction': 0, 'action_type': -1, 'action_distance': 3})
 			enemies_i += 1
 		
 		if child.is_in_group('CIVILIANS'):
+			var civilian_scene = int(child.name.substr(8, 1)) - 1
 			if civilians_i == 0:
-				level_data.civilians.push_back({'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
+				level_data.civilians.push_back({'scene': civilian_scene, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
 			else:
-				level_data.civilians.push_back({'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
+				level_data.civilians.push_back({'scene': civilian_scene, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
 			civilians_i += 1
 
 
@@ -210,6 +214,8 @@ func _on_main_menu_button_pressed():
 func _on_play_button_toggled(toggled_on):
 	reset()
 	
+	end_turn_button.set_disabled(not toggled_on)
+	undo_button.set_disabled(not toggled_on)
 	reset_button.set_disabled(toggled_on)
 	delete_button.set_disabled(toggled_on)
 	save_button.set_disabled(toggled_on)
@@ -289,6 +295,10 @@ func _on_save_button_pressed():
 	var level = content.count('->START') + 1
 	
 	calculate_level_data(level)
+	# level_generator will add characters data
+	level_data.erase('players')
+	level_data.erase('enemies')
+	level_data.erase('civilians')
 	
 	content += '\n' + str(level) + '->START\n'
 	# make it pretty

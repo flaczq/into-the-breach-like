@@ -157,13 +157,11 @@ func after_action():
 
 
 func get_killed():
-	is_alive = false
+	super()
 	print('playe ' + str(tile.coords) + ' -> dead!')
 	
 	tile.set_player(null)
 	tile = null
-	
-	model.get_active_material(0).albedo_color = Color.DARK_RED
 
 
 func start_turn():

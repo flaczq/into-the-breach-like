@@ -127,6 +127,7 @@ popup/item_1/text = "POLISH"
 popup/item_1/id = 1
 
 [node name="AACheckBox" type="CheckBox" parent="CanvasLayer/UI/OptionsContainer"]
+visible = false
 layout_mode = 2
 button_pressed = true
 text = "ANTI-ALIASING"

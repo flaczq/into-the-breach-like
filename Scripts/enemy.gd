@@ -116,15 +116,13 @@ func execute_planned_action():
 
 
 func get_killed():
-	is_alive = false
+	super()
 	print('enemy ' + str(tile.coords) + ' -> dead!')
 	
 	reset_planned_tile()
 	
 	tile.set_enemy(null)
 	tile = null
-	
-	model.get_active_material(0).albedo_color = Color.DARK_RED
 
 
 func reset_planned_tile():

@@ -54,10 +54,8 @@ func move(tiles_path, forced = false, outside_tile = null):
 
 
 func get_killed():
-	is_alive = false
+	super()
 	print('civil ' + str(tile.coords) + ' -> dead!')
 	
 	tile.set_civilian(null)
 	tile = null
-	
-	model.get_active_material(0).albedo_color = Color.DARK_RED

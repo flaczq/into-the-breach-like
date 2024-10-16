@@ -129,10 +129,9 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 			if models.asset.name == 'sign' and level_type == LevelType.TUTORIAL:
 				models.asset.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
 	
-	if models.has('asset'):
-		for child in models.asset.get_children():
-			if child.is_in_group('MODEL_OUTLINES'):
-				models.asset_outline = child
+	if models.get('asset'):
+		for child in models.asset.get_children().filter(func(child): return child.is_in_group('OUTLINES')):
+			models.asset_outline = child
 	
 	models.tile_default_color = get_color_by_tile_type(tile_type)
 	
@@ -182,6 +181,31 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 			return TileHealthType.HEALTHY
 
 
+func plan_level_events(level_events):
+	for level_event in level_events:
+		print(LevelEvent.keys()[level_event])
+		# 3 missles spawn indicators
+		if level_event == LevelEvent.MISSLES:
+			for i in range(0, 3):
+				var event_tile = get_untargetable_tiles().pick_random()
+				event_tile.models.event_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+				event_tile.models.event_asset.show()
+				event_tile.add_child(event_tile.models.event_asset)
+		#TODO else...
+
+
+func execute_level_events(level_events):
+	for level_event in level_events:
+		print(LevelEvent.keys()[level_event])
+		# 3 missles hit at spawned indicators
+		if level_event == LevelEvent.MISSLES:
+			for tile in tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')):
+				await tile.get_shot(1)
+				tile.models.event_asset.queue_free()
+				tile.models.erase('event_asset')
+		#TODO else...
+
+
 func get_side_dimension():
 	return sqrt(tiles.size())
 
@@ -208,3 +232,11 @@ func get_spawnable_tiles(tiles_coords):
 		return get_available_tiles()
 	
 	return spawnable_tiles
+
+
+func get_targetable_tiles():
+	return tiles.filter(func(tile): return is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES'))
+
+
+func get_untargetable_tiles():
+	return tiles.filter(func(tile): return not get_targetable_tiles().has(tile))

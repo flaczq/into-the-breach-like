@@ -23,7 +23,7 @@ var map: Node3D = null
 var players: Array[Node3D] = []
 var enemies: Array[Node3D] = []
 var civilians: Array[Node3D] = []
-var level_events: Array[int] = []
+var level_events: Array = []
 var level_end_clicked: bool = false
 
 var level: int
@@ -64,7 +64,7 @@ func init_by_level_type(level_type):
 func init(level_data):
 	Global.engine_mode = Global.EngineMode.GAME
 	
-	init_game_state(level_data)
+	init_game_state()
 	init_map(level_data)
 	init_players(level_data)
 	init_enemies(level_data)
@@ -73,12 +73,10 @@ func init(level_data):
 	start_turn()
 
 
-func init_game_state(level_data):
+func init_game_state():
 	current_turn = 1
-	max_turns = (level_data.map.max_turns) if (level_data.map.max_turns) else (-1)
 	selected_player = null
 	undo = {}
-	level_events = (level_data.map.level_events) if (level_data.map.level_events) else ([])
 	
 	# UI
 	reset_ui()
@@ -91,6 +89,9 @@ func init_game_state(level_data):
 
 
 func init_map(level_data):
+	max_turns = level_data.map.get('max_turns', -1)
+	level_events = level_data.map.get('level_events', [])
+	
 	map = map_scenes[level_data.map.scene].instantiate()
 	add_sibling(map)
 	map.spawn(level_data)
@@ -166,16 +167,15 @@ func init_civilians(level_data):
 
 
 func start_turn():
-	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓
-	# ┃┓┣┫┃┃┃┣   ┃┃┃┣┫┓┃┃  ┃ ┃┃┃┃┃┃
-	# ┗┛┛┗┛ ┗┗┛  ┛ ┗┛┗┗┛┗  ┗┛┗┛┗┛┣┛
+	###############################################
+	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓  ┏┓┏┳┓┏┓┳┓┏┳┓ #
+	# ┃┓┣┫┃┃┃┣   ┃┃┃┣┫┓┃┃  ┃ ┃┃┃┃┃┃  ┗┓ ┃ ┣┫┣┫ ┃  #
+	# ┗┛┛┗┛ ┗┗┛  ┛ ┗┛┗┗┛┗  ┗┛┗┛┗┛┣┛  ┗┛ ┻ ┛┗┛┗ ┻  #
+	###############################################
 	
-	# TODO environment actions: missles into indicators, lava flames, falling rocks
-	for level_event in level_events:
-		print(LevelEvent.keys()[level_event])
-		#if level_event == LevelEvent.MINES:
-			#...
+	map.plan_level_events(level_events)
 	
+	# actions order: events plan > civilians > enemies move and plan > players > enemies actions > events actions
 	var alive_civilians = civilians.filter(func(civilian): return civilian.is_alive)
 	var alive_enemies = enemies.filter(func(enemy): return enemy.is_alive)
 	var alive_players = players.filter(func(player): return player.is_alive)
@@ -186,26 +186,29 @@ func start_turn():
 			tiles_for_movement.push_back(civilian.tile)
 		
 		# prefer to move if possible
-		var target_tiles_for_movement = (tiles_for_movement) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile): return tile != civilian.tile))
-		var target_tile_for_movement = target_tiles_for_movement.pick_random()
+		var target_tile_for_movement = (tiles_for_movement[0]) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile): return tile != civilian.tile)).pick_random()
 		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
 		await civilian.move(tiles_path)
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
+	
+	# enemy targets order: assets > civilians > players
+	var target_tiles_for_enemy = [
+		alive_civilians.map(func(alive_civilian): return alive_civilian.tile),
+		alive_players.map(func(alive_player): return alive_player.tile)
+	]
+	var targetable_tiles = map.get_targetable_tiles()
+	if not targetable_tiles.is_empty():
+		target_tiles_for_enemy.push_front(targetable_tiles)
 	
 	# sort by order
 	alive_enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for enemy in alive_enemies:
 		var tiles_for_movement = calculate_tiles_for_movement(true, enemy)
 		tiles_for_movement.push_back(enemy.tile)
-		
-		var target_tiles = alive_civilians.map(func(alive_civilian): return alive_civilian.tile)
-		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, target_tiles)
+		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, target_tiles_for_enemy)
 		if not target_tile_for_movement:
-			target_tiles = alive_players.map(func(alive_player): return alive_player.tile)
-			target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, target_tiles)
-			if not target_tile_for_movement:
-				target_tile_for_movement = tiles_for_movement.pick_random()
-				print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
+			target_tile_for_movement = tiles_for_movement.pick_random()
+			print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
 		
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
 		await enemy.move(tiles_path)
@@ -214,7 +217,7 @@ func start_turn():
 		recalculate_enemies_planned_actions()
 		
 		var tiles_for_action = calculate_tiles_for_action(true, enemy)
-		var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, alive_civilians + alive_players)
+		var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, target_tiles_for_enemy)
 		if not target_tile_for_action:
 			# no friendly fire preferred
 			var no_ff_tiles = tiles_for_action.filter(func(tile): return not tile.enemy)
@@ -238,8 +241,8 @@ func end_turn():
 	end_turn_button.set_disabled(true)
 	shoot_button.set_pressed_no_signal(false)
 	action_button.set_pressed_no_signal(false)
-	undo = {}
 	undo_button.set_disabled(true)
+	undo = {}
 	
 	for player in players.filter(func(player): return player.is_alive):
 		#player.reset_phase()
@@ -254,6 +257,13 @@ func end_turn():
 		if enemy.is_alive:
 			await enemy.execute_planned_action()
 	
+	await map.execute_level_events(level_events)
+	
+	#########################################
+	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓  ┏┓┳┓┳┓ #
+	# ┃┓┣┫┃┃┃┣   ┃┃┃┣┫┓┃┃  ┃ ┃┃┃┃┃┃  ┣ ┃┃┃┃ #
+	# ┗┛┛┗┛ ┗┗┛  ┛ ┗┛┗┗┛┗  ┗┛┗┛┗┛┣┛  ┗┛┛┗┻┛ #
+	#########################################
 	
 	if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
 		level_won()
@@ -463,64 +473,66 @@ func calculate_tiles_for_action(active, character):
 	return tiles_for_action
 
 
-func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_character, target_tiles):
-	var valid_tiles_for_movement = []
-	var target_tile_for_movement = null
-	
-	# make it random
-	tiles_for_movement.shuffle()
-	
-	if tiles_for_movement.has(origin_character.tile):
-		# prefer to move (origin character tile at the last position)
-		tiles_for_movement.erase(origin_character.tile)
-		tiles_for_movement.push_back(origin_character.tile)
-	
-	for tile_for_movement in tiles_for_movement:
-		if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.HORIZONTAL_DOT:
-			valid_tiles_for_movement = target_tiles.filter(func(target_tile): return (target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_distance) or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_distance))
-			if not valid_tiles_for_movement.is_empty():
-				target_tile_for_movement = tile_for_movement
-		elif origin_character.action_direction == ActionDirection.VERTICAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_DOT:
-			var max_range = mini(map.get_side_dimension(), origin_character.action_distance)
-			for i in range(1, max_range + 1):
-				var valid_tiles = target_tiles.filter(func(target_tile): return abs(target_tile.coords - tile_for_movement.coords) == Vector2i(i, i))
-				if not valid_tiles.is_empty():
-					valid_tiles_for_movement.append_array(valid_tiles)
+func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_character, different_target_tiles):
+	for target_tiles in different_target_tiles:
+		var valid_tiles_for_movement = []
+		var target_tile_for_movement = null
 		
-			if not valid_tiles_for_movement.is_empty():
-				target_tile_for_movement = tile_for_movement
+		# make it random
+		tiles_for_movement.shuffle()
 		
-		# exclude tiles behind occupied tiles
-		if target_tile_for_movement and (origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE):
-			if valid_tiles_for_movement.all(func(target_tile): return target_tile != calculate_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_tile.coords)):
-				valid_tiles_for_movement = []
-				target_tile_for_movement = null
+		if tiles_for_movement.has(origin_character.tile):
+			# prefer to move (origin character tile at the last position)
+			tiles_for_movement.erase(origin_character.tile)
+			tiles_for_movement.push_back(origin_character.tile)
 		
-		if target_tile_for_movement:
-			# exlude tiles in front of the other enemy attack line
-			if origin_character.is_in_group('ENEMIES'):
-				for other_enemy in enemies.filter(func(enemy): return enemy != origin_character and enemy.planned_tile and (enemy.action_direction == ActionDirection.HORIZONTAL_LINE or enemy.action_direction == ActionDirection.VERTICAL_LINE)):
-					var other_enemy_to_planned_sign = (other_enemy.tile.coords - other_enemy.planned_tile.coords).sign()
-					var target_tile_to_other_enemy_planned_sign = (target_tile_for_movement.coords - other_enemy.planned_tile.coords).sign()
-					var target_tile_to_other_enemy_sign = (target_tile_for_movement.coords - other_enemy.tile.coords).sign()
-					if get_hit_direction(other_enemy_to_planned_sign) == get_hit_direction(target_tile_to_other_enemy_planned_sign) and get_hit_direction(target_tile_to_other_enemy_planned_sign) != get_hit_direction(target_tile_to_other_enemy_sign):
-						valid_tiles_for_movement = []
-						target_tile_for_movement = null
-						break;
+		for tile_for_movement in tiles_for_movement:
+			if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.HORIZONTAL_DOT:
+				valid_tiles_for_movement = target_tiles.filter(func(target_tile): return (target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_distance) or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_distance))
+				if not valid_tiles_for_movement.is_empty():
+					target_tile_for_movement = tile_for_movement
+			elif origin_character.action_direction == ActionDirection.VERTICAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_DOT:
+				var max_range = mini(map.get_side_dimension(), origin_character.action_distance)
+				for i in range(1, max_range + 1):
+					var valid_tiles = target_tiles.filter(func(target_tile): return abs(target_tile.coords - tile_for_movement.coords) == Vector2i(i, i))
+					if not valid_tiles.is_empty():
+						valid_tiles_for_movement.append_array(valid_tiles)
+			
+				if not valid_tiles_for_movement.is_empty():
+					target_tile_for_movement = tile_for_movement
+			
+			# exclude tiles behind occupied tiles
+			if target_tile_for_movement and (origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE):
+				if valid_tiles_for_movement.all(func(target_tile): return target_tile != calculate_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_tile.coords)):
+					valid_tiles_for_movement = []
+					target_tile_for_movement = null
 			
 			if target_tile_for_movement:
-				return target_tile_for_movement
+				# exlude tiles in front of the other enemy attack line
+				if origin_character.is_in_group('ENEMIES'):
+					for other_enemy in enemies.filter(func(enemy): return enemy != origin_character and enemy.planned_tile and (enemy.action_direction == ActionDirection.HORIZONTAL_LINE or enemy.action_direction == ActionDirection.VERTICAL_LINE)):
+						var other_enemy_to_planned_sign = (other_enemy.tile.coords - other_enemy.planned_tile.coords).sign()
+						var target_tile_to_other_enemy_planned_sign = (target_tile_for_movement.coords - other_enemy.planned_tile.coords).sign()
+						var target_tile_to_other_enemy_sign = (target_tile_for_movement.coords - other_enemy.tile.coords).sign()
+						if get_hit_direction(other_enemy_to_planned_sign) == get_hit_direction(target_tile_to_other_enemy_planned_sign) and get_hit_direction(target_tile_to_other_enemy_planned_sign) != get_hit_direction(target_tile_to_other_enemy_sign):
+							valid_tiles_for_movement = []
+							target_tile_for_movement = null
+							break;
+				
+				if target_tile_for_movement:
+					return target_tile_for_movement
 	
 	return null
 
 
-func calculate_tile_for_action_towards_characters(tiles_for_action, target_characters):
-	# make it random
-	tiles_for_action.shuffle()
-	
-	for tile_for_action in tiles_for_action:
-		if target_characters.any(func(target_character): return target_character.tile.coords == tile_for_action.coords):
-			return tile_for_action
+func calculate_tile_for_action_towards_characters(tiles_for_action, different_target_tiles):
+	for target_tiles in different_target_tiles:
+		# make it random
+		tiles_for_action.shuffle()
+		
+		for tile_for_action in tiles_for_action:
+			if target_tiles.any(func(target_tile): return target_tile.coords == tile_for_action.coords):
+				return tile_for_action
 	
 	return null
 
@@ -799,7 +811,7 @@ func _on_tile_clicked(tile):
 	# highlighted tile is clicked while player is selected
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
 		# clear undo if next move/action is performed
-		if undo.has('player') and undo.has('last_tile'):
+		if undo.get('player') and undo.get('last_tile'):
 			undo = {}
 			undo_button.set_disabled(true)
 		
@@ -995,7 +1007,7 @@ func _on_action_button_toggled(toggled_on):
 
 
 func _on_undo_button_pressed():
-	if undo.has('player') and undo.has('last_tile'):
+	if undo.get('player') and undo.get('last_tile'):
 		var undo_player = players.filter(func(player): return player == undo.player).front()
 		var undo_tile = map.tiles.filter(func(tile): return tile == undo.last_tile).front()
 		undo_player.position = undo_tile.position

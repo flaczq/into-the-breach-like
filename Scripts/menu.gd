@@ -119,9 +119,8 @@ func _on_main_menu_button_pressed():
 	
 	toggle_visibility(true)
 	
-	for child_to_queue in get_tree().root.get_children().filter(func(child): return not child.is_in_group('NEVER_QUEUED')):
-		if not child_to_queue.is_queued_for_deletion():
-			child_to_queue.queue_free()
+	for child_to_queue in get_tree().root.get_children().filter(func(child): return is_instance_valid(child) and not child.is_queued_for_deletion() and not child.is_in_group('NEVER_QUEUED')):
+		child_to_queue.queue_free()
 
 
 func _on_back_button_pressed():

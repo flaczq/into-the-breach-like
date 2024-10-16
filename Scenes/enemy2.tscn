@@ -109,7 +109,7 @@ assets_scene = ExtResource("2_ifdjs")
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_8eurk")
 
-[node name="Skeleton_Head_Outline" type="MeshInstance3D" parent="Skeleton_Head" groups=["MODEL_OUTLINES"]]
+[node name="Skeleton_Head_Outline" type="MeshInstance3D" parent="Skeleton_Head" groups=["OUTLINES"]]
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_fp2bs")
 

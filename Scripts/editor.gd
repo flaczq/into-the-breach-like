@@ -115,7 +115,7 @@ func _input(event):
 		# LOG ASSETS TILES
 		if Input.is_key_pressed(KEY_A):
 			key_pressed = true
-			print('assets tiles: ' + str(map.tiles.filter(func(tile): return tile.models.has('asset')).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
+			print('assets tiles: ' + str(map.tiles.filter(func(tile): return tile.models.get('asset')).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
 	
 	if Global.engine_mode != Global.EngineMode.EDITOR:
 		return
@@ -159,9 +159,15 @@ func reset():
 
 
 func calculate_level_data(level = -1):
+	#########################
+	# ┓ ┏┓┓┏┏┓┓   ┳┓┏┓┏┳┓┏┓ #
+	# ┃ ┣ ┃┃┣ ┃   ┃┃┣┫ ┃ ┣┫ #
+	# ┗┛┗┛┗┛┗┛┗┛  ┻┛┛┗ ┻ ┛┗ #
+	#########################
+	
 	if level >= 0:
 		level_data.map.level = level
-	level_data.map.level_events = []
+	level_data.map.level_events = [1]
 	level_data.map.tiles = ''
 	level_data.map.tiles_assets = ''
 	level_data.players = []
@@ -172,18 +178,13 @@ func calculate_level_data(level = -1):
 	for tile in map.tiles:
 		level_data.map.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
 		
-		if tile.models.has('asset'):
-			level_data.map.tiles_assets += map.convert_asset_filename_to_initial(tile.models.asset.name)
-		else:
-			level_data.map.tiles_assets += map.convert_asset_filename_to_initial(null)
+		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else null
+		level_data.map.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
 	var players_i = 0
 	var enemies_i = 0
 	var civilians_i = 0
 	for child in get_children():
-		# ┏┓┓┏┏┓┳┓┏┓┏┓┏┳┓┏┓┳┓  ┓┏┏┓┓ ┳┳┏┓┏┓
-		# ┃ ┣┫┣┫┣┫┣┫┃  ┃ ┣ ┣┫  ┃┃┣┫┃ ┃┃┣ ┗┓
-		# ┗┛┛┗┛┗┛┗┛┗┗┛ ┻ ┗┛┛┗  ┗┛┛┗┗┛┗┛┗┛┗┛
 		if child.is_in_group('PLAYERS'):
 			var player_scene = int(child.name.substr(6, 1)) - 1
 			if players_i == 0:
@@ -482,7 +483,7 @@ func _on_selected_tile_id_pressed(id):
 		elif id == 2:
 			push_unique_to_array(level_data.map.spawn_civilian_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		
-		var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('ASSETS_INDICATORS')).front().duplicate()
+		var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
 		spawn_indicator.show()
 		selected_tile.add_child(spawn_indicator)
 	else:
@@ -493,7 +494,7 @@ func _on_selected_tile_id_pressed(id):
 		elif id == 2:
 			level_data.map.spawn_civilian_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		
-		var spawn_indicator = selected_tile.get_children().filter(func(child): return child.is_in_group('ASSETS_INDICATORS')).front()
+		var spawn_indicator = selected_tile.get_children().filter(func(child): return child.is_in_group('INDICATORS')).front()
 		if spawn_indicator:
 			spawn_indicator.queue_free()
 			spawn_indicator = null
@@ -519,7 +520,7 @@ func _on_editor_tile_clicked(tile):
 			selected_asset = null
 			editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
 			new_selected = false
-		elif tile.models.has('asset'):
+		elif tile.models.get('asset'):
 			selected = null
 			tile_to_placed = {}
 			selected_asset = tile.models.asset
@@ -561,7 +562,7 @@ func _on_editor_tile_clicked(tile):
 			else:
 				selected = character
 				editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
-		elif tile.models.has('asset'):
+		elif tile.models.get('asset'):
 			if is_deleting:
 				editor_label.text = 'deleted asset "' + tile.models.asset.name + '" from tile ' + str(tile.coords)
 				tile.models.asset.queue_free()

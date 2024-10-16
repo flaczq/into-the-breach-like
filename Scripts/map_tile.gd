@@ -50,9 +50,9 @@ func init(tile_init_data):
 	shader_material.set_shader(models.tile_shader)
 	toggle_shader(false)
 	
-	if models.has('tile_texture'):
+	if models.get('tile_texture'):
 		model_material.set_texture(0, models.tile_texture)
-	elif models.has('tile_default_color'):
+	elif models.get('tile_default_color'):
 		model_material.albedo_color = models.tile_default_color
 	
 	# surface: 0 = ground, 1 = grass
@@ -76,7 +76,7 @@ func init(tile_init_data):
 	add_child(models.indicator_solid)
 	add_child(models.indicator_dashed)
 	add_child(models.indicator_corners)
-	if models.has('asset'):
+	if models.get('asset'):
 		# translation exists
 		if tr(models.asset.name.to_upper()) != models.asset.name.to_upper():
 			info = tr(models.asset.name.to_upper())
@@ -181,7 +181,7 @@ func toggle_shader(is_toggled):
 
 
 func toggle_asset_outline(is_outlined):
-	if models.has('asset_outline') and models.asset_outline != null and not models.asset_outline.is_queued_for_deletion():
+	if is_instance_valid(models.get('asset_outline')) and not models.asset_outline.is_queued_for_deletion():
 		if is_outlined:
 			models.asset_outline.show()
 		else:
@@ -223,8 +223,9 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 			if health_type == TileHealthType.DESTRUCTIBLE:
 				health_type = TileHealthType.HEALTHY
 				# destroy required asset for destructible tile
-				if models.has('asset') and models.asset != null and not models.asset.is_queued_for_deletion():
+				if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
 					models.asset.queue_free()
+					models.erase('asset')
 				
 				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> healthy tile')

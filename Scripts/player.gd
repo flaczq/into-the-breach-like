@@ -23,7 +23,7 @@ func _ready():
 	arrow_model_material.disable_receive_shadows = true
 	arrow_model_material.albedo_color = PLAYER_ARROW_COLOR
 	
-	# draw player arrow on top of enemy arrow
+	# draw a player arrow on top of an enemy arrow
 	# player arrow 1.2 > player sphere 1.1 > enemy arrow 1.0 > enemy sphere 0.9
 	default_arrow_model.get_child(0).set_sorting_offset(1.2)
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)

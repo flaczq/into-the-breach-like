@@ -3,7 +3,6 @@ extends Util
 class_name Character
 @export var assets_scene: PackedScene
 
-@onready var camera_3d = $Camera3D
 @onready var health_bar = $HealthProgressBar
 
 signal action_push_back(character: Character, origin_tile_coords: Vector2i)
@@ -86,7 +85,7 @@ func apply_action_type(action_type, origin_tile_coords = null):
 
 func set_model_outlines(parent = model):
 	for child in parent.get_children():
-		if child.is_in_group('MODEL_OUTLINES'):
+		if child.is_in_group('OUTLINES'):
 			model_outlines.append(child)
 		
 		if child.get_child_count() > 0:
@@ -186,12 +185,12 @@ func spawn_arrow(target):
 
 
 func clear_arrows():
-	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
+	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
 		child.queue_free()
 
 
 func toggle_arrows(is_toggled):
-	for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW')):
+	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
 		if is_toggled:
 			child.show()
 		else:

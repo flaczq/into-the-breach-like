@@ -1,7 +1,5 @@
 extends Character
 
-@onready var progress_bar = $ProgressBar
-
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
 var arrow_model_material: StandardMaterial3D
@@ -50,7 +48,6 @@ func move(tiles_path, forced = false, outside_tile = null):
 			if forced and outside_tile:
 				print('enemy ' + str(tile.coords) + ' -> pushed into the wall')
 				get_shot(1)
-				
 				await forced_into_occupied_tile(outside_tile, true)
 			else:
 				print('enemy ' + str(tile.coords) + ' -> is not moving')
@@ -58,7 +55,6 @@ func move(tiles_path, forced = false, outside_tile = null):
 			if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
 				print('enemy ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 				get_shot(1)
-				
 				await forced_into_occupied_tile(target_tile)
 			else:
 				clear_arrows()
@@ -112,7 +108,6 @@ func execute_planned_action():
 		
 		if temp_planned_tile:
 			await spawn_bullet(temp_planned_tile)
-			
 			await temp_planned_tile.get_shot(damage, action_type, tile.coords)
 
 
@@ -148,7 +143,7 @@ func toggle_health_bar(is_toggled):
 
 func toggle_arrow_highlight(is_toggled):
 	# MAYBE show arrows only when hovered
-	#for child in get_children().filter(func(child): return child.is_in_group('ASSETS_ARROW') and child.name != 'ArrowSignContainer'):
+	#for child in get_children().filter(func(child): return child.is_in_group('ARROW') and child.name != 'ArrowSignContainer'):
 		#if is_toggled:
 			#child.show()
 		#else:

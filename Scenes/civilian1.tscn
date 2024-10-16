@@ -202,7 +202,7 @@ assets_scene = ExtResource("2_wduy7")
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_pmast")
 
-[node name="Princess_Head_Outline" type="MeshInstance3D" parent="Princess_Head" groups=["MODEL_OUTLINES"]]
+[node name="Princess_Head_Outline" type="MeshInstance3D" parent="Princess_Head" groups=["OUTLINES"]]
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_3nevw")
 

@@ -76,9 +76,7 @@ size = Vector2(1, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_03ytj"]
 resource_name = "colormap"
-cull_mode = 2
 albedo_color = Color(1, 1, 0, 1)
-texture_filter = 2
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_t3kp7"]
 _surfaces = [{
@@ -114,9 +112,7 @@ shadow_mesh = SubResource("ArrayMesh_t3kp7")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ovk0r"]
 resource_name = "colormap"
-cull_mode = 2
 albedo_color = Color(1, 1, 0, 1)
-texture_filter = 2
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_6x3pq"]
 _surfaces = [{
@@ -152,9 +148,7 @@ shadow_mesh = SubResource("ArrayMesh_6x3pq")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ta3ie"]
 resource_name = "colormap"
-cull_mode = 2
 albedo_color = Color(1, 1, 0, 1)
-texture_filter = 2
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_vdudg"]
 _surfaces = [{
@@ -189,9 +183,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_vdudg")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cl1mm"]
-cull_mode = 2
-albedo_color = Color(1, 1, 0, 1)
-texture_filter = 2
+albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_ftyb6"]
 _surfaces = [{
@@ -980,7 +972,7 @@ cast_shadow = 0
 mesh = SubResource("PlaneMesh_6vd2u")
 skeleton = NodePath("")
 
-[node name="indicator-square-a" type="MeshInstance3D" parent="." groups=["ASSETS_INDICATORS"]]
+[node name="indicator-square-a" type="MeshInstance3D" parent="." groups=["INDICATORS"]]
 transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0.211, 0)
 visible = false
 cast_shadow = 0
@@ -997,9 +989,8 @@ transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0.211, 0)
 visible = false
 mesh = SubResource("ArrayMesh_to7ky")
 
-[node name="indicator-special-cross" type="MeshInstance3D" parent="."]
+[node name="indicator-special-cross" type="MeshInstance3D" parent="." groups=["MISSLES_INDICATORS"]]
 transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0.211, 0)
-visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_r31oh")
 
@@ -1008,7 +999,7 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.2, 0)
 mesh = SubResource("ArrayMesh_lnnt6")
 skeleton = NodePath("")
 
-[node name="ground_grass_outline" type="MeshInstance3D" parent="ground_grass" groups=["MODEL_OUTLINES"]]
+[node name="ground_grass_outline" type="MeshInstance3D" parent="ground_grass" groups=["OUTLINES"]]
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_q6th3")
 
@@ -1023,7 +1014,7 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.2, 0)
 visible = false
 mesh = SubResource("ArrayMesh_bgdcb")
 
-[node name="ArrowSignContainer" type="Node3D" parent="." groups=["ASSETS_ARROW"]]
+[node name="ArrowSignContainer" type="Node3D" parent="." groups=["ARROW"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.006)
 visible = false
 
@@ -1035,7 +1026,7 @@ mesh = SubResource("ArrayMesh_b1x4s")
 skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_adqhn")
 
-[node name="sphere" type="MeshInstance3D" parent="." groups=["ASSETS_ARROW"]]
+[node name="sphere" type="MeshInstance3D" parent="." groups=["ARROW"]]
 transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0.5, 0)
 visible = false
 sorting_offset = 0.9
@@ -1057,7 +1048,7 @@ mesh = SubResource("ArrayMesh_skeun")
 skeleton = NodePath("")
 script = ExtResource("5_4g6f2")
 
-[node name="tree_outline" type="MeshInstance3D" parent="tree" groups=["MODEL_OUTLINES"]]
+[node name="tree_outline" type="MeshInstance3D" parent="tree" groups=["OUTLINES"]]
 visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_p8r5p")
@@ -1068,7 +1059,7 @@ visible = false
 mesh = SubResource("ArrayMesh_fchqw")
 script = ExtResource("5_4g6f2")
 
-[node name="mountain_outline" type="MeshInstance3D" parent="mountain" groups=["MODEL_OUTLINES"]]
+[node name="mountain_outline" type="MeshInstance3D" parent="mountain" groups=["OUTLINES"]]
 visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_udi50")
@@ -1081,7 +1072,7 @@ skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_7jcjy")
 script = ExtResource("5_4g6f2")
 
-[node name="sign_outline" type="MeshInstance3D" parent="sign" groups=["MODEL_OUTLINES"]]
+[node name="sign_outline" type="MeshInstance3D" parent="sign" groups=["OUTLINES"]]
 visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_gyft3")

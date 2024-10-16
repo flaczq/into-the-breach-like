@@ -167,7 +167,7 @@ func calculate_level_data(level = -1):
 	
 	if level >= 0:
 		level_data.map.level = level
-	level_data.map.level_events = [1]
+	#level_data.map.level_events = [1]
 	level_data.map.tiles = ''
 	level_data.map.tiles_assets = ''
 	level_data.players = []
@@ -188,7 +188,7 @@ func calculate_level_data(level = -1):
 		if child.is_in_group('PLAYERS'):
 			var player_scene = int(child.name.substr(6, 1)) - 1
 			if players_i == 0:
-				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PULL_FRONT, 'action_distance': 7})
+				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
 			elif players_i == 1:
 				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
 			else:

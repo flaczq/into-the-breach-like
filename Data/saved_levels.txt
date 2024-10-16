@@ -9,5 +9,5 @@
 2->STOP
 
 3->START
-{ "map": { "scene": 2, "level": 4, "level_type": -1, "level_events": [1], "tiles": "MMMWWWWWWWWWWWWWTPTTWTPPTPPPPTPPPPPTPPPTTPTTWPPPPPPTPPPWPPWWWWWW", "tiles_assets": "MMM0000000000000T0TT0T000000000000000000T0TT00000000000000000000", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [] } }
+{ "map": { "scene": 2, "level": 4, "level_type": -1, "level_events": [1,1,2,2,2], "tiles": "MMMWWWWWWWWWWWWWTPTTWTPPTPPPPTPPPPPTPPPTTPTTWPPPPPPTPPPWPPWWWWWW", "tiles_assets": "MMM0000000000000T0TT0T000000000000000000T0TT00000000000000000000", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [] } }
 3->STOP

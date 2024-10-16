@@ -184,22 +184,53 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 func plan_level_events(level_events):
 	for level_event in level_events:
 		print(LevelEvent.keys()[level_event])
-		# 3 missles spawn indicators
-		if level_event == LevelEvent.MISSLES:
-			for i in range(0, 3):
+		# missle spawned at random tile
+		if level_event == LevelEvent.FALLING_MISSLE:
+			var event_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+			var event_asset_material = StandardMaterial3D.new()
+			event_asset_material.albedo_color = Color('FF0000')#red
+			event_asset.set_surface_override_material(0, event_asset_material)
+			
+			#var max_range = (2) if (get_side_dimension() == 8 or get_side_dimension() == 6) else (1)
+			for i in range(0, 1):
 				var event_tile = get_untargetable_tiles().pick_random()
-				event_tile.models.event_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+				event_tile.models.event_asset = event_asset.duplicate()
+				event_tile.models.event_asset.add_to_group('MISSLES_INDICATORS')
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
+				print('spawned missle at ' + str(event_tile.coords))
+		# rock spawned near mountains
+		elif level_event == LevelEvent.FALLING_ROCK:
+			var mountains_coords = tiles.filter(func(tile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile): return tile.coords)
+			var event_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+			var event_asset_material = StandardMaterial3D.new()
+			event_asset_material.albedo_color = Color('7A5134')#brown
+			event_asset.set_surface_override_material(0, event_asset_material)
+			
+			#var max_range = (3) if (get_side_dimension() == 8) else (2) if (get_side_dimension() == 6) else (1)
+			for i in range(0, 1):
+				var event_tiles = get_untargetable_tiles().filter(func(tile): return not mountains_coords.has(tile.coords) and mountains_coords.any(func(mountain_coords): return are_tiles_close(mountain_coords, tile.coords, 2.5)))
+				print(event_tiles.map(func(tile): return str(tile.coords)))
+				var event_tile = event_tiles.pick_random()
+				event_tile.models.event_asset = event_asset.duplicate()
+				event_tile.models.event_asset.add_to_group('ROCKS_INDICATORS')
+				event_tile.models.event_asset.show()
+				event_tile.add_child(event_tile.models.event_asset)
+				print('spawned rock at ' + str(event_tile.coords))
 		#TODO else...
 
 
 func execute_level_events(level_events):
 	for level_event in level_events:
-		print(LevelEvent.keys()[level_event])
-		# 3 missles hit at spawned indicators
-		if level_event == LevelEvent.MISSLES:
+		# missles hit at spawned indicators
+		if level_event == LevelEvent.FALLING_MISSLE:
 			for tile in tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')):
+				await tile.get_shot(1)
+				tile.models.event_asset.queue_free()
+				tile.models.erase('event_asset')
+		# rocks hit at spawned indicators
+		elif level_event == LevelEvent.FALLING_ROCK:
+			for tile in tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')):
 				await tile.get_shot(1)
 				tile.models.event_asset.queue_free()
 				tile.models.erase('event_asset')
@@ -239,4 +270,4 @@ func get_targetable_tiles():
 
 
 func get_untargetable_tiles():
-	return tiles.filter(func(tile): return not get_targetable_tiles().has(tile))
+	return tiles.filter(func(tile): return not get_targetable_tiles().has(tile) and (not tile.models.has('event_asset') or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))

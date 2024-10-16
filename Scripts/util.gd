@@ -10,7 +10,7 @@ enum TileType {PLAIN, GRASS, TREE, MOUNTAIN, VOLCANO, WATER, LAVA}
 enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE, INDESTRUCTIBLE, INDESTRUCTIBLE_WALKABLE}
 enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LEFT}
 enum LevelType {KILL_ENEMIES, SAVE_CIVILIANS, SAVE_TILES, SURVIVE_TIL_MAX_TURN, TUTORIAL = -1}
-enum LevelEvent {MINES, MISSLES, FALLING_ROCKS, LAVA_EXPLOSION, FLOOD, MORE_ENEMIES, NONE = -1}
+enum LevelEvent {MINE, FALLING_MISSLE, FALLING_ROCK, FALLING_LAVA, FLOOD, MOVING_PLATFORMS, MORE_ENEMIES, NONE = -1}
 
 const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
 const PLAYER_ARROW_COLOR: Color = Color('005fcd')
@@ -39,6 +39,15 @@ func push_unique_to_array(array, item):
 
 func get_vector3_on_map(position):
 	return Vector3(position.x, 0.5, position.z)
+
+
+func are_tiles_close(origin_coords, target_coords, distance = 1):
+	return Vector2(origin_coords).distance_to(Vector2(target_coords)) <= distance
+	#for i in range(1, distance + 1):
+		#if abs(origin_coords - target_coords) == Vector2i(0, i) or abs(origin_coords - target_coords) == Vector2i(i, 0) or abs(origin_coords - target_coords) == Vector2i(i, i):
+			#return true
+	#
+	#return false
 
 
 func is_close(value, target):

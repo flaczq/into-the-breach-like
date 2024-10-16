@@ -13,6 +13,7 @@ extends Util
 @onready var shoot_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton'
 @onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
 @onready var undo_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton"
+@onready var character_info_label = $"../CanvasLayer/UI/CharacterInfoLabel"
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
@@ -337,6 +338,7 @@ func reset_ui():
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
 	game_info_label.text += 'POINTS: ' + str(points)
 	tile_info_label.text = ''
+	character_info_label.text = ''
 
 
 func calculate_tiles_for_movement(active, character):
@@ -354,7 +356,8 @@ func calculate_tiles_for_movement(active, character):
 			var temp_origin_tiles = []
 			
 			for origin_tile in origin_tiles:
-				for tile in map.tiles:
+				# can't walk into water/lava, can only be pushed there
+				for tile in map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE):
 					# characters can move through other characters of the same type
 					var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
 					if not occupied_by_characters and not tiles_for_movement.has(tile):
@@ -664,44 +667,53 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
 			tile_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 			
+			if tile.info:
+				tile_info_label.text += '\n\n' + tile.info
+			
 			if tile.player:
-				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
-				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
-				tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
-				tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
-				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
+				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
+				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+				character_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
+				character_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
+				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n'
+				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
 			elif tile.enemy:
-				tile_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
-				tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
-				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
-				tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
-				tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
-				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
+				character_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+				character_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
+				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+				character_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
+				character_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
+				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
+				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
 			elif tile.civilian:
-				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
-				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
+				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
+				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
+				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
 		else:
 			tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
 			tile_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
+			
+			if tile.info:
+				tile_info_label.text += '\n\n' + tile.info
 		
 			if tile.player:
-				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
-				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
-				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance)
+				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
+				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n' 
+				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
 			elif tile.enemy:
-				tile_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
-				tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
-				tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
-				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance)
+				character_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+				character_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
+				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
+				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
 			elif tile.civilian:
-				tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
-				tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance)
-		
-		# kinda hardcoded but maybe it will be fine..?
-		if tile.info:
-			tile_info_label.text += '\n\n' + tile.info
+				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
+				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
+				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
 	else:
 		tile_info_label.text = ''
+		character_info_label.text = ''
 	
 	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
@@ -923,7 +935,10 @@ func _on_character_action_push_back(character, origin_tile_coords):
 			if character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
 				character.get_killed()
+			elif character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
+				character.state_type = StateType.SLOW_DOWN
 			elif character.tile == target_tile and character.is_in_group('ENEMIES'):
+				# enemy actually moved
 				var enemy = character
 				if enemy.planned_tile:
 					# push planned tile with pushed enemy
@@ -954,7 +969,10 @@ func _on_character_action_pull_front(character, origin_tile_coords):
 			if character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
 				character.get_killed()
+			elif character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
+				character.state_type = StateType.SLOW_DOWN
 			elif character.tile == target_tile and character.is_in_group('ENEMIES'):
+				# enemy actually moved
 				var enemy = character
 				if enemy.planned_tile:
 					# pull planned tile with pulled enemy

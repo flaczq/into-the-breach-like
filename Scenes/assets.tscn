@@ -182,7 +182,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_vdudg")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cl1mm"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_svtxu"]
 albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_ftyb6"]
@@ -200,6 +200,7 @@ _surfaces = [{
 blend_shape_mode = 0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_r31oh"]
+resource_local_to_scene = true
 resource_name = "indicator-special-cross_indicator-special-cross"
 _surfaces = [{
 "aabb": AABB(-0.5, 0, -0.5, 1, 1e-05, 1),
@@ -207,7 +208,7 @@ _surfaces = [{
 "format": 34896613399,
 "index_count": 66,
 "index_data": PackedByteArray(2, 0, 0, 0, 1, 0, 1, 0, 3, 0, 2, 0, 3, 0, 4, 0, 2, 0, 5, 0, 4, 0, 3, 0, 5, 0, 6, 0, 4, 0, 7, 0, 5, 0, 3, 0, 8, 0, 7, 0, 3, 0, 3, 0, 9, 0, 8, 0, 5, 0, 10, 0, 6, 0, 10, 0, 5, 0, 11, 0, 10, 0, 12, 0, 6, 0, 12, 0, 13, 0, 6, 0, 11, 0, 14, 0, 10, 0, 11, 0, 15, 0, 14, 0, 18, 0, 16, 0, 17, 0, 16, 0, 19, 0, 17, 0, 18, 0, 17, 0, 20, 0, 21, 0, 17, 0, 19, 0, 20, 0, 22, 0, 18, 0, 21, 0, 19, 0, 23, 0, 22, 0, 21, 0, 23, 0, 23, 0, 18, 0, 22, 0),
-"material": SubResource("StandardMaterial3D_cl1mm"),
+"material": SubResource("StandardMaterial3D_svtxu"),
 "name": "colormap",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
@@ -989,8 +990,8 @@ transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0.211, 0)
 visible = false
 mesh = SubResource("ArrayMesh_to7ky")
 
-[node name="indicator-special-cross" type="MeshInstance3D" parent="." groups=["MISSLES_INDICATORS"]]
-transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0.211, 0)
+[node name="indicator-special-cross" type="MeshInstance3D" parent="." groups=["EVENTS_INDICATORS"]]
+transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0.207, 0)
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_r31oh")
 

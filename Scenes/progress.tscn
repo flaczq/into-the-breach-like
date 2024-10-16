@@ -61,8 +61,7 @@ theme_override_constants/separation = 50
 
 [node name="ActionsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
 layout_mode = 2
-text = "You've collected 0 alien parts.
-After collecting 3 alien parts, you can select which action to learn!"
+text = "Some sort of upgrade system, TBA"
 horizontal_alignment = 1
 
 [node name="ActionsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
@@ -73,17 +72,17 @@ theme_override_constants/separation = 50
 [node name="Action1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
 layout_mode = 2
 disabled = true
-text = "ACTION 1"
+text = "UPGRADE 1"
 
 [node name="Action2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
 layout_mode = 2
 disabled = true
-text = "ACTION 2"
+text = "UPGRADE 2"
 
 [node name="Action3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
 layout_mode = 2
 disabled = true
-text = "ACTION 3"
+text = "UPGRADE 3"
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
 layout_mode = 2

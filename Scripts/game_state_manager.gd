@@ -667,6 +667,12 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
 			tile_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 			
+			if tile.models.get('event_asset'):
+				if tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
+					tile_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
+				elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
+					tile_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_ROCK]) + '\n'
+			
 			if tile.info:
 				tile_info_label.text += '\n\n' + tile.info
 			

@@ -130,15 +130,21 @@ func reset_planned_tile():
 
 
 func toggle_health_bar(is_toggled):
-	pass
-	# FIXME change to 3D, because in 2D it looks bad when moving camera
-	#if health_bar:
-		#if is_toggled:
-			#var top_model_position = Vector3(model.global_position.x, model.global_position.y + 0.9, model.global_position.z + 0.5)
-			#health_bar.position = get_viewport().get_camera_3d().unproject_position(top_model_position)
-			#health_bar.show()
-		#else:
-			#health_bar.hide()
+	super(is_toggled)
+	
+	if health_bar:
+		if is_toggled:
+			var top_model_position = Vector3(model.global_position.x, model.global_position.y, model.global_position.z)
+			health_bar.position = get_viewport().get_camera_3d().unproject_position(model.global_transform.origin)
+			health_bar.position.x -= 33
+			
+			# hardcoded
+			if is_close(get_viewport().get_camera_3d().rotation_degrees.x, -50):
+				health_bar.position.y -= 41
+			elif is_close(get_viewport().get_camera_3d().rotation_degrees.x, -40):
+				health_bar.position.y -= 47
+			else:
+				health_bar.position.y -= 51
 
 
 func toggle_arrow_highlight(is_toggled):

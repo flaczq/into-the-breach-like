@@ -70,6 +70,8 @@ func init(character_init_data):
 	action_direction = character_init_data.action_direction
 	action_type = character_init_data.action_type
 	action_distance = character_init_data.action_distance
+	
+	set_health_bar()
 
 
 func apply_action_type(action_type, origin_tile_coords = null):
@@ -257,6 +259,7 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 		state_type = StateType.NONE
 	
 	health -= taken_damage
+	set_health_bar()
 	
 	apply_action_type(action_type, origin_tile_coords)
 	
@@ -284,6 +287,16 @@ func toggle_outline(is_toggled, outline_color = Color.BLACK):
 			model_outline.hide()
 
 
+func toggle_health_bar(is_toggled):
+	if health_bar:
+		set_health_bar()
+		
+		if is_toggled:
+			health_bar.show()
+		else:
+			health_bar.hide()
+
+
 func look_at_y(target):
 	model.look_at(target.position, Vector3.UP, true)
 	model.rotation_degrees.x = 0
@@ -300,3 +313,8 @@ func look_at_y(target):
 	#rotation_tween.tween_property(model, 'rotation_degrees:y', rotation, 0.1)
 	#
 	#dummy.queue_free()
+
+
+func set_health_bar():
+	health_bar.set_max(max_health)
+	health_bar.set_value(health)

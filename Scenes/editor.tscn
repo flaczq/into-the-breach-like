@@ -108,11 +108,10 @@ offset_left = -106.0
 offset_bottom = 171.0
 grow_horizontal = 0
 
-[node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
+[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "ONLY SHOWS INFO
-WHEN PLAYING"
+text = "DEBUG INFO"
 
 [node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI/PlayerInfoContainer"]
 layout_mode = 2
@@ -325,7 +324,7 @@ popup/item_2/text = "CAN SPAWN CIVILIAN"
 popup/item_2/checkable = 1
 popup/item_2/id = 2
 
-[node name="CharacterInfoLabel" type="Label" parent="CanvasLayer/UI"]
+[node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -338,8 +337,7 @@ offset_bottom = -31.0
 grow_horizontal = 0
 grow_vertical = 0
 size_flags_horizontal = 3
-text = "ACTION DIRECTION: HORIZONTAL_LINE
-ACTION TYPE: NONE"
+text = "TILE INFO"
 
 [node name="LevelEndPopup" type="ColorRect" parent="CanvasLayer/UI"]
 visible = false

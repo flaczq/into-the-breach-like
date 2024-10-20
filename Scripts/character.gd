@@ -61,21 +61,6 @@ func _ready():
 			#default_bullet_model = asset
 
 
-#func init(character_init_data):
-	#model_name = character_init_data.model_name
-	##model = get_node(character_init_data.model_path)
-	#max_health = character_init_data.health
-	#health = character_init_data.health
-	#damage = character_init_data.damage
-	#move_distance = character_init_data.move_distance
-	#can_fly = character_init_data.can_fly
-	#action_direction = character_init_data.action_direction
-	#action_type = character_init_data.action_type
-	#action_distance = character_init_data.action_distance
-	#
-	#set_health_bar()
-
-
 func apply_action_type(action_type, origin_tile_coords = null):
 	match action_type:
 		ActionType.PUSH_BACK: action_push_back.emit(self, origin_tile_coords)

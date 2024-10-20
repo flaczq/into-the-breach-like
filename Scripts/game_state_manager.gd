@@ -8,12 +8,12 @@ extends Util
 
 @onready var level_generator = $"../LevelGenerator"
 @onready var game_info_label = $'../CanvasLayer/UI/GameInfoLabel'
-@onready var tile_info_label = $'../CanvasLayer/UI/PlayerInfoContainer/TileInfoLabel'
+@onready var debug_info_label = $'../CanvasLayer/UI/PlayerInfoContainer/DebugInfoLabel'
 @onready var end_turn_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton'
 @onready var shoot_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton'
 @onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
 @onready var undo_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton"
-@onready var character_info_label = $"../CanvasLayer/UI/CharacterInfoLabel"
+@onready var tile_info_label = $"../CanvasLayer/UI/TileInfoLabel"
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
@@ -43,6 +43,11 @@ func _ready():
 	# FIXME
 	max_levels = 9
 	points = 0
+	
+	if Global.build_mode == Global.BuildMode.DEBUG:
+		debug_info_label.show()
+	else:
+		debug_info_label.hide()
 
 
 func progress():
@@ -337,8 +342,8 @@ func reset_ui():
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
 	game_info_label.text += 'POINTS: ' + str(points)
+	debug_info_label.text = ''
 	tile_info_label.text = ''
-	character_info_label.text = ''
 
 
 func calculate_tiles_for_movement(active, character):
@@ -659,67 +664,47 @@ func _on_tile_hovered(tile, is_hovered):
 		# ┏┳┓•┓ ┏┓  •┳┓┏┓┏┓
 		#  ┃ ┓┃ ┣   ┓┃┃┣ ┃┃
 		#  ┻ ┗┗┛┗┛  ┗┛┗┻ ┗┛
-		if Global.build_mode == Global.BuildMode.DEBUG:
-			tile_info_label.text = 'POSITION: ' + str(tile.position) + '\n'
-			tile_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
-			tile_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n\n'
-			
-			tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
-			tile_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
-			
-			if tile.models.get('event_asset'):
-				if tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
-					tile_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
-				elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
-					tile_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_ROCK]) + '\n'
-			
-			if tile.info:
-				tile_info_label.text += '\n\n' + tile.info
-			
-			if tile.player:
-				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
-				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
-				character_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
-				character_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
-				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n'
-				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
-			elif tile.enemy:
-				character_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
-				character_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
-				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
-				character_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
-				character_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
-				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
-				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
-			elif tile.civilian:
-				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
-				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
-				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
-		else:
-			tile_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
-			tile_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
-			
-			if tile.info:
-				tile_info_label.text += '\n\n' + tile.info
 		
-			if tile.player:
-				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
-				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
-				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n' 
-				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
-			elif tile.enemy:
-				character_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
-				character_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
-				character_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
-				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
-				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
-			elif tile.civilian:
-				character_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
-				character_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
-				character_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
+		# DEBUG
+		debug_info_label.text = 'POSITION: ' + str(tile.position) + '\n'
+		debug_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
+		debug_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n\n'
+		debug_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
+		debug_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
+		if tile.models.get('event_asset'):
+			if tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
+				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
+			elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
+				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_ROCK]) + '\n'
+		if tile.info:
+			debug_info_label.text += '\n\n' + tile.info
+		
+		# tile and character hover info
+		# TODO
+		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
+		
+		if tile.player:
+			tile_info_label.text += '\n\n' + tr('INFO_HEALTH') + ': ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
+			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
+			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
+			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
+			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n'
+			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
+		elif tile.enemy:
+			tile_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+			tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
+			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
+			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
+			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
+			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
+			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
+		elif tile.civilian:
+			tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
+			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
+			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
 	else:
+		debug_info_label.text = ''
 		tile_info_label.text = ''
-		character_info_label.text = ''
 	
 	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
@@ -759,8 +744,6 @@ func _on_tile_hovered(tile, is_hovered):
 				if first_occupied_tile_in_line.enemy:
 					first_occupied_tile_in_line.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
 					first_occupied_tile_in_line.enemy.toggle_health_bar(true)
-					#TODO !!!!!!!!!! show_health_with_damage_inflicted()
-					print('enemy ' + str(first_occupied_tile_in_line.coords) + ' -> with health ' + str(first_occupied_tile_in_line.enemy.health) + ' will be damaged to health ' + str(first_occupied_tile_in_line.enemy.health - selected_player.damage))
 				
 				if first_occupied_tile_in_line.civilian:
 					first_occupied_tile_in_line.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
@@ -769,6 +752,7 @@ func _on_tile_hovered(tile, is_hovered):
 				selected_player.clear_arrows()
 	
 	if is_hovered:
+		# show health bar for hovered player
 		if tile.player:
 			tile.player.toggle_health_bar(true)
 		
@@ -799,11 +783,13 @@ func _on_tile_hovered(tile, is_hovered):
 		if tile.is_planned_enemy_action:
 			#tile.toggle_shader(true)
 			
+			var current_enemies_damage = 0
 			# find enemy whose planned tile is hovered
 			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
 				current_enemy.toggle_arrow_highlight(true)
 				current_enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
 				current_enemy.toggle_health_bar(true)
+				current_enemies_damage += current_enemy.damage
 			
 			if tile.player:
 				tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)

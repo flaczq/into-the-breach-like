@@ -201,7 +201,7 @@ func plan_level_events(level_events):
 				print('spawned missle at ' + str(event_tile.coords))
 		# rock spawned near mountains
 		elif level_event == LevelEvent.FALLING_ROCK:
-			var mountains_coords = tiles.filter(func(tile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile): return tile.coords)
+			var mountain_positions = tiles.filter(func(tile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile): return tile.position)
 			var event_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 			var event_asset_material = StandardMaterial3D.new()
 			event_asset_material.albedo_color = Color('7A5134')#brown
@@ -209,8 +209,7 @@ func plan_level_events(level_events):
 			
 			#var max_range = (3) if (get_side_dimension() == 8) else (2) if (get_side_dimension() == 6) else (1)
 			for i in range(0, 1):
-				var event_tiles = get_untargetable_tiles().filter(func(tile): return not mountains_coords.has(tile.coords) and mountains_coords.any(func(mountain_coords): return are_tiles_close(mountain_coords, tile.coords, 2.5)))
-				print(event_tiles.map(func(tile): return str(tile.coords)))
+				var event_tiles = get_untargetable_tiles().filter(func(tile): return not mountain_positions.has(tile.position) and mountain_positions.any(func(mountain_position): return mountain_position.distance_to(tile.position) <= 1.5))
 				var event_tile = event_tiles.pick_random()
 				event_tile.models.event_asset = event_asset.duplicate()
 				event_tile.models.event_asset.add_to_group('ROCKS_INDICATORS')

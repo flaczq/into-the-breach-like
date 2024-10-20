@@ -1,5 +1,7 @@
 extends Character
 
+class_name Enemy
+
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
 var arrow_model_material: StandardMaterial3D
@@ -39,9 +41,16 @@ func move(tiles_path, forced = false, outside_tile = null):
 	toggle_arrows(false)
 	
 	if is_alive:
+		if not forced and state_type == StateType.MISS_ACTION:
+			print('enemy ' + str(tile.coords) + ' -> missed action=move')
+			state_type = StateType.NONE
+			return
+		
 		if not forced and state_type == StateType.SLOW_DOWN:
 			print('enemy ' + str(tile.coords) + ' -> slowed down')
 			state_type = StateType.NONE
+		
+		toggle_health_bar(false)
 		
 		var target_tile = tiles_path.back()
 		if target_tile == tile:

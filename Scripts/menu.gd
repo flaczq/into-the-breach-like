@@ -11,6 +11,8 @@ extends Util
 @onready var language_option_button = $CanvasLayer/UI/OptionsContainer/LanguageOptionButton
 @onready var aa_check_box = $CanvasLayer/UI/OptionsContainer/AACheckBox
 @onready var players_container = $CanvasLayer/UI/PlayersContainer
+@onready var players_buttons = $CanvasLayer/UI/PlayersContainer/PlayersButtons
+@onready var next_button = $CanvasLayer/UI/PlayersContainer/NextButton
 @onready var version_label = $CanvasLayer/UI/VersionLabel
 
 var last_screen: Node3D
@@ -30,6 +32,8 @@ func _ready():
 	
 	aa_check_box.set_pressed(Global.antialiasing)
 	_on_aa_check_box_toggled(Global.antialiasing)
+	
+	next_button.set_disabled(true)
 	
 	main_menu_container.show()
 	if Global.build_mode == Global.BuildMode.DEBUG:
@@ -151,8 +155,21 @@ func _on_aa_check_box_toggled(toggled_on):
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)
 
 
-func _on_player_button_pressed(player_type):
-	print('you selected player type: ' + Global.PlayerType.keys()[player_type])
-	Global.current_player_types.push_back(player_type)
+func _on_player_option_button_item_selected(index):
+	print('you selected player scene: ' + str(index))
 	
+	Global.current_player_scenes = []
+	
+	var all_selected = true
+	
+	for player_button in players_buttons.get_children():
+		if player_button.get_selected_id() >= 0:
+			Global.current_player_scenes.push_back(player_button.get_selected_id())
+		else:
+			all_selected = false
+	
+	next_button.set_disabled(not all_selected)
+
+
+func _on_next_button_pressed():
 	start()

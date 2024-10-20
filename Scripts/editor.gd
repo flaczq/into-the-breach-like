@@ -166,50 +166,33 @@ func calculate_level_data(level = -1):
 	#########################
 	
 	if level >= 0:
-		level_data.map.level = level
-	#level_data.map.level_events = [1]
-	level_data.map.tiles = ''
-	level_data.map.tiles_assets = ''
-	level_data.players = []
-	level_data.enemies = []
-	level_data.civilians = []
-	#level_data.map.max_turns = 3
+		level_data.level = level
+	#level_data.level_events = [1]
+	level_data.tiles = ''
+	level_data.tiles_assets = ''
+	level_data.player_scenes = []
+	level_data.enemy_scenes = []
+	level_data.civilian_scenes = []
+	#level_data.max_turns = 3
 	
 	for tile in map.tiles:
-		level_data.map.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
+		level_data.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
 		
 		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else null
-		level_data.map.tiles_assets += map.convert_asset_filename_to_initial(asset)
+		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
-	var players_i = 0
-	var enemies_i = 0
-	var civilians_i = 0
 	for child in get_children():
 		if child.is_in_group('PLAYERS'):
 			var player_scene = int(child.name.substr(6, 1)) - 1
-			if players_i == 0:
-				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
-			elif players_i == 1:
-				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
-			else:
-				level_data.players.push_back({'scene': player_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7})
-			players_i += 1
+			level_data.player_scenes.push_back(player_scene)
 		
 		if child.is_in_group('ENEMIES'):
 			var enemy_scene = int(child.name.substr(5, 1)) - 1
-			if enemies_i == 0:
-				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
-			else:
-				level_data.enemies.push_back({'scene': enemy_scene, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_DOT, 'action_type': ActionType.PUSH_BACK, 'action_distance': 7})
-			enemies_i += 1
+			level_data.enemy_scenes.push_back(enemy_scene)
 		
 		if child.is_in_group('CIVILIANS'):
 			var civilian_scene = int(child.name.substr(8, 1)) - 1
-			if civilians_i == 0:
-				level_data.civilians.push_back({'scene': civilian_scene, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
-			else:
-				level_data.civilians.push_back({'scene': civilian_scene, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': -1, 'action_type': -1, 'action_distance': 0})
-			civilians_i += 1
+			level_data.civilian_scenes.push_back(civilian_scene)
 
 
 func _on_main_menu_button_pressed():
@@ -337,16 +320,16 @@ func _on_load_id_pressed(id):
 	var level_data_string = content.get_slice(str(id) + '->START', 1).get_slice(str(id) + '->STOP', 0).strip_escapes()
 	level_data = level_generator.parse_data(level_data_string)
 	
-	_on_maps_id_pressed(level_data.map.scene)
+	_on_maps_id_pressed(level_data.scene)
 	
 	for tile in map.tiles:
 		var index = map.get_side_dimension() * (tile.coords.x - 1) + (tile.coords.y - 1)
-		var tile_type = map.convert_tile_type_initial_to_enum(level_data.map.tiles[index])
+		var tile_type = map.convert_tile_type_initial_to_enum(level_data.tiles[index])
 		var color = map.get_color_by_tile_type(tile_type)
 		tile.tile_type = tile_type
 		tile.model_material.albedo_color = color
 		
-		var asset_filename = map.convert_asset_initial_to_filename(level_data.map.tiles_assets[index])
+		var asset_filename = map.convert_asset_initial_to_filename(level_data.tiles_assets[index])
 		if asset_filename:
 			var asset = assets.filter(func(asset): return asset.name == asset_filename).front().duplicate()
 			asset.set_meta('tile', tile)
@@ -373,7 +356,7 @@ func _on_maps_id_pressed(id):
 	map = map_scenes[id].instantiate()
 	add_child(map)
 	
-	level_data.map.scene = id
+	level_data.scene = id
 	
 	for tile in map.tiles:
 		tile.area_3d.disconnect('mouse_entered', tile._on_area_3d_mouse_entered)
@@ -477,22 +460,22 @@ func _on_selected_tile_id_pressed(id):
 	
 	if selected_tile_menu_button.get_popup().is_item_checked(id):
 		if id == 0:
-			push_unique_to_array(level_data.map.spawn_player_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			push_unique_to_array(level_data.spawn_player_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		elif id == 1:
-			push_unique_to_array(level_data.map.spawn_enemy_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			push_unique_to_array(level_data.spawn_enemy_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		elif id == 2:
-			push_unique_to_array(level_data.map.spawn_civilian_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			push_unique_to_array(level_data.spawn_civilian_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		
 		var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
 		spawn_indicator.show()
 		selected_tile.add_child(spawn_indicator)
 	else:
 		if id == 0:
-			level_data.map.spawn_player_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			level_data.spawn_player_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		elif id == 1:
-			level_data.map.spawn_enemy_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			level_data.spawn_enemy_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		elif id == 2:
-			level_data.map.spawn_civilian_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			level_data.spawn_civilian_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		
 		var spawn_indicator = selected_tile.get_children().filter(func(child): return child.is_in_group('INDICATORS')).front()
 		if spawn_indicator:
@@ -504,9 +487,9 @@ func _on_editor_tile_clicked(tile):
 	selected_tile = tile
 	selected_tile_menu_button.text = 'SELECTED TILE ' + str(tile.coords)
 	selected_tile_menu_button.set_disabled(false)
-	selected_tile_menu_button.get_popup().set_item_checked(0, level_data.map.spawn_player_coords.any(func(spawn_player_coords): return spawn_player_coords.x == tile.coords.x and spawn_player_coords.y == tile.coords.y))
-	selected_tile_menu_button.get_popup().set_item_checked(1, level_data.map.spawn_enemy_coords.any(func(spawn_enemy_coords): return spawn_enemy_coords.x == tile.coords.x and spawn_enemy_coords.y == tile.coords.y))
-	selected_tile_menu_button.get_popup().set_item_checked(2, level_data.map.spawn_civilian_coords.any(func(spawn_civilian_coords): return spawn_civilian_coords.x == tile.coords.x and spawn_civilian_coords.y == tile.coords.y))
+	selected_tile_menu_button.get_popup().set_item_checked(0, level_data.spawn_player_coords.any(func(spawn_player_coords): return spawn_player_coords.x == tile.coords.x and spawn_player_coords.y == tile.coords.y))
+	selected_tile_menu_button.get_popup().set_item_checked(1, level_data.spawn_enemy_coords.any(func(spawn_enemy_coords): return spawn_enemy_coords.x == tile.coords.x and spawn_enemy_coords.y == tile.coords.y))
+	selected_tile_menu_button.get_popup().set_item_checked(2, level_data.spawn_civilian_coords.any(func(spawn_civilian_coords): return spawn_civilian_coords.x == tile.coords.x and spawn_civilian_coords.y == tile.coords.y))
 	
 	var character = tile.get_character()
 	if not tile_to_placed.is_empty():

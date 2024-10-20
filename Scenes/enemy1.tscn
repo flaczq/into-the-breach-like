@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://d3kikj28cfn8h"]
 
-[ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_hqvdf"]
+[ext_resource type="Script" path="res://Scripts/enemy1.gd" id="1_7n172"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_usem4"]
 [ext_resource type="StyleBox" uid="uid://bpkofwngvli4v" path="res://Other/health_bar_style_box_flat.tres" id="3_50ymb"]
 
@@ -102,7 +102,7 @@ _surfaces = [{
 bg_color = Color(0, 1, 0, 1)
 
 [node name="Enemy1" type="Node3D" groups=["ENEMIES"]]
-script = ExtResource("1_hqvdf")
+script = ExtResource("1_7n172")
 assets_scene = ExtResource("2_usem4")
 
 [node name="Skeleton_Head" type="MeshInstance3D" parent="."]

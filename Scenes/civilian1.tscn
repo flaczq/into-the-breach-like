@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://b60h1emnunq1s"]
 
-[ext_resource type="Script" path="res://Scripts/civilian.gd" id="1_0y823"]
+[ext_resource type="Script" path="res://Scripts/civilian1.gd" id="1_3a1sn"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_wduy7"]
 [ext_resource type="StyleBox" uid="uid://bpkofwngvli4v" path="res://Other/health_bar_style_box_flat.tres" id="3_kn01m"]
 
@@ -195,7 +195,7 @@ _surfaces = [{
 bg_color = Color(0, 1, 0, 1)
 
 [node name="Civilian1" type="Node3D" groups=["CIVILIANS"]]
-script = ExtResource("1_0y823")
+script = ExtResource("1_3a1sn")
 assets_scene = ExtResource("2_wduy7")
 
 [node name="Princess_Head" type="MeshInstance3D" parent="."]

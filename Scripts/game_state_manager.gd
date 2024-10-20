@@ -90,10 +90,10 @@ func init_game_state():
 
 
 func init_map(level_data):
-	max_turns = level_data.map.get('max_turns', -1)
-	level_events = level_data.map.get('level_events', [])
+	max_turns = level_data.get('max_turns', -1)
+	level_events = level_data.get('level_events', [])
 	
-	map = map_scenes[level_data.map.scene].instantiate()
+	map = map_scenes[level_data.scene].instantiate()
 	add_sibling(map)
 	map.spawn(level_data)
 	
@@ -105,11 +105,11 @@ func init_map(level_data):
 func init_players(level_data):
 	players = []
 	
-	for current_level_player in level_data.players:
-		var player_instance = player_scenes[current_level_player.scene].instantiate()
+	for player_scene in level_data.player_scenes:
+		var player_instance = player_scenes[player_scene].instantiate()
 		add_sibling(player_instance)
-		player_instance.init(current_level_player)
-		var spawn_tile = map.get_spawnable_tiles(level_data.map.spawn_player_coords).pick_random()
+		#player_instance.init(current_level_player)
+		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
 		player_instance.spawn(spawn_tile)
 		
 		player_instance.connect('hovered_event', _on_player_hovered)
@@ -128,11 +128,11 @@ func init_enemies(level_data):
 	enemies = []
 	
 	var order = 1
-	for current_level_enemy in level_data.enemies:
-		var enemy_instance = enemy_scenes[current_level_enemy.scene].instantiate()
+	for enemy_scene in level_data.enemy_scenes:
+		var enemy_instance = enemy_scenes[enemy_scene].instantiate()
 		add_sibling(enemy_instance)
-		enemy_instance.init(current_level_enemy)
-		var spawn_tile = map.get_spawnable_tiles(level_data.map.spawn_enemy_coords).pick_random()
+		#enemy_instance.init(current_level_enemy)
+		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_enemy_coords).pick_random()
 		enemy_instance.spawn(spawn_tile, order)
 		
 		enemy_instance.connect('action_push_back', _on_character_action_push_back)
@@ -150,11 +150,11 @@ func init_enemies(level_data):
 func init_civilians(level_data):
 	civilians = []
 	
-	for current_level_civilian in level_data.civilians:
-		var civilian_instance = civilian_scenes[current_level_civilian.scene].instantiate()
+	for civilian_scene in level_data.civilian_scenes:
+		var civilian_instance = civilian_scenes[civilian_scene].instantiate()
 		add_sibling(civilian_instance)
-		civilian_instance.init(current_level_civilian)
-		var spawn_tile = map.get_spawnable_tiles(level_data.map.spawn_civilian_coords).pick_random()
+		#civilian_instance.init(current_level_civilian)
+		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_civilian_coords).pick_random()
 		civilian_instance.spawn(spawn_tile)
 		
 		civilian_instance.connect('action_push_back', _on_character_action_push_back)
@@ -769,6 +769,9 @@ func _on_tile_hovered(tile, is_hovered):
 				selected_player.clear_arrows()
 	
 	if is_hovered:
+		if tile.player:
+			tile.player.toggle_health_bar(true)
+		
 		# outline hovered enemy and highlight his attack arrows
 		if tile.enemy:
 			tile.enemy.toggle_arrow_highlight(true)
@@ -1054,7 +1057,6 @@ func _on_level_end_popup_gui_input(event):
 		
 		level_end_clicked = true
 		
-		# FIXME level won animation
 		for player in players:
 			var flying_tile_tween = create_tween()
 			flying_tile_tween.tween_property(player, 'position:y', 6, 0.5)

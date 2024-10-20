@@ -1,5 +1,7 @@
 extends Character
 
+class_name Player
+
 signal hovered_event(player: Node3D, is_hovered: bool)
 signal clicked_event(player: Node3D, is_clicked: bool)
 
@@ -44,9 +46,16 @@ func move(tiles_path, forced = false, outside_tile = null):
 	if not forced and current_phase != PhaseType.MOVE:
 		return
 	
+	if not forced and state_type == StateType.MISS_ACTION:
+		print('enemy ' + str(tile.coords) + ' -> missed action=move')
+		state_type = StateType.NONE
+		return
+	
 	if not forced and state_type == StateType.SLOW_DOWN:
 		print('playe ' + str(tile.coords) + ' -> slowed down')
 		state_type = StateType.NONE
+	
+	toggle_health_bar(false)
 	
 	var target_tile = tiles_path.back()
 	if target_tile == tile:

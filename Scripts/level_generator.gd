@@ -2,21 +2,6 @@ extends Util
 
 const SAVED_LEVELS_FILE_PATH: String = 'res://Data/saved_levels.txt'
 const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
-const PLAYERS_DATA = [
-	{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-	#{'scene': 1, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-	#{'scene': 2, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-]
-const ENEMIES_DATA = [
-	{'scene': 0, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-	{'scene': 1, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-	#{'scene': 2, 'health': 2, 'damage': 1, 'move_distance': 3, 'can_fly': false, 'action_direction': ActionDirection.HORIZONTAL_LINE, 'action_type': ActionType.NONE, 'action_distance': 7},
-]
-const CIVILIANS_DATA = [
-	{'scene': 0, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-	#{'scene': 1, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-	#{'scene': 2, 'health': 2, 'damage': 0, 'move_distance': 1, 'can_fly': false, 'action_direction': ActionDirection.NONE, 'action_type': ActionType.NONE, 'action_distance': 0},
-]
 
 
 func generate_data(level_type, level):
@@ -47,20 +32,20 @@ func get_levels_file_path(level_type):
 
 
 func add_characters(level_data):
-	if level_data.map.level_type == LevelType.TUTORIAL:
+	if level_data.level_type == LevelType.TUTORIAL:
 		# FIXME hardcoded
-		if level_data.map.level == 1:
-			level_data.players = [PLAYERS_DATA[0]]
-			level_data.enemies = [ENEMIES_DATA[0]]
-			level_data.civilians = []
+		if level_data.level == 1:
+			level_data.player_scenes = [0]
+			level_data.enemy_scenes = [0]
+			level_data.civilian_scenes = []
 			#2:
-				#level_data.players = [PLAYERS_DATA[0]]
-				#level_data.enemies = [ENEMIES_DATA[0]]
-				#level_data.civilians = []
+				#level_data.player_scenes = [0]
+				#level_data.enemy_scenes = [0]
+				#level_data.civilian_scenes = []
 	else:
 		# TODO pick enemies and civilians by random(?) based on level type and level number
-		for current_player_type in Global.current_player_types:
-			level_data.players = [PLAYERS_DATA[current_player_type]]
+		for current_player_scene in Global.current_player_scenes:
+			level_data.player_scenes = [current_player_scene]
 		
-		level_data.enemies = [ENEMIES_DATA.pick_random()]
-		level_data.civilians = [CIVILIANS_DATA.pick_random()]
+		level_data.enemy_scenes = [randi_range(0, 1)]
+		level_data.civilian_scenes = [randi_range(0, 0)]

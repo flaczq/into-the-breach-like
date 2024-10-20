@@ -1,6 +1,7 @@
 extends Util
 
 class_name Character
+
 @export var assets_scene: PackedScene
 
 @onready var health_bar = $HealthProgressBar
@@ -16,6 +17,7 @@ var is_alive: bool = true
 var state_type: StateType = StateType.NONE
 var model_outlines: Array[Node] = []
 
+var model_name: String
 var model: MeshInstance3D
 var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
@@ -24,10 +26,10 @@ var max_health: int
 var health: int
 var damage: int
 var move_distance: int
-var can_fly: bool
+var action_distance: int
 var action_direction: ActionDirection
 var action_type: ActionType
-var action_distance: int
+var can_fly: bool
 var tile: Node3D
 
 
@@ -46,8 +48,7 @@ func _ready():
 	for model_outline in model_outlines:
 		model_outline.hide()
 	
-	if health_bar:
-		health_bar.hide()
+	health_bar.hide()
 	
 	var assets_instance = assets_scene.instantiate()
 	for asset in assets_instance.get_children():
@@ -60,18 +61,19 @@ func _ready():
 			#default_bullet_model = asset
 
 
-func init(character_init_data):
-	#model = get_node(character_init_data.model_path)
-	max_health = character_init_data.health
-	health = character_init_data.health
-	damage = character_init_data.damage
-	move_distance = character_init_data.move_distance
-	can_fly = character_init_data.can_fly
-	action_direction = character_init_data.action_direction
-	action_type = character_init_data.action_type
-	action_distance = character_init_data.action_distance
-	
-	set_health_bar()
+#func init(character_init_data):
+	#model_name = character_init_data.model_name
+	##model = get_node(character_init_data.model_path)
+	#max_health = character_init_data.health
+	#health = character_init_data.health
+	#damage = character_init_data.damage
+	#move_distance = character_init_data.move_distance
+	#can_fly = character_init_data.can_fly
+	#action_direction = character_init_data.action_direction
+	#action_type = character_init_data.action_type
+	#action_distance = character_init_data.action_distance
+	#
+	#set_health_bar()
 
 
 func apply_action_type(action_type, origin_tile_coords = null):

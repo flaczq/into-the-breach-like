@@ -1,5 +1,7 @@
 extends Character
 
+class_name Civilian
+
 
 func _ready():
 	super()
@@ -24,6 +26,8 @@ func move(tiles_path, forced = false, outside_tile = null):
 		if not forced and state_type == StateType.SLOW_DOWN:
 			print('civil ' + str(tile.coords) + ' -> slowed down')
 			state_type = StateType.NONE
+		
+		toggle_health_bar(false)
 		
 		var target_tile = tiles_path.back()
 		if target_tile == tile:

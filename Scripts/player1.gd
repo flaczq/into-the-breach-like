@@ -10,7 +10,7 @@ func _ready():
 	damage = 1
 	move_distance = 4
 	action_distance = 1
-	action_direction = ActionDirection.HORIZONTAL_LINE
+	action_direction = ActionDirection.VERTICAL_LINE
 	action_type = ActionType.PUSH_BACK
 	can_fly = false
 	

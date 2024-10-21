@@ -141,7 +141,7 @@ func init():
 	enemies_menu_button.set_disabled(true)
 	civilians_menu_button.set_disabled(true)
 	level_data = {
-		'map': {'scene': -1, 'level': -1, 'level_type': -1, 'level_events': [], 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []}
+		'scene': -1, 'level': -1, 'level_type': -1, 'level_events': [], 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []
 	}
 
 

@@ -39,6 +39,7 @@ func spawn(target_tile, new_order):
 
 func move(tiles_path, forced = false, outside_tile = null):
 	toggle_arrows(false)
+	toggle_action_indicators(false)
 	
 	if is_alive:
 		if not forced and state_type == StateType.MISS_ACTION:
@@ -57,16 +58,17 @@ func move(tiles_path, forced = false, outside_tile = null):
 			if forced and outside_tile:
 				print('enemy ' + str(tile.coords) + ' -> pushed into the wall')
 				get_shot(1)
-				await forced_into_occupied_tile(outside_tile, true)
+				await force_into_occupied_tile(outside_tile, true)
 			else:
 				print('enemy ' + str(tile.coords) + ' -> is not moving')
 		else:
 			if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
 				print('enemy ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 				get_shot(1)
-				await forced_into_occupied_tile(target_tile)
+				await force_into_occupied_tile(target_tile)
 			else:
 				clear_arrows()
+				clear_action_indicators()
 				
 				tile.set_enemy(null)
 				tile = target_tile
@@ -82,6 +84,7 @@ func move(tiles_path, forced = false, outside_tile = null):
 					await position_tween.finished
 	
 	toggle_arrows(true)
+	toggle_action_indicators(true)
 
 
 func plan_action(target_tile):
@@ -93,14 +96,14 @@ func plan_action(target_tile):
 			planned_tile.set_planned_enemy_action(true)
 			
 			spawn_arrow(planned_tile)
-			
+			spawn_action_indicators(planned_tile)
 			look_at_y(planned_tile)
-			
 			#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 
 
 func execute_planned_action():
 	clear_arrows()
+	clear_action_indicators()
 	
 	var temp_planned_tile = null
 	if planned_tile:
@@ -132,6 +135,7 @@ func get_killed():
 
 func reset_planned_tile():
 	clear_arrows()
+	clear_action_indicators()
 	
 	if planned_tile:
 		planned_tile.set_planned_enemy_action(false)

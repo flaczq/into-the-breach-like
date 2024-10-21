@@ -55,6 +55,7 @@ func _input(event):
 				#player.is_clicked = false
 				player.is_ghost = false
 				player.clear_arrows()
+				player.clear_action_indicators()
 				
 				if player.is_alive:
 					player.reset_phase()

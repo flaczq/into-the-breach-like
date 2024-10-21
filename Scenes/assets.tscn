@@ -1,9 +1,10 @@
-[gd_scene load_steps=74 format=3 uid="uid://d0dm54nlu3hbr"]
+[gd_scene load_steps=79 format=3 uid="uid://d0dm54nlu3hbr"]
 
 [ext_resource type="Material" uid="uid://ckugw863i3koj" path="res://Other/outline_material.tres" id="1_fpwv7"]
 [ext_resource type="Material" uid="uid://02s77grdtqbj" path="res://Other/outline_no_fade_material.tres" id="1_pq3cv"]
 [ext_resource type="Texture2D" uid="uid://1v2hwuehojpn" path="res://Assets/loafbrr.basic-platforming-pack/props/Pallete3.png" id="4_abx10"]
 [ext_resource type="Script" path="res://Scripts/asset.gd" id="5_4g6f2"]
+[ext_resource type="Texture2D" uid="uid://o8jtnohtfapr" path="res://Assets/Prototype/Textures/colormap.png" id="5_55487"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uf2gi"]
 resource_name = "colormap"
@@ -553,6 +554,48 @@ no_depth_test = true
 albedo_color = Color(0.796078, 0, 0.235294, 1)
 disable_receive_shadows = true
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lu2cm"]
+resource_name = "colormap"
+cull_mode = 2
+albedo_texture = ExtResource("5_55487")
+texture_filter = 2
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_w4l2c"]
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1.00001, 1e-05, 1),
+"format": 34896613377,
+"index_count": 48,
+"index_data": PackedByteArray(2, 0, 0, 0, 1, 0, 4, 0, 3, 0, 2, 0, 6, 0, 5, 0, 4, 0, 8, 0, 7, 0, 6, 0, 10, 0, 3, 0, 9, 0, 9, 0, 11, 0, 10, 0, 9, 0, 5, 0, 12, 0, 12, 0, 13, 0, 9, 0, 13, 0, 14, 0, 11, 0, 11, 0, 9, 0, 13, 0, 16, 0, 9, 0, 15, 0, 15, 0, 17, 0, 16, 0, 7, 0, 18, 0, 16, 0, 16, 0, 6, 0, 7, 0, 15, 0, 19, 0, 0, 0, 0, 0, 2, 0, 15, 0),
+"name": "colormap",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray(254, 255, 0, 0, 255, 191, 0, 0, 254, 255, 0, 0, 255, 255, 0, 0, 254, 191, 0, 0, 255, 191, 0, 0, 254, 191, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 63, 0, 0, 255, 63, 0, 0, 255, 63, 0, 0, 255, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254, 191, 0, 0, 255, 63, 0, 0, 254, 255, 0, 0, 255, 127, 0, 0, 254, 255, 0, 0, 255, 63, 0, 0, 255, 127, 0, 0, 0, 0, 0, 0, 254, 191, 0, 0, 0, 0, 0, 0, 254, 255, 0, 0, 0, 0, 0, 0, 254, 191, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 63, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 0, 0, 0, 0, 254, 255, 0, 0, 255, 127, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_hhqyr"]
+resource_name = "floor-small-diagonal_floor-small-diagonal"
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.5, 1.00001, 1e-05, 1),
+"attribute_data": PackedByteArray(255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 152, 249, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236, 255, 119, 203, 236),
+"format": 34896613399,
+"index_count": 48,
+"index_data": PackedByteArray(2, 0, 0, 0, 1, 0, 4, 0, 3, 0, 2, 0, 6, 0, 5, 0, 4, 0, 8, 0, 7, 0, 6, 0, 10, 0, 3, 0, 9, 0, 9, 0, 11, 0, 10, 0, 9, 0, 5, 0, 12, 0, 12, 0, 13, 0, 9, 0, 16, 0, 14, 0, 15, 0, 15, 0, 17, 0, 16, 0, 19, 0, 17, 0, 18, 0, 18, 0, 20, 0, 19, 0, 22, 0, 21, 0, 19, 0, 19, 0, 23, 0, 22, 0, 18, 0, 24, 0, 25, 0, 25, 0, 26, 0, 18, 0),
+"material": SubResource("StandardMaterial3D_lu2cm"),
+"name": "colormap",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 27,
+"vertex_data": PackedByteArray(254, 255, 0, 0, 255, 191, 255, 255, 254, 255, 0, 0, 255, 255, 255, 255, 254, 191, 0, 0, 255, 191, 255, 255, 254, 191, 0, 0, 255, 127, 255, 255, 255, 127, 0, 0, 255, 127, 255, 255, 255, 127, 0, 0, 255, 63, 255, 255, 255, 63, 0, 0, 255, 63, 255, 255, 255, 63, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 254, 191, 0, 0, 255, 63, 255, 255, 254, 255, 0, 0, 255, 127, 255, 255, 254, 255, 0, 0, 255, 63, 255, 255, 255, 127, 0, 0, 0, 0, 255, 255, 254, 191, 0, 0, 0, 0, 255, 255, 254, 255, 0, 0, 0, 0, 255, 255, 254, 255, 0, 0, 255, 63, 255, 255, 254, 191, 0, 0, 0, 0, 255, 255, 254, 191, 0, 0, 255, 63, 255, 255, 254, 191, 0, 0, 255, 127, 255, 255, 255, 127, 0, 0, 255, 63, 255, 255, 255, 127, 0, 0, 255, 127, 255, 255, 255, 127, 0, 0, 0, 0, 255, 255, 255, 63, 0, 0, 0, 0, 255, 255, 255, 63, 0, 0, 255, 63, 255, 255, 254, 255, 0, 0, 255, 127, 255, 255, 254, 255, 0, 0, 255, 191, 255, 255, 254, 191, 0, 0, 255, 191, 255, 255, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191, 255, 127, 255, 191)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_w4l2c")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lnv2f"]
+transparency = 1
+albedo_color = Color(0.796078, 0, 0.235294, 0.74902)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uhler"]
 resource_name = "Desert_Rock.001"
 cull_mode = 2
@@ -992,6 +1035,7 @@ mesh = SubResource("ArrayMesh_to7ky")
 
 [node name="indicator-special-cross" type="MeshInstance3D" parent="." groups=["EVENTS_INDICATORS"]]
 transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0.207, 0)
+visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_r31oh")
 
@@ -1017,11 +1061,9 @@ mesh = SubResource("ArrayMesh_bgdcb")
 
 [node name="ArrowSignContainer" type="Node3D" parent="." groups=["ARROW"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.006)
-visible = false
 
 [node name="ArrowSign" type="MeshInstance3D" parent="ArrowSignContainer"]
 transform = Transform3D(50, 0, 0, 0, -2.18557e-06, -50, 0, 50, -2.18557e-06, 0, 0, 0)
-visible = false
 sorting_offset = 1.0
 mesh = SubResource("ArrayMesh_b1x4s")
 skeleton = NodePath("")
@@ -1033,6 +1075,12 @@ visible = false
 sorting_offset = 0.9
 mesh = SubResource("SphereMesh_tx8n1")
 surface_material_override/0 = SubResource("StandardMaterial3D_l7r3e")
+
+[node name="floor-small-diagonal" type="MeshInstance3D" parent="." groups=["ACTION_INDICATORS"]]
+transform = Transform3D(0.353553, 0, -0.353553, 0, 0.5, 0, 0.353553, 0, 0.353553, 0, 0.21, 0)
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_hhqyr")
+surface_material_override/0 = SubResource("StandardMaterial3D_lnv2f")
 
 [node name="mountain2" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.8, 0, 0, 0, -3.49691e-08, -0.8, 0, 0.8, -3.49691e-08, 0, 0.2, 0)

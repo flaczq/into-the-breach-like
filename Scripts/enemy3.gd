@@ -11,7 +11,7 @@ func _ready():
 	move_distance = 2
 	action_distance = 7
 	action_direction = ActionDirection.VERTICAL_DOT
-	action_type = ActionType.PUSH_BACK
+	action_type = ActionType.NONE
 	can_fly = false
 	
 	set_health_bar()

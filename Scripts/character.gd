@@ -21,7 +21,8 @@ var model_name: String
 var model: MeshInstance3D
 var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
-var default_bullet_model: Node3D
+var default_bullet_model: MeshInstance3D
+var default_forced_action_model: MeshInstance3D
 var max_health: int
 var health: int
 var damage: int
@@ -57,8 +58,8 @@ func _ready():
 		elif asset.name == 'sphere':
 			default_arrow_sphere_model = asset
 			default_bullet_model = asset
-		#elif asset.name == 'sphere':
-			#default_bullet_model = asset
+		elif asset.name == 'floor-small-diagonal':
+			default_forced_action_model = asset
 
 
 func apply_action_type(action_type, origin_tile_coords = null):
@@ -81,8 +82,8 @@ func set_model_outlines(parent = model):
 			set_model_outlines(child)
 
 
-func forced_into_occupied_tile(target_tile, is_outside = false):
-	# remember position to bounce back to
+func force_into_occupied_tile(target_tile, is_outside = false):
+	# remember position to bounce back to it
 	var origin_position = position
 	var duration = 0.4
 	var position_tween = create_tween()
@@ -186,6 +187,61 @@ func toggle_arrows(is_toggled):
 			child.hide()
 
 
+func spawn_action_indicators(target):
+	var position_to_target = get_vector3_on_map(position - target.position)
+	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
+	var origin_to_target_sign = hit_distance.sign()
+	var hit_direction = get_hit_direction(origin_to_target_sign)
+	
+	# TODO
+	match action_type:
+		ActionType.PUSH_BACK:
+			var forced_action_model = default_forced_action_model.duplicate()
+			
+			# hardcoded because rotations suck b4llz
+			if hit_direction == HitDirection.DOWN_LEFT:
+				forced_action_model.rotation_degrees.y = -135
+			elif hit_direction == HitDirection.UP_RIGHT:
+				forced_action_model.rotation_degrees.y = 45
+			elif hit_direction == HitDirection.RIGHT_DOWN:
+				forced_action_model.rotation_degrees.y = -45
+			elif hit_direction == HitDirection.LEFT_UP:
+				forced_action_model.rotation_degrees.y = 135
+			elif hit_direction == HitDirection.DOWN:
+				forced_action_model.rotation_degrees.y = -90
+			elif hit_direction == HitDirection.UP:
+				forced_action_model.rotation_degrees.y = 90
+			elif hit_direction == HitDirection.RIGHT:
+				forced_action_model.rotation_degrees.y = 0
+			elif hit_direction == HitDirection.LEFT:
+				forced_action_model.rotation_degrees.y = -180
+		
+			forced_action_model.show()
+			add_child(forced_action_model)
+		ActionType.PULL_FRONT:
+			var forced_action_model = default_forced_action_model.duplicate()
+			forced_action_model.show()
+			add_child(forced_action_model)
+		ActionType.MISS_ACTION: pass
+		ActionType.HIT_ALLY: pass
+		ActionType.GIVE_SHIELD: pass
+		ActionType.SLOW_DOWN: pass
+		_: print('no action indicators')
+
+
+func clear_action_indicators():
+	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
+		child.queue_free()
+
+
+func toggle_action_indicators(is_toggled):
+	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
+		if is_toggled:
+			child.show()
+		else:
+			child.hide()
+
+
 func spawn_bullet(target):
 	var position_to_target = get_vector3_on_map(position - target.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
@@ -237,6 +293,26 @@ func spawn_bullet(target):
 	await position_tween.finished
 	
 	bullet_model.queue_free()
+
+
+#func spawn_forced_action(target):
+	#var forced_action_model = default_forced_action_model.duplicate()
+	#
+	#forced_action_model.show()
+	#add_child(forced_action_model)
+#
+#
+#func clear_forced_action():
+	#for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
+		#child.queue_free()
+#
+#
+#func toggle_forced_action(is_toggled):
+	#for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
+		#if is_toggled:
+			#child.show()
+		#else:
+			#child.hide()
 
 
 func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = null):

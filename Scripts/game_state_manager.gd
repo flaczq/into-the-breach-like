@@ -631,6 +631,7 @@ func on_shoot_action_button_toggled(toggled_on):
 
 
 func _on_tile_hovered(tile, is_hovered):
+	# reset all kinds of arrows, indicators, outlines, ...
 	for current_player in players:
 		current_player.is_ghost = false
 		
@@ -684,13 +685,15 @@ func _on_tile_hovered(tile, is_hovered):
 		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 		
 		if tile.player:
-			tile_info_label.text += '\n\n' + tr('INFO_HEALTH') + ': ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
+			tile_info_label.text += '\n\n' + tile.player.model_name + '\n'
+			tile_info_label.text += tr('INFO_HEALTH') + ': ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
 			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
 			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
 			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
 			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n'
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
 		elif tile.enemy:
+			tile_info_label.text += '\n\n' + tile.enemy.model_name + '\n'
 			tile_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
 			tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
 			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
@@ -699,6 +702,7 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
 		elif tile.civilian:
+			tile_info_label.text += '\n\n' + tile.civilian.model_name + '\n'
 			tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
 			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
@@ -736,6 +740,7 @@ func _on_tile_hovered(tile, is_hovered):
 				
 				selected_player.look_at_y(first_occupied_tile_in_line)
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
+				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
 				
 				if first_occupied_tile_in_line.player:
 					first_occupied_tile_in_line.player.toggle_outline(true, PLAYER_ARROW_COLOR)
@@ -750,6 +755,7 @@ func _on_tile_hovered(tile, is_hovered):
 					first_occupied_tile_in_line.civilian.toggle_health_bar(true)
 			else:
 				selected_player.clear_arrows()
+				selected_player.clear_action_indicators()
 	
 	if is_hovered:
 		# show health bar for hovered player
@@ -833,6 +839,7 @@ func _on_tile_clicked(tile):
 			recalculate_enemies_planned_actions()
 		elif selected_player.current_phase == PhaseType.ACTION:
 			selected_player.clear_arrows()
+			selected_player.clear_action_indicators()
 		
 			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
 			if not first_occupied_tile_in_line:

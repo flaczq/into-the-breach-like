@@ -41,6 +41,10 @@ func get_vector3_on_map(position):
 	return Vector3(position.x, 0.5, position.z)
 
 
+func is_tile_adjacent_by_coords(origin_coords, target_coords):
+	return abs(origin_coords - target_coords) == Vector2i(0, 1) or abs(origin_coords - target_coords) == Vector2i(1, 0)
+
+
 func is_close(value, target):
 	return absf(value - target) < 0.1
 

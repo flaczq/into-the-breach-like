@@ -6,12 +6,13 @@ class_name Character
 
 @onready var health_bar = $HealthProgressBar
 
-signal action_push_back(character: Character, origin_tile_coords: Vector2i)
-signal action_pull_front(character: Character, origin_tile_coords: Vector2i)
+signal action_push_back(character: Character, action_damage: int, origin_tile_coords: Vector2i)
+signal action_pull_front(character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_miss_action(character: Character)
 signal action_hit_ally(character: Character)
 signal action_give_shield(character: Character)
 signal action_slow_down(character: Character)
+signal action_cross_push_back(character: Character, action_damage: int, origin_tile_coords: Vector2i)
 
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
@@ -64,12 +65,14 @@ func _ready():
 
 func apply_action_type(action_type, origin_tile_coords = null):
 	match action_type:
-		ActionType.PUSH_BACK: action_push_back.emit(self, origin_tile_coords)
-		ActionType.PULL_FRONT: action_pull_front.emit(self, origin_tile_coords)
+		# FIXME add action damage
+		ActionType.PUSH_BACK: action_push_back.emit(self, 0, origin_tile_coords)
+		ActionType.PULL_FRONT: action_pull_front.emit(self, 0, origin_tile_coords)
 		ActionType.MISS_ACTION: action_miss_action.emit(self)
 		ActionType.HIT_ALLY: action_hit_ally.emit(self)
 		ActionType.GIVE_SHIELD: action_give_shield.emit(self)
 		ActionType.SLOW_DOWN: action_slow_down.emit(self)
+		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(self, 0, origin_tile_coords)
 		_: print('no action')
 
 
@@ -166,6 +169,7 @@ func spawn_arrow(target):
 			arrow_sphere_model.show()
 			add_child(arrow_sphere_model.duplicate())
 		
+		# hardcoded top down
 		arrow_model.rotation_degrees.z = -75
 		arrow_model.position = origin_position.bezier_interpolate(control_1, control_2, target_position, amount / float(amount + 0.5))
 	
@@ -193,10 +197,13 @@ func spawn_action_indicators(target):
 	var origin_to_target_sign = hit_distance.sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
 	
-	# TODO
+	# TODO more actions
+	# FIXME: arrow on the floor looks bad, maybe icon near tile?
 	match action_type:
 		ActionType.PUSH_BACK:
 			var forced_action_model = default_forced_action_model.duplicate()
+			# near tile floor
+			forced_action_model.position = Vector3(0, 0.1, 0)
 			
 			# hardcoded because rotations suck b4llz
 			if hit_direction == HitDirection.DOWN_LEFT:
@@ -215,11 +222,41 @@ func spawn_action_indicators(target):
 				forced_action_model.rotation_degrees.y = 0
 			elif hit_direction == HitDirection.LEFT:
 				forced_action_model.rotation_degrees.y = -180
-		
+			
+			var target_position = get_vector3_on_map(-1 * position_to_target)
+			forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
+			# move it at the target back
+			forced_action_model.position -= 0.3 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.PULL_FRONT:
 			var forced_action_model = default_forced_action_model.duplicate()
+			# near tile floor
+			forced_action_model.position = Vector3(0, 0.1, 0)
+			
+			# hardcoded because rotations suck b4llz
+			if hit_direction == HitDirection.DOWN_LEFT:
+				forced_action_model.rotation_degrees.y = 45
+			elif hit_direction == HitDirection.UP_RIGHT:
+				forced_action_model.rotation_degrees.y = -135
+			elif hit_direction == HitDirection.RIGHT_DOWN:
+				forced_action_model.rotation_degrees.y = 135
+			elif hit_direction == HitDirection.LEFT_UP:
+				forced_action_model.rotation_degrees.y = -45
+			elif hit_direction == HitDirection.DOWN:
+				forced_action_model.rotation_degrees.y = 90
+			elif hit_direction == HitDirection.UP:
+				forced_action_model.rotation_degrees.y = -90
+			elif hit_direction == HitDirection.RIGHT:
+				forced_action_model.rotation_degrees.y = -180
+			elif hit_direction == HitDirection.LEFT:
+				forced_action_model.rotation_degrees.y = 0
+			
+			# move it at the target back
+			var target_position = get_vector3_on_map(-1 * position_to_target)
+			forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
+			# move it at the target back
+			forced_action_model.position += 0.3 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.MISS_ACTION: pass

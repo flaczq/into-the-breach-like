@@ -125,6 +125,7 @@ func init_players(level_data):
 		player_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 		player_instance.connect('action_give_shield', _on_character_action_give_shield)
 		player_instance.connect('action_slow_down', _on_character_action_slow_down)
+		player_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 		
 		players.push_back(player_instance)
 
@@ -146,6 +147,7 @@ func init_enemies(level_data):
 		enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 		enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
 		enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
+		enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 		
 		enemies.push_back(enemy_instance)
 		
@@ -168,6 +170,7 @@ func init_civilians(level_data):
 		civilian_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 		civilian_instance.connect('action_give_shield', _on_character_action_give_shield)
 		civilian_instance.connect('action_slow_down', _on_character_action_slow_down)
+		civilian_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 		
 		civilians.push_back(civilian_instance)
 
@@ -385,7 +388,7 @@ func is_tile_adjacent(tile, origin_tile, check_for_movement = true):
 	if check_for_movement and (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE):
 		return false
 	
-	return abs(tile.coords - origin_tile.coords) == Vector2i(0, 1) or abs(tile.coords - origin_tile.coords) == Vector2i(1, 0)
+	return is_tile_adjacent_by_coords(tile.coords, origin_tile.coords)
 
 
 func calculate_tiles_path(character, target_tile):
@@ -920,7 +923,7 @@ func _on_player_clicked(player, is_clicked):
 	player.tile.on_mouse_entered()
 
 
-func _on_character_action_push_back(character, origin_tile_coords):
+func _on_character_action_push_back(character, action_damage, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
 	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
@@ -954,7 +957,7 @@ func _on_character_action_push_back(character, origin_tile_coords):
 	recalculate_enemies_planned_actions()
 
 
-func _on_character_action_pull_front(character, origin_tile_coords):
+func _on_character_action_pull_front(character, action_damage, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
 	var pull_direction = hit_direction
 	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
@@ -1006,6 +1009,13 @@ func _on_character_action_give_shield(character):
 
 func _on_character_action_slow_down(character):
 	character.state_type = StateType.SLOW_DOWN
+
+
+func _on_character_action_cross_push_back(character, action_damage, origin_tile_coords):
+	for tile in map.tiles:
+		if is_tile_adjacent_by_coords(character.tile.coords, tile.coords):
+			# FIXME weird bug with enemy changing target - horizontal to vertical (?!)
+			tile.get_shot(action_damage, ActionType.PUSH_BACK, character.tile.coords)
 
 
 func _on_end_turn_button_pressed():

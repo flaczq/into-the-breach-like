@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=24 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/util.gd" id="3_r3ry7"]
@@ -7,12 +7,15 @@
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="5_phmd4"]
 [ext_resource type="PackedScene" uid="uid://bysqedydgeakv" path="res://Scenes/map4x4.tscn" id="6_f5ijx"]
 [ext_resource type="PackedScene" uid="uid://cxidqolshdlac" path="res://Scenes/map6x6.tscn" id="7_6jo0a"]
+[ext_resource type="PackedScene" uid="uid://bo5rbatygsore" path="res://Scenes/player2.tscn" id="7_j7ymc"]
 [ext_resource type="PackedScene" uid="uid://blw8ngoaherru" path="res://Scenes/enemy2.tscn" id="7_nph1h"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="8_gfadf"]
+[ext_resource type="PackedScene" uid="uid://d0eitlou8xuox" path="res://Scenes/player3.tscn" id="8_hcwj8"]
 [ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player1.tscn" id="8_wa28c"]
 [ext_resource type="PackedScene" uid="uid://d3kikj28cfn8h" path="res://Scenes/enemy1.tscn" id="9_aubv4"]
 [ext_resource type="PackedScene" uid="uid://b60h1emnunq1s" path="res://Scenes/civilian1.tscn" id="10_wdovn"]
 [ext_resource type="PackedScene" uid="uid://8bvhgfxla8ng" path="res://Scenes/progress.tscn" id="11_4i00g"]
+[ext_resource type="PackedScene" uid="uid://dliou6uj8vx8g" path="res://Scenes/enemy3.tscn" id="11_kt37j"]
 [ext_resource type="ButtonGroup" uid="uid://by0pbsfufftxo" path="res://Other/shoot_action_button_group.tres" id="12_yqnhu"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oi1vl"]
@@ -38,8 +41,8 @@ events = [SubResource("InputEventKey_comoe")]
 script = ExtResource("4_nvvvx")
 assets_scene = ExtResource("8_gfadf")
 map_scenes = Array[PackedScene]([ExtResource("6_f5ijx"), ExtResource("7_6jo0a"), ExtResource("2_u2oq0")])
-player_scenes = Array[PackedScene]([ExtResource("8_wa28c")])
-enemy_scenes = Array[PackedScene]([ExtResource("9_aubv4"), ExtResource("7_nph1h")])
+player_scenes = Array[PackedScene]([ExtResource("8_wa28c"), ExtResource("7_j7ymc"), ExtResource("8_hcwj8")])
+enemy_scenes = Array[PackedScene]([ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j")])
 civilian_scenes = Array[PackedScene]([ExtResource("10_wdovn")])
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -63,8 +66,8 @@ script = ExtResource("4_cmfno")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0)
 script = ExtResource("5_phmd4")
 map_scenes = Array[PackedScene]([ExtResource("6_f5ijx"), ExtResource("7_6jo0a"), ExtResource("2_u2oq0")])
-player_scenes = Array[PackedScene]([ExtResource("8_wa28c")])
-enemy_scenes = Array[PackedScene]([ExtResource("9_aubv4"), ExtResource("7_nph1h")])
+player_scenes = Array[PackedScene]([ExtResource("8_wa28c"), ExtResource("7_j7ymc"), ExtResource("8_hcwj8")])
+enemy_scenes = Array[PackedScene]([ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j")])
 civilian_scenes = Array[PackedScene]([ExtResource("10_wdovn")])
 progress_scene = ExtResource("11_4i00g")
 

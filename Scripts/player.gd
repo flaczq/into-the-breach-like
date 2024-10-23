@@ -114,7 +114,7 @@ func execute_action(target_tile):
 	reset_tiles()
 	
 	await spawn_bullet(target_tile)
-	await target_tile.get_shot(damage, action_type, tile.coords)
+	await target_tile.get_shot(damage, action_type, action_damage, tile.coords)
 	
 	after_action()
 

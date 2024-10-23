@@ -105,6 +105,7 @@ func init_map(level_data):
 	for tile in map.tiles:
 		tile.connect('hovered_event', _on_tile_hovered)
 		tile.connect('clicked_event', _on_tile_clicked)
+		tile.connect('action_cross_push_back', _on_tile_action_cross_push_back)
 
 
 func init_players(level_data):
@@ -423,7 +424,8 @@ func calculate_tiles_for_action(active, character):
 		
 		if character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.HORIZONTAL_DOT:
 			for tile in map.tiles.filter(func(tile): return not tile.coords == character.tile.coords):
-				if (tile.coords.x == origin_tile.coords.x and absi(tile.coords.y - origin_tile.coords.y) <= character.action_distance) or (tile.coords.y == origin_tile.coords.y and absi(tile.coords.x - origin_tile.coords.x) <= character.action_distance):
+				if (tile.coords.x == origin_tile.coords.x and absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) \
+					or (tile.coords.y == origin_tile.coords.y and absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance):
 					# include all tiles in path
 					if character.is_in_group('PLAYERS'):
 						push_unique_to_array(tiles_for_action, tile)
@@ -434,8 +436,9 @@ func calculate_tiles_for_action(active, character):
 						
 						push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
 		elif character.action_direction == ActionDirection.VERTICAL_LINE or character.action_direction == ActionDirection.VERTICAL_DOT:
-			var max_range = mini(map.get_side_dimension(), character.action_distance)
-			for i in range(1, max_range + 1):
+			var min_range = maxi(1, character.action_min_distance)
+			var max_range = mini(map.get_side_dimension(), character.action_max_distance)
+			for i in range(min_range, max_range + 1):
 				var counter = 0
 				for tile in map.tiles.filter(func(tile): return not tiles_for_action.has(tile)):
 					if abs(tile.coords - origin_tile.coords) == Vector2i(i, i):
@@ -499,12 +502,15 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_c
 		
 		for tile_for_movement in tiles_for_movement:
 			if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.HORIZONTAL_DOT:
-				valid_tiles_for_movement = target_tiles.filter(func(target_tile): return (target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_distance) or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_distance))
+				valid_tiles_for_movement = target_tiles.filter(func(target_tile): return \
+					(target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) >= origin_character.action_min_distance and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_max_distance) \
+					or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) >= origin_character.action_min_distance and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_max_distance))
 				if not valid_tiles_for_movement.is_empty():
 					target_tile_for_movement = tile_for_movement
 			elif origin_character.action_direction == ActionDirection.VERTICAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_DOT:
-				var max_range = mini(map.get_side_dimension(), origin_character.action_distance)
-				for i in range(1, max_range + 1):
+				var min_range = maxi(1, origin_character.action_min_distance)
+				var max_range = mini(map.get_side_dimension(), origin_character.action_max_distance)
+				for i in range(min_range, max_range + 1):
 					var valid_tiles = target_tiles.filter(func(target_tile): return abs(target_tile.coords - tile_for_movement.coords) == Vector2i(i, i))
 					if not valid_tiles.is_empty():
 						valid_tiles_for_movement.append_array(valid_tiles)
@@ -552,8 +558,9 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character, o
 	if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE:
 		var hit_direction = (origin_tile_coords - target_tile_coords).sign()
 		var tiles_in_line = []
-		var max_range = mini(map.get_side_dimension(), origin_character.action_distance)
-		for i in range(1, max_range + 1):
+		var min_range = maxi(1, origin_character.action_min_distance)
+		var max_range = mini(map.get_side_dimension(), origin_character.action_max_distance)
+		for i in range(min_range, max_range + 1):
 			var current_tiles_in_line = map.tiles.filter(func(tile): return tile.coords == origin_tile_coords - hit_direction * i)
 			if not current_tiles_in_line.is_empty():
 				push_unique_to_array(tiles_in_line, current_tiles_in_line.front())
@@ -674,7 +681,7 @@ func _on_tile_hovered(tile, is_hovered):
 		debug_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
 		debug_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n\n'
 		debug_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
-		debug_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
+		#debug_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 		if tile.models.get('event_asset'):
 			if tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
@@ -692,7 +699,7 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += tr('INFO_HEALTH') + ': ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
 			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
 			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
-			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_distance) + '\n'
+			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_min_distance) + '-' + str(tile.player.action_max_distance) + '\n'
 			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n'
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
 		elif tile.enemy:
@@ -701,7 +708,7 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
 			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
 			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
-			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_distance) + '\n'
+			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_min_distance) + '-' + str(tile.enemy.action_max_distance) + '\n'
 			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
 		elif tile.civilian:
@@ -864,6 +871,25 @@ func _on_tile_clicked(tile):
 		action_button.set_pressed_no_signal(false)
 
 
+func _on_tile_action_cross_push_back(target_tile_coords, action_damage, origin_tile_coords):
+	var tiles_to_be_pushed = []
+	for tile in map.tiles:
+		if is_tile_adjacent_by_coords(target_tile_coords, tile.coords):
+			tiles_to_be_pushed.push_back(tile)
+		
+		if tiles_to_be_pushed.size() == 4:
+			break;
+	
+	var i = 0
+	for tile_to_be_pushed in tiles_to_be_pushed:
+		i += 1
+		if i < tiles_to_be_pushed.size():
+			tile_to_be_pushed.get_shot(action_damage, ActionType.PUSH_BACK, 0, target_tile_coords)
+		else:
+			# does this even work if it's called from signal? i don't think so...
+			await tile_to_be_pushed.get_shot(action_damage, ActionType.PUSH_BACK, 0, target_tile_coords)
+
+
 func _on_player_hovered(player, is_hovered):
 	if selected_player and selected_player != player:
 		return
@@ -923,28 +949,28 @@ func _on_player_clicked(player, is_clicked):
 	player.tile.on_mouse_entered()
 
 
-func _on_character_action_push_back(character, action_damage, origin_tile_coords):
-	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
+func _on_character_action_push_back(target_character, action_damage, origin_tile_coords):
+	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
 	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
-	var target_tiles = map.tiles.filter(func(tile): return tile.coords == character.tile.coords + push_direction)
+	var target_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + push_direction)
 	if target_tiles.is_empty():
-		var outside_tile = {'position': character.tile.position + Vector3(push_direction.y, 0, push_direction.x)}
+		var outside_tile = {'position': target_character.tile.position + Vector3(push_direction.y, 0, push_direction.x)}
 		# pushed outside of the map
-		await character.move([character.tile], true, outside_tile)
+		await target_character.move([target_character.tile], true, outside_tile)
 	else:
 		var target_tile = target_tiles.front()
-		await character.move([target_tile], true)
+		await target_character.move([target_tile], true)
 		
-		if character.is_alive and character.tile:
-			if character.tile.health_type == TileHealthType.DESTROYED:
+		if target_character.is_alive and target_character.tile:
+			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
-				character.get_killed()
-			elif character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-				character.state_type = StateType.SLOW_DOWN
-			elif character.tile == target_tile and character.is_in_group('ENEMIES'):
+				target_character.get_killed()
+			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
+				target_character.state_type = StateType.SLOW_DOWN
+			elif target_character.tile == target_tile and target_character.is_in_group('ENEMIES'):
 				# enemy actually moved
-				var enemy = character
+				var enemy = target_character
 				if enemy.planned_tile:
 					# push planned tile with pushed enemy
 					var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + push_direction)
@@ -957,28 +983,28 @@ func _on_character_action_push_back(character, action_damage, origin_tile_coords
 	recalculate_enemies_planned_actions()
 
 
-func _on_character_action_pull_front(character, action_damage, origin_tile_coords):
-	var hit_direction = (origin_tile_coords - character.tile.coords).sign()
+func _on_character_action_pull_front(target_character, action_damage, origin_tile_coords):
+	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var pull_direction = hit_direction
 	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
-	var target_tiles = map.tiles.filter(func(tile): return tile.coords == character.tile.coords + pull_direction)
+	var target_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + pull_direction)
 	if target_tiles.is_empty():
-		var outside_tile = {'position': character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)}
+		var outside_tile = {'position': target_character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)}
 		# pulled outside of the map - is this even possible?
-		await character.move([character.tile], true, outside_tile)
+		await target_character.move([target_character.tile], true, outside_tile)
 	else:
 		var target_tile = target_tiles.front()
-		await character.move([target_tile], true)
+		await target_character.move([target_tile], true)
 		
-		if character.is_alive and character.tile:
-			if character.tile.health_type == TileHealthType.DESTROYED:
+		if target_character.is_alive and target_character.tile:
+			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
-				character.get_killed()
-			elif character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-				character.state_type = StateType.SLOW_DOWN
-			elif character.tile == target_tile and character.is_in_group('ENEMIES'):
+				target_character.get_killed()
+			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
+				target_character.state_type = StateType.SLOW_DOWN
+			elif target_character.tile == target_tile and target_character.is_in_group('ENEMIES'):
 				# enemy actually moved
-				var enemy = character
+				var enemy = target_character
 				if enemy.planned_tile:
 					# pull planned tile with pulled enemy
 					var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + pull_direction)
@@ -991,31 +1017,29 @@ func _on_character_action_pull_front(character, action_damage, origin_tile_coord
 	recalculate_enemies_planned_actions()
 
 
-func _on_character_action_miss_action(character):
-	character.state_type = StateType.MISS_ACTION
+func _on_character_action_miss_action(target_character):
+	target_character.state_type = StateType.MISS_ACTION
 	
-	if character.is_in_group('ENEMIES'):
-		var enemy = character
+	if target_character.is_in_group('ENEMIES'):
+		var enemy = target_character
 		enemy.reset_planned_tile()
 
 
-func _on_character_action_hit_ally(character):
-	character.state_type = StateType.HIT_ALLY
+func _on_character_action_hit_ally(target_character):
+	target_character.state_type = StateType.HIT_ALLY
 
 
-func _on_character_action_give_shield(character):
-	character.state_type = StateType.GIVE_SHIELD
+func _on_character_action_give_shield(target_character):
+	target_character.state_type = StateType.GIVE_SHIELD
 
 
-func _on_character_action_slow_down(character):
-	character.state_type = StateType.SLOW_DOWN
+func _on_character_action_slow_down(target_character):
+	target_character.state_type = StateType.SLOW_DOWN
 
 
-func _on_character_action_cross_push_back(character, action_damage, origin_tile_coords):
-	for tile in map.tiles:
-		if is_tile_adjacent_by_coords(character.tile.coords, tile.coords):
-			# FIXME weird bug with enemy changing target - horizontal to vertical (?!)
-			tile.get_shot(action_damage, ActionType.PUSH_BACK, character.tile.coords)
+func _on_character_action_cross_push_back(target_character, action_damage, origin_tile_coords):
+	# does this even work if it's called from signal? i don't think so...
+	await _on_tile_action_cross_push_back(target_character.tile.coords, action_damage, origin_tile_coords)
 
 
 func _on_end_turn_button_pressed():

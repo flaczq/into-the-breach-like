@@ -2,17 +2,17 @@ extends Util
 
 class_name Character
 
+signal action_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
+signal action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
+signal action_miss_action(target_character: Character)
+signal action_hit_ally(target_character: Character)
+signal action_give_shield(target_character: Character)
+signal action_slow_down(target_character: Character)
+signal action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
+
 @export var assets_scene: PackedScene
 
 @onready var health_bar = $HealthProgressBar
-
-signal action_push_back(character: Character, action_damage: int, origin_tile_coords: Vector2i)
-signal action_pull_front(character: Character, action_damage: int, origin_tile_coords: Vector2i)
-signal action_miss_action(character: Character)
-signal action_hit_ally(character: Character)
-signal action_give_shield(character: Character)
-signal action_slow_down(character: Character)
-signal action_cross_push_back(character: Character, action_damage: int, origin_tile_coords: Vector2i)
 
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
@@ -28,9 +28,11 @@ var max_health: int
 var health: int
 var damage: int
 var move_distance: int
-var action_distance: int
+var action_min_distance: int
+var action_max_distance: int
 var action_direction: ActionDirection
 var action_type: ActionType
+var action_damage: int
 var can_fly: bool
 var tile: Node3D
 
@@ -61,19 +63,6 @@ func _ready():
 			default_bullet_model = asset
 		elif asset.name == 'floor-small-diagonal':
 			default_forced_action_model = asset
-
-
-func apply_action_type(action_type, origin_tile_coords = null):
-	match action_type:
-		# FIXME add action damage
-		ActionType.PUSH_BACK: action_push_back.emit(self, 0, origin_tile_coords)
-		ActionType.PULL_FRONT: action_pull_front.emit(self, 0, origin_tile_coords)
-		ActionType.MISS_ACTION: action_miss_action.emit(self)
-		ActionType.HIT_ALLY: action_hit_ally.emit(self)
-		ActionType.GIVE_SHIELD: action_give_shield.emit(self)
-		ActionType.SLOW_DOWN: action_slow_down.emit(self)
-		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(self, 0, origin_tile_coords)
-		_: print('no action')
 
 
 func set_model_outlines(parent = model):
@@ -191,8 +180,8 @@ func toggle_arrows(is_toggled):
 			child.hide()
 
 
-func spawn_action_indicators(target):
-	var position_to_target = get_vector3_on_map(position - target.position)
+func spawn_action_indicators(target_tile):
+	var position_to_target = get_vector3_on_map(position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
@@ -200,6 +189,7 @@ func spawn_action_indicators(target):
 	# TODO more actions
 	# FIXME: arrow on the floor looks bad, maybe icon near tile?
 	match action_type:
+		ActionType.NONE: pass
 		ActionType.PUSH_BACK:
 			var forced_action_model = default_forced_action_model.duplicate()
 			# near tile floor
@@ -227,6 +217,15 @@ func spawn_action_indicators(target):
 			forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
 			# move it at the target back
 			forced_action_model.position -= 0.3 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
+			
+			if target_tile.get_character():
+				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_DISABLED
+				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 1.0)
+			else:
+				# hide indicator a little if nothing will be pushed
+				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_ALPHA
+				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 0.5)
+			
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.PULL_FRONT:
@@ -257,13 +256,18 @@ func spawn_action_indicators(target):
 			forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
 			# move it at the target back
 			forced_action_model.position += 0.3 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
+			
+			if target_tile.get_character():
+				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_DISABLED
+				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 1.0)
+			else:
+				# hide indicator a little if nothing will be pulled
+				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_ALPHA
+				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 0.5)
+			
 			forced_action_model.show()
 			add_child(forced_action_model)
-		ActionType.MISS_ACTION: pass
-		ActionType.HIT_ALLY: pass
-		ActionType.GIVE_SHIELD: pass
-		ActionType.SLOW_DOWN: pass
-		_: print('no action indicators')
+		_: print('no implementation of indicator for applied action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
 
 
 func clear_action_indicators():
@@ -332,43 +336,39 @@ func spawn_bullet(target):
 	bullet_model.queue_free()
 
 
-#func spawn_forced_action(target):
-	#var forced_action_model = default_forced_action_model.duplicate()
-	#
-	#forced_action_model.show()
-	#add_child(forced_action_model)
-#
-#
-#func clear_forced_action():
-	#for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
-		#child.queue_free()
-#
-#
-#func toggle_forced_action(is_toggled):
-	#for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
-		#if is_toggled:
-			#child.show()
-		#else:
-			#child.hide()
+func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
+	match action_type:
+		ActionType.NONE: print('no applied action for character: ' + str(self))
+		ActionType.PUSH_BACK: action_push_back.emit(self, action_damage, origin_tile_coords)
+		ActionType.PULL_FRONT: action_pull_front.emit(self, action_damage, origin_tile_coords)
+		ActionType.MISS_ACTION: action_miss_action.emit(self)
+		ActionType.HIT_ALLY: action_hit_ally.emit(self)
+		ActionType.GIVE_SHIELD: action_give_shield.emit(self)
+		ActionType.SLOW_DOWN: action_slow_down.emit(self)
+		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(self, action_damage, origin_tile_coords)
+		_: print('no implementation of applied action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
 
 
-func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = null):
+func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_tile_coords = null):
 	if state_type == StateType.GIVE_SHIELD:
-		taken_damage = 0
-		print('playe ' + str(tile.coords) + ' -> was given shield')
+		damage = 0
+		print('chara ' + str(tile.coords) + ' -> was given shield')
 		state_type = StateType.NONE
 	
-	health -= taken_damage
-	set_health_bar()
+	apply_action(action_type, action_damage, origin_tile_coords)
 	
-	apply_action_type(action_type, origin_tile_coords)
-	
-	var color_tween = create_tween()
-	color_tween.tween_property(model.get_active_material(0), 'albedo_color', model.get_active_material(0).albedo_color, 1.0).from(Color.RED)
-	await color_tween.finished
-	
-	if health <= 0 and is_alive:
-		get_killed()
+	if damage > 0:
+		health -= damage
+		set_health_bar()
+		
+		var color_tween = create_tween()
+		color_tween.tween_property(model.get_active_material(0), 'albedo_color', model.get_active_material(0).albedo_color, 1.0).from(Color.RED)
+		await color_tween.finished
+		
+		if health <= 0 and is_alive:
+			get_killed()
+	else:
+		print('chara ' + str(tile.coords) + ' -> got shot with 0 damage')
 
 
 func get_killed():

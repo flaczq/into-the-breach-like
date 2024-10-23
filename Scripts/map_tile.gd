@@ -2,6 +2,7 @@ extends Util
 
 signal hovered_event(tile: Node3D, is_hovered: bool)
 signal clicked_event(tile: Node3D)
+signal action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i)
 
 @onready var area_3d = $Area3D
 
@@ -98,7 +99,7 @@ func reset_tile_models():
 	
 	if is_player_clicked:
 		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.75)
-		models.tile_highlighted.show()
+		#models.tile_highlighted.show()
 	elif is_player_hovered:
 		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.5)
 		models.tile_highlighted.show()
@@ -114,7 +115,7 @@ func reset_tile_models():
 	if is_player_clicked and is_hovered:
 		# last (target) tile in path
 		#models.indicator_solid.hide()
-		models.indicator_dashed.show()
+		#models.indicator_dashed.show()
 		#models.indicator_corners.hide()
 		#position.y = 0.2
 		toggle_asset_outline(true)
@@ -206,16 +207,24 @@ func set_planned_enemy_action(new_is_planned_enemy_action):
 	reset_tile_models()
 
 
-func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = null):
+func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
+	match action_type:
+		ActionType.NONE: print('no applied action for tile coords: ' + str(coords))
+		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(coords, action_damage, origin_tile_coords)
+		_: print('no implementation of applied action: ' + ActionType.keys()[action_type] + ' for tile coords: ' + str(coords))
+
+
+func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_tile_coords = null):
 	if player:
-		await player.get_shot(taken_damage, action_type, origin_tile_coords)
+		await player.get_shot(damage, action_type, action_damage, origin_tile_coords)
 	elif enemy:
-		await enemy.get_shot(taken_damage, action_type, origin_tile_coords)
+		await enemy.get_shot(damage, action_type, action_damage, origin_tile_coords)
 	elif civilian:
-		await civilian.get_shot(taken_damage, action_type, origin_tile_coords)
+		await civilian.get_shot(damage, action_type, action_damage, origin_tile_coords)
 	else:
-		# TODO maybe apply_action_type()?
-		if taken_damage > 0:
+		apply_action(action_type, action_damage, origin_tile_coords)
+		
+		if damage > 0:
 			var color_tween = create_tween()
 			color_tween.tween_property(model_material, 'albedo_color', model_material.albedo_color, 1.0).from(Color.RED)
 			await color_tween.finished
@@ -246,7 +255,7 @@ func get_shot(taken_damage, action_type = ActionType.NONE, origin_tile_coords = 
 			elif health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				print('ttile ' + str(coords) + ' -> indestructible walkable, nothing happens')
 		else:
-			print('ttile ' + str(coords) + ' -> used action on empty tile, nothing happens')
+			print('ttile ' + str(coords) + ' -> got shot with 0 damage')
 
 
 func on_mouse_entered():

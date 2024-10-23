@@ -88,17 +88,18 @@ func move(tiles_path, forced = false, outside_tile = null):
 
 
 func plan_action(target_tile):
-	if planned_tile != target_tile:
-		reset_planned_tile()
+	# refresh arrows and indicators
+	#if planned_tile != target_tile:
+	reset_planned_tile()
+	
+	if is_alive:
+		planned_tile = target_tile
+		planned_tile.set_planned_enemy_action(true)
 		
-		if is_alive:
-			planned_tile = target_tile
-			planned_tile.set_planned_enemy_action(true)
-			
-			spawn_arrow(planned_tile)
-			spawn_action_indicators(planned_tile)
-			look_at_y(planned_tile)
-			#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
+		spawn_arrow(planned_tile)
+		spawn_action_indicators(planned_tile)
+		look_at_y(planned_tile)
+		#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 
 
 func execute_planned_action():
@@ -120,7 +121,7 @@ func execute_planned_action():
 		
 		if temp_planned_tile:
 			await spawn_bullet(temp_planned_tile)
-			await temp_planned_tile.get_shot(damage, action_type, tile.coords)
+			await temp_planned_tile.get_shot(damage, action_type, action_damage, tile.coords)
 
 
 func get_killed():

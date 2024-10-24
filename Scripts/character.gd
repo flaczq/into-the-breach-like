@@ -267,7 +267,7 @@ func spawn_action_indicators(target_tile):
 			
 			forced_action_model.show()
 			add_child(forced_action_model)
-		_: print('no implementation of indicator for applied action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
+		_: print('no implementation of indicator for applied action ' + ActionType.keys()[action_type] + ' for character ' + str(tile.coords))
 
 
 func clear_action_indicators():

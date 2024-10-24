@@ -32,20 +32,21 @@ func get_levels_file_path(level_type):
 
 
 func add_characters(level_data):
+	level_data.player_scenes = []
+	level_data.enemy_scenes = []
+	level_data.civilian_scenes = []
+	
 	if level_data.level_type == LevelType.TUTORIAL:
 		# FIXME hardcoded
 		if level_data.level == 1:
-			level_data.player_scenes = [0]
-			level_data.enemy_scenes = [0]
-			level_data.civilian_scenes = []
-			#2:
-				#level_data.player_scenes = [0]
-				#level_data.enemy_scenes = [0]
-				#level_data.civilian_scenes = []
+			level_data.player_scenes.push_back(0)
+			level_data.enemy_scenes.push_back(0)
+			#level_data.civilian_scenes = []
+			#TODO 2:
 	else:
 		# TODO pick enemies and civilians by random(?) based on level type and level number
 		for current_player_scene in Global.current_player_scenes:
-			level_data.player_scenes = [current_player_scene]
+			level_data.player_scenes.push_back(current_player_scene)
 		
-		level_data.enemy_scenes = [randi_range(0, 1)]
-		level_data.civilian_scenes = [randi_range(0, 0)]
+		level_data.enemy_scenes.push_back(randi_range(0, 1))
+		level_data.civilian_scenes.push_back(randi_range(0, 0))

@@ -99,7 +99,7 @@ func reset_tile_models():
 	
 	if is_player_clicked:
 		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.75)
-		#models.tile_highlighted.show()
+		models.tile_highlighted.show()
 	elif is_player_hovered:
 		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.5)
 		models.tile_highlighted.show()
@@ -115,12 +115,13 @@ func reset_tile_models():
 	if is_player_clicked and is_hovered:
 		# last (target) tile in path
 		#models.indicator_solid.hide()
-		#models.indicator_dashed.show()
+		models.indicator_dashed.show()
 		#models.indicator_corners.hide()
 		#position.y = 0.2
 		toggle_asset_outline(true)
 	elif health_type == TileHealthType.DESTROYED:
-		position.y = -0.2
+		# hardcoded
+		position.y = -0.3
 	else:
 		models.indicator_solid.hide()
 		models.indicator_dashed.hide()
@@ -209,9 +210,9 @@ func set_planned_enemy_action(new_is_planned_enemy_action):
 
 func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
 	match action_type:
-		ActionType.NONE: print('no applied action for tile coords: ' + str(coords))
+		ActionType.NONE: print('no applied action for tile coords ' + str(coords))
 		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(coords, action_damage, origin_tile_coords)
-		_: print('no implementation of applied action: ' + ActionType.keys()[action_type] + ' for tile coords: ' + str(coords))
+		_: print('no need for applied action ' + ActionType.keys()[action_type] + ' for tile coords ' + str(coords))
 
 
 func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_tile_coords = null):

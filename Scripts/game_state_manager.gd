@@ -218,7 +218,7 @@ func start_turn():
 		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, target_tiles_for_enemy)
 		if not target_tile_for_movement:
 			target_tile_for_movement = tiles_for_movement.pick_random()
-			print('enemy ' + str(enemy.tile.coords) + ' -> random move: ' + str(target_tile_for_movement.coords))
+			print('enemy ' + str(enemy.tile.coords) + ' -> random move ' + str(target_tile_for_movement.coords))
 		
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
 		await enemy.move(tiles_path)
@@ -235,7 +235,7 @@ func start_turn():
 				target_tile_for_action = tiles_for_action.pick_random()
 			else:
 				target_tile_for_action = no_ff_tiles.pick_random()
-			print('enemy ' + str(enemy.tile.coords) + ' -> random action: ' + str(target_tile_for_action.coords))
+			print('enemy ' + str(enemy.tile.coords) + ' -> random action ' + str(target_tile_for_action.coords))
 		
 		enemy.plan_action(target_tile_for_action)
 	

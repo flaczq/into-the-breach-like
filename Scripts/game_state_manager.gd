@@ -644,6 +644,7 @@ func _on_tile_hovered(tile, is_hovered):
 	# reset all kinds of arrows, indicators, outlines, ...
 	for current_player in players:
 		current_player.is_ghost = false
+		current_player.reset_health_bar()
 		
 		if current_player != selected_player:
 			current_player.toggle_outline(false)
@@ -665,10 +666,12 @@ func _on_tile_hovered(tile, is_hovered):
 		current_enemy.toggle_arrow_highlight(false)
 		current_enemy.toggle_outline(false)
 		current_enemy.toggle_health_bar(false)
+		current_enemy.reset_health_bar()
 	
 	for current_civilian in civilians:
 		current_civilian.toggle_outline(false)
 		current_civilian.toggle_health_bar(false)
+		current_civilian.reset_health_bar()
 	
 	# UI
 	if is_hovered:
@@ -720,6 +723,63 @@ func _on_tile_hovered(tile, is_hovered):
 		debug_info_label.text = ''
 		tile_info_label.text = ''
 	
+	if is_hovered:
+		# show health bar for hovered player
+		if tile.player:
+			tile.player.toggle_health_bar(true)
+		
+		# outline hovered enemy and highlight his attack arrows
+		if tile.enemy:
+			#tile.enemy.toggle_arrow_highlight(true)
+			#tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+			tile.enemy.toggle_health_bar(true)
+			
+			if tile.enemy.planned_tile:
+				#tile.enemy.planned_tile.toggle_shader(true)
+				
+				if tile.enemy.planned_tile.player:
+					tile.enemy.planned_tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+					var predicted_health = tile.enemy.planned_tile.player.health if tile.enemy.planned_tile.player.state_type == StateType.GIVE_SHIELD else maxi(0, tile.enemy.planned_tile.player.health - tile.enemy.damage)
+					tile.enemy.planned_tile.player.toggle_health_bar(true, predicted_health)
+				
+				if tile.enemy.planned_tile.enemy:
+					tile.enemy.planned_tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+					var predicted_health = tile.enemy.planned_tile.enemy.health if tile.enemy.planned_tile.enemy.state_type == StateType.GIVE_SHIELD else maxi(0, tile.enemy.planned_tile.enemy.health - tile.enemy.damage)
+					tile.enemy.planned_tile.enemy.toggle_health_bar(true, predicted_health)
+				
+				if tile.enemy.planned_tile.civilian:
+					tile.enemy.planned_tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
+					var predicted_health = tile.enemy.planned_tile.civilian.health if tile.enemy.planned_tile.civilian.state_type == StateType.GIVE_SHIELD else maxi(0, tile.enemy.planned_tile.civilian.health - tile.enemy.damage)
+					tile.enemy.planned_tile.civilian.toggle_health_bar(true, predicted_health)
+				
+				tile.enemy.planned_tile.toggle_asset_outline(true)
+		
+		# highlight attack arrows of hovered planned target
+		if tile.is_planned_enemy_action:
+			#tile.toggle_shader(true)
+			
+			var current_enemies_damage = 0
+			# find enemy whose planned tile is hovered
+			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
+				current_enemy.toggle_arrow_highlight(true)
+				current_enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+				current_enemy.toggle_health_bar(true)
+				current_enemies_damage += current_enemy.damage
+			
+			if tile.player:
+				#tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
+				tile.player.toggle_health_bar(true)
+			
+			if tile.enemy:
+				#tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
+				tile.enemy.toggle_health_bar(true)
+			
+			if tile.civilian:
+				#tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
+				tile.civilian.toggle_health_bar(true)
+			
+			tile.toggle_asset_outline(true)
+	
 	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
 		if selected_player.current_phase == PhaseType.MOVE:
@@ -754,72 +814,21 @@ func _on_tile_hovered(tile, is_hovered):
 				
 				if first_occupied_tile_in_line.player:
 					first_occupied_tile_in_line.player.toggle_outline(true, PLAYER_ARROW_COLOR)
-					first_occupied_tile_in_line.player.toggle_health_bar(true)
+					var predicted_health = first_occupied_tile_in_line.player.health if first_occupied_tile_in_line.player.state_type == StateType.GIVE_SHIELD else maxi(0, first_occupied_tile_in_line.player.health - selected_player.damage)
+					first_occupied_tile_in_line.player.toggle_health_bar(true, predicted_health)
 				
 				if first_occupied_tile_in_line.enemy:
 					first_occupied_tile_in_line.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
-					first_occupied_tile_in_line.enemy.toggle_health_bar(true)
+					var predicted_health = first_occupied_tile_in_line.enemy.health if first_occupied_tile_in_line.enemy.state_type == StateType.GIVE_SHIELD else maxi(0, first_occupied_tile_in_line.enemy.health - selected_player.damage)
+					first_occupied_tile_in_line.enemy.toggle_health_bar(true, predicted_health)
 				
 				if first_occupied_tile_in_line.civilian:
 					first_occupied_tile_in_line.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
-					first_occupied_tile_in_line.civilian.toggle_health_bar(true)
+					var predicted_health = first_occupied_tile_in_line.civilian.health if first_occupied_tile_in_line.civilian.state_type == StateType.GIVE_SHIELD else maxi(0, first_occupied_tile_in_line.civilian.health - selected_player.damage)
+					first_occupied_tile_in_line.civilian.toggle_health_bar(true, predicted_health)
 			else:
 				selected_player.clear_arrows()
 				selected_player.clear_action_indicators()
-	
-	if is_hovered:
-		# show health bar for hovered player
-		if tile.player:
-			tile.player.toggle_health_bar(true)
-		
-		# outline hovered enemy and highlight his attack arrows
-		if tile.enemy:
-			tile.enemy.toggle_arrow_highlight(true)
-			tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
-			tile.enemy.toggle_health_bar(true)
-			
-			if tile.enemy.planned_tile:
-				#tile.enemy.planned_tile.toggle_shader(true)
-				
-				if tile.enemy.planned_tile.player:
-					tile.enemy.planned_tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
-					tile.enemy.planned_tile.player.toggle_health_bar(true)
-				
-				if tile.enemy.planned_tile.enemy:
-					tile.enemy.planned_tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
-					tile.enemy.planned_tile.enemy.toggle_health_bar(true)
-				
-				if tile.enemy.planned_tile.civilian:
-					tile.enemy.planned_tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
-					tile.enemy.planned_tile.civilian.toggle_health_bar(true)
-				
-				tile.enemy.planned_tile.toggle_asset_outline(true)
-		
-		# highlight attack arrows of hovered planned target
-		if tile.is_planned_enemy_action:
-			#tile.toggle_shader(true)
-			
-			var current_enemies_damage = 0
-			# find enemy whose planned tile is hovered
-			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
-				current_enemy.toggle_arrow_highlight(true)
-				current_enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
-				current_enemy.toggle_health_bar(true)
-				current_enemies_damage += current_enemy.damage
-			
-			if tile.player:
-				tile.player.toggle_outline(true, PLAYER_ARROW_COLOR)
-				tile.player.toggle_health_bar(true)
-			
-			if tile.enemy:
-				tile.enemy.toggle_outline(true, ENEMY_ARROW_COLOR)
-				tile.enemy.toggle_health_bar(true)
-			
-			if tile.civilian:
-				tile.civilian.toggle_outline(true, CIVILIAN_ARROW_COLOR)
-				tile.civilian.toggle_health_bar(true)
-			
-			tile.toggle_asset_outline(true)
 
 
 func _on_tile_clicked(tile):

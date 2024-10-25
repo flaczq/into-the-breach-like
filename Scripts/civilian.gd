@@ -65,19 +65,21 @@ func get_killed():
 	tile = null
 
 
-func toggle_health_bar(is_toggled):
-	super(is_toggled)
+func toggle_health_bar(is_toggled, displayed_health = health):
+	super(is_toggled, displayed_health)
 	
 	if health_bar:
 		if is_toggled:
 			var top_model_position = Vector3(model.global_position.x, model.global_position.y, model.global_position.z)
 			health_bar.position = get_viewport().get_camera_3d().unproject_position(top_model_position)
-			health_bar.position.x -= 33
 			
 			# hardcoded
 			if is_close(get_viewport().get_camera_3d().rotation_degrees.x, -50):
-				health_bar.position.y -= 50
+				health_bar.position.x -= 38
+				health_bar.position.y -= 45
 			elif is_close(get_viewport().get_camera_3d().rotation_degrees.x, -40):
-				health_bar.position.y -= 57
+				health_bar.position.x -= 38
+				health_bar.position.y -= 50
 			else:
-				health_bar.position.y -= 61
+				health_bar.position.x -= 40
+				health_bar.position.y -= 55

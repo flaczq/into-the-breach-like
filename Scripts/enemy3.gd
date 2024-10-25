@@ -7,7 +7,7 @@ func _ready():
 	model_name = 'VerticAlien'
 	max_health = 2
 	health = 2
-	damage = 1
+	damage = 2
 	move_distance = 2
 	action_min_distance = 3
 	action_max_distance = 7

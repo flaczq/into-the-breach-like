@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://d3kikj28cfn8h"]
+[gd_scene load_steps=13 format=3 uid="uid://d3kikj28cfn8h"]
 
 [ext_resource type="Script" path="res://Scripts/enemy1.gd" id="1_7n172"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_usem4"]
 [ext_resource type="StyleBox" uid="uid://bpkofwngvli4v" path="res://Other/health_bar_style_box_flat.tres" id="3_50ymb"]
+[ext_resource type="LabelSettings" uid="uid://cmxjnw1revt23" path="res://Other/health_bar_label.tres" id="4_wj55g"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ssjdt"]
 resource_name = "white.003"
@@ -122,8 +123,17 @@ shape = SubResource("BoxShape3D_dnh2y")
 disabled = true
 
 [node name="HealthProgressBar" type="ProgressBar" parent="."]
-offset_right = 70.0
-offset_bottom = 10.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -5.0
+offset_right = 35.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/background = ExtResource("3_50ymb")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ughr4")
@@ -131,3 +141,16 @@ max_value = 3.0
 step = 1.0
 value = 2.0
 show_percentage = false
+
+[node name="Label" type="Label" parent="HealthProgressBar"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "|       |"
+label_settings = ExtResource("4_wj55g")
+horizontal_alignment = 1

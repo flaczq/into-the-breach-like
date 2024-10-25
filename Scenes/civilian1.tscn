@@ -1,8 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://b60h1emnunq1s"]
+[gd_scene load_steps=16 format=3 uid="uid://b60h1emnunq1s"]
 
 [ext_resource type="Script" path="res://Scripts/civilian1.gd" id="1_3a1sn"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_wduy7"]
 [ext_resource type="StyleBox" uid="uid://bpkofwngvli4v" path="res://Other/health_bar_style_box_flat.tres" id="3_kn01m"]
+[ext_resource type="LabelSettings" uid="uid://cmxjnw1revt23" path="res://Other/health_bar_label.tres" id="4_5vcfk"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ada2h"]
 resource_name = "skin"
@@ -214,7 +215,6 @@ shape = SubResource("BoxShape3D_6k62g")
 disabled = true
 
 [node name="HealthProgressBar" type="ProgressBar" parent="."]
-visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -233,3 +233,16 @@ max_value = 3.0
 step = 1.0
 value = 2.0
 show_percentage = false
+
+[node name="Label" type="Label" parent="HealthProgressBar"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "|       |"
+label_settings = ExtResource("4_5vcfk")
+horizontal_alignment = 1

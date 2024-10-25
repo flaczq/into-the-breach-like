@@ -156,8 +156,8 @@ func get_killed():
 	tile = null
 
 
-func toggle_health_bar(is_toggled):
-	super(is_toggled)
+func toggle_health_bar(is_toggled, displayed_health = health):
+	super(is_toggled, displayed_health)
 	
 	if health_bar:
 		if is_toggled:

@@ -35,6 +35,7 @@ var action_type: ActionType
 var action_damage: int
 var can_fly: bool
 var tile: Node3D
+var health_bar_tween: Tween
 
 
 func _ready():
@@ -180,7 +181,7 @@ func toggle_arrows(is_toggled):
 			child.hide()
 
 
-func spawn_action_indicators(target_tile):
+func spawn_action_indicators(target_tile, target_action_type = action_type):
 	var position_to_target = get_vector3_on_map(position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
@@ -188,7 +189,7 @@ func spawn_action_indicators(target_tile):
 	
 	# TODO more actions
 	# FIXME: arrow on the floor looks bad, maybe icon near tile?
-	match action_type:
+	match target_action_type:
 		ActionType.NONE: pass
 		ActionType.PUSH_BACK:
 			var forced_action_model = default_forced_action_model.duplicate()
@@ -267,7 +268,14 @@ func spawn_action_indicators(target_tile):
 			
 			forced_action_model.show()
 			add_child(forced_action_model)
-		_: print('no implementation of indicator for applied action ' + ActionType.keys()[action_type] + ' for character ' + str(tile.coords))
+		ActionType.CROSS_PUSH_BACK:
+			# FIXME maybe don't search for map here..?
+			var map = get_parent().get_children().filter(func(child): return child.is_in_group('MAPS')).front()
+			for tile in map.tiles:
+				if is_tile_adjacent_by_coords(target_tile.coords, tile.coords):
+					# FIXME: wrong rotations
+					spawn_action_indicators(tile, ActionType.PUSH_BACK)
+		_: print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
 
 
 func clear_action_indicators():
@@ -387,14 +395,49 @@ func toggle_outline(is_toggled, outline_color = Color.BLACK):
 			model_outline.hide()
 
 
-func toggle_health_bar(is_toggled):
+func toggle_health_bar(is_toggled, displayed_health = health):
 	if health_bar:
-		set_health_bar()
+		set_health_bar(displayed_health)
 		
 		if is_toggled:
 			health_bar.show()
 		else:
 			health_bar.hide()
+
+
+func set_health_bar_value(displayed_health = health):
+	health_bar.set_value(displayed_health)
+
+
+func set_health_bar(displayed_health = health):
+	health_bar.set_max(max_health)
+	set_health_bar_value(displayed_health)
+	
+	if health_bar_tween:
+		health_bar_tween.kill()
+	
+	if displayed_health != health:
+		health_bar_tween = create_tween().set_loops()
+		health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.5)
+		health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.5)
+	
+	# FIXME hacky wacky health bar segments
+	if health_bar.get_child_count() > 0:
+		if max_health == 1:
+			health_bar.get_child(0).text = ''
+		elif max_health == 2:
+			health_bar.get_child(0).text = '|'
+		elif max_health == 3:
+			health_bar.get_child(0).text = '|       |'
+		elif max_health == 4:
+			health_bar.get_child(0).text = '|     |     |'
+
+
+func reset_health_bar():
+	set_health_bar_value()
+	
+	if health_bar_tween:
+		health_bar_tween.kill()
 
 
 func look_at_y(target):
@@ -413,8 +456,3 @@ func look_at_y(target):
 	#rotation_tween.tween_property(model, 'rotation_degrees:y', rotation, 0.1)
 	#
 	#dummy.queue_free()
-
-
-func set_health_bar():
-	health_bar.set_max(max_health)
-	health_bar.set_value(health)

@@ -143,8 +143,8 @@ func reset_planned_tile():
 		planned_tile = null
 
 
-func toggle_health_bar(is_toggled):
-	super(is_toggled)
+func toggle_health_bar(is_toggled, displayed_health = health):
+	super(is_toggled, displayed_health)
 	
 	if health_bar:
 		if is_toggled:
@@ -156,9 +156,9 @@ func toggle_health_bar(is_toggled):
 			if is_close(get_viewport().get_camera_3d().rotation_degrees.x, -50):
 				health_bar.position.y -= 41
 			elif is_close(get_viewport().get_camera_3d().rotation_degrees.x, -40):
-				health_bar.position.y -= 47
+				health_bar.position.y -= 43
 			else:
-				health_bar.position.y -= 51
+				health_bar.position.y -= 44
 
 
 func toggle_arrow_highlight(is_toggled):

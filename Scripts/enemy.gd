@@ -21,11 +21,15 @@ func _ready():
 	arrow_model_material.disable_receive_shadows = true
 	arrow_model_material.albedo_color = ENEMY_ARROW_COLOR
 	
+	var forced_action_model_material = StandardMaterial3D.new()
+	forced_action_model_material.albedo_color = ENEMY_ARROW_COLOR
+	
 	arrow_shader_material = ShaderMaterial.new()
 	arrow_shader_material.set_shader(FLASHING_SHADER)
 	
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
 	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
+	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
 func spawn(target_tile, new_order):

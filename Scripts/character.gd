@@ -181,8 +181,8 @@ func toggle_arrows(is_toggled):
 			child.hide()
 
 
-func spawn_action_indicators(target_tile, target_action_type = action_type):
-	var position_to_target = get_vector3_on_map(position - target_tile.position)
+func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_position = origin_tile.position, target_action_type = action_type):
+	var position_to_target = get_vector3_on_map(origin_tile.position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
@@ -215,10 +215,13 @@ func spawn_action_indicators(target_tile, target_action_type = action_type):
 				forced_action_model.rotation_degrees.y = -180
 			
 			var target_position = get_vector3_on_map(-1 * position_to_target)
-			forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
+			forced_action_model.position = target_position + origin_tile.position - first_origin_position
 			# move it at the target back
 			forced_action_model.position -= 0.3 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
+			forced_action_model.position.y = 0.1
 			
+			# make materials unique
+			forced_action_model.set_surface_override_material(0, forced_action_model.get_active_material(0).duplicate())
 			if target_tile.get_character():
 				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_DISABLED
 				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 1.0)
@@ -271,10 +274,10 @@ func spawn_action_indicators(target_tile, target_action_type = action_type):
 		ActionType.CROSS_PUSH_BACK:
 			# FIXME maybe don't search for map here..?
 			var map = get_parent().get_children().filter(func(child): return child.is_in_group('MAPS')).front()
-			for tile in map.tiles:
-				if is_tile_adjacent_by_coords(target_tile.coords, tile.coords):
-					# FIXME: wrong rotations
-					spawn_action_indicators(tile, ActionType.PUSH_BACK)
+			for current_tile in map.tiles:
+				if is_tile_adjacent_by_coords(target_tile.coords, current_tile.coords):
+					# 'current_tile' is target, 'target_tile' is origin, 'origin_tile.position' is first_origin_position
+					spawn_action_indicators(current_tile, target_tile, origin_tile.position, ActionType.PUSH_BACK)
 		_: print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
 
 

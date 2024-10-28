@@ -70,7 +70,7 @@ func move(tiles_path, forced = false, outside_tile = null):
 		else:
 			print('playe ' + str(tile.coords) + ' -> is not moving')
 	else:
-		if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.player or target_tile.enemy or target_tile.civilian:
+		if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
 			print('playe ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 			get_shot(1)
 			await force_into_occupied_tile(target_tile)
@@ -233,10 +233,10 @@ func clicked():
 	
 	if is_clicked:
 		#position.y = 0.15
-		toggle_outline(true, PLAYER_ARROW_COLOR)
+		toggle_outline(true)
 	else:
 		#position.y = 0.0
-		toggle_outline(false, PLAYER_ARROW_COLOR)
+		toggle_outline(false)
 		
 		hovered_event.emit(self, true)
 

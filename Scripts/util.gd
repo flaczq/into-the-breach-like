@@ -66,3 +66,9 @@ func get_hit_direction(origin_to_target_sign):
 		return HitDirection.RIGHT
 	if origin_to_target_sign == Vector2i(-1, 1):
 		return HitDirection.LEFT
+
+
+func get_character_color(character):
+	if character.is_in_group('PLAYERS'): return PLAYER_ARROW_COLOR
+	if character.is_in_group('ENEMIES'): return ENEMY_ARROW_COLOR
+	if character.is_in_group('CIVILIANS'): return CIVILIAN_ARROW_COLOR

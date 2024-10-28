@@ -278,6 +278,13 @@ func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_posit
 				if is_tile_adjacent_by_coords(target_tile.coords, current_tile.coords):
 					# 'current_tile' is target, 'target_tile' is origin, 'origin_tile.position' is first_origin_position
 					spawn_action_indicators(current_tile, target_tile, origin_tile.position, ActionType.PUSH_BACK)
+					
+					# show outline and health bar for pushed characters
+					# FIXME maybe move this to game_state_manager..?
+					var character = current_tile.get_character()
+					if character:
+						character.toggle_outline(true)
+						character.toggle_health_bar(true)
 		_: print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
 
 
@@ -389,9 +396,10 @@ func get_killed():
 	model.position.y /= 2
 
 
-func toggle_outline(is_toggled, outline_color = Color.BLACK):
+func toggle_outline(is_toggled):
 	for model_outline in model_outlines:
 		if is_toggled:
+			var outline_color = get_character_color(self)
 			model_outline.get_active_material(0).albedo_color = outline_color
 			model_outline.show()
 		else:
@@ -414,15 +422,14 @@ func set_health_bar_value(displayed_health = health):
 
 func set_health_bar(displayed_health = health):
 	health_bar.set_max(max_health)
-	set_health_bar_value(displayed_health)
+	set_health_bar_value()
 	
 	if health_bar_tween:
 		health_bar_tween.kill()
 	
-	if displayed_health != health:
-		health_bar_tween = create_tween().set_loops()
-		health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.5)
-		health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.5)
+	health_bar_tween = create_tween().set_loops()
+	health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.3)
+	health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.3)
 	
 	# FIXME hacky wacky health bar segments
 	if health_bar.get_child_count() > 0:

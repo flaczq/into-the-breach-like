@@ -386,6 +386,7 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 		if health <= 0 and is_alive:
 			get_killed()
 	else:
+		await get_tree().create_timer(1.0).timeout
 		print('chara ' + str(tile.coords) + ' -> got shot with 0 damage')
 
 
@@ -428,8 +429,8 @@ func set_health_bar(displayed_health = health):
 		health_bar_tween.kill()
 	
 	health_bar_tween = create_tween().set_loops()
-	health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.3)
-	health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.3)
+	health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.4)
+	health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.4)
 	
 	# FIXME hacky wacky health bar segments
 	if health_bar.get_child_count() > 0:

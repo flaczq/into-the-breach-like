@@ -18,7 +18,10 @@ extends Util
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
 # FIXME hardcoded
-const MAX_TUTORIAL_LEVELS: int = 6
+#const MAX_TUTORIAL_LEVELS: int = 6
+const TUTORIAL_PLAYER1: Resource = preload("res://Scripts/tutorial_player1.gd")
+const TUTORIAL_ENEMY1: Resource = preload("res://Scripts/tutorial_enemy1.gd")
+const TUTORIAL_CIVILIAN1: Resource = preload("res://Scripts/tutorial_civilian1.gd")
 
 var map: Node3D = null
 var players: Array[Node3D] = []
@@ -52,7 +55,7 @@ func _ready():
 
 func progress():
 	# level not increased yet
-	if Global.tutorial and level < MAX_TUTORIAL_LEVELS:
+	if Global.tutorial:
 		init_by_level_type(LevelType.TUTORIAL)
 	else:
 		get_parent().toggle_visibility(false)
@@ -113,6 +116,11 @@ func init_players(level_data):
 	
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate()
+		# set proper script for tutorial
+		if Global.tutorial:
+			if level_data.level == 1:
+				player_instance.set_script(TUTORIAL_PLAYER1)
+		
 		add_sibling(player_instance)
 		#player_instance.init(current_level_player)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
@@ -137,6 +145,10 @@ func init_enemies(level_data):
 	var order = 1
 	for enemy_scene in level_data.enemy_scenes:
 		var enemy_instance = enemy_scenes[enemy_scene].instantiate()
+		if Global.tutorial:
+			if level_data.level == 1:
+				enemy_instance.set_script(TUTORIAL_ENEMY1)
+		
 		add_sibling(enemy_instance)
 		#enemy_instance.init(current_level_enemy)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_enemy_coords).pick_random()
@@ -160,6 +172,10 @@ func init_civilians(level_data):
 	
 	for civilian_scene in level_data.civilian_scenes:
 		var civilian_instance = civilian_scenes[civilian_scene].instantiate()
+		if Global.tutorial:
+			if level_data.level == 1:
+				civilian_instance.set_script(TUTORIAL_CIVILIAN1)
+		
 		add_sibling(civilian_instance)
 		#civilian_instance.init(current_level_civilian)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_civilian_coords).pick_random()
@@ -227,17 +243,20 @@ func start_turn():
 		recalculate_enemies_planned_actions()
 		
 		var tiles_for_action = calculate_tiles_for_action(true, enemy)
-		var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, target_tiles_for_enemy)
-		if not target_tile_for_action:
-			# no friendly fire preferred
-			var no_ff_tiles = tiles_for_action.filter(func(tile): return not tile.enemy)
-			if no_ff_tiles.is_empty():
-				target_tile_for_action = tiles_for_action.pick_random()
-			else:
-				target_tile_for_action = no_ff_tiles.pick_random()
-			print('enemy ' + str(enemy.tile.coords) + ' -> random action ' + str(target_tile_for_action.coords))
-		
-		enemy.plan_action(target_tile_for_action)
+		if tiles_for_action.is_empty():
+			print('enemy ' + str(enemy.tile.coords) + ' -> no actions available')
+		else:
+			var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, target_tiles_for_enemy)
+			if not target_tile_for_action:
+				# no friendly fire preferred
+				var no_ff_tiles = tiles_for_action.filter(func(tile): return not tile.enemy)
+				if no_ff_tiles.is_empty():
+					target_tile_for_action = tiles_for_action.pick_random()
+				else:
+					target_tile_for_action = no_ff_tiles.pick_random()
+				print('enemy ' + str(enemy.tile.coords) + ' -> random action ' + str(target_tile_for_action.coords))
+			
+			enemy.plan_action(target_tile_for_action)
 	
 	for player in alive_players:
 		player.start_turn()
@@ -323,7 +342,7 @@ func next_level():
 func level_won():
 	points += civilians.filter(func(civilian): return civilian.is_alive).size()
 	
-	if level < max_levels:
+	if level < max_levels and not Global.tutorial:
 		level_end_label.text = 'LEVEL WON'
 		level_end_popup.show()
 		#next_level()
@@ -333,11 +352,11 @@ func level_won():
 
 
 func level_lost():
-	level_end_label.text = 'LEVEL LOST'
-	level_end_popup.show()
-	
-	# still in tutorial
-	if Global.tutorial:
+	if not Global.tutorial:
+		level_end_label.text = 'LEVEL LOST'
+		level_end_popup.show()
+	else:
+		print('LOOOOOOST!!!')
 		# TODO achievements
 		print('achievement unlocked: you\'re a game journalist now')
 

@@ -336,6 +336,13 @@ func _on_load_id_pressed(id):
 			asset.show()
 			tile.add_child(asset)
 			tile.models.asset = asset
+		
+		if level_data.spawn_player_coords.any(func(spawn_player_coord): return spawn_player_coord.x == tile.coords.x and spawn_player_coord.y == tile.coords.y) \
+			or level_data.spawn_enemy_coords.any(func(spawn_enemy_coord): return spawn_enemy_coord.x == tile.coords.x and spawn_enemy_coord.y == tile.coords.y) \
+			or level_data.spawn_civilian_coords.any(func(spawn_civilian_coord): return spawn_civilian_coord.x == tile.coords.x and spawn_civilian_coord.y == tile.coords.y):
+			var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
+			spawn_indicator.show()
+			tile.add_child(spawn_indicator)
 
 
 func _on_maps_id_pressed(id):
@@ -487,9 +494,9 @@ func _on_editor_tile_clicked(tile):
 	selected_tile = tile
 	selected_tile_menu_button.text = 'SELECTED TILE ' + str(tile.coords)
 	selected_tile_menu_button.set_disabled(false)
-	selected_tile_menu_button.get_popup().set_item_checked(0, level_data.spawn_player_coords.any(func(spawn_player_coords): return spawn_player_coords.x == tile.coords.x and spawn_player_coords.y == tile.coords.y))
-	selected_tile_menu_button.get_popup().set_item_checked(1, level_data.spawn_enemy_coords.any(func(spawn_enemy_coords): return spawn_enemy_coords.x == tile.coords.x and spawn_enemy_coords.y == tile.coords.y))
-	selected_tile_menu_button.get_popup().set_item_checked(2, level_data.spawn_civilian_coords.any(func(spawn_civilian_coords): return spawn_civilian_coords.x == tile.coords.x and spawn_civilian_coords.y == tile.coords.y))
+	selected_tile_menu_button.get_popup().set_item_checked(0, level_data.spawn_player_coords.any(func(spawn_player_coord): return spawn_player_coord.x == tile.coords.x and spawn_player_coord.y == tile.coords.y))
+	selected_tile_menu_button.get_popup().set_item_checked(1, level_data.spawn_enemy_coords.any(func(spawn_enemy_coord): return spawn_enemy_coord.x == tile.coords.x and spawn_enemy_coord.y == tile.coords.y))
+	selected_tile_menu_button.get_popup().set_item_checked(2, level_data.spawn_civilian_coords.any(func(spawn_civilian_coord): return spawn_civilian_coord.x == tile.coords.x and spawn_civilian_coord.y == tile.coords.y))
 	
 	var character = tile.get_character()
 	if not tile_to_placed.is_empty():

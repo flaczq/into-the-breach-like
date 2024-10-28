@@ -256,6 +256,7 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 			elif health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				print('ttile ' + str(coords) + ' -> indestructible walkable, nothing happens')
 		else:
+			await get_tree().create_timer(1.0).timeout
 			print('ttile ' + str(coords) + ' -> got shot with 0 damage')
 
 

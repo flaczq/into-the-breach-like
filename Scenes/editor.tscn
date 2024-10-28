@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=27 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/util.gd" id="3_r3ry7"]
@@ -17,6 +17,9 @@
 [ext_resource type="PackedScene" uid="uid://8bvhgfxla8ng" path="res://Scenes/progress.tscn" id="11_4i00g"]
 [ext_resource type="PackedScene" uid="uid://dliou6uj8vx8g" path="res://Scenes/enemy3.tscn" id="11_kt37j"]
 [ext_resource type="ButtonGroup" uid="uid://by0pbsfufftxo" path="res://Other/shoot_action_button_group.tres" id="12_yqnhu"]
+[ext_resource type="PackedScene" uid="uid://djb7hjxihkin0" path="res://Scenes/tutorial_player.tscn" id="16_b1rcx"]
+[ext_resource type="PackedScene" uid="uid://cyk5jmmvp3sag" path="res://Scenes/tutorial_enemy.tscn" id="17_hdgpr"]
+[ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="18_v5xqc"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oi1vl"]
 
@@ -66,9 +69,9 @@ script = ExtResource("4_cmfno")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0)
 script = ExtResource("5_phmd4")
 map_scenes = Array[PackedScene]([ExtResource("6_f5ijx"), ExtResource("7_6jo0a"), ExtResource("2_u2oq0")])
-player_scenes = Array[PackedScene]([ExtResource("8_wa28c"), ExtResource("7_j7ymc"), ExtResource("8_hcwj8")])
-enemy_scenes = Array[PackedScene]([ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j")])
-civilian_scenes = Array[PackedScene]([ExtResource("10_wdovn")])
+player_scenes = Array[PackedScene]([ExtResource("16_b1rcx"), ExtResource("8_wa28c"), ExtResource("7_j7ymc"), ExtResource("8_hcwj8")])
+enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j")])
+civilian_scenes = Array[PackedScene]([ExtResource("18_v5xqc"), ExtResource("10_wdovn")])
 progress_scene = ExtResource("11_4i00g")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

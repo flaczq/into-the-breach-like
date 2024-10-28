@@ -48,5 +48,6 @@ func add_characters(level_data):
 		for current_player_scene in Global.current_player_scenes:
 			level_data.player_scenes.push_back(current_player_scene)
 		
-		level_data.enemy_scenes.push_back(randi_range(0, 1))
-		level_data.civilian_scenes.push_back(randi_range(0, 0))
+		# 0 scene is always tutorial
+		level_data.enemy_scenes.push_back(randi_range(1, 2))
+		level_data.civilian_scenes.push_back(randi_range(1, 1))

@@ -21,6 +21,7 @@ extends Util
 #const MAX_TUTORIAL_LEVELS: int = 6
 const TUTORIAL_PLAYER1: Resource = preload("res://Scripts/tutorial_player1.gd")
 const TUTORIAL_ENEMY1: Resource = preload("res://Scripts/tutorial_enemy1.gd")
+const TUTORIAL_ENEMY2: Resource = preload("res://Scripts/tutorial_enemy2.gd")
 const TUTORIAL_CIVILIAN1: Resource = preload("res://Scripts/tutorial_civilian1.gd")
 
 var map: Node3D = null
@@ -148,6 +149,8 @@ func init_enemies(level_data):
 		if Global.tutorial:
 			if level_data.level == 1:
 				enemy_instance.set_script(TUTORIAL_ENEMY1)
+			elif level_data.level == 2:
+				enemy_instance.set_script(TUTORIAL_ENEMY2)
 		
 		add_sibling(enemy_instance)
 		#enemy_instance.init(current_level_enemy)

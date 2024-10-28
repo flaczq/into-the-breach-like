@@ -266,13 +266,15 @@ disabled = true
 text = "PLAYERS"
 flat = false
 expand_icon = true
-item_count = 3
-popup/item_0/text = "PLAYER 1"
+item_count = 4
+popup/item_0/text = "TUTORIAL PLAYER 1"
 popup/item_0/id = 0
-popup/item_1/text = "PLAYER 2"
+popup/item_1/text = "PLAYER 1"
 popup/item_1/id = 1
-popup/item_2/text = "PLAYER 3"
+popup/item_2/text = "PLAYER 2"
 popup/item_2/id = 2
+popup/item_3/text = "PLAYER 3"
+popup/item_3/id = 3
 
 [node name="EnemiesMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
@@ -280,13 +282,15 @@ disabled = true
 text = "ENEMIES"
 flat = false
 expand_icon = true
-item_count = 3
-popup/item_0/text = "ENEMY 1"
+item_count = 4
+popup/item_0/text = "TUTORIAL ENEMY 1"
 popup/item_0/id = 0
-popup/item_1/text = "ENEMY 2"
+popup/item_1/text = "ENEMY 1"
 popup/item_1/id = 1
-popup/item_2/text = "ENEMY 3"
+popup/item_2/text = "ENEMY 2"
 popup/item_2/id = 2
+popup/item_3/text = "ENEMY 3"
+popup/item_3/id = 3
 
 [node name="CiviliansMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
@@ -294,13 +298,15 @@ disabled = true
 text = "CIVILIANS"
 flat = false
 expand_icon = true
-item_count = 3
-popup/item_0/text = "CIVILIAN 1"
+item_count = 4
+popup/item_0/text = "TUTORIAL CIVILIAN 1"
 popup/item_0/id = 0
-popup/item_1/text = "CIVILIAN 2"
+popup/item_1/text = "CIVILIAN 1"
 popup/item_1/id = 1
-popup/item_2/text = "CIVILIAN 3"
+popup/item_2/text = "CIVILIAN 2"
 popup/item_2/id = 2
+popup/item_3/text = "CIVILIAN 3"
+popup/item_3/id = 3
 
 [node name="AlsoEditorContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1

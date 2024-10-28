@@ -170,9 +170,9 @@ func calculate_level_data(level = -1):
 	#level_data.level_events = [1]
 	level_data.tiles = ''
 	level_data.tiles_assets = ''
-	level_data.player_scenes = []
-	level_data.enemy_scenes = []
-	level_data.civilian_scenes = []
+	#level_data.player_scenes = []
+	#level_data.enemy_scenes = []
+	#level_data.civilian_scenes = []
 	#level_data.max_turns = 3
 	
 	for tile in map.tiles:
@@ -181,18 +181,18 @@ func calculate_level_data(level = -1):
 		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else null
 		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
-	for child in get_children():
-		if child.is_in_group('PLAYERS'):
-			var player_scene = int(child.name.substr(6, 1)) - 1
-			level_data.player_scenes.push_back(player_scene)
-		
-		if child.is_in_group('ENEMIES'):
-			var enemy_scene = int(child.name.substr(5, 1)) - 1
-			level_data.enemy_scenes.push_back(enemy_scene)
-		
-		if child.is_in_group('CIVILIANS'):
-			var civilian_scene = int(child.name.substr(8, 1)) - 1
-			level_data.civilian_scenes.push_back(civilian_scene)
+	#for child in get_children():
+		#if child.is_in_group('PLAYERS'):
+			#var player_scene = int(child.name.substr(6, 1)) - 1
+			#level_data.player_scenes.push_back(player_scene)
+		#
+		#if child.is_in_group('ENEMIES'):
+			#var enemy_scene = int(child.name.substr(5, 1)) - 1
+			#level_data.enemy_scenes.push_back(enemy_scene)
+		#
+		#if child.is_in_group('CIVILIANS'):
+			#var civilian_scene = int(child.name.substr(8, 1)) - 1
+			#level_data.civilian_scenes.push_back(civilian_scene)
 
 
 func _on_main_menu_button_pressed():
@@ -287,8 +287,11 @@ func _on_save_button_pressed():
 	calculate_level_data(level)
 	# level_generator will add characters data
 	level_data.erase('players')
+	level_data.erase('player_scenes')
 	level_data.erase('enemies')
+	level_data.erase('enemy_scenes')
 	level_data.erase('civilians')
+	level_data.erase('civilian_scenes')
 	
 	content += '\n' + str(level) + '->START\n'
 	# make it pretty
@@ -337,9 +340,10 @@ func _on_load_id_pressed(id):
 			tile.add_child(asset)
 			tile.models.asset = asset
 		
-		if level_data.spawn_player_coords.any(func(spawn_player_coord): return spawn_player_coord.x == tile.coords.x and spawn_player_coord.y == tile.coords.y) \
-			or level_data.spawn_enemy_coords.any(func(spawn_enemy_coord): return spawn_enemy_coord.x == tile.coords.x and spawn_enemy_coord.y == tile.coords.y) \
-			or level_data.spawn_civilian_coords.any(func(spawn_civilian_coord): return spawn_civilian_coord.x == tile.coords.x and spawn_civilian_coord.y == tile.coords.y):
+		var vector2i_tiles_coords = level_data.spawn_player_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
+		vector2i_tiles_coords += level_data.spawn_enemy_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
+		vector2i_tiles_coords += level_data.spawn_civilian_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
+		if vector2i_tiles_coords.has(tile.coords):
 			var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
 			spawn_indicator.show()
 			tile.add_child(spawn_indicator)
@@ -421,7 +425,6 @@ func _on_assets_id_pressed(id):
 	
 	editor_label.text = 'placing asset "' + selected_asset.name + '"'
 
-# not used
 func _on_players_id_pressed(id):
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
@@ -434,7 +437,6 @@ func _on_players_id_pressed(id):
 	
 	editor_label.text = 'placing "' + selected.name + '"'
 
-# not used
 func _on_enemies_id_pressed(id):
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
@@ -447,8 +449,6 @@ func _on_enemies_id_pressed(id):
 	
 	editor_label.text = 'placing "' + selected.name + '"'
 
-
-# not used
 func _on_civilians_id_pressed(id):
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
@@ -478,11 +478,17 @@ func _on_selected_tile_id_pressed(id):
 		selected_tile.add_child(spawn_indicator)
 	else:
 		if id == 0:
-			level_data.spawn_player_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			var tile_coords = level_data.spawn_player_coords.filter(func(tile_coords): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			if tile_coords:
+				level_data.spawn_player_coords.erase(tile_coords)
 		elif id == 1:
-			level_data.spawn_enemy_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			var tile_coords = level_data.spawn_enemy_coords.filter(func(tile_coords): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			if tile_coords:
+				level_data.spawn_enemy_coords.erase(tile_coords)
 		elif id == 2:
-			level_data.spawn_civilian_coords.erase({'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
+			var tile_coords = level_data.spawn_civilian_coords.filter(func(tile_coords): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			if tile_coords:
+				level_data.spawn_civilian_coords.erase(tile_coords)
 		
 		var spawn_indicator = selected_tile.get_children().filter(func(child): return child.is_in_group('INDICATORS')).front()
 		if spawn_indicator:
@@ -494,9 +500,9 @@ func _on_editor_tile_clicked(tile):
 	selected_tile = tile
 	selected_tile_menu_button.text = 'SELECTED TILE ' + str(tile.coords)
 	selected_tile_menu_button.set_disabled(false)
-	selected_tile_menu_button.get_popup().set_item_checked(0, level_data.spawn_player_coords.any(func(spawn_player_coord): return spawn_player_coord.x == tile.coords.x and spawn_player_coord.y == tile.coords.y))
-	selected_tile_menu_button.get_popup().set_item_checked(1, level_data.spawn_enemy_coords.any(func(spawn_enemy_coord): return spawn_enemy_coord.x == tile.coords.x and spawn_enemy_coord.y == tile.coords.y))
-	selected_tile_menu_button.get_popup().set_item_checked(2, level_data.spawn_civilian_coords.any(func(spawn_civilian_coord): return spawn_civilian_coord.x == tile.coords.x and spawn_civilian_coord.y == tile.coords.y))
+	selected_tile_menu_button.get_popup().set_item_checked(0, level_data.spawn_player_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y)).has(tile.coords))
+	selected_tile_menu_button.get_popup().set_item_checked(1, level_data.spawn_enemy_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y)).has(tile.coords))
+	selected_tile_menu_button.get_popup().set_item_checked(2, level_data.spawn_civilian_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y)).has(tile.coords))
 	
 	var character = tile.get_character()
 	if not tile_to_placed.is_empty():

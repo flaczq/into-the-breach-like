@@ -1,6 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://bhmnehlqiw8bo"]
 
-[ext_resource type="Script" path="res://Scripts/tutorial_civilian1.gd" id="1_8yrlq"]
+[ext_resource type="Script" path="res://Scripts/civilian.gd" id="1_ytlxs"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_f68kc"]
 [ext_resource type="StyleBox" uid="uid://bpkofwngvli4v" path="res://Other/health_bar_style_box_flat.tres" id="3_4mpqw"]
 [ext_resource type="LabelSettings" uid="uid://cmxjnw1revt23" path="res://Other/health_bar_label.tres" id="4_x62re"]
@@ -195,8 +195,8 @@ _surfaces = [{
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dnuse"]
 bg_color = Color(0, 1, 0, 1)
 
-[node name="CivilianTutorial" type="Node3D" groups=["CIVILIANS"]]
-script = ExtResource("1_8yrlq")
+[node name="Civilian0Tutorial" type="Node3D" groups=["CIVILIANS"]]
+script = ExtResource("1_ytlxs")
 assets_scene = ExtResource("2_f68kc")
 
 [node name="Princess_Head" type="MeshInstance3D" parent="."]

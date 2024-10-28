@@ -5,8 +5,8 @@ func _ready():
 	super()
 	
 	model_name = 'VerticAlien'
-	max_health = 2
-	health = 2
+	max_health = 3
+	health = 3
 	damage = 2
 	move_distance = 2
 	action_min_distance = 3

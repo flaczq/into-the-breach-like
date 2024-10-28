@@ -167,12 +167,13 @@ func calculate_level_data(level = -1):
 	
 	if level >= 0:
 		level_data.level = level
+	level_data.level_type = -1
 	#level_data.level_events = [1]
 	level_data.tiles = ''
 	level_data.tiles_assets = ''
-	#level_data.player_scenes = []
-	#level_data.enemy_scenes = []
-	#level_data.civilian_scenes = []
+	level_data.player_scenes = []
+	level_data.enemy_scenes = []
+	level_data.civilian_scenes = []
 	#level_data.max_turns = 3
 	
 	for tile in map.tiles:
@@ -181,18 +182,18 @@ func calculate_level_data(level = -1):
 		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else null
 		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
-	#for child in get_children():
-		#if child.is_in_group('PLAYERS'):
-			#var player_scene = int(child.name.substr(6, 1)) - 1
-			#level_data.player_scenes.push_back(player_scene)
-		#
-		#if child.is_in_group('ENEMIES'):
-			#var enemy_scene = int(child.name.substr(5, 1)) - 1
-			#level_data.enemy_scenes.push_back(enemy_scene)
-		#
-		#if child.is_in_group('CIVILIANS'):
-			#var civilian_scene = int(child.name.substr(8, 1)) - 1
-			#level_data.civilian_scenes.push_back(civilian_scene)
+	for child in get_children():
+		if child.is_in_group('PLAYERS'):
+			var player_scene = int(child.name.substr(6, 1))
+			level_data.player_scenes.push_back(player_scene)
+		
+		if child.is_in_group('ENEMIES'):
+			var enemy_scene = int(child.name.substr(5, 1))
+			level_data.enemy_scenes.push_back(enemy_scene)
+		
+		if child.is_in_group('CIVILIANS'):
+			var civilian_scene = int(child.name.substr(8, 1))
+			level_data.civilian_scenes.push_back(civilian_scene)
 
 
 func _on_main_menu_button_pressed():
@@ -285,6 +286,7 @@ func _on_save_button_pressed():
 	var level = content.count('->START') + 1
 	
 	calculate_level_data(level)
+	
 	# level_generator will add characters data
 	level_data.erase('players')
 	level_data.erase('player_scenes')

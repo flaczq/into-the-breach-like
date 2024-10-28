@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://cyk5jmmvp3sag"]
 
-[ext_resource type="Script" path="res://Scripts/tutorial_enemy1.gd" id="1_ey3x0"]
+[ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_qke8p"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_404hm"]
 [ext_resource type="StyleBox" uid="uid://bpkofwngvli4v" path="res://Other/health_bar_style_box_flat.tres" id="3_5nu4s"]
 [ext_resource type="LabelSettings" uid="uid://cmxjnw1revt23" path="res://Other/health_bar_label.tres" id="4_jvduy"]
@@ -102,8 +102,8 @@ _surfaces = [{
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ughr4"]
 bg_color = Color(0, 1, 0, 1)
 
-[node name="EnemyTutorial" type="Node3D" groups=["ENEMIES"]]
-script = ExtResource("1_ey3x0")
+[node name="Enemy0Tutorial" type="Node3D" groups=["ENEMIES"]]
+script = ExtResource("1_qke8p")
 assets_scene = ExtResource("2_404hm")
 
 [node name="Skeleton_Head" type="MeshInstance3D" parent="."]

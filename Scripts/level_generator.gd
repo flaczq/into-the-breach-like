@@ -37,12 +37,14 @@ func add_characters(level_data):
 	level_data.civilian_scenes = []
 	
 	if level_data.level_type == LevelType.TUTORIAL:
-		# FIXME hardcoded
+		# TODO FIXME hardcoded
 		if level_data.level == 1:
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 			#level_data.civilian_scenes = []
-			#TODO 2:
+		elif level_data.level == 2:
+			level_data.player_scenes.push_back(0)
+			level_data.enemy_scenes.push_back(0)
 	else:
 		# TODO pick enemies and civilians by random(?) based on level type and level number
 		for current_player_scene in Global.current_player_scenes:

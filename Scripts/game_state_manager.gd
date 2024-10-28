@@ -19,11 +19,8 @@ extends Util
 
 # FIXME hardcoded
 #const MAX_TUTORIAL_LEVELS: int = 6
-const TUTORIAL_PLAYER1: Resource = preload("res://Scripts/tutorial_player1.gd")
-const TUTORIAL_ENEMY1: Resource = preload("res://Scripts/tutorial_enemy1.gd")
-const TUTORIAL_ENEMY2: Resource = preload("res://Scripts/tutorial_enemy2.gd")
-const TUTORIAL_CIVILIAN1: Resource = preload("res://Scripts/tutorial_civilian1.gd")
 
+var tutorial_script: Node = preload("res://Scripts/tutorial.gd").new()
 var map: Node3D = null
 var players: Array[Node3D] = []
 var enemies: Array[Node3D] = []
@@ -74,7 +71,7 @@ func init_by_level_type(level_type):
 func init(level_data):
 	Global.engine_mode = Global.EngineMode.GAME
 	
-	init_game_state()
+	init_game_state(level_data)
 	init_map(level_data)
 	init_players(level_data)
 	init_enemies(level_data)
@@ -83,7 +80,7 @@ func init(level_data):
 	start_turn()
 
 
-func init_game_state():
+func init_game_state(level_data):
 	current_turn = 1
 	selected_player = null
 	undo = {}
@@ -96,6 +93,8 @@ func init_game_state():
 	undo_button.set_disabled(true)
 	level_end_label.text = ''
 	level_end_popup.hide()
+	
+	Global.tutorial = level_data.level_type == LevelType.TUTORIAL
 
 
 func init_map(level_data):
@@ -117,12 +116,9 @@ func init_players(level_data):
 	
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate()
-		# set proper script for tutorial
-		if Global.tutorial:
-			if level_data.level == 1:
-				player_instance.set_script(TUTORIAL_PLAYER1)
-		
 		add_sibling(player_instance)
+		if Global.tutorial:  tutorial_script.init_player(player_instance, level_data.level)
+		
 		#player_instance.init(current_level_player)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
 		player_instance.spawn(spawn_tile)
@@ -146,13 +142,9 @@ func init_enemies(level_data):
 	var order = 1
 	for enemy_scene in level_data.enemy_scenes:
 		var enemy_instance = enemy_scenes[enemy_scene].instantiate()
-		if Global.tutorial:
-			if level_data.level == 1:
-				enemy_instance.set_script(TUTORIAL_ENEMY1)
-			elif level_data.level == 2:
-				enemy_instance.set_script(TUTORIAL_ENEMY2)
-		
 		add_sibling(enemy_instance)
+		if Global.tutorial:  tutorial_script.init_enemy(enemy_instance, level_data.level)
+		
 		#enemy_instance.init(current_level_enemy)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_enemy_coords).pick_random()
 		enemy_instance.spawn(spawn_tile, order)
@@ -175,11 +167,9 @@ func init_civilians(level_data):
 	
 	for civilian_scene in level_data.civilian_scenes:
 		var civilian_instance = civilian_scenes[civilian_scene].instantiate()
-		if Global.tutorial:
-			if level_data.level == 1:
-				civilian_instance.set_script(TUTORIAL_CIVILIAN1)
-		
 		add_sibling(civilian_instance)
+		if Global.tutorial:  tutorial_script.init_civilian(civilian_instance, level_data.level)
+		
 		#civilian_instance.init(current_level_civilian)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_civilian_coords).pick_random()
 		civilian_instance.spawn(spawn_tile)
@@ -637,8 +627,12 @@ func recalculate_enemies_planned_actions():
 		var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(enemy, enemy.tile.coords, enemy.planned_tile.coords)
 		if first_occupied_tile_in_line:# and first_occupied_tile_in_line != enemy.planned_tile:
 			enemy.plan_action(first_occupied_tile_in_line)
+		else:
+			# just to be sure and refresh arrows, indicators, etc.
+			enemy.plan_action(enemy.planned_tile)
+			
 		# planned tile could've lost 'is_planned_enemy_action' true flag
-		elif not enemy.planned_tile.is_planned_enemy_action:
+		if not enemy.planned_tile.is_planned_enemy_action:
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
@@ -776,16 +770,18 @@ func _on_tile_hovered(tile, is_hovered):
 			#tile.toggle_shader(true)
 			tile.toggle_asset_outline(true)
 			
-			# find enemy whose planned tile is hovered
-			for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
-				current_enemy.toggle_arrow_highlight(true)
-				current_enemy.toggle_outline(true)
-				current_enemy.toggle_health_bar(true)
-			
-			var character = tile.get_character()
-			if character:
-				#character.toggle_outline(true)
-				character.toggle_health_bar(true)
+			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed()
+			if not is_selected_player_action:
+				# find enemy whose planned tile is hovered
+				for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
+					current_enemy.toggle_arrow_highlight(true)
+					current_enemy.toggle_outline(true)
+					current_enemy.toggle_health_bar(true)
+				
+				var character = tile.get_character()
+				if character:
+					#character.toggle_outline(true)
+					character.toggle_health_bar(true)
 	
 	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:

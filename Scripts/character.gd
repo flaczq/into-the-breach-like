@@ -334,7 +334,7 @@ func spawn_bullet(target):
 	
 	var position_tween = create_tween()
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
-		var duration = position_to_target.length() / 12.0
+		var duration = position_to_target.length() / 10.0
 		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * position_to_target), duration)
 	else:
 		var origin_position = get_vector3_on_map(Vector3.ZERO)
@@ -344,7 +344,7 @@ func spawn_bullet(target):
 		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		# more = smoother
 		var amount = maxi(2 * roundi(position_difference.length()), 6)
-		var duration = position_difference.length() / (amount * 10.0)
+		var duration = position_difference.length() / (amount * 6.0)
 		for i in range(1, amount + 1):
 			# manually slowing down the bullet in the top part of the trajectory
 			var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)

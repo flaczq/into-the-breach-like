@@ -32,8 +32,8 @@ func _ready():
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
-func spawn(target_tile, new_order):
-	tile = target_tile
+func spawn(spawn_tile, new_order):
+	tile = spawn_tile
 	tile.set_enemy(self)
 	
 	position = Vector3(tile.position.x, 0.0, tile.position.z)
@@ -179,8 +179,7 @@ func toggle_arrow_highlight(is_toggled):
 	if is_toggled:
 		highlight_tween = create_tween().set_loops()
 		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ENEMY_ARROW_HIGHLIGHTED_COLOR, 0.3)
-		highlight_tween.tween_interval(0.1)
-		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ENEMY_ARROW_COLOR, 0.3)
+		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ENEMY_ARROW_COLOR, 0.3).set_delay(0.5)
 		#arrow_model_material.albedo_color = Color.YELLOW
 		#arrow_model_material.set_next_pass(arrow_shader_material)
 	else:

@@ -181,61 +181,6 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 			return TileHealthType.HEALTHY
 
 
-func plan_level_events(level_events):
-	for level_event in level_events:
-		print(LevelEvent.keys()[level_event])
-		# missle spawned at random tile
-		if level_event == LevelEvent.FALLING_MISSLE:
-			var event_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
-			var event_asset_material = StandardMaterial3D.new()
-			event_asset_material.albedo_color = Color('FF0000')#red
-			event_asset.set_surface_override_material(0, event_asset_material)
-			
-			#var max_range = (2) if (get_side_dimension() == 8 or get_side_dimension() == 6) else (1)
-			for i in range(0, 1):
-				var event_tile = get_untargetable_tiles().pick_random()
-				event_tile.models.event_asset = event_asset.duplicate()
-				event_tile.models.event_asset.add_to_group('MISSLES_INDICATORS')
-				event_tile.models.event_asset.show()
-				event_tile.add_child(event_tile.models.event_asset)
-				print('spawned missle at ' + str(event_tile.coords))
-		# rock spawned near mountains
-		elif level_event == LevelEvent.FALLING_ROCK:
-			var mountain_positions = tiles.filter(func(tile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile): return tile.position)
-			var event_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
-			var event_asset_material = StandardMaterial3D.new()
-			event_asset_material.albedo_color = Color('7A5134')#brown
-			event_asset.set_surface_override_material(0, event_asset_material)
-			
-			#var max_range = (3) if (get_side_dimension() == 8) else (2) if (get_side_dimension() == 6) else (1)
-			for i in range(0, 1):
-				var event_tiles = get_untargetable_tiles().filter(func(tile): return not mountain_positions.has(tile.position) and mountain_positions.any(func(mountain_position): return mountain_position.distance_to(tile.position) <= 1.5))
-				var event_tile = event_tiles.pick_random()
-				event_tile.models.event_asset = event_asset.duplicate()
-				event_tile.models.event_asset.add_to_group('ROCKS_INDICATORS')
-				event_tile.models.event_asset.show()
-				event_tile.add_child(event_tile.models.event_asset)
-				print('spawned rock at ' + str(event_tile.coords))
-		#TODO else...
-
-
-func execute_level_events(level_events):
-	for level_event in level_events:
-		# missles hit at spawned indicators
-		if level_event == LevelEvent.FALLING_MISSLE:
-			for tile in tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')):
-				await tile.get_shot(1)
-				tile.models.event_asset.queue_free()
-				tile.models.erase('event_asset')
-		# rocks hit at spawned indicators
-		elif level_event == LevelEvent.FALLING_ROCK:
-			for tile in tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')):
-				await tile.get_shot(1)
-				tile.models.event_asset.queue_free()
-				tile.models.erase('event_asset')
-		#TODO else...
-
-
 func get_side_dimension():
 	return sqrt(tiles.size())
 
@@ -256,7 +201,7 @@ func get_spawnable_tiles(tiles_coords):
 	if tiles_coords.is_empty():
 		return get_available_tiles()
 	
-	var vector2i_tiles_coords = tiles_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
+	var vector2i_tiles_coords = convert_spawn_coords_to_vector_coords(tiles_coords)
 	var spawnable_tiles = get_available_tiles().filter(func(tile): return vector2i_tiles_coords.has(tile.coords))
 	if spawnable_tiles.is_empty():
 		return get_available_tiles()
@@ -265,6 +210,7 @@ func get_spawnable_tiles(tiles_coords):
 
 
 func get_targetable_tiles():
+	# add character/asset to group 'TARGETABLES' to make the enemy try to target it
 	return tiles.filter(func(tile): return is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES'))
 
 

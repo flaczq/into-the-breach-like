@@ -15,7 +15,7 @@ unicode = 32
 [sub_resource type="Shortcut" id="Shortcut_fmudf"]
 events = [SubResource("InputEventKey_c3o0l")]
 
-[node name="Menu" type="Node3D" groups=["NEVER_QUEUED"]]
+[node name="Menu" type="Node3D" groups=["NEVER_FREED"]]
 script = ExtResource("1_ybquj")
 main_scene = ExtResource("2_0ykcs")
 editor_scene = ExtResource("3_kwi8q")
@@ -164,13 +164,13 @@ expand_icon = true
 item_count = 3
 popup/item_0/text = "PLAYER 1"
 popup/item_0/icon = ExtResource("3_wbc5l")
-popup/item_0/id = 0
+popup/item_0/id = 1
 popup/item_1/text = "PLAYER 2"
 popup/item_1/icon = ExtResource("3_wbc5l")
-popup/item_1/id = 1
+popup/item_1/id = 2
 popup/item_2/text = "PLAYER 3"
 popup/item_2/icon = ExtResource("3_wbc5l")
-popup/item_2/id = 2
+popup/item_2/id = 3
 
 [node name="Player2OptionButton" type="OptionButton" parent="CanvasLayer/UI/PlayersContainer/PlayersButtons"]
 layout_mode = 2
@@ -178,13 +178,13 @@ expand_icon = true
 item_count = 3
 popup/item_0/text = "PLAYER 1"
 popup/item_0/icon = ExtResource("3_wbc5l")
-popup/item_0/id = 0
+popup/item_0/id = 1
 popup/item_1/text = "PLAYER 2"
 popup/item_1/icon = ExtResource("3_wbc5l")
-popup/item_1/id = 1
+popup/item_1/id = 2
 popup/item_2/text = "PLAYER 3"
 popup/item_2/icon = ExtResource("3_wbc5l")
-popup/item_2/id = 2
+popup/item_2/id = 3
 
 [node name="Player3OptionButton" type="OptionButton" parent="CanvasLayer/UI/PlayersContainer/PlayersButtons"]
 layout_mode = 2
@@ -192,13 +192,13 @@ expand_icon = true
 item_count = 3
 popup/item_0/text = "PLAYER 1"
 popup/item_0/icon = ExtResource("3_wbc5l")
-popup/item_0/id = 0
+popup/item_0/id = 1
 popup/item_1/text = "PLAYER 2"
 popup/item_1/icon = ExtResource("3_wbc5l")
-popup/item_1/id = 1
+popup/item_1/id = 2
 popup/item_2/text = "PLAYER 3"
 popup/item_2/icon = ExtResource("3_wbc5l")
-popup/item_2/id = 2
+popup/item_2/id = 3
 
 [node name="NextButton" type="Button" parent="CanvasLayer/UI/PlayersContainer"]
 layout_mode = 2

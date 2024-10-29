@@ -9,8 +9,8 @@ func _ready():
 	#model = $Princess_Head
 
 
-func spawn(target_tile):
-	tile = target_tile
+func spawn(spawn_tile):
+	tile = spawn_tile
 	tile.set_civilian(self)
 	
 	position = Vector3(tile.position.x, 0.0, tile.position.z)

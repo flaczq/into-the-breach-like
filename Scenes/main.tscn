@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=24 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -6,13 +6,11 @@
 [ext_resource type="PackedScene" uid="uid://bysqedydgeakv" path="res://Scenes/map4x4.tscn" id="4_22mq3"]
 [ext_resource type="PackedScene" uid="uid://cxidqolshdlac" path="res://Scenes/map6x6.tscn" id="4_wpjf0"]
 [ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player1.tscn" id="6_vfyg3"]
-[ext_resource type="Script" path="res://Scripts/util.gd" id="7_gp40j"]
 [ext_resource type="PackedScene" uid="uid://d3kikj28cfn8h" path="res://Scenes/enemy1.tscn" id="7_ptp77"]
 [ext_resource type="PackedScene" uid="uid://djb7hjxihkin0" path="res://Scenes/tutorial_player.tscn" id="8_846lr"]
 [ext_resource type="PackedScene" uid="uid://b60h1emnunq1s" path="res://Scenes/civilian1.tscn" id="8_g8h8s"]
 [ext_resource type="ButtonGroup" uid="uid://by0pbsfufftxo" path="res://Other/shoot_action_button_group.tres" id="8_t76ir"]
 [ext_resource type="PackedScene" uid="uid://8bvhgfxla8ng" path="res://Scenes/progress.tscn" id="9_ey5p0"]
-[ext_resource type="Script" path="res://Scripts/level_generator.gd" id="9_le872"]
 [ext_resource type="PackedScene" uid="uid://bo5rbatygsore" path="res://Scenes/player2.tscn" id="9_ybl51"]
 [ext_resource type="PackedScene" uid="uid://blw8ngoaherru" path="res://Scenes/enemy2.tscn" id="10_b2cwl"]
 [ext_resource type="PackedScene" uid="uid://d0eitlou8xuox" path="res://Scenes/player3.tscn" id="10_nys73"]
@@ -52,14 +50,6 @@ transform = Transform3D(0.766045, 0.492404, -0.413176, 0, 0.642788, 0.766045, 0.
 shadow_enabled = true
 
 [node name="Map8x8" parent="." instance=ExtResource("2_gdtvm")]
-
-[node name="Util" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
-script = ExtResource("7_gp40j")
-
-[node name="LevelGenerator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-script = ExtResource("9_le872")
 
 [node name="GameStateManager" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)

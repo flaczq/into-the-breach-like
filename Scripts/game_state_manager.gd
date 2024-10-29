@@ -6,44 +6,44 @@ extends Util
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
 
-@onready var level_generator = $"../LevelGenerator"
 @onready var game_info_label = $'../CanvasLayer/UI/GameInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/UI/PlayerInfoContainer/DebugInfoLabel'
 @onready var end_turn_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton'
 @onready var shoot_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton'
 @onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
-@onready var undo_button = $"../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton"
-@onready var tile_info_label = $"../CanvasLayer/UI/TileInfoLabel"
+@onready var undo_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton'
+@onready var tile_info_label = $'../CanvasLayer/UI/TileInfoLabel'
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
 # FIXME hardcoded
 #const MAX_TUTORIAL_LEVELS: int = 6
 
-var tutorial_script: Node = preload("res://Scripts/tutorial.gd").new()
+var tutorial_manager_script: Node = preload('res://Scripts/tutorial_manager.gd').new()
+var level_manager_script: Node = preload('res://Scripts/level_manager.gd').new()
 var map: Node3D = null
 var players: Array[Node3D] = []
 var enemies: Array[Node3D] = []
 var civilians: Array[Node3D] = []
-var level_events: Array = []
+var level_data: Dictionary = {}
 var level_end_clicked: bool = false
 
 var level: int
 var max_levels: int
 var current_turn: int
-var max_turns: int
 var points: int
 var selected_player: Node3D
 var undo: Dictionary
 
 
 func _ready():
-	# next_level() will increase level number
 	level = 0
 	
 	# FIXME
 	max_levels = 9
 	points = 0
+	
+	level_manager_script.connect('init_enemy_event', _on_init_enemy)
 	
 	if Global.build_mode == Global.BuildMode.DEBUG:
 		debug_info_label.show()
@@ -52,7 +52,6 @@ func _ready():
 
 
 func progress():
-	# level not increased yet
 	if Global.tutorial:
 		init_by_level_type(LevelType.TUTORIAL)
 	else:
@@ -62,25 +61,30 @@ func progress():
 
 
 func init_by_level_type(level_type):
+	# level not increased yet
+	level_data = level_manager_script.generate_data(level_type, level + 1)
+	
 	next_level()
-	# level was already increased
-	var level_data = level_generator.generate_data(level_type, level)
-	init(level_data)
+	init()
 
 
-func init(level_data):
+func init(init_level_data = level_data):
+	# already increased level
 	Global.engine_mode = Global.EngineMode.GAME
 	
-	init_game_state(level_data)
-	init_map(level_data)
-	init_players(level_data)
-	init_enemies(level_data)
-	init_civilians(level_data)
+	if init_level_data != level_data:
+		level_data = init_level_data
+	
+	init_game_state()
+	init_map()
+	init_players()
+	init_enemies()
+	init_civilians()
 	
 	start_turn()
 
 
-func init_game_state(level_data):
+func init_game_state():
 	current_turn = 1
 	selected_player = null
 	undo = {}
@@ -94,13 +98,10 @@ func init_game_state(level_data):
 	level_end_label.text = ''
 	level_end_popup.hide()
 	
-	Global.tutorial = level_data.level_type == LevelType.TUTORIAL
+	Global.tutorial = (level_data.level_type == LevelType.TUTORIAL)
 
 
-func init_map(level_data):
-	max_turns = level_data.get('max_turns', -1)
-	level_events = level_data.get('level_events', [])
-	
+func init_map():
 	map = map_scenes[level_data.scene].instantiate()
 	add_sibling(map)
 	map.spawn(level_data)
@@ -111,13 +112,13 @@ func init_map(level_data):
 		tile.connect('action_cross_push_back', _on_tile_action_cross_push_back)
 
 
-func init_players(level_data):
+func init_players():
 	players = []
 	
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate()
 		add_sibling(player_instance)
-		if Global.tutorial:  tutorial_script.init_player(player_instance, level_data.level)
+		if Global.tutorial:   tutorial_manager_script.init_player(player_instance, level)
 		
 		#player_instance.init(current_level_player)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
@@ -125,6 +126,7 @@ func init_players(level_data):
 		
 		player_instance.connect('hovered_event', _on_player_hovered)
 		player_instance.connect('clicked_event', _on_player_clicked)
+		player_instance.connect('toggle_character_event', _on_toggle_character)
 		player_instance.connect('action_push_back', _on_character_action_push_back)
 		player_instance.connect('action_pull_front', _on_character_action_pull_front)
 		player_instance.connect('action_miss_action', _on_character_action_miss_action)
@@ -136,44 +138,27 @@ func init_players(level_data):
 		players.push_back(player_instance)
 
 
-func init_enemies(level_data):
+func init_enemies():
 	enemies = []
 	
-	var order = 1
 	for enemy_scene in level_data.enemy_scenes:
-		var enemy_instance = enemy_scenes[enemy_scene].instantiate()
-		add_sibling(enemy_instance)
-		if Global.tutorial:  tutorial_script.init_enemy(enemy_instance, level_data.level)
-		
-		#enemy_instance.init(current_level_enemy)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_enemy_coords).pick_random()
-		enemy_instance.spawn(spawn_tile, order)
-		
-		enemy_instance.connect('action_push_back', _on_character_action_push_back)
-		enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
-		enemy_instance.connect('action_miss_action', _on_character_action_miss_action)
-		enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
-		enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
-		enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
-		enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
-		
-		enemies.push_back(enemy_instance)
-		
-		order += 1
+		_on_init_enemy(enemy_scene, spawn_tile)
 
 
-func init_civilians(level_data):
+func init_civilians():
 	civilians = []
 	
 	for civilian_scene in level_data.civilian_scenes:
 		var civilian_instance = civilian_scenes[civilian_scene].instantiate()
 		add_sibling(civilian_instance)
-		if Global.tutorial:  tutorial_script.init_civilian(civilian_instance, level_data.level)
+		if Global.tutorial:   tutorial_manager_script.init_civilian(civilian_instance, level)
 		
 		#civilian_instance.init(current_level_civilian)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_civilian_coords).pick_random()
 		civilian_instance.spawn(spawn_tile)
 		
+		civilian_instance.connect('toggle_character_event', _on_toggle_character)
 		civilian_instance.connect('action_push_back', _on_character_action_push_back)
 		civilian_instance.connect('action_pull_front', _on_character_action_pull_front)
 		civilian_instance.connect('action_miss_action', _on_character_action_miss_action)
@@ -192,7 +177,7 @@ func start_turn():
 	# ┗┛┛┗┛ ┗┗┛  ┛ ┗┛┗┗┛┗  ┗┛┗┛┗┛┣┛  ┗┛ ┻ ┛┗┛┗ ┻  #
 	###############################################
 	
-	map.plan_level_events(level_events)
+	level_manager_script.plan_events(map, level_data, current_turn)
 	
 	# actions order: events plan > civilians > enemies move and plan > players > enemies actions > events actions
 	var alive_civilians = civilians.filter(func(civilian): return civilian.is_alive)
@@ -279,7 +264,7 @@ func end_turn():
 		if enemy.is_alive:
 			await enemy.execute_planned_action()
 	
-	await map.execute_level_events(level_events)
+	await level_manager_script.execute_events(map, level_data)
 	
 	#########################################
 	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓  ┏┓┳┓┳┓ #
@@ -294,7 +279,7 @@ func end_turn():
 		level_lost()
 	else:
 		next_turn()
-	#elif current_turn < max_turns:
+	#elif current_turn < level_data.max_turns:
 		#next_turn()
 	#else:
 		#level_won()
@@ -656,6 +641,28 @@ func on_shoot_action_button_toggled(toggled_on):
 			tile.toggle_player_clicked(true)
 
 
+func _on_init_enemy(enemy_scene, spawn_tile):
+	var enemy_instance = enemy_scenes[enemy_scene].instantiate()
+	add_sibling(enemy_instance)
+	if Global.tutorial:   tutorial_manager_script.init_enemy(enemy_instance, level)
+	
+	# find max order
+	var enemies_orders = enemies.map(func(enemy): return enemy.order)
+	var max_order = (0) if (enemies_orders.is_empty()) else (enemies_orders.max())
+	enemy_instance.spawn(spawn_tile, max_order + 1)
+	
+	enemy_instance.connect('toggle_character_event', _on_toggle_character)
+	enemy_instance.connect('action_push_back', _on_character_action_push_back)
+	enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
+	enemy_instance.connect('action_miss_action', _on_character_action_miss_action)
+	enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
+	enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
+	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
+	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
+	
+	enemies.push_back(enemy_instance)
+
+
 func _on_tile_hovered(tile, is_hovered):
 	# reset all kinds of arrows, indicators, outlines, ...
 	for current_player in players:
@@ -668,7 +675,7 @@ func _on_tile_hovered(tile, is_hovered):
 	
 	for current_tile in map.tiles:
 		current_tile.ghost = null
-		#current_tile.toggle_shader(false)
+		current_tile.toggle_shader(false)
 		
 		if not is_hovered:
 			current_tile.toggle_asset_outline(false)
@@ -702,7 +709,9 @@ func _on_tile_hovered(tile, is_hovered):
 		debug_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
 		#debug_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 		if tile.models.get('event_asset'):
-			if tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
+			if tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS'):
+				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.MORE_ENEMIES]) + '\n'
+			elif tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
 			elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_ROCK]) + '\n'
@@ -723,7 +732,7 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
 		elif tile.enemy:
 			tile_info_label.text += '\n\n' + tile.enemy.model_name + '\n'
-			tile_info_label.text += '\n\n' + 'ORDER: ' + str(tile.enemy.order) + '\n'
+			tile_info_label.text += 'ORDER: ' + str(tile.enemy.order) + '\n'
 			tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
 			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
 			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
@@ -732,7 +741,7 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
 		elif tile.civilian:
 			tile_info_label.text += '\n\n' + tile.civilian.model_name + '\n'
-			tile_info_label.text += '\n\n' + 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
+			tile_info_label.text += 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
 			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
 			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
 	else:
@@ -746,37 +755,40 @@ func _on_tile_hovered(tile, is_hovered):
 		
 		# outline hovered enemy and highlight his attack arrows
 		if tile.enemy:
-			#tile.enemy.toggle_arrow_highlight(true)
 			#tile.enemy.toggle_outline(true)
 			tile.enemy.toggle_health_bar(true)
 			
 			if tile.enemy.planned_tile:
-				#tile.enemy.planned_tile.toggle_shader(true)
 				tile.enemy.planned_tile.toggle_asset_outline(true)
 				
 				var character = tile.enemy.planned_tile.get_character()
 				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed()
-				if character and not is_selected_player_action:
-					# FIXME more generic for different state types if needed
-					if character.state_type == StateType.GIVE_SHIELD:
-						character.toggle_health_bar(true)
-					else:
-						character.toggle_outline(true)
-						var predicted_health = maxi(0, character.health - tile.enemy.damage)
-						character.toggle_health_bar(true, predicted_health)
+				if not is_selected_player_action:
+					tile.enemy.toggle_arrow_highlight(true)
+					
+					if character:
+						# FIXME more generic for different state types if needed
+						if character.state_type == StateType.GIVE_SHIELD:
+							character.toggle_health_bar(true)
+						else:
+							character.toggle_outline(true)
+							var predicted_health = maxi(0, character.health - tile.enemy.damage)
+							character.toggle_health_bar(true, predicted_health)
+					elif not tile.enemy.planned_tile.models.get('asset'):
+						tile.enemy.planned_tile.toggle_shader(true)
 		
 		# highlight attack arrows of hovered planned target
 		if tile.is_planned_enemy_action:
 			#tile.toggle_shader(true)
-			tile.toggle_asset_outline(true)
+			#tile.toggle_asset_outline(true)
 			
 			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed()
 			if not is_selected_player_action:
 				# find enemy whose planned tile is hovered
 				for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
-					current_enemy.toggle_arrow_highlight(true)
 					current_enemy.toggle_outline(true)
 					current_enemy.toggle_health_bar(true)
+					#current_enemy.toggle_arrow_highlight(true)
 				
 				var character = tile.get_character()
 				if character:
@@ -953,6 +965,12 @@ func _on_player_clicked(player, is_clicked):
 			tile.toggle_player_clicked(false)
 	
 	player.tile.on_mouse_entered()
+
+
+func _on_toggle_character(character):
+	if character:
+		character.toggle_outline(true)
+		character.toggle_health_bar(true)
 
 
 func _on_character_action_push_back(target_character, action_damage, origin_tile_coords):

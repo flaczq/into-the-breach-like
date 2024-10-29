@@ -3,7 +3,7 @@ MAIN_MENU,MAIN MENU,MENU GŁÓWNE
 MENU_OPTIONS,OPTIONS,USTAWIENIA
 TILE_TYPE_PLAIN,Nothing special,Nic wyjątkowego
 TILE_TYPE_GRASS,Nothing special,Nic wyjątkowego
-TILE_TYPE_TREE,Walkable after damaging,Można chodzić po zadaniu obrażeń
+TILE_TYPE_TREE,Can be damaged,Można zniszczyć
 TILE_TYPE_MOUNTAIN,Can't be damaged,Odporne na obrażenia
 TILE_TYPE_VOLCANO,Can't be damaged,Odporne na obrażenia
 TILE_TYPE_WATER,Movement slowed down to 1 tile,Ruch spowolniony do 1 pola

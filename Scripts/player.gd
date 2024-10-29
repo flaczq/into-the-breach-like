@@ -37,8 +37,8 @@ func _ready():
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
-func spawn(target_tile):
-	tile = target_tile
+func spawn(spawn_tile):
+	tile = spawn_tile
 	tile.set_player(self)
 	
 	position = Vector3(tile.position.x, 0, tile.position.z)

@@ -8,7 +8,6 @@ extends Util
 
 @onready var menu = $/root/Menu
 @onready var camera_3d = $Camera3D
-@onready var level_generator = $LevelGenerator
 @onready var game_state_manager = $GameStateManager
 @onready var editor_label = $CanvasLayer/UI/EditorLabel
 @onready var end_turn_button = $CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton
@@ -29,6 +28,7 @@ extends Util
 
 const SAVED_LEVELS_FILE_PATH = 'res://Data/saved_levels.txt'
 
+var level_manager_script: Node = preload('res://Scripts/level_manager.gd').new()
 var assets: Array[Node3D] = []
 var key_pressed: bool = false
 var is_deleting: bool = false
@@ -158,16 +158,16 @@ func reset():
 	selected = null
 
 
-func calculate_level_data(level = -1):
+func calculate_level_data():
 	#########################
 	# ┓ ┏┓┓┏┏┓┓   ┳┓┏┓┏┳┓┏┓ #
 	# ┃ ┣ ┃┃┣ ┃   ┃┃┣┫ ┃ ┣┫ #
 	# ┗┛┗┛┗┛┗┛┗┛  ┻┛┛┗ ┻ ┛┗ #
 	#########################
 	
-	if level >= 0:
-		level_data.level = level
-	level_data.level_type = -1
+	# FIXME all levels are 1 for now, later group them by levels and pick random
+	level_data.level = 1
+	level_data.level_type = 0
 	#level_data.level_events = [1]
 	level_data.tiles = ''
 	level_data.tiles_assets = ''
@@ -283,11 +283,12 @@ func _on_delete_button_toggled(toggled_on):
 func _on_save_button_pressed():
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
 	var content = file.get_as_text()
-	var level = content.count('->START') + 1
+	var index = content.count('->START') + 1
 	
-	calculate_level_data(level)
+	calculate_level_data()
 	
-	# level_generator will add characters data
+	# level_manager will add characters and events
+	level_data.erase('level_events')
 	level_data.erase('players')
 	level_data.erase('player_scenes')
 	level_data.erase('enemies')
@@ -295,26 +296,26 @@ func _on_save_button_pressed():
 	level_data.erase('civilians')
 	level_data.erase('civilian_scenes')
 	
-	content += '\n' + str(level) + '->START\n'
+	content += '\n' + str(index) + '-1->START\n'
 	# make it pretty
 	#content += JSON.stringify(level_data, '\t')
 	content += str(level_data)
-	content += '\n' + str(level) + '->STOP\n'
+	content += '\n' + str(index) + '-1->STOP\n'
 	
 	file.store_string(content)
-	editor_label.text = 'map "' + str(level) + '" saved'
+	editor_label.text = 'map "' + str(index) + '" saved'
 
 
 func _on_load_menu_button_about_to_popup():
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
 	var content = file.get_as_text()
-	var level = content.count('->START')
-	if level != load_menu_button.get_popup().get_item_count():
+	var index = content.count('->START')
+	if index != load_menu_button.get_popup().get_item_count():
 		load_menu_button.get_popup().clear()
 		
-		for current_level in range(1, level + 1):
+		for i in range(1, index + 1):
 			# TODO how to show more details?
-			load_menu_button.get_popup().add_item(str(current_level), current_level)
+			load_menu_button.get_popup().add_item(str(i), i)
 
 
 func _on_load_id_pressed(id):
@@ -322,8 +323,8 @@ func _on_load_id_pressed(id):
 	
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
 	var content = file.get_as_text()
-	var level_data_string = content.get_slice(str(id) + '->START', 1).get_slice(str(id) + '->STOP', 0).strip_escapes()
-	level_data = level_generator.parse_data(level_data_string)
+	var level_data_string = content.get_slice(str(id) + '-1->START', 1).get_slice(str(id) + '-1->STOP', 0).strip_escapes()
+	level_data = level_manager_script.parse_data(level_data_string)
 	
 	_on_maps_id_pressed(level_data.scene)
 	
@@ -342,9 +343,9 @@ func _on_load_id_pressed(id):
 			tile.add_child(asset)
 			tile.models.asset = asset
 		
-		var vector2i_tiles_coords = level_data.spawn_player_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
-		vector2i_tiles_coords += level_data.spawn_enemy_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
-		vector2i_tiles_coords += level_data.spawn_civilian_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y))
+		var vector2i_tiles_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_player_coords)
+		vector2i_tiles_coords += convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
+		vector2i_tiles_coords += convert_spawn_coords_to_vector_coords(level_data.spawn_civilian_coords)
 		if vector2i_tiles_coords.has(tile.coords):
 			var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
 			spawn_indicator.show()
@@ -502,9 +503,9 @@ func _on_editor_tile_clicked(tile):
 	selected_tile = tile
 	selected_tile_menu_button.text = 'SELECTED TILE ' + str(tile.coords)
 	selected_tile_menu_button.set_disabled(false)
-	selected_tile_menu_button.get_popup().set_item_checked(0, level_data.spawn_player_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y)).has(tile.coords))
-	selected_tile_menu_button.get_popup().set_item_checked(1, level_data.spawn_enemy_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y)).has(tile.coords))
-	selected_tile_menu_button.get_popup().set_item_checked(2, level_data.spawn_civilian_coords.map(func(tile_coords): return Vector2i(tile_coords.x, tile_coords.y)).has(tile.coords))
+	selected_tile_menu_button.get_popup().set_item_checked(0, convert_spawn_coords_to_vector_coords(level_data.spawn_player_coords).has(tile.coords))
+	selected_tile_menu_button.get_popup().set_item_checked(1, convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords).has(tile.coords))
+	selected_tile_menu_button.get_popup().set_item_checked(2, convert_spawn_coords_to_vector_coords(level_data.spawn_civilian_coords).has(tile.coords))
 	
 	var character = tile.get_character()
 	if not tile_to_placed.is_empty():

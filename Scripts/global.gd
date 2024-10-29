@@ -14,4 +14,4 @@ var current_player_scenes: Array[int] = []
 
 
 func _ready():
-	add_to_group('NEVER_QUEUED')
+	add_to_group('NEVER_FREED')

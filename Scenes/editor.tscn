@@ -1,8 +1,6 @@
-[gd_scene load_steps=27 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=25 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
-[ext_resource type="Script" path="res://Scripts/util.gd" id="3_r3ry7"]
-[ext_resource type="Script" path="res://Scripts/level_generator.gd" id="4_cmfno"]
 [ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="5_phmd4"]
 [ext_resource type="PackedScene" uid="uid://bysqedydgeakv" path="res://Scenes/map4x4.tscn" id="6_f5ijx"]
@@ -56,14 +54,6 @@ size = 8.604
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.766045, 0.492404, -0.413176, 0, 0.642788, 0.766045, 0.642788, -0.586824, 0.492404, 0, 5, 0)
 shadow_enabled = true
-
-[node name="Util" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
-script = ExtResource("3_r3ry7")
-
-[node name="LevelGenerator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-script = ExtResource("4_cmfno")
 
 [node name="GameStateManager" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0)

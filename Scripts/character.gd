@@ -2,6 +2,7 @@ extends Util
 
 class_name Character
 
+signal toggle_character_event(character: Character)
 signal action_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_miss_action(target_character: Character)
@@ -217,7 +218,7 @@ func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_posit
 			var target_position = get_vector3_on_map(-1 * position_to_target)
 			forced_action_model.position = target_position + origin_tile.position - first_origin_position
 			# move it at the target back
-			forced_action_model.position -= 0.3 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
+			forced_action_model.position -= 0.4 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
 			forced_action_model.position.y = 0.1
 			
 			# make materials unique
@@ -259,7 +260,7 @@ func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_posit
 			var target_position = get_vector3_on_map(-1 * position_to_target)
 			forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
 			# move it at the target back
-			forced_action_model.position += 0.3 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
+			forced_action_model.position += 0.4 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
 			
 			if target_tile.get_character():
 				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_DISABLED
@@ -280,11 +281,9 @@ func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_posit
 					spawn_action_indicators(current_tile, target_tile, origin_tile.position, ActionType.PUSH_BACK)
 					
 					# show outline and health bar for pushed characters
-					# FIXME maybe move this to game_state_manager..?
+					# FIXME maybe this kind of code should be only in game_state_manager..?
 					var character = current_tile.get_character()
-					if character:
-						character.toggle_outline(true)
-						character.toggle_health_bar(true)
+					toggle_character_event.emit(character)
 		_: print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
 
 
@@ -334,9 +333,9 @@ func spawn_bullet(target):
 	
 	var position_tween = create_tween()
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
-		var duration = position_to_target.length() / 10.0
+		var duration = position_to_target.length() / 8.0
 		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * position_to_target), duration)
-	else:
+	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		var origin_position = get_vector3_on_map(Vector3.ZERO)
 		var target_position = get_vector3_on_map(-1 * position_to_target)
 		var position_difference = target_position - origin_position
@@ -344,7 +343,7 @@ func spawn_bullet(target):
 		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		# more = smoother
 		var amount = maxi(2 * roundi(position_difference.length()), 6)
-		var duration = position_difference.length() / (amount * 6.0)
+		var duration = position_difference.length() / 12.0
 		for i in range(1, amount + 1):
 			# manually slowing down the bullet in the top part of the trajectory
 			var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)
@@ -429,8 +428,8 @@ func set_health_bar(displayed_health = health):
 		health_bar_tween.kill()
 	
 	health_bar_tween = create_tween().set_loops()
-	health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.4)
-	health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.4)
+	health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.5)
+	health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.5)
 	
 	# FIXME hacky wacky health bar segments
 	if health_bar.get_child_count() > 0:

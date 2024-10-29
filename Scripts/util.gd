@@ -10,7 +10,7 @@ enum TileType {PLAIN, GRASS, TREE, MOUNTAIN, VOLCANO, WATER, LAVA}
 enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE, INDESTRUCTIBLE, INDESTRUCTIBLE_WALKABLE}
 enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LEFT}
 enum LevelType {KILL_ENEMIES, SAVE_CIVILIANS, SAVE_TILES, SURVIVE_TIL_MAX_TURN, TUTORIAL = -1}
-enum LevelEvent {MINE, FALLING_MISSLE, FALLING_ROCK, FALLING_LAVA, FLOOD, MOVING_PLATFORMS, MORE_ENEMIES, NONE = -1}
+enum LevelEvent {MORE_ENEMIES, MINE, FALLING_MISSLE, FALLING_ROCK, FALLING_LAVA, FLOOD, MOVING_PLATFORMS, NONE = -1}
 
 const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
 const PLAYER_ARROW_COLOR: Color = Color('005fcd')
@@ -39,6 +39,10 @@ func push_unique_to_array(array, item):
 
 func get_vector3_on_map(position):
 	return Vector3(position.x, 0.5, position.z)
+
+
+func convert_spawn_coords_to_vector_coords(spawn_coords):
+	return spawn_coords.map(func(coords): return Vector2i(coords.x, coords.y))
 
 
 func is_tile_adjacent_by_coords(origin_coords, target_coords):

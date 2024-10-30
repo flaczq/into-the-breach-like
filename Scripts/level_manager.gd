@@ -6,16 +6,17 @@ const SAVED_LEVELS_FILE_PATH: String = 'res://Data/saved_levels.txt'
 const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
 
 
-func generate_data(level_type, level):
+func generate_data(level_type, level, enemy_scenes_size, civilian_scenes_size):
 	var levels_file_path = get_levels_file_path(level_type)
 	var file = FileAccess.open(levels_file_path, FileAccess.READ)
 	var file_content = file.get_as_text()
-	var level_data_string = select_random_level_data(file_content, level)
+	var level_data_string = select_random_level_data(file_content, level, level_type)
 	assert(level_data_string != file_content, 'Add level ' + str(level) + ' to levels file: ' + str(levels_file_path))
 	var level_data = parse_data(level_data_string)
 	
-	add_characters(level_data)
-	add_events(level_data)
+	add_characters(level_data, enemy_scenes_size, civilian_scenes_size)
+	add_level_type_details(level_data)
+	add_events_details(level_data, enemy_scenes_size)
 	
 	return level_data
 
@@ -34,13 +35,14 @@ func get_levels_file_path(level_type):
 	return SAVED_LEVELS_FILE_PATH
 
 
-func select_random_level_data(file_content, level):
-	var index = file_content.count('-' + str(level) + '->START')
+func select_random_level_data(file_content, level, level_type):
+	var prefix = '-' + str(level) + '-' + str(level_type) + '->'
+	var index = file_content.count(prefix + 'START')
 	var random_index = randi_range(1, index)
-	return file_content.get_slice(str(random_index) + '-' + str(level) + '->START', 1).get_slice(str(random_index) + '-' + str(level) + '->STOP', 0)#.strip_escapes()
+	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()
 
 
-func add_characters(level_data):
+func add_characters(level_data, enemy_scenes_size, civilian_scenes_size):
 	level_data.player_scenes = []
 	level_data.enemy_scenes = []
 	level_data.civilian_scenes = []
@@ -50,32 +52,41 @@ func add_characters(level_data):
 		if level_data.level == 1:
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
-			#level_data.civilian_scenes = []
 		elif level_data.level == 2:
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 	else:
-		# TODO pick enemies and civilians by random(?) based on level type and level number
 		for current_player_scene in Global.current_player_scenes:
 			level_data.player_scenes.push_back(current_player_scene)
 		
 		# scene 0 is always tutorial
-		# FIXME hardcoded scenes
-		level_data.enemy_scenes.push_back(randi_range(1, 3))
-		level_data.civilian_scenes.push_back(randi_range(1, 1))
+		# TODO pick enemies and civilians by random(?) based on level type and level number
+		level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+		level_data.civilian_scenes.push_back(randi_range(1, civilian_scenes_size - 1))
 
 
-func add_events(level_data):
+func add_level_type_details(level_data):
+	if level_data.level_type == LevelType.KILL_ENEMIES:
+		# FIXME hardcoded, maybe not needed..?
+		level_data.max_enemies = 7
+	elif level_data.level_type == LevelType.SURVIVE_TURNS:
+		# FIXME hardcoded
+		level_data.max_turns = 5
+
+
+func add_events_details(level_data, enemy_scenes_size):
 	if not level_data.has('level_events'):
 		return
 	
 	for level_event in level_data.level_events:
 		if level_event == LevelEvent.MORE_ENEMIES:
-			if not level_data.has('level_event_more_enemies'):
-				level_data.level_event_more_enemies = []
+			if not level_data.has('more_enemies'):
+				level_data.more_enemies = []
 			
-			# FIXME hardcoded enemy scene
-			level_data.level_event_more_enemies.push_back(randi_range(1, 3))
+			level_data.more_enemies.push_back(randi_range(1, enemy_scenes_size - 1))
+			# FIXME hardcoded
+			level_data.more_enemies_first_turn = 2
+			level_data.more_enemies_last_turn = 3
 
 
 func plan_events(map, level_data, current_turn):
@@ -85,7 +96,7 @@ func plan_events(map, level_data, current_turn):
 	for level_event in level_data.level_events:
 		# enemy spawned near spawn_enemy_coords
 		if level_event == LevelEvent.MORE_ENEMIES:
-			if current_turn > 1:
+			if current_turn >= level_data.more_enemies_first_turn and current_turn <= level_data.more_enemies_last_turn:
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FFFF00')#yellow
@@ -147,7 +158,7 @@ func plan_events(map, level_data, current_turn):
 		else:   print('no implementation of planning level event: ' + LevelEvent.keys()[level_event])
 
 
-func execute_events(map, level_data):
+func execute_events(map, level_data, current_turn):
 	if not level_data.has('level_events'):
 		return
 	
@@ -155,41 +166,44 @@ func execute_events(map, level_data):
 	for level_event in level_data.level_events:
 		# enemy spawns at spawned indicators
 		if level_event == LevelEvent.MORE_ENEMIES:
-			var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).front()
-			if not event_tile:
-				return
-			
-			# TODO animation
-			if level_data.has('level_event_more_enemies'):
-				init_enemy_event.emit(level_data.level_event_more_enemies[more_enemies_index], event_tile)
-			else:
-				printerr('wtf?! ' + str(level_data))
-				init_enemy_event.emit(0, event_tile)
-			
-			event_tile.models.event_asset.queue_free()
-			event_tile.models.erase('event_asset')
-			more_enemies_index += 1
+			if current_turn >= level_data.more_enemies_first_turn and current_turn <= level_data.more_enemies_last_turn:
+				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).front()
+				if not event_tile:
+					return
+				
+				# TODO animation
+				if level_data.has('more_enemies'):
+					init_enemy_event.emit(level_data.more_enemies[more_enemies_index], event_tile)
+				else:
+					printerr('wtf?! ' + str(level_data))
+					init_enemy_event.emit(0, event_tile)
+				
+				event_tile.models.event_asset.queue_free()
+				event_tile.models.erase('event_asset')
+				more_enemies_index += 1
 		# missle hits at spawned indicators
 		elif level_event == LevelEvent.FALLING_MISSLE:
-			var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')).front()
-			if not event_tile:
-				return
-			
-			# TODO add bullet spawn
-			await event_tile.get_shot(1)
-			
-			event_tile.models.event_asset.queue_free()
-			event_tile.models.erase('event_asset')
+			if current_turn > 1:
+				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')).front()
+				if not event_tile:
+					return
+				
+				# TODO add bullet spawn
+				await event_tile.get_shot(1)
+				
+				event_tile.models.event_asset.queue_free()
+				event_tile.models.erase('event_asset')
 		# rock hits at spawned indicators
 		elif level_event == LevelEvent.FALLING_ROCK:
-			var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')).front()
-			if not event_tile:
-				return
-			
-			# TODO add bullet spawn
-			await event_tile.get_shot(1)
-			
-			event_tile.models.event_asset.queue_free()
-			event_tile.models.erase('event_asset')
+			if current_turn > 1:
+				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')).front()
+				if not event_tile:
+					return
+				
+				# TODO add bullet spawn
+				await event_tile.get_shot(1)
+				
+				event_tile.models.event_asset.queue_free()
+				event_tile.models.erase('event_asset')
 		#TODO else...
 		else: print('no implementation of executing level event: ' + LevelEvent.keys()[level_event])

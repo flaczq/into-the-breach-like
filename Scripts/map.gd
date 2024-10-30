@@ -45,6 +45,7 @@ func convert_tile_type_initial_to_enum(tile_type_initial):
 		'V': return TileType.VOLCANO
 		'W': return TileType.WATER
 		'L': return TileType.LAVA
+		'F': return TileType.FLOOR
 		_:
 			print('[convert_tile_type_initial_to_enum] -> unknown tile type initial: ' + tile_type_initial)
 			return TileType.PLAIN
@@ -59,6 +60,7 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 		TileType.VOLCANO: return 'V'
 		TileType.WATER: return 'W'
 		TileType.LAVA: return 'L'
+		TileType.FLOOR: return 'F'
 		_:
 			print('[convert_tile_type_enum_to_initial] -> unknown tile type enum: ' + str(tile_type_enum))
 			return 'P'
@@ -73,6 +75,7 @@ func convert_asset_initial_to_filename(asset_initial):
 		'V': return 'volcano'
 		'S': return 'sign'
 		'I': return 'indicator-special-cross'
+		'H': return 'house'
 		_:
 			print('[convert_asset_initial_to_filename] -> unknown asset initial: ' + asset_initial)
 			return null
@@ -96,6 +99,9 @@ func convert_asset_filename_to_initial(asset_filename):
 	
 	if asset_filename.begins_with('indicator-special-cross'):
 		return 'I'
+	
+	if asset_filename.begins_with('house'):
+		return 'H'
 	
 	print('[convert_asset_filename_to_initial] -> default asset used or unknown asset filename: ' + asset_filename)
 	return '0'
@@ -141,7 +147,7 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 func get_color_by_tile_type(tile_type):
 	match tile_type:
 		TileType.PLAIN:
-			return Color('e3cdaa')#light brown
+			return Color('e3cdaa')#beige
 		TileType.GRASS:
 			return Color('66ff3e')#green
 		TileType.TREE:
@@ -154,6 +160,8 @@ func get_color_by_tile_type(tile_type):
 			return Color('3a8aff')#blue
 		TileType.LAVA:
 			return Color('c54700')#orange
+		TileType.FLOOR:
+			return Color('b58450')#light brown
 		_:
 			print('[get_color_by_tile_type] -> unknown tile type: ' + str(tile_type))
 			return Color('e3cdaa')
@@ -162,7 +170,7 @@ func get_color_by_tile_type(tile_type):
 func get_health_type_by_tile_type(tile_type, asset_filename):
 	# hardcoded
 	if asset_filename:
-		if asset_filename == 'tree' or asset_filename == 'sign':
+		if asset_filename == 'tree' or asset_filename == 'sign' or asset_filename == 'house':
 			return TileHealthType.DESTRUCTIBLE
 		
 		if asset_filename == 'mountain' or asset_filename == 'volcano':
@@ -176,6 +184,7 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 		TileType.VOLCANO: return TileHealthType.INDESTRUCTIBLE
 		TileType.WATER: return TileHealthType.INDESTRUCTIBLE_WALKABLE
 		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE_WALKABLE
+		TileType.FLOOR: return TileHealthType.HEALTHY
 		_:
 			print('[get_health_type_by_tile_type] -> unknown tile type: ' + str(tile_type))
 			return TileHealthType.HEALTHY
@@ -210,7 +219,7 @@ func get_spawnable_tiles(tiles_coords):
 
 
 func get_targetable_tiles():
-	# add character/asset to group 'TARGETABLES' to make the enemy try to target it
+	# add asset to group 'TARGETABLES' to make the enemy try to target it
 	return tiles.filter(func(tile): return is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES'))
 
 

@@ -343,7 +343,7 @@ func spawn_bullet(target):
 		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		# more = smoother
 		var amount = maxi(2 * roundi(position_difference.length()), 6)
-		var duration = position_difference.length() / 12.0
+		var duration = position_difference.length() / (amount * 6.0)
 		for i in range(1, amount + 1):
 			# manually slowing down the bullet in the top part of the trajectory
 			var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)
@@ -383,7 +383,7 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 		await color_tween.finished
 		
 		if health <= 0 and is_alive:
-			get_killed()
+			await get_killed()
 	else:
 		await get_tree().create_timer(1.0).timeout
 		print('chara ' + str(tile.coords) + ' -> got shot with 0 damage')
@@ -392,8 +392,14 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 func get_killed():
 	is_alive = false
 	
-	model.scale.y /= 2
-	model.position.y /= 2
+	#model.scale.y /= 2
+	#model.position.y /= 2
+	
+	var death_tween = create_tween().set_parallel()
+	death_tween.tween_property(model, 'scale:y', 0, 0.5).from(model.scale.y)
+	await death_tween.finished
+	
+	model.scale = Vector3.ZERO
 
 
 func toggle_outline(is_toggled):

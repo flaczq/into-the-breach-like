@@ -4,7 +4,7 @@ extends Player
 func _ready():
 	super()
 	# TODO custom name
-	model_name = 'Pulling tank'
+	model_name = 'Player 2'
 	max_health = 3
 	health = 3
 	damage = 1

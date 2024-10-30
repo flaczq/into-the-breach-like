@@ -168,13 +168,14 @@ func calculate_level_data():
 	# FIXME all levels are 1 for now, later group them by levels and pick random
 	level_data.level = 1
 	level_data.level_type = 0
-	#level_data.level_events = [1]
+	level_data.level_events = [LevelEvent.MORE_ENEMIES, LevelEvent.MORE_ENEMIES]
+	level_manager_script.add_level_type_details(level_data)
+	level_manager_script.add_events_details(level_data, enemy_scenes.size())
 	level_data.tiles = ''
 	level_data.tiles_assets = ''
 	level_data.player_scenes = []
 	level_data.enemy_scenes = []
 	level_data.civilian_scenes = []
-	#level_data.max_turns = 3
 	
 	for tile in map.tiles:
 		level_data.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
@@ -182,18 +183,23 @@ func calculate_level_data():
 		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else null
 		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
-	for child in get_children():
-		if child.is_in_group('PLAYERS'):
-			var player_scene = int(child.name.substr(6, 1))
-			level_data.player_scenes.push_back(player_scene)
-		
-		if child.is_in_group('ENEMIES'):
-			var enemy_scene = int(child.name.substr(5, 1))
-			level_data.enemy_scenes.push_back(enemy_scene)
-		
-		if child.is_in_group('CIVILIANS'):
-			var civilian_scene = int(child.name.substr(8, 1))
-			level_data.civilian_scenes.push_back(civilian_scene)
+	if get_children().all(func(child): return not child.is_in_group('PLAYERS') and not child.is_in_group('ENEMIES') and not child.is_in_group('CIVILIANS')):
+		# place 3 default players and enemies
+		level_data.player_scenes = [1,2,3]
+		level_data.enemy_scenes = [1,2,3]
+	else:
+		for child in get_children():
+			if child.is_in_group('PLAYERS'):
+				var player_scene = int(child.name.substr(6, 1))
+				level_data.player_scenes.push_back(player_scene)
+			
+			if child.is_in_group('ENEMIES'):
+				var enemy_scene = int(child.name.substr(5, 1))
+				level_data.enemy_scenes.push_back(enemy_scene)
+			
+			if child.is_in_group('CIVILIANS'):
+				var civilian_scene = int(child.name.substr(8, 1))
+				level_data.civilian_scenes.push_back(civilian_scene)
 
 
 func _on_main_menu_button_pressed():
@@ -284,23 +290,27 @@ func _on_save_button_pressed():
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
 	var content = file.get_as_text()
 	var index = content.count('->START') + 1
+	var prefix = '-' + str(level_data.level) + '-' + str(level_data.level_type) + '->'
 	
 	calculate_level_data()
 	
 	# level_manager will add characters and events
-	level_data.erase('level_events')
+	#level_data.erase('level_events')
 	level_data.erase('players')
 	level_data.erase('player_scenes')
 	level_data.erase('enemies')
 	level_data.erase('enemy_scenes')
 	level_data.erase('civilians')
 	level_data.erase('civilian_scenes')
+	level_data.erase('level_event_more_enemies_first_turn')
+	level_data.erase('level_event_more_enemies_last_turn')
+	level_data.erase('level_event_more_enemies')
 	
-	content += '\n' + str(index) + '-1->START\n'
+	content += '\n' + str(index) + prefix + 'START\n'
 	# make it pretty
 	#content += JSON.stringify(level_data, '\t')
 	content += str(level_data)
-	content += '\n' + str(index) + '-1->STOP\n'
+	content += '\n' + str(index) + prefix + 'STOP\n'
 	
 	file.store_string(content)
 	editor_label.text = 'map "' + str(index) + '" saved'
@@ -323,8 +333,10 @@ func _on_load_id_pressed(id):
 	
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
 	var content = file.get_as_text()
-	var level_data_string = content.get_slice(str(id) + '-1->START', 1).get_slice(str(id) + '-1->STOP', 0).strip_escapes()
+	# FIXME hardcoded
+	var level_data_string = content.get_slice(str(id) + '-1-0->START', 1).get_slice(str(id) + '-1-0->STOP', 0).strip_escapes()
 	level_data = level_manager_script.parse_data(level_data_string)
+	#level_manager_script.add_events_details(level_data, enemy_scenes.size())
 	
 	_on_maps_id_pressed(level_data.scene)
 	
@@ -425,6 +437,7 @@ func _on_assets_id_pressed(id):
 		2: selected_asset = assets.filter(func(asset): return asset.name == 'volcano').front().duplicate()
 		3: selected_asset = assets.filter(func(asset): return asset.name == 'sign').front().duplicate()
 		4: selected_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+		5: selected_asset = assets.filter(func(asset): return asset.name == 'house').front().duplicate()
 	
 	editor_label.text = 'placing asset "' + selected_asset.name + '"'
 

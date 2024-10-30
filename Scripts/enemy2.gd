@@ -4,7 +4,7 @@ extends Enemy
 func _ready():
 	super()
 	
-	model_name = 'Tanky ufo'
+	model_name = 'Enemy 2'
 	max_health = 3
 	health = 3
 	damage = 1

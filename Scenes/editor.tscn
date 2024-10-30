@@ -214,7 +214,7 @@ disabled = true
 text = "TILES"
 flat = false
 expand_icon = true
-item_count = 7
+item_count = 8
 popup/item_0/text = "PLAIN"
 popup/item_0/id = 0
 popup/item_1/text = "GRASS"
@@ -231,6 +231,8 @@ popup/item_5/text = "WATER"
 popup/item_5/id = 5
 popup/item_6/text = "LAVA"
 popup/item_6/id = 6
+popup/item_7/text = "FLOOR"
+popup/item_7/id = 7
 
 [node name="AssetsMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
@@ -238,7 +240,7 @@ disabled = true
 text = "ASSETS"
 flat = false
 expand_icon = true
-item_count = 5
+item_count = 6
 popup/item_0/text = "TREE"
 popup/item_0/id = 0
 popup/item_1/text = "MOUNTAIN"
@@ -249,6 +251,8 @@ popup/item_3/text = "SIGN"
 popup/item_3/id = 3
 popup/item_4/text = "INDICATOR CROSS"
 popup/item_4/id = 4
+popup/item_5/text = "HOUSE"
+popup/item_5/id = 5
 
 [node name="PlayersMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2

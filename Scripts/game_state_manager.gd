@@ -62,7 +62,7 @@ func progress():
 
 func init_by_level_type(level_type):
 	# level not increased yet
-	level_data = level_manager_script.generate_data(level_type, level + 1)
+	level_data = level_manager_script.generate_data(level_type, level + 1, enemy_scenes.size(), civilian_scenes.size())
 	
 	next_level()
 	init()
@@ -195,15 +195,17 @@ func start_turn():
 		await civilian.move(tiles_path)
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
 	
-	# enemy targets order: assets > civilians > players
+	# NOT (enemy targets order: assets > civilians > players) -> all are of the same priority
 	var target_tiles_for_enemy = [
-		alive_civilians.map(func(alive_civilian): return alive_civilian.tile),
+		alive_civilians.map(func(alive_civilian): return alive_civilian.tile) +
 		alive_players.map(func(alive_player): return alive_player.tile)
 	]
 	var targetable_tiles = map.get_targetable_tiles()
 	if not targetable_tiles.is_empty():
-		target_tiles_for_enemy.push_front(targetable_tiles)
+		#target_tiles_for_enemy.push_front(targetable_tiles)
+		target_tiles_for_enemy[0] += targetable_tiles
 	
+	print(target_tiles_for_enemy)
 	# sort by order
 	alive_enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for enemy in alive_enemies:
@@ -264,25 +266,15 @@ func end_turn():
 		if enemy.is_alive:
 			await enemy.execute_planned_action()
 	
-	await level_manager_script.execute_events(map, level_data)
+	await level_manager_script.execute_events(map, level_data, current_turn)
+	
+	check_for_level_end()
 	
 	#########################################
 	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓  ┏┓┳┓┳┓ #
 	# ┃┓┣┫┃┃┃┣   ┃┃┃┣┫┓┃┃  ┃ ┃┃┃┃┃┃  ┣ ┃┃┃┃ #
 	# ┗┛┛┗┛ ┗┗┛  ┛ ┗┛┗┗┛┗  ┗┛┗┛┗┛┣┛  ┗┛┛┗┻┛ #
 	#########################################
-	
-	if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
-		level_won()
-	
-	if players.filter(func(player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
-		level_lost()
-	else:
-		next_turn()
-	#elif current_turn < level_data.max_turns:
-		#next_turn()
-	#else:
-		#level_won()
 
 
 func next_turn():
@@ -317,9 +309,26 @@ func next_level():
 	level += 1
 
 
+func check_for_level_end(turn_ended = true):
+	if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
+		level_won()
+	elif turn_ended:
+		if players.filter(func(player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
+			level_lost()
+		elif level_data.level_type == LevelType.SURVIVE_TURNS:
+			# turn not increased yet
+			if current_turn >= level_data.max_turns:
+				level_won()
+			else:
+				next_turn()
+		else:
+			next_turn()
+
+
 func level_won():
 	points += civilians.filter(func(civilian): return civilian.is_alive).size()
 	
+	# TODO
 	if level < max_levels and not Global.tutorial:
 		level_end_label.text = 'LEVEL WON'
 		level_end_popup.show()
@@ -878,8 +887,7 @@ func _on_tile_clicked(tile):
 			else:
 				await selected_player.shoot(first_occupied_tile_in_line)
 			
-			if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
-				level_won()
+			check_for_level_end(false)
 	# other player or selected player is clicked
 	elif tile.player and (not selected_player or selected_player.tile == tile or selected_player.can_be_interacted_with()):
 		tile.player.reset_phase()
@@ -989,7 +997,7 @@ func _on_character_action_push_back(target_character, action_damage, origin_tile
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
-				target_character.get_killed()
+				await target_character.get_killed()
 			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				target_character.state_type = StateType.SLOW_DOWN
 			elif target_character.tile == target_tile and target_character.is_in_group('ENEMIES'):
@@ -1023,7 +1031,7 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# fell down
-				target_character.get_killed()
+				await target_character.get_killed()
 			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				target_character.state_type = StateType.SLOW_DOWN
 			elif target_character.tile == target_tile and target_character.is_in_group('ENEMIES'):
@@ -1125,7 +1133,7 @@ func _on_level_end_popup_gui_input(event):
 		
 		for tile in map.tiles:
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(tile, 'position:y', 6, 0.2)
+			flying_tile_tween.tween_property(tile, 'position:y', 6, 0.1)
 			await flying_tile_tween.finished
 		
 		level_end_popup.hide()

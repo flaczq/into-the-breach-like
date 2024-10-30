@@ -4,11 +4,11 @@ extends Enemy
 func _ready():
 	super()
 	
-	model_name = 'Punch squid'
+	model_name = 'Enemy 1'
 	max_health = 3
 	health = 3
 	damage = 1
-	move_distance = 4
+	move_distance = 3
 	action_min_distance = 1
 	action_max_distance = 1
 	action_direction = ActionDirection.HORIZONTAL_LINE

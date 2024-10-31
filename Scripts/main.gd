@@ -9,6 +9,7 @@ var key_pressed: bool = false
 
 func _ready():
 	Global.engine_mode = Global.EngineMode.GAME
+	Global.editor = false
 	
 	var default_maps = get_children().filter(func(child): return child.is_in_group('MAPS'))
 	if default_maps:

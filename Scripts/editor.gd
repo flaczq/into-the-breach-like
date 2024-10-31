@@ -44,6 +44,7 @@ var selected: Node3D
 
 func _ready():
 	Global.engine_mode = Global.EngineMode.EDITOR
+	Global.editor = true
 	
 	assets.append_array(assets_scene.instantiate().get_children())
 	
@@ -334,7 +335,7 @@ func _on_load_id_pressed(id):
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
 	var content = file.get_as_text()
 	# FIXME hardcoded
-	var level_data_string = content.get_slice(str(id) + '-1-0->START', 1).get_slice(str(id) + '-1-0->STOP', 0).strip_escapes()
+	var level_data_string = content.get_slice(str(id) + '-1-1->START', 1).get_slice(str(id) + '-1-1->STOP', 0).strip_escapes()
 	level_data = level_manager_script.parse_data(level_data_string)
 	#level_manager_script.add_events_details(level_data, enemy_scenes.size())
 	

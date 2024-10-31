@@ -11,7 +11,7 @@ func generate_data(level_type, level, enemy_scenes_size, civilian_scenes_size):
 	var file = FileAccess.open(levels_file_path, FileAccess.READ)
 	var file_content = file.get_as_text()
 	var level_data_string = select_random_level_data(file_content, level, level_type)
-	assert(level_data_string != file_content, 'Add level ' + str(level) + ' to levels file: ' + str(levels_file_path))
+	assert(level_data_string != file_content, 'Add level type ' + str(level_type) + ' to levels file: ' + str(levels_file_path))
 	var level_data = parse_data(level_data_string)
 	
 	add_characters(level_data, enemy_scenes_size, civilian_scenes_size)
@@ -37,6 +37,10 @@ func get_levels_file_path(level_type):
 
 func select_random_level_data(file_content, level, level_type):
 	var prefix = '-' + str(level) + '-' + str(level_type) + '->'
+	
+	if level_type == LevelType.TUTORIAL:
+		return file_content.get_slice(str(level) + prefix + 'START', 1).get_slice(str(level) + prefix + 'STOP', 0)#.strip_escapes()
+	
 	var index = file_content.count(prefix + 'START')
 	var random_index = randi_range(1, index)
 	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()

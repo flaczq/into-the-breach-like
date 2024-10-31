@@ -329,7 +329,7 @@ func level_won():
 	points += civilians.filter(func(civilian): return civilian.is_alive).size()
 	
 	# TODO
-	if level < max_levels and not Global.tutorial:
+	if level < max_levels and not Global.editor:
 		level_end_label.text = 'LEVEL WON'
 		level_end_popup.show()
 		#next_level()
@@ -339,7 +339,7 @@ func level_won():
 
 
 func level_lost():
-	if not Global.tutorial:
+	if not Global.editor:
 		level_end_label.text = 'LEVEL LOST'
 		level_end_popup.show()
 	else:
@@ -1133,7 +1133,7 @@ func _on_level_end_popup_gui_input(event):
 		
 		for tile in map.tiles:
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(tile, 'position:y', 6, 0.1)
+			flying_tile_tween.tween_property(tile, 'position:y', 6, 0.2)
 			await flying_tile_tween.finished
 		
 		level_end_popup.hide()

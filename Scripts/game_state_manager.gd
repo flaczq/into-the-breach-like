@@ -118,7 +118,8 @@ func init_players():
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate()
 		add_sibling(player_instance)
-		if Global.tutorial:   tutorial_manager_script.init_player(player_instance, level)
+		if Global.tutorial:
+			tutorial_manager_script.init_player(player_instance, level)
 		
 		#player_instance.init(current_level_player)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
@@ -126,7 +127,6 @@ func init_players():
 		
 		player_instance.connect('hovered_event', _on_player_hovered)
 		player_instance.connect('clicked_event', _on_player_clicked)
-		player_instance.connect('toggle_character_event', _on_toggle_character)
 		player_instance.connect('action_push_back', _on_character_action_push_back)
 		player_instance.connect('action_pull_front', _on_character_action_pull_front)
 		player_instance.connect('action_miss_action', _on_character_action_miss_action)
@@ -134,6 +134,7 @@ func init_players():
 		player_instance.connect('action_give_shield', _on_character_action_give_shield)
 		player_instance.connect('action_slow_down', _on_character_action_slow_down)
 		player_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
+		player_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
 		
 		players.push_back(player_instance)
 
@@ -152,13 +153,13 @@ func init_civilians():
 	for civilian_scene in level_data.civilian_scenes:
 		var civilian_instance = civilian_scenes[civilian_scene].instantiate()
 		add_sibling(civilian_instance)
-		if Global.tutorial:   tutorial_manager_script.init_civilian(civilian_instance, level)
+		if Global.tutorial:
+			tutorial_manager_script.init_civilian(civilian_instance, level)
 		
 		#civilian_instance.init(current_level_civilian)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_civilian_coords).pick_random()
 		civilian_instance.spawn(spawn_tile)
 		
-		civilian_instance.connect('toggle_character_event', _on_toggle_character)
 		civilian_instance.connect('action_push_back', _on_character_action_push_back)
 		civilian_instance.connect('action_pull_front', _on_character_action_pull_front)
 		civilian_instance.connect('action_miss_action', _on_character_action_miss_action)
@@ -166,6 +167,7 @@ func init_civilians():
 		civilian_instance.connect('action_give_shield', _on_character_action_give_shield)
 		civilian_instance.connect('action_slow_down', _on_character_action_slow_down)
 		civilian_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
+		civilian_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
 		
 		civilians.push_back(civilian_instance)
 
@@ -392,7 +394,7 @@ func calculate_tiles_for_movement(active, character):
 
 
 func is_tile_adjacent(tile, origin_tile, check_for_movement = true):
-	if check_for_movement and (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE):
+	if check_for_movement and (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE):
 		return false
 	
 	return is_tile_adjacent_by_coords(tile.coords, origin_tile.coords)
@@ -406,7 +408,7 @@ func calculate_tiles_path(character, target_tile):
 	astar_grid_map.update()
 	
 	for tile in map.tiles:
-		var occupied_by_health_type = tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE
+		var occupied_by_health_type = (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE)
 		var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
 		if occupied_by_health_type or occupied_by_characters:
 			astar_grid_map.set_point_solid(tile.coords, true)
@@ -466,7 +468,7 @@ func calculate_tiles_for_action(active, character):
 		
 		# exclude tiles behind occupied tiles
 		if character.is_in_group('PLAYERS') and character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.VERTICAL_LINE:
-			var occupied_tiles = tiles_for_action.filter(func(tile): return tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE or tile.get_character())
+			var occupied_tiles = tiles_for_action.filter(func(tile): return tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE or tile.get_character())
 			if not occupied_tiles.is_empty():
 				for occupied_tile in occupied_tiles:
 					var origin_to_target_sign = (character.tile.coords - occupied_tile.coords).sign()
@@ -571,7 +573,7 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character, o
 			if not current_tiles_in_line.is_empty():
 				push_unique_to_array(tiles_in_line, current_tiles_in_line.front())
 		
-		var occupied_tiles_in_line = tiles_in_line.filter(func(tile): return (tile.health_type == TileHealthType.DESTRUCTIBLE or tile.health_type == TileHealthType.INDESTRUCTIBLE or (tile.player and not tile.player.is_ghost) or tile.ghost or tile.enemy or tile.civilian) and tile != origin_character.tile)
+		var occupied_tiles_in_line = tiles_in_line.filter(func(tile): return (tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE or (tile.player and not tile.player.is_ghost) or tile.ghost or tile.enemy or tile.civilian) and tile != origin_character.tile)
 		if not occupied_tiles_in_line.is_empty():
 			return occupied_tiles_in_line.front()
 		
@@ -630,6 +632,20 @@ func recalculate_enemies_planned_actions():
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
+func show_outline_with_predicted_health(origin_character, target_character):
+	if target_character:
+		target_character.toggle_outline(true)
+		
+		if target_character.state_type == StateType.GIVE_SHIELD:
+			# FIXME maybe don't show..?
+			target_character.toggle_health_bar(true)
+		else:
+			var predicted_health = maxi(0, target_character.health - origin_character.damage)
+			target_character.toggle_health_bar(true, predicted_health)
+			#if health changed:
+			#adjacent_character.toggle_health_bar(true)
+
+
 func on_shoot_action_button_toggled(toggled_on):
 	# order matters here!
 	if toggled_on:
@@ -653,14 +669,14 @@ func on_shoot_action_button_toggled(toggled_on):
 func _on_init_enemy(enemy_scene, spawn_tile):
 	var enemy_instance = enemy_scenes[enemy_scene].instantiate()
 	add_sibling(enemy_instance)
-	if Global.tutorial:   tutorial_manager_script.init_enemy(enemy_instance, level)
+	if Global.tutorial:
+		tutorial_manager_script.init_enemy(enemy_instance, level)
 	
 	# find max order
 	var enemies_orders = enemies.map(func(enemy): return enemy.order)
 	var max_order = (0) if (enemies_orders.is_empty()) else (enemies_orders.max())
 	enemy_instance.spawn(spawn_tile, max_order + 1)
 	
-	enemy_instance.connect('toggle_character_event', _on_toggle_character)
 	enemy_instance.connect('action_push_back', _on_character_action_push_back)
 	enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
 	enemy_instance.connect('action_miss_action', _on_character_action_miss_action)
@@ -668,6 +684,7 @@ func _on_init_enemy(enemy_scene, spawn_tile):
 	enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
 	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
 	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
+	enemy_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
 	
 	enemies.push_back(enemy_instance)
 
@@ -724,35 +741,22 @@ func _on_tile_hovered(tile, is_hovered):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
 			elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_ROCK]) + '\n'
-		if tile.info:
+		if tile.info and not tile.info.is_empty():
 			debug_info_label.text += '\n\n' + tile.info
 		
 		# tile and character hover info
 		# TODO
 		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 		
-		if tile.player:
-			tile_info_label.text += '\n\n' + tile.player.model_name + '\n'
-			tile_info_label.text += tr('INFO_HEALTH') + ': ' + str(tile.player.health) + '/' + str(tile.player.max_health) + '\n'
-			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.player.action_type]) + '\n'
-			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.player.action_direction]) + '\n'
-			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.player.action_min_distance) + '-' + str(tile.player.action_max_distance) + '\n'
-			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.player.move_distance) + '\n'
-			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.player.state_type])
-		elif tile.enemy:
-			tile_info_label.text += '\n\n' + tile.enemy.model_name + '\n'
-			tile_info_label.text += 'ORDER: ' + str(tile.enemy.order) + '\n'
-			tile_info_label.text += 'HEALTH: ' + str(tile.enemy.health) + '/' + str(tile.enemy.max_health) + '\n'
-			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[tile.enemy.action_type]) + '\n'
-			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[tile.enemy.action_direction]) + '\n'
-			tile_info_label.text += 'ACTION DISTANCE: ' + str(tile.enemy.action_min_distance) + '-' + str(tile.enemy.action_max_distance) + '\n'
-			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.enemy.move_distance) + '\n'
-			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.enemy.state_type])
-		elif tile.civilian:
-			tile_info_label.text += '\n\n' + tile.civilian.model_name + '\n'
-			tile_info_label.text += 'HEALTH: ' + str(tile.civilian.health) + '/' + str(tile.civilian.max_health) + '\n'
-			tile_info_label.text += 'MOVE DISTANCE: ' + str(tile.civilian.move_distance) + '\n'
-			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[tile.civilian.state_type])
+		var character = tile.get_character()
+		if character:
+			tile_info_label.text += '\n\n' + character.model_name + '\n'
+			tile_info_label.text += tr('INFO_HEALTH') + ': ' + str(character.health) + '/' + str(character.max_health) + '\n'
+			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[character.action_type]) + '\n'
+			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[character.action_direction]) + '\n'
+			tile_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
+			tile_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
+			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
 	else:
 		debug_info_label.text = ''
 		tile_info_label.text = ''
@@ -768,23 +772,24 @@ func _on_tile_hovered(tile, is_hovered):
 			tile.enemy.toggle_health_bar(true)
 			
 			if tile.enemy.planned_tile:
-				tile.enemy.planned_tile.toggle_asset_outline(true)
-				
-				var character = tile.enemy.planned_tile.get_character()
 				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed()
 				if not is_selected_player_action:
 					tile.enemy.toggle_arrow_highlight(true)
+					tile.enemy.planned_tile.toggle_asset_outline(true)
 					
-					if character:
-						# FIXME more generic for different state types if needed
-						if character.state_type == StateType.GIVE_SHIELD:
-							character.toggle_health_bar(true)
-						else:
-							character.toggle_outline(true)
-							var predicted_health = maxi(0, character.health - tile.enemy.damage)
-							character.toggle_health_bar(true, predicted_health)
-					elif not tile.enemy.planned_tile.models.get('asset'):
+					var target_character = tile.enemy.planned_tile.get_character()
+					# show outline with health for enemy targets
+					show_outline_with_predicted_health(tile.enemy, target_character)
+					
+					# highlight tile if it's empty
+					if not target_character and not tile.enemy.planned_tile.models.get('asset') and not tile.enemy.planned_tile.models.get('asset_damaged'):
 						tile.enemy.planned_tile.toggle_shader(true)
+					
+					#if tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
+						#for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(tile.enemy.planned_tile.coords, current_tile.coords)):
+							#var adjacent_character = current_tile.get_character()
+							## show outline with health for enemy cross pushed targets
+							#show_outline_with_predicted_health(tile.enemy, adjacent_character)
 		
 		# highlight attack arrows of hovered planned target
 		if tile.is_planned_enemy_action:
@@ -836,14 +841,9 @@ func _on_tile_hovered(tile, is_hovered):
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
 				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
 				
-				var character = first_occupied_tile_in_line.get_character()
-				if character:
-					character.toggle_outline(true)
-					if character.state_type == StateType.GIVE_SHIELD:
-						character.toggle_health_bar(true)
-					else:
-						var predicted_health = maxi(0, character.health - selected_player.damage)
-						character.toggle_health_bar(true, predicted_health)
+				var target_character = first_occupied_tile_in_line.get_character()
+				# show outline with health for player targets
+				show_outline_with_predicted_health(selected_player, target_character)
 			else:
 				selected_player.clear_arrows()
 				selected_player.clear_action_indicators()
@@ -975,12 +975,6 @@ func _on_player_clicked(player, is_clicked):
 	player.tile.on_mouse_entered()
 
 
-func _on_toggle_character(character):
-	if character:
-		character.toggle_outline(true)
-		character.toggle_health_bar(true)
-
-
 func _on_character_action_push_back(target_character, action_damage, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
@@ -1072,6 +1066,16 @@ func _on_character_action_slow_down(target_character):
 func _on_character_action_cross_push_back(target_character, action_damage, origin_tile_coords):
 	# does this even work if it's called from signal? i don't think so...
 	await _on_tile_action_cross_push_back(target_character.tile.coords, action_damage, origin_tile_coords)
+
+
+func _on_action_indicators_cross_push_back(target_character, origin_tile, first_origin_position):
+	for tile in map.tiles.filter(func(tile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)):
+		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
+		
+		# show outline with health only for player cross pushed targets
+		#if selected_player and selected_player == target_character and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed():
+			#var adjacent_character = tile.get_character()
+			#show_outline_with_predicted_health(selected_player, adjacent_character)
 
 
 func _on_end_turn_button_pressed():

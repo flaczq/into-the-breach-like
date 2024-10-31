@@ -2,7 +2,6 @@ extends Util
 
 class_name Character
 
-signal toggle_character_event(character: Character)
 signal action_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_miss_action(target_character: Character)
@@ -10,6 +9,7 @@ signal action_hit_ally(target_character: Character)
 signal action_give_shield(target_character: Character)
 signal action_slow_down(target_character: Character)
 signal action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
+signal action_indicators_cross_push_back(target_character: Character, origin_tile: Node3D, first_origin_position: Vector3)
 
 @export var assets_scene: PackedScene
 
@@ -273,17 +273,8 @@ func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_posit
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.CROSS_PUSH_BACK:
-			# FIXME maybe don't search for map here..?
-			var map = get_parent().get_children().filter(func(child): return child.is_in_group('MAPS')).front()
-			for current_tile in map.tiles:
-				if is_tile_adjacent_by_coords(target_tile.coords, current_tile.coords):
-					# 'current_tile' is target, 'target_tile' is origin, 'origin_tile.position' is first_origin_position
-					spawn_action_indicators(current_tile, target_tile, origin_tile.position, ActionType.PUSH_BACK)
-					
-					# show outline and health bar for pushed characters
-					# FIXME maybe this kind of code should be only in game_state_manager..?
-					var character = current_tile.get_character()
-					toggle_character_event.emit(character)
+			# 'target_tile' is origin, 'origin_tile.position' is first_origin_position
+			action_indicators_cross_push_back.emit(self, target_tile, origin_tile.position)
 		_: print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
 
 

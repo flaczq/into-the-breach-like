@@ -57,11 +57,18 @@ func _input(event):
 				player.is_ghost = false
 				player.clear_arrows()
 				player.clear_action_indicators()
+				player.toggle_health_bar(false)
 				
 				if player.is_alive:
 					player.reset_phase()
 					player.reset_tiles()
-		
+			
+			for enemy in game_state_manager.enemies:
+				enemy.toggle_health_bar(false)
+			
+			for civilian in game_state_manager.civilians:
+				civilian.toggle_health_bar(false)
+			
 			for tile in game_state_manager.map.tiles:
 				#tile.is_clicked = false
 				tile.ghost = null

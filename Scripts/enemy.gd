@@ -66,7 +66,7 @@ func move(tiles_path, forced = false, outside_tile = null):
 			else:
 				print('enemy ' + str(tile.coords) + ' -> is not moving')
 		else:
-			if target_tile.health_type == TileHealthType.DESTRUCTIBLE or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
+			if target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
 				print('enemy ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 				get_shot(1)
 				await force_into_occupied_tile(target_tile)

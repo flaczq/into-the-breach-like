@@ -78,15 +78,15 @@ func init(tile_init_data):
 	add_child(models.indicator_dashed)
 	add_child(models.indicator_corners)
 	if models.get('asset'):
-		# translation exists
-		if tr(models.asset.name.to_upper()) != models.asset.name.to_upper():
-			info = tr(models.asset.name.to_upper())
-		
 		#models.asset.rotation_degrees.y = randi_range(0, 180)
-		models.asset.show()
+		models.asset.hide()
 		add_child(models.asset)
-		
-		toggle_asset_outline(false)
+	if models.get('asset_damaged'):
+		#models.asset_damaged.rotation_degrees.y = randi_range(0, 180)
+		models.asset_damaged.hide()
+		add_child(models.asset_damaged)
+	
+	setup_assets()
 	
 	reset_tile_models()
 
@@ -172,7 +172,30 @@ func set_character(character):
 
 
 func is_free():
-	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE and not player and not enemy and not civilian
+	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE_HEALTHY and health_type != TileHealthType.DESTRUCTIBLE_DAMAGED and health_type != TileHealthType.INDESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE and not player and not enemy and not civilian
+
+
+func setup_assets():
+	if health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
+		if is_instance_valid(models.get('asset_damaged')) and not models.asset_damaged.is_queued_for_deletion():
+			# translation exists
+			if tr(models.asset_damaged.name.to_upper()) != models.asset_damaged.name.to_upper():
+				info = tr(models.asset_damaged.name.to_upper())
+			else:
+				info = ''
+			
+			models.asset_damaged.show()
+	else:
+		if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
+			# translation exists
+			if tr(models.asset.name.to_upper()) != models.asset.name.to_upper():
+				info = tr(models.asset.name.to_upper())
+			else:
+				info = ''
+			
+			models.asset.show()
+	
+	toggle_asset_outline(false)
 
 
 func toggle_shader(is_toggled):
@@ -183,11 +206,21 @@ func toggle_shader(is_toggled):
 
 
 func toggle_asset_outline(is_outlined):
-	if is_instance_valid(models.get('asset_outline')) and not models.asset_outline.is_queued_for_deletion():
-		if is_outlined:
-			models.asset_outline.show()
-		else:
-			models.asset_outline.hide()
+	if health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
+		if is_instance_valid(models.get('asset_damaged_outline')) and not models.asset_damaged_outline.is_queued_for_deletion():
+			if is_outlined:
+				models.asset_damaged_outline.show()
+			else:
+				models.asset_damaged_outline.hide()
+	else:
+		if is_instance_valid(models.get('asset_outline')) and not models.asset_outline.is_queued_for_deletion():
+			if is_outlined:
+				models.asset_outline.show()
+			else:
+				models.asset_outline.hide()
+		
+		if is_instance_valid(models.get('asset_damaged_outline')) and not models.asset_damaged_outline.is_queued_for_deletion():
+			models.asset_damaged_outline.hide()
 
 
 func toggle_player_hovered(is_toggled):
@@ -230,12 +263,37 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 			color_tween.tween_property(model_material, 'albedo_color', model_material.albedo_color, 1.0).from(Color.RED)
 			await color_tween.finished
 			
-			if health_type == TileHealthType.DESTRUCTIBLE:
-				health_type = TileHealthType.HEALTHY
-				# destroy required asset for destructible tile
+			if health_type == TileHealthType.DESTRUCTIBLE_HEALTHY:
+				health_type = TileHealthType.DESTRUCTIBLE_DAMAGED
+				
+				# damage asset with outline for destructible tile
 				if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
 					models.asset.queue_free()
 					models.erase('asset')
+				if is_instance_valid(models.get('asset_outline')) and not models.asset_outline.is_queued_for_deletion():
+					models.asset_outline.queue_free()
+					models.erase('asset_outline')
+				
+				setup_assets()
+				reset_tile_models()
+				print('ttile ' + str(coords) + ' -> destructible damaged tile')
+			elif health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
+				health_type = TileHealthType.HEALTHY
+				
+				# destroy assets with outlines for destructible tile
+				if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
+					models.asset.queue_free()
+					models.erase('asset')
+				if is_instance_valid(models.get('asset_outline')) and not models.asset_outline.is_queued_for_deletion():
+					models.asset_outline.queue_free()
+					models.erase('asset_outline')
+				
+				if is_instance_valid(models.get('asset_damaged')) and not models.asset_damaged.is_queued_for_deletion():
+					models.asset_damaged.queue_free()
+					models.erase('asset_damaged')
+				if is_instance_valid(models.get('asset_damaged_outline')) and not models.asset_damaged_outline.is_queued_for_deletion():
+					models.asset_damaged_outline.queue_free()
+					models.erase('asset_damaged_outline')
 				
 				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> healthy tile')

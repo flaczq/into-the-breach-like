@@ -131,13 +131,25 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 		if asset_filename and asset.name == asset_filename:
 			models.asset = asset.duplicate()
 			
+			var asset_damaged = assets.filter(func(asset): return asset.name == asset_filename + '_damaged').front()
+			if asset_damaged:
+				models.asset_damaged = asset_damaged.duplicate()
+			else:
+				models.asset_damaged = asset.duplicate()
+			
 			# change name for custom translations
 			if models.asset.name == 'sign' and level_type == LevelType.TUTORIAL:
 				models.asset.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
+				models.asset_damaged.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
 	
 	if models.get('asset'):
-		for child in models.asset.get_children().filter(func(child): return child.is_in_group('OUTLINES')):
-			models.asset_outline = child
+		for child in models.asset.get_children():
+			if child.is_in_group('OUTLINES'):
+				models.asset_outline = child
+	if models.get('asset_damaged'):
+		for child in models.asset_damaged.get_children():
+			if child.is_in_group('OUTLINES'):
+				models.asset_damaged_outline = child
 	
 	models.tile_default_color = get_color_by_tile_type(tile_type)
 	
@@ -168,10 +180,13 @@ func get_color_by_tile_type(tile_type):
 
 
 func get_health_type_by_tile_type(tile_type, asset_filename):
-	# hardcoded
+	# FIXME hardcoded
 	if asset_filename:
-		if asset_filename == 'tree' or asset_filename == 'sign' or asset_filename == 'house':
-			return TileHealthType.DESTRUCTIBLE
+		if asset_filename == 'house':
+			return TileHealthType.DESTRUCTIBLE_HEALTHY
+		
+		if asset_filename == 'tree' or asset_filename == 'sign':
+			return TileHealthType.DESTRUCTIBLE_DAMAGED
 		
 		if asset_filename == 'mountain' or asset_filename == 'volcano':
 			return TileHealthType.INDESTRUCTIBLE
@@ -220,7 +235,8 @@ func get_spawnable_tiles(tiles_coords):
 
 func get_targetable_tiles():
 	# add asset to group 'TARGETABLES' to make the enemy try to target it
-	return tiles.filter(func(tile): return is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES'))
+	return tiles.filter(func(tile): return (is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES')) \
+		or (is_instance_valid(tile.models.get('asset_damaged')) and not tile.models.asset_damaged.is_queued_for_deletion() and tile.models.asset_damaged.is_in_group('TARGETABLES')))
 
 
 func get_untargetable_tiles():

@@ -43,6 +43,7 @@ func select_random_level_data(file_content, level, level_type):
 	
 	var index = file_content.count(prefix + 'START')
 	var random_index = randi_range(1, index)
+	print('selected level: ' + str(random_index) + prefix)
 	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()
 
 
@@ -65,6 +66,8 @@ func add_characters(level_data, enemy_scenes_size, civilian_scenes_size):
 		
 		# scene 0 is always tutorial
 		# TODO pick enemies and civilians by random(?) based on level type and level number
+		level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+		level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
 		level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
 		level_data.civilian_scenes.push_back(randi_range(1, civilian_scenes_size - 1))
 
@@ -159,7 +162,8 @@ func plan_events(map, level_data, current_turn):
 				event_tile.add_child(event_tile.models.event_asset)
 				print('spawned rock at ' + str(event_tile.coords))
 		#TODO more
-		else:   print('no implementation of planning level event: ' + LevelEvent.keys()[level_event])
+		else:
+			print('no implementation of planning level event: ' + LevelEvent.keys()[level_event])
 
 
 func execute_events(map, level_data, current_turn):

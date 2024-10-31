@@ -102,23 +102,23 @@ theme_override_constants/separation = 50
 layout_mode = 2
 text = "KILL_ENEMIES"
 
-[node name="LevelType2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
+[node name="LevelType2Button2" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
-text = "SAVE_CIVILIANS"
+text = "SURVIVE_TURNS"
 
 [node name="LevelType3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
-text = "SAVE_TILES"
+text = "SAVE_CIVILIANS"
 
 [node name="LevelType4Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
-text = "SURVIVE_TIL_MAX_TURN"
+text = "SAVE_TILES"
 
 [connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action1Button" to="." method="_on_action_button_pressed" binds= [0]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action2Button" to="." method="_on_action_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action3Button" to="." method="_on_action_button_pressed" binds= [2]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [0]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [1]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [2]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [2]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType2Button2" to="." method="_on_level_type_button_pressed" binds= [2]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]
+[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [4]]

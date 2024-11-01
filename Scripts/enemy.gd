@@ -41,7 +41,7 @@ func spawn(spawn_tile, new_order):
 	order = new_order
 
 
-func move(tiles_path, forced = false, outside_tile = null):
+func move(tiles_path, forced = false, outside_tile_position = null):
 	toggle_arrows(false)
 	toggle_action_indicators(false)
 	
@@ -59,17 +59,17 @@ func move(tiles_path, forced = false, outside_tile = null):
 		
 		var target_tile = tiles_path.back()
 		if target_tile == tile:
-			if forced and outside_tile:
+			if forced and outside_tile_position:
 				print('enemy ' + str(tile.coords) + ' -> pushed into the wall')
 				get_shot(1)
-				await force_into_occupied_tile(outside_tile, true)
+				await force_into_occupied_tile(outside_tile_position)
 			else:
 				print('enemy ' + str(tile.coords) + ' -> is not moving')
 		else:
 			if target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
 				print('enemy ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 				get_shot(1)
-				await force_into_occupied_tile(target_tile)
+				await force_into_occupied_tile(target_tile.position, target_tile)
 			else:
 				clear_arrows()
 				clear_action_indicators()

@@ -171,8 +171,14 @@ func set_character(character):
 		printerr('unknown character ' + str(character))
 
 
+func is_occupied():
+	# is occupied by character or asset
+	return health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or health_type == TileHealthType.INDESTRUCTIBLE or get_character()
+
+
 func is_free():
-	return health_type != TileHealthType.DESTROYED and health_type != TileHealthType.DESTRUCTIBLE_HEALTHY and health_type != TileHealthType.DESTRUCTIBLE_DAMAGED and health_type != TileHealthType.INDESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE and not player and not enemy and not civilian
+	# is occupied by character or asset
+	return not is_occupied() and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
 
 
 func setup_assets():

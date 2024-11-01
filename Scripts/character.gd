@@ -76,18 +76,18 @@ func set_model_outlines(parent = model):
 			set_model_outlines(child)
 
 
-func force_into_occupied_tile(target_tile, is_outside = false):
+func force_into_occupied_tile(target_tile_position, target_tile = null):
 	# remember position to bounce back to it
 	var origin_position = position
 	var duration = 0.4
 	var position_tween = create_tween()
-	position_tween.tween_property(self, 'position', target_tile.position, duration)
+	position_tween.tween_property(self, 'position', target_tile_position, duration)
 	await position_tween.finished
 	
-	if not is_outside:
+	if target_tile:
 		target_tile.get_shot(1)
 	
-	# TODO hit the wall sprite
+	# TODO sprite for hiting the wall
 	position_tween = create_tween()
 	position_tween.tween_property(self, 'position', origin_position, duration)
 	await position_tween.finished
@@ -391,6 +391,50 @@ func get_killed():
 	await death_tween.finished
 	
 	model.scale = Vector3.ZERO
+
+
+func show_outline_with_predicted_health(target_tile, tiles, origin_action_type = action_type, origin_tile = target_tile, damage_dealt = damage):
+	var target_character = target_tile.get_character()
+	if target_character:
+		target_character.toggle_outline(true)
+		
+		if target_character.state_type == StateType.GIVE_SHIELD:
+			# FIXME show crossed shield icon
+			target_character.toggle_health_bar(true)
+		else:
+			# include damage from hiting something after being pushed or pulled
+			if origin_action_type == ActionType.PUSH_BACK or origin_action_type == ActionType.CROSS_PUSH_BACK:
+				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
+				var hit_direction_sign = hit_direction.sign()
+				var push_direction = -1 * hit_direction_sign
+				var pushed_into_tile = tiles.filter(func(tile): return tile.coords == target_character.tile.coords + push_direction).front()
+				if pushed_into_tile:
+					# pushed into other character or asset
+					if pushed_into_tile.is_occupied():
+						damage_dealt += 1
+						# to the same for hit character as well
+						target_character.show_outline_with_predicted_health(pushed_into_tile, tiles, ActionType.NONE, pushed_into_tile, 1)
+				else:
+					# pushed outside of the map
+					damage_dealt += 1
+			elif origin_action_type == ActionType.PULL_FRONT:
+				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
+				var hit_direction_sign = hit_direction.sign()
+				var pull_direction = hit_direction_sign
+				var pulled_into_tile = tiles.filter(func(tile): return tile.coords == target_character.tile.coords + pull_direction).front()
+				if pulled_into_tile:
+					# pulled into other character or asset
+					if pulled_into_tile.is_occupied():
+						damage_dealt += 1
+						# to the same for hit character as well
+						target_character.show_outline_with_predicted_health(pulled_into_tile, tiles, ActionType.NONE, pulled_into_tile, 1)
+				else:
+					# pulled outside of the map
+					damage_dealt += 1
+			
+			if damage_dealt > 0:
+				var predicted_health = maxi(0, target_character.health - damage_dealt)
+				target_character.toggle_health_bar(true, predicted_health)
 
 
 func toggle_outline(is_toggled):

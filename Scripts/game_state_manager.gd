@@ -461,7 +461,6 @@ func calculate_tiles_for_action(active, character):
 							push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
 						
 						counter += 1
-						
 						# only four tiles can have valid coords for given 'i'
 						if counter == 4:
 							break
@@ -632,20 +631,6 @@ func recalculate_enemies_planned_actions():
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
-func show_outline_with_predicted_health(origin_character, target_character):
-	if target_character:
-		target_character.toggle_outline(true)
-		
-		if target_character.state_type == StateType.GIVE_SHIELD:
-			# FIXME maybe don't show..?
-			target_character.toggle_health_bar(true)
-		else:
-			var predicted_health = maxi(0, target_character.health - origin_character.damage)
-			target_character.toggle_health_bar(true, predicted_health)
-			#if health changed:
-			#adjacent_character.toggle_health_bar(true)
-
-
 func on_shoot_action_button_toggled(toggled_on):
 	# order matters here!
 	if toggled_on:
@@ -722,6 +707,8 @@ func _on_tile_hovered(tile, is_hovered):
 		current_civilian.toggle_health_bar(false)
 		current_civilian.reset_health_bar()
 	
+	var character = tile.get_character()
+	
 	# UI
 	if is_hovered:
 		# ┏┳┓•┓ ┏┓  •┳┓┏┓┏┓
@@ -748,7 +735,6 @@ func _on_tile_hovered(tile, is_hovered):
 		# TODO
 		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
 		
-		var character = tile.get_character()
 		if character:
 			tile_info_label.text += '\n\n' + character.model_name + '\n'
 			tile_info_label.text += tr('INFO_HEALTH') + ': ' + str(character.health) + '/' + str(character.max_health) + '\n'
@@ -762,14 +748,13 @@ func _on_tile_hovered(tile, is_hovered):
 		tile_info_label.text = ''
 	
 	if is_hovered:
-		# show health bar for hovered player
-		if tile.player:
-			tile.player.toggle_health_bar(true)
+		# show health bar for hovered character
+		if character:
+			character.toggle_health_bar(true)
 		
 		# outline hovered enemy and highlight his attack arrows
 		if tile.enemy:
 			#tile.enemy.toggle_outline(true)
-			tile.enemy.toggle_health_bar(true)
 			
 			if tile.enemy.planned_tile:
 				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed()
@@ -777,19 +762,20 @@ func _on_tile_hovered(tile, is_hovered):
 					tile.enemy.toggle_arrow_highlight(true)
 					tile.enemy.planned_tile.toggle_asset_outline(true)
 					
-					var target_character = tile.enemy.planned_tile.get_character()
-					# show outline with health for enemy targets
-					show_outline_with_predicted_health(tile.enemy, target_character)
+					# show outline with predicted health for enemy targets
+					# works only for action types other than CROSS_PUSH_BACK
+					var origin_action_type = (ActionType.NONE) if (tile.enemy.action_type == ActionType.CROSS_PUSH_BACK) else (tile.enemy.action_type)
+					tile.enemy.show_outline_with_predicted_health(tile.enemy.planned_tile, map.tiles, origin_action_type)
 					
-					# highlight tile if it's empty
-					if not target_character and not tile.enemy.planned_tile.models.get('asset') and not tile.enemy.planned_tile.models.get('asset_damaged'):
+					# highlight tile itself if it's empty
+					if not tile.enemy.planned_tile.is_occupied():
 						tile.enemy.planned_tile.toggle_shader(true)
 					
-					#if tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
-						#for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(tile.enemy.planned_tile.coords, current_tile.coords)):
-							#var adjacent_character = current_tile.get_character()
-							## show outline with health for enemy cross pushed targets
-							#show_outline_with_predicted_health(tile.enemy, adjacent_character)
+					if tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
+						# works only for CROSS_PUSH_BACK action type
+						for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(tile.enemy.planned_tile.coords, current_tile.coords)):
+							# show outline with predicted health for enemy cross pushed targets
+							tile.enemy.show_outline_with_predicted_health(current_tile, map.tiles, ActionType.CROSS_PUSH_BACK, tile.enemy.planned_tile, tile.enemy.action_damage)
 		
 		# highlight attack arrows of hovered planned target
 		if tile.is_planned_enemy_action:
@@ -803,11 +789,6 @@ func _on_tile_hovered(tile, is_hovered):
 					current_enemy.toggle_outline(true)
 					current_enemy.toggle_health_bar(true)
 					#current_enemy.toggle_arrow_highlight(true)
-				
-				var character = tile.get_character()
-				if character:
-					#character.toggle_outline(true)
-					character.toggle_health_bar(true)
 	
 	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
@@ -841,9 +822,20 @@ func _on_tile_hovered(tile, is_hovered):
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
 				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
 				
-				var target_character = first_occupied_tile_in_line.get_character()
-				# show outline with health for player targets
-				show_outline_with_predicted_health(selected_player, target_character)
+				# show outline with predicted health for player targets
+				# works only for action types other than CROSS_PUSH_BACK
+				var origin_action_type = (ActionType.NONE) if (selected_player.action_type == ActionType.CROSS_PUSH_BACK) else (selected_player.action_type)
+				selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, origin_action_type)
+				
+				# highlight tile itself if it's empty
+				if not first_occupied_tile_in_line.is_occupied():
+					first_occupied_tile_in_line.toggle_shader(true)
+				
+				if selected_player.action_type == ActionType.CROSS_PUSH_BACK:
+					# works only for CROSS_PUSH_BACK action type
+					for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(first_occupied_tile_in_line.coords, current_tile.coords)):
+						# show outline with predicted health for player cross pushed targets
+						selected_player.show_outline_with_predicted_health(current_tile, map.tiles, ActionType.CROSS_PUSH_BACK, first_occupied_tile_in_line, selected_player.action_damage)
 			else:
 				selected_player.clear_arrows()
 				selected_player.clear_action_indicators()
@@ -978,15 +970,15 @@ func _on_player_clicked(player, is_clicked):
 func _on_character_action_push_back(target_character, action_damage, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
-	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
-	var target_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + push_direction)
-	if target_tiles.is_empty():
-		var outside_tile = {'position': target_character.tile.position + Vector3(push_direction.y, 0, push_direction.x)}
+	# find tile pushed into
+	var pushed_into_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + push_direction)
+	if pushed_into_tiles.is_empty():
+		var outside_tile_position = target_character.tile.position + Vector3(push_direction.y, 0, push_direction.x)
 		# pushed outside of the map
-		await target_character.move([target_character.tile], true, outside_tile)
+		await target_character.move([target_character.tile], true, outside_tile_position)
 	else:
-		var target_tile = target_tiles.front()
-		await target_character.move([target_tile], true)
+		var pushed_into_tile = pushed_into_tiles.front()
+		await target_character.move([pushed_into_tile], true)
 		
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
@@ -994,7 +986,7 @@ func _on_character_action_push_back(target_character, action_damage, origin_tile
 				await target_character.get_killed()
 			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				target_character.state_type = StateType.SLOW_DOWN
-			elif target_character.tile == target_tile and target_character.is_in_group('ENEMIES'):
+			elif target_character.tile == pushed_into_tile and target_character.is_in_group('ENEMIES'):
 				# enemy actually moved
 				var enemy = target_character
 				if enemy.planned_tile:
@@ -1012,15 +1004,15 @@ func _on_character_action_push_back(target_character, action_damage, origin_tile
 func _on_character_action_pull_front(target_character, action_damage, origin_tile_coords):
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var pull_direction = hit_direction
-	# tile.health_type != TileHealthType.INDESTRUCTIBLE and
-	var target_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + pull_direction)
-	if target_tiles.is_empty():
-		var outside_tile = {'position': target_character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)}
+	# find tile pulled into
+	var pulled_into_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + pull_direction)
+	if pulled_into_tiles.is_empty():
+		var outside_tile_position = target_character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)
 		# pulled outside of the map - is this even possible?
-		await target_character.move([target_character.tile], true, outside_tile)
+		await target_character.move([target_character.tile], true, outside_tile_position)
 	else:
-		var target_tile = target_tiles.front()
-		await target_character.move([target_tile], true)
+		var pulled_into_tile = pulled_into_tiles.front()
+		await target_character.move([pulled_into_tile], true)
 		
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
@@ -1028,7 +1020,7 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 				await target_character.get_killed()
 			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				target_character.state_type = StateType.SLOW_DOWN
-			elif target_character.tile == target_tile and target_character.is_in_group('ENEMIES'):
+			elif target_character.tile == pulled_into_tile and target_character.is_in_group('ENEMIES'):
 				# enemy actually moved
 				var enemy = target_character
 				if enemy.planned_tile:
@@ -1071,11 +1063,6 @@ func _on_character_action_cross_push_back(target_character, action_damage, origi
 func _on_action_indicators_cross_push_back(target_character, origin_tile, first_origin_position):
 	for tile in map.tiles.filter(func(tile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)):
 		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
-		
-		# show outline with health only for player cross pushed targets
-		#if selected_player and selected_player == target_character and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed():
-			#var adjacent_character = tile.get_character()
-			#show_outline_with_predicted_health(selected_player, adjacent_character)
 
 
 func _on_end_turn_button_pressed():

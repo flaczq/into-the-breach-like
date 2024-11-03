@@ -762,20 +762,21 @@ func _on_tile_hovered(tile, is_hovered):
 					tile.enemy.toggle_arrow_highlight(true)
 					tile.enemy.planned_tile.toggle_asset_outline(true)
 					
-					# show outline with predicted health for enemy targets
-					# works only for action types other than CROSS_PUSH_BACK
-					var origin_action_type = (ActionType.NONE) if (tile.enemy.action_type == ActionType.CROSS_PUSH_BACK) else (tile.enemy.action_type)
-					tile.enemy.show_outline_with_predicted_health(tile.enemy.planned_tile, map.tiles, origin_action_type)
-					
 					# highlight tile itself if it's empty
 					if not tile.enemy.planned_tile.is_occupied():
 						tile.enemy.planned_tile.toggle_shader(true)
 					
+					# show outline with predicted health for enemy targets
 					if tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
-						# works only for CROSS_PUSH_BACK action type
+						# only for target tile
+						tile.enemy.show_outline_with_predicted_health(tile.enemy.planned_tile, map.tiles, ActionType.NONE)
+						
+						# only for tiles to be cross pushed back
 						for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(tile.enemy.planned_tile.coords, current_tile.coords)):
 							# show outline with predicted health for enemy cross pushed targets
 							tile.enemy.show_outline_with_predicted_health(current_tile, map.tiles, ActionType.CROSS_PUSH_BACK, tile.enemy.planned_tile, tile.enemy.action_damage)
+					else:
+						tile.enemy.show_outline_with_predicted_health(tile.enemy.planned_tile, map.tiles, tile.enemy.action_type)
 		
 		# highlight attack arrows of hovered planned target
 		if tile.is_planned_enemy_action:
@@ -822,20 +823,20 @@ func _on_tile_hovered(tile, is_hovered):
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
 				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
 				
-				# show outline with predicted health for player targets
-				# works only for action types other than CROSS_PUSH_BACK
-				var origin_action_type = (ActionType.NONE) if (selected_player.action_type == ActionType.CROSS_PUSH_BACK) else (selected_player.action_type)
-				selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, origin_action_type)
-				
 				# highlight tile itself if it's empty
 				if not first_occupied_tile_in_line.is_occupied():
 					first_occupied_tile_in_line.toggle_shader(true)
 				
+				# show outline with predicted health for player targets
 				if selected_player.action_type == ActionType.CROSS_PUSH_BACK:
-					# works only for CROSS_PUSH_BACK action type
+					# only for target tile
+					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, ActionType.NONE)
+					
+					# only for tiles to be cross pushed back
 					for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(first_occupied_tile_in_line.coords, current_tile.coords)):
-						# show outline with predicted health for player cross pushed targets
 						selected_player.show_outline_with_predicted_health(current_tile, map.tiles, ActionType.CROSS_PUSH_BACK, first_occupied_tile_in_line, selected_player.action_damage)
+				else:
+					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, selected_player.action_type)
 			else:
 				selected_player.clear_arrows()
 				selected_player.clear_action_indicators()

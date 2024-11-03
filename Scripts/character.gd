@@ -393,7 +393,8 @@ func get_killed():
 	model.scale = Vector3.ZERO
 
 
-func show_outline_with_predicted_health(target_tile, tiles, origin_action_type = action_type, origin_tile = target_tile, damage_dealt = damage):
+# FIXME maybe too many parameters..?
+func show_outline_with_predicted_health(target_tile, tiles, origin_action_type = action_type, origin_tile = target_tile, damage_dealt = damage, next_call = false):
 	var target_character = target_tile.get_character()
 	if target_character:
 		target_character.toggle_outline(true)
@@ -413,7 +414,7 @@ func show_outline_with_predicted_health(target_tile, tiles, origin_action_type =
 					if pushed_into_tile.is_occupied():
 						damage_dealt += 1
 						# to the same for hit character as well
-						target_character.show_outline_with_predicted_health(pushed_into_tile, tiles, ActionType.NONE, pushed_into_tile, 1)
+						target_character.show_outline_with_predicted_health(pushed_into_tile, tiles, ActionType.NONE, pushed_into_tile, 1, true)
 				else:
 					# pushed outside of the map
 					damage_dealt += 1
@@ -427,7 +428,7 @@ func show_outline_with_predicted_health(target_tile, tiles, origin_action_type =
 					if pulled_into_tile.is_occupied():
 						damage_dealt += 1
 						# to the same for hit character as well
-						target_character.show_outline_with_predicted_health(pulled_into_tile, tiles, ActionType.NONE, pulled_into_tile, 1)
+						target_character.show_outline_with_predicted_health(pulled_into_tile, tiles, ActionType.NONE, pulled_into_tile, 1, true)
 				else:
 					# pulled outside of the map
 					damage_dealt += 1
@@ -435,6 +436,9 @@ func show_outline_with_predicted_health(target_tile, tiles, origin_action_type =
 			if damage_dealt > 0:
 				var predicted_health = maxi(0, target_character.health - damage_dealt)
 				target_character.toggle_health_bar(true, predicted_health)
+	elif next_call and target_tile.is_occupied():
+		# asset exists
+		target_tile.toggle_asset_outline(true)
 
 
 func toggle_outline(is_toggled):

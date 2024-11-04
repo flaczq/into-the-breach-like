@@ -14,7 +14,9 @@ enum LevelEvent {MORE_ENEMIES, MINE, FALLING_MISSLE, FALLING_ROCK, FALLING_LAVA,
 
 const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
 const PLAYER_ARROW_COLOR: Color = Color('005fcd')
-const ENEMY_ARROW_COLOR: Color = Color('cb003c')
+const ENEMY_1_ARROW_COLOR: Color = Color('cb003c')
+const ENEMY_2_ARROW_COLOR: Color = Color('930029')
+const ENEMY_3_ARROW_COLOR: Color = Color('74001e')
 const ENEMY_ARROW_HIGHLIGHTED_COLOR: Color = Color('ffa3ac')#ffa3ac
 const CIVILIAN_ARROW_COLOR: Color = Color('fff700')
 
@@ -74,5 +76,5 @@ func get_hit_direction(origin_to_target_sign):
 
 func get_character_color(character):
 	if character.is_in_group('PLAYERS'): return PLAYER_ARROW_COLOR
-	if character.is_in_group('ENEMIES'): return ENEMY_ARROW_COLOR
+	if character.is_in_group('ENEMIES'): return character.arrow_color
 	if character.is_in_group('CIVILIANS'): return CIVILIAN_ARROW_COLOR

@@ -2,6 +2,8 @@ extends Character
 
 class_name Enemy
 
+signal recalculate_order_event()
+
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
 var arrow_model_material: StandardMaterial3D
@@ -9,6 +11,7 @@ var arrow_shader_material: ShaderMaterial
 var planned_tile: Node3D
 var order: int
 var highlight_tween: Tween
+var arrow_color: Color
 
 
 func _ready():
@@ -19,10 +22,10 @@ func _ready():
 	arrow_model_material = StandardMaterial3D.new()
 	arrow_model_material.no_depth_test = true
 	arrow_model_material.disable_receive_shadows = true
-	arrow_model_material.albedo_color = ENEMY_ARROW_COLOR
+	arrow_model_material.albedo_color = arrow_color
 	
 	var forced_action_model_material = StandardMaterial3D.new()
-	forced_action_model_material.albedo_color = ENEMY_ARROW_COLOR
+	forced_action_model_material.albedo_color = arrow_color
 	
 	arrow_shader_material = ShaderMaterial.new()
 	arrow_shader_material.set_shader(FLASHING_SHADER)
@@ -78,7 +81,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 				tile = target_tile
 				tile.set_enemy(self)
 				
-				var duration = 0.4 / tiles_path.size()
+				var duration = 0.2#0.4 / tiles_path.size()
 				for next_tile in tiles_path:
 					if not forced:
 						look_at_y(next_tile)
@@ -136,6 +139,8 @@ func get_killed():
 	
 	tile.set_enemy(null)
 	tile = null
+	
+	recalculate_order_event.emit()
 
 
 func reset_planned_tile():
@@ -179,9 +184,9 @@ func toggle_arrow_highlight(is_toggled):
 	if is_toggled:
 		highlight_tween = create_tween().set_loops()
 		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ENEMY_ARROW_HIGHLIGHTED_COLOR, 0.3)
-		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ENEMY_ARROW_COLOR, 0.3).set_delay(0.5)
+		highlight_tween.tween_property(arrow_model_material, 'albedo_color', arrow_color, 0.3).set_delay(0.5)
 		#arrow_model_material.albedo_color = Color.YELLOW
 		#arrow_model_material.set_next_pass(arrow_shader_material)
 	else:
-		arrow_model_material.albedo_color = ENEMY_ARROW_COLOR
+		arrow_model_material.albedo_color = arrow_color
 		#arrow_model_material.set_next_pass(null)

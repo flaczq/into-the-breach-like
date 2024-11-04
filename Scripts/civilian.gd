@@ -47,7 +47,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 				tile = target_tile
 				tile.set_civilian(self)
 				
-				var duration = 0.4 / tiles_path.size()
+				var duration = 0.2#0.4 / tiles_path.size()
 				for next_tile in tiles_path:
 					if not forced:
 						look_at_y(next_tile)

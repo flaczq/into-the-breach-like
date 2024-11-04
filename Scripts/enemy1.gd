@@ -2,6 +2,8 @@ extends Enemy
 
 
 func _ready():
+	arrow_color = ENEMY_1_ARROW_COLOR
+	
 	super()
 	
 	model_name = 'Enemy 1'

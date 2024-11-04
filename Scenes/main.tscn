@@ -147,6 +147,35 @@ grow_vertical = 0
 size_flags_horizontal = 3
 text = "TILE INFO"
 
+[node name="TurnEndPopup" type="ColorRect" parent="CanvasLayer/UI"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TurnEndLabel" type="Label" parent="CanvasLayer/UI/TurnEndPopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -67.5
+offset_top = -11.5
+offset_right = 67.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "ENEMY TURN"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="LevelEndPopup" type="ColorRect" parent="CanvasLayer/UI"]
 visible = false
 layout_mode = 1
@@ -179,4 +208,5 @@ vertical_alignment = 1
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton" to="GameStateManager" method="_on_shoot_button_toggled"]
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton" to="GameStateManager" method="_on_action_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton" to="GameStateManager" method="_on_undo_button_pressed"]
+[connection signal="gui_input" from="CanvasLayer/UI/TurnEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]
 [connection signal="gui_input" from="CanvasLayer/UI/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

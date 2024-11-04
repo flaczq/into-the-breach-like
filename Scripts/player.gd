@@ -83,13 +83,14 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 			# need call set_player() after reset_tiles() to properly toggle target tile
 			tile.set_player(self)
 			
-			var duration = 0.4 / tiles_path.size()
+			# TODO parameterized in options
+			var duration = 0.2#0.4 / tiles_path.size()
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)
 				
 				var position_tween = create_tween()
-				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
+				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
 				await position_tween.finished
 			
 			if not forced:
@@ -140,7 +141,7 @@ func after_action():
 	
 	if no_more_actions_this_turn():
 		current_phase = PhaseType.WAIT
-		print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase])
+		#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase])
 		
 		mouse_exited()
 	elif not is_clicked:

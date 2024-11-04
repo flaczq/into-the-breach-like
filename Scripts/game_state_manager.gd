@@ -13,6 +13,8 @@ extends Util
 @onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
 @onready var undo_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton'
 @onready var tile_info_label = $'../CanvasLayer/UI/TileInfoLabel'
+@onready var turn_end_popup = $'../CanvasLayer/UI/TurnEndPopup'
+@onready var turn_end_label = $'../CanvasLayer/UI/TurnEndPopup/TurnEndLabel'
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
@@ -81,6 +83,8 @@ func init(init_level_data = level_data):
 	init_enemies()
 	init_civilians()
 	
+	await show_turn_end_popup('ENEMY')
+	
 	start_turn()
 
 
@@ -95,8 +99,10 @@ func init_game_state():
 	shoot_button.set_disabled(true)
 	action_button.set_disabled(true)
 	undo_button.set_disabled(true)
-	level_end_label.text = ''
+	turn_end_popup.hide()
+	turn_end_label.text = ''
 	level_end_popup.hide()
+	level_end_label.text = ''
 	
 	Global.tutorial = (level_data.level_type == LevelType.TUTORIAL)
 
@@ -207,7 +213,6 @@ func start_turn():
 		#target_tiles_for_enemy.push_front(targetable_tiles)
 		target_tiles_for_enemy[0] += targetable_tiles
 	
-	print(target_tiles_for_enemy)
 	# sort by order
 	alive_enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for enemy in alive_enemies:
@@ -220,6 +225,9 @@ func start_turn():
 		
 		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
 		await enemy.move(tiles_path)
+		
+		# wait for 'thinking' about action
+		await get_tree().create_timer(0.3).timeout
 	
 		# enemy shouldn't but could have moved in front of the other enemy attack line
 		recalculate_enemies_planned_actions()
@@ -245,6 +253,8 @@ func start_turn():
 	
 	# UI
 	end_turn_button.set_disabled(false)
+	
+	await show_turn_end_popup()
 
 
 func end_turn():
@@ -255,13 +265,14 @@ func end_turn():
 	undo_button.set_disabled(true)
 	undo = {}
 	
+	await show_turn_end_popup('ENEMY')
+	
 	for player in players.filter(func(player): return player.is_alive):
 		#player.reset_phase()
 		player.reset_tiles()
 		player.reset_states()
 		player.current_phase = PhaseType.WAIT
 	
-	# sort by order
 	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for enemy in enemies:
 		# enemy could have been killed by another enemy inside this loop
@@ -348,6 +359,26 @@ func level_lost():
 		print('LOOOOOOST!!!')
 		# TODO achievements
 		print('achievement unlocked: you\'re a game journalist now')
+
+
+func show_turn_end_popup(whose_turn = 'PLAYER'):
+	pass
+	## FIXME hardcoded
+	#turn_end_label.text = whose_turn + ' TURN'
+	#turn_end_popup.color = Color(0, 0, 0, 0.5)
+	#turn_end_popup.show()
+	#
+	#await get_tree().create_timer(1.0).timeout
+	#
+	#var turn_end_tween = create_tween()
+	#turn_end_tween.tween_property(turn_end_popup, 'color:a', 0, 1.0).from(0.5)
+	#await turn_end_tween.finished
+	#
+	#turn_end_label.text = ''
+	#turn_end_popup.hide()
+	#
+	#if whose_turn == 'ENEMY':
+		#await get_tree().create_timer(0.5).timeout
 
 
 func reset_ui():
@@ -653,9 +684,10 @@ func on_shoot_action_button_toggled(toggled_on):
 
 func _on_init_enemy(enemy_scene, spawn_tile):
 	var enemy_instance = enemy_scenes[enemy_scene].instantiate()
-	add_sibling(enemy_instance)
 	if Global.tutorial:
 		tutorial_manager_script.init_enemy(enemy_instance, level)
+	
+	add_sibling(enemy_instance)
 	
 	# find max order
 	var enemies_orders = enemies.map(func(enemy): return enemy.order)
@@ -670,6 +702,7 @@ func _on_init_enemy(enemy_scene, spawn_tile):
 	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
 	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 	enemy_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
+	enemy_instance.connect('recalculate_order_event', _on_recalculate_order_event)
 	
 	enemies.push_back(enemy_instance)
 
@@ -720,7 +753,14 @@ func _on_tile_hovered(tile, is_hovered):
 		debug_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
 		debug_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n\n'
 		debug_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
-		#debug_info_label.text += tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
+		if character:
+			debug_info_label.text += '\n\n' + character.model_name + '\n'
+			debug_info_label.text += tr('INFO_HEALTH') + ': ' + str(character.health) + '/' + str(character.max_health) + '\n'
+			debug_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[character.action_type]) + '\n'
+			debug_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[character.action_direction]) + '\n'
+			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
+			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
+			debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
 		if tile.models.get('event_asset'):
 			if tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.MORE_ENEMIES]) + '\n'
@@ -728,21 +768,18 @@ func _on_tile_hovered(tile, is_hovered):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
 			elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_ROCK]) + '\n'
+		
 		if tile.info and not tile.info.is_empty():
 			debug_info_label.text += '\n\n' + tile.info
 		
 		# tile and character hover info
 		# TODO
-		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type]))
-		
+		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type])) + '\n'
 		if character:
-			tile_info_label.text += '\n\n' + character.model_name + '\n'
-			tile_info_label.text += tr('INFO_HEALTH') + ': ' + str(character.health) + '/' + str(character.max_health) + '\n'
-			tile_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[character.action_type]) + '\n'
-			tile_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[character.action_direction]) + '\n'
-			tile_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
-			tile_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
-			tile_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
+			tile_info_label.text += '[ACTION ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_type])) + '\n'
+			tile_info_label.text += '[MOVE ICON] ' + tr('MOVE_' + str(character.move_distance)) + '\n'
+			if character.state_type != StateType.NONE:
+				tile_info_label.text += '[STATE ICON] ' + tr('STATE_TYPE_' + str(StateType.keys()[character.state_type]))
 	else:
 		debug_info_label.text = ''
 		tile_info_label.text = ''
@@ -853,14 +890,9 @@ func _on_tile_clicked(tile):
 	
 	# highlighted tile is clicked while player is selected
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
-		# clear undo if next move/action is performed
-		if undo.get('player') and undo.get('last_tile'):
-			undo = {}
-			undo_button.set_disabled(true)
-		
 		if selected_player.current_phase == PhaseType.MOVE:
-			# remember player's last tile for ability to undo
-			undo = {'player': selected_player, 'last_tile': selected_player.tile}
+			# remember player's last tile
+			undo[selected_player.get_instance_id()] = selected_player.tile
 			undo_button.set_disabled(false)
 			
 			var tiles_path = calculate_tiles_path(selected_player, tile)
@@ -879,6 +911,10 @@ func _on_tile_clicked(tile):
 				await selected_player.execute_action(first_occupied_tile_in_line)
 			else:
 				await selected_player.shoot(first_occupied_tile_in_line)
+			
+			# reset undo when action was executed
+			undo = {}
+			undo_button.set_disabled(true)
 			
 			check_for_level_end(false)
 	# other player or selected player is clicked
@@ -1066,6 +1102,13 @@ func _on_action_indicators_cross_push_back(target_character, origin_tile, first_
 		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
 
 
+func _on_recalculate_order_event():
+	var order = 1
+	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
+	for enemy in enemies:
+		enemy.order = order
+
+
 func _on_end_turn_button_pressed():
 	end_turn()
 
@@ -1085,18 +1128,20 @@ func _on_action_button_toggled(toggled_on):
 
 
 func _on_undo_button_pressed():
-	if undo.get('player') and undo.get('last_tile'):
-		var undo_player = players.filter(func(player): return player == undo.player).front()
-		var undo_tile = map.tiles.filter(func(tile): return tile == undo.last_tile).front()
-		undo_player.position = undo_tile.position
-		undo_player.tile.set_player(null)
-		undo_player.tile = undo_tile
-		undo_tile.set_player(undo_player)
+	if not undo.is_empty():
+		var last_undo_player_instance_id = undo.keys().back()
+		var last_undo_player = players.filter(func(player): return player.get_instance_id() == last_undo_player_instance_id).front()
+		var last_undo_tile = undo[last_undo_player_instance_id]
+		last_undo_player.position = last_undo_tile.position
+		last_undo_player.tile.set_player(null)
+		last_undo_player.tile = last_undo_tile
+		last_undo_tile.set_player(last_undo_player)
 		
-		undo = {}
-		undo_button.set_disabled(true)
+		undo.erase(last_undo_player_instance_id)
+		if undo.is_empty():
+			undo_button.set_disabled(true)
 		
-		undo_player.start_turn()
+		last_undo_player.start_turn()
 		
 		recalculate_enemies_planned_actions()
 

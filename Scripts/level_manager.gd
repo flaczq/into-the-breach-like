@@ -100,10 +100,17 @@ func plan_events(map, level_data, current_turn):
 	if not level_data.has('level_events'):
 		return
 	
+	var more_enemies_index = 0
 	for level_event in level_data.level_events:
 		# enemy spawned near spawn_enemy_coords
 		if level_event == LevelEvent.MORE_ENEMIES:
 			if current_turn >= level_data.more_enemies_first_turn and current_turn <= level_data.more_enemies_last_turn:
+				# check if some indicators were left from the last turn
+				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).size()
+				if more_enemies_index < existing_event_tiles_count:
+					more_enemies_index += 1
+					return
+				
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FFFF00')#yellow
@@ -111,9 +118,9 @@ func plan_events(map, level_data, current_turn):
 				
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
 				var spawn_enemy_positions = map.tiles.filter(func(tile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
-				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return not tile.is_occupied() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
-					print('no enemy spawned')
+					print('no more enemies indicator spawned')
 					return
 				
 				var event_tile = event_tiles.pick_random()
@@ -132,7 +139,7 @@ func plan_events(map, level_data, current_turn):
 				
 				var event_tiles = map.get_untargetable_tiles()
 				if event_tiles.is_empty():
-					print('no missle spawned')
+					print('no missle indicator spawned')
 					return
 				
 				var event_tile = event_tiles.pick_random()
@@ -152,7 +159,7 @@ func plan_events(map, level_data, current_turn):
 				var mountain_positions = map.tiles.filter(func(tile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile): return tile.position)
 				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return not mountain_positions.has(tile.position) and mountain_positions.any(func(mountain_position): return mountain_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
-					print('no rock spawned')
+					print('no rock indicator spawned')
 					return
 				
 				var event_tile = event_tiles.pick_random()
@@ -175,7 +182,7 @@ func execute_events(map, level_data, current_turn):
 		# enemy spawns at spawned indicators
 		if level_event == LevelEvent.MORE_ENEMIES:
 			if current_turn >= level_data.more_enemies_first_turn and current_turn <= level_data.more_enemies_last_turn:
-				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile): return not tile.is_occupied() and tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).front()
 				if not event_tile:
 					return
 				

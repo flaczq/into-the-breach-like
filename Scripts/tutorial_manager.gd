@@ -20,6 +20,7 @@ func init_player(player, level):
 
 func init_enemy(enemy, level):
 	if level == 1:
+		enemy.arrow_color = ENEMY_1_ARROW_COLOR
 		enemy.model_name = 'Tutorial enemy 1'
 		enemy.max_health = 3
 		enemy.health = 3
@@ -32,6 +33,7 @@ func init_enemy(enemy, level):
 		enemy.action_damage = 0
 		enemy.can_fly = false
 	elif level == 2:
+		enemy.arrow_color = ENEMY_1_ARROW_COLOR
 		enemy.model_name = 'Tutorial enemy 2'
 		enemy.max_health = 3
 		enemy.health = 3
@@ -44,7 +46,7 @@ func init_enemy(enemy, level):
 		enemy.action_damage = 0
 		enemy.can_fly = false
 	
-	enemy.set_health_bar()
+	#enemy.set_health_bar()
 
 
 func init_civilian(civilian, level):

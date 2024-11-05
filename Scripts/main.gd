@@ -87,7 +87,8 @@ func show_back():
 	toggle_visibility(true)
 
 
-func _on_in_game_menu_button_pressed():
-	toggle_visibility(false)
-	
-	menu.show_in_game_menu(self)
+func _on_settings_texture_rect_gui_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		toggle_visibility(false)
+		
+		menu.show_in_game_menu(self)

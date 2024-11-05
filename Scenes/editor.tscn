@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=26 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://djb7hjxihkin0" path="res://Scenes/tutorial_player.tscn" id="16_b1rcx"]
 [ext_resource type="PackedScene" uid="uid://cyk5jmmvp3sag" path="res://Scenes/tutorial_enemy.tscn" id="17_hdgpr"]
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="18_v5xqc"]
+[ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="19_yyv2y"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oi1vl"]
 
@@ -74,14 +75,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="GameInfoLabel" type="Label" parent="CanvasLayer/UI"]
-layout_mode = 1
-offset_right = 76.0
-offset_bottom = 75.0
-text = "LEVEL: 0
-TURN: 0
-POINTS: 0"
 
 [node name="EditorLabel" type="Label" parent="CanvasLayer/UI"]
 layout_mode = 1
@@ -330,20 +323,58 @@ popup/item_2/text = "CAN SPAWN CIVILIAN"
 popup/item_2/checkable = 1
 popup/item_2/id = 2
 
-[node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -302.0
-offset_top = -80.0
-offset_bottom = -31.0
-grow_horizontal = 0
-grow_vertical = 0
+[node name="BottomContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_left = 978.0
+offset_top = 640.0
+offset_right = 1018.0
+offset_bottom = 680.0
+
+[node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI/BottomContainer"]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "TILE INFO"
+
+[node name="GameInfoLabel" type="Label" parent="CanvasLayer/UI/BottomContainer"]
+layout_mode = 2
+text = "LEVEL: 0
+TURN: 0
+POINTS: 0"
+
+[node name="TurnEndTextureRect" type="TextureRect" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -196.5
+offset_top = -72.5
+offset_right = 196.5
+offset_bottom = 72.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("19_yyv2y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TurnEndLabel" type="Label" parent="CanvasLayer/UI/TurnEndTextureRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -67.5
+offset_top = -40.0
+offset_right = 67.5
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "ENEMY TURN"
+horizontal_alignment = 1
 
 [node name="LevelEndPopup" type="ColorRect" parent="CanvasLayer/UI"]
 visible = false

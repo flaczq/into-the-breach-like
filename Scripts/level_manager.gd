@@ -100,15 +100,14 @@ func plan_events(map, level_data, current_turn):
 	if not level_data.has('level_events'):
 		return
 	
-	var more_enemies_index = 0
+	var more_enemies_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.MORE_ENEMIES).size()
 	for level_event in level_data.level_events:
 		# enemy spawned near spawn_enemy_coords
 		if level_event == LevelEvent.MORE_ENEMIES:
 			if current_turn >= level_data.more_enemies_first_turn and current_turn <= level_data.more_enemies_last_turn:
 				# check if some indicators were left from the last turn
 				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).size()
-				if more_enemies_index < existing_event_tiles_count:
-					more_enemies_index += 1
+				if existing_event_tiles_count >= more_enemies_count:
 					return
 				
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()

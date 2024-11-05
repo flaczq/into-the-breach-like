@@ -37,12 +37,12 @@ func init_enemy(enemy, level):
 		enemy.model_name = 'Tutorial enemy 2'
 		enemy.max_health = 3
 		enemy.health = 3
-		enemy.damage = 1
+		enemy.damage = 2
 		enemy.move_distance = 3
 		enemy.action_min_distance = 2
 		enemy.action_max_distance = 9
 		enemy.action_direction = ActionDirection.HORIZONTAL_DOT
-		enemy.action_type = ActionType.PUSH_BACK
+		enemy.action_type = ActionType.NONE
 		enemy.action_damage = 0
 		enemy.can_fly = false
 	

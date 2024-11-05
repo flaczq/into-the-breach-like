@@ -6,15 +6,15 @@ extends Util
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
 
-@onready var game_info_label = $'../CanvasLayer/UI/GameInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/UI/PlayerInfoContainer/DebugInfoLabel'
 @onready var end_turn_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton'
 @onready var shoot_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton'
 @onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
 @onready var undo_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton'
-@onready var tile_info_label = $'../CanvasLayer/UI/TileInfoLabel'
-@onready var turn_end_popup = $'../CanvasLayer/UI/TurnEndPopup'
-@onready var turn_end_label = $'../CanvasLayer/UI/TurnEndPopup/TurnEndLabel'
+@onready var tile_info_label = $'../CanvasLayer/UI/BottomContainer/TileInfoLabel'
+@onready var game_info_label = $"../CanvasLayer/UI/BottomContainer/GameInfoLabel"
+@onready var turn_end_texture_rect = $"../CanvasLayer/UI/TurnEndTextureRect"
+@onready var turn_end_label = $'../CanvasLayer/UI/TurnEndTextureRect/TurnEndLabel'
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
 
@@ -83,7 +83,7 @@ func init(init_level_data = level_data):
 	init_enemies()
 	init_civilians()
 	
-	await show_turn_end_popup('ENEMY')
+	await show_turn_end_texture_rect('ENEMY')
 	
 	start_turn()
 
@@ -99,7 +99,7 @@ func init_game_state():
 	shoot_button.set_disabled(true)
 	action_button.set_disabled(true)
 	undo_button.set_disabled(true)
-	turn_end_popup.hide()
+	turn_end_texture_rect.hide()
 	turn_end_label.text = ''
 	level_end_popup.hide()
 	level_end_label.text = ''
@@ -254,7 +254,7 @@ func start_turn():
 	# UI
 	end_turn_button.set_disabled(false)
 	
-	await show_turn_end_popup()
+	await show_turn_end_texture_rect('PLAYER')
 
 
 func end_turn():
@@ -265,7 +265,7 @@ func end_turn():
 	undo_button.set_disabled(true)
 	undo = {}
 	
-	await show_turn_end_popup('ENEMY')
+	await show_turn_end_texture_rect('ENEMY')
 	
 	for player in players.filter(func(player): return player.is_alive):
 		#player.reset_phase()
@@ -361,21 +361,21 @@ func level_lost():
 		print('achievement unlocked: you\'re a game journalist now')
 
 
-func show_turn_end_popup(whose_turn = 'PLAYER'):
+func show_turn_end_texture_rect(whose_turn):
 	pass
-	## FIXME hardcoded
+	# FIXME hardcoded
 	#turn_end_label.text = whose_turn + ' TURN'
-	#turn_end_popup.color = Color(0, 0, 0, 0.5)
-	#turn_end_popup.show()
+	#turn_end_texture_rect.show()
 	#
-	#await get_tree().create_timer(1.0).timeout
+	#await get_tree().create_timer(0.5).timeout
 	#
 	#var turn_end_tween = create_tween()
-	#turn_end_tween.tween_property(turn_end_popup, 'color:a', 0, 1.0).from(0.5)
+	#turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
 	#await turn_end_tween.finished
 	#
+	#turn_end_texture_rect.hide()
+	#turn_end_texture_rect.modulate.a = 1.0
 	#turn_end_label.text = ''
-	#turn_end_popup.hide()
 	#
 	#if whose_turn == 'ENEMY':
 		#await get_tree().create_timer(0.5).timeout

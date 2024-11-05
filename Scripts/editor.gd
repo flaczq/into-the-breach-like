@@ -168,7 +168,7 @@ func calculate_level_data():
 	
 	# FIXME all levels are 1 for now, later group them by levels and pick random
 	level_data.level = 1
-	level_data.level_type = 0
+	level_data.level_type = 1
 	level_data.level_events = [LevelEvent.MORE_ENEMIES, LevelEvent.MORE_ENEMIES]
 	level_manager_script.add_level_type_details(level_data)
 	level_manager_script.add_events_details(level_data, enemy_scenes.size())

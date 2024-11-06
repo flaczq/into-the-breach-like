@@ -14,7 +14,7 @@ func _ready():
 	action_min_distance = 1
 	action_max_distance = 1
 	action_direction = ActionDirection.HORIZONTAL_LINE
-	action_type = ActionType.PUSH_BACK
+	action_type = ActionType.NONE
 	action_damage = 0
 	can_fly = false
 	

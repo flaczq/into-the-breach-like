@@ -61,7 +61,7 @@ func add_characters(level_data, enemy_scenes_size, civilian_scenes_size):
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 	else:
-		for current_player_scene in Global.current_player_scenes:
+		for current_player_scene in Global.current_players_scenes:
 			level_data.player_scenes.push_back(current_player_scene)
 		
 		# scene 0 is always tutorial
@@ -96,7 +96,11 @@ func add_events_details(level_data, enemy_scenes_size):
 			level_data.more_enemies_last_turn = 3
 
 
-func plan_events(map, level_data, current_turn):
+func plan_events(game_state_manager):
+	var map = game_state_manager.map
+	var level_data = game_state_manager.level_data
+	var current_turn = game_state_manager.current_turn
+	
 	if not level_data.has('level_events'):
 		return
 	
@@ -127,6 +131,8 @@ func plan_events(map, level_data, current_turn):
 				event_tile.models.event_asset.add_to_group('MORE_ENEMIES_INDICATORS')
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
+				
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 				print('more enemy at ' + str(event_tile.coords))
 		# missle spawned at random tile
 		elif level_event == LevelEvent.FALLING_MISSLE:
@@ -146,6 +152,8 @@ func plan_events(map, level_data, current_turn):
 				event_tile.models.event_asset.add_to_group('MISSLES_INDICATORS')
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
+				
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 				print('spawned missle at ' + str(event_tile.coords))
 		# rock spawned near mountains
 		elif level_event == LevelEvent.FALLING_ROCK:
@@ -166,13 +174,19 @@ func plan_events(map, level_data, current_turn):
 				event_tile.models.event_asset.add_to_group('ROCKS_INDICATORS')
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
+				
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 				print('spawned rock at ' + str(event_tile.coords))
 		#TODO more
 		else:
 			print('no implementation of planning level event: ' + LevelEvent.keys()[level_event])
 
 
-func execute_events(map, level_data, current_turn):
+func execute_events(game_state_manager):
+	var map = game_state_manager.map
+	var level_data = game_state_manager.level_data
+	var current_turn = game_state_manager.current_turn
+	
 	if not level_data.has('level_events'):
 		return
 	
@@ -195,6 +209,8 @@ func execute_events(map, level_data, current_turn):
 				event_tile.models.event_asset.queue_free()
 				event_tile.models.erase('event_asset')
 				more_enemies_index += 1
+				
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# missle hits at spawned indicators
 		elif level_event == LevelEvent.FALLING_MISSLE:
 			if current_turn > 1:

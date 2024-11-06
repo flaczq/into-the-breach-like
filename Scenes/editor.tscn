@@ -295,19 +295,31 @@ popup/item_2/id = 2
 popup/item_3/text = "CIVILIAN 3"
 popup/item_3/id = 3
 
-[node name="AlsoEditorContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+[node name="BottomContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -149.0
-offset_top = -31.0
+offset_left = -155.0
+offset_top = -75.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="SelectedTileMenuButton" type="MenuButton" parent="CanvasLayer/UI/AlsoEditorContainer"]
+[node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI/BottomContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "TILE INFO"
+
+[node name="GameInfoLabel" type="Label" parent="CanvasLayer/UI/BottomContainer"]
+visible = false
+layout_mode = 2
+text = "LEVEL: 0
+TURN: 0
+POINTS: 0"
+
+[node name="SelectedTileMenuButton" type="MenuButton" parent="CanvasLayer/UI/BottomContainer"]
 layout_mode = 2
 disabled = true
 text = "NO TILE SELECTED"
@@ -322,24 +334,6 @@ popup/item_1/id = 1
 popup/item_2/text = "CAN SPAWN CIVILIAN"
 popup/item_2/checkable = 1
 popup/item_2/id = 2
-
-[node name="BottomContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
-layout_mode = 0
-offset_left = 978.0
-offset_top = 640.0
-offset_right = 1018.0
-offset_bottom = 680.0
-
-[node name="TileInfoLabel" type="Label" parent="CanvasLayer/UI/BottomContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "TILE INFO"
-
-[node name="GameInfoLabel" type="Label" parent="CanvasLayer/UI/BottomContainer"]
-layout_mode = 2
-text = "LEVEL: 0
-TURN: 0
-POINTS: 0"
 
 [node name="TurnEndTextureRect" type="TextureRect" parent="CanvasLayer/UI"]
 visible = false

@@ -24,7 +24,7 @@ extends Util
 @onready var players_menu_button = $CanvasLayer/UI/EditorContainer/PlayersMenuButton
 @onready var enemies_menu_button = $CanvasLayer/UI/EditorContainer/EnemiesMenuButton
 @onready var civilians_menu_button = $CanvasLayer/UI/EditorContainer/CiviliansMenuButton
-@onready var selected_tile_menu_button = $CanvasLayer/UI/AlsoEditorContainer/SelectedTileMenuButton
+@onready var selected_tile_menu_button = $CanvasLayer/UI/BottomContainer/SelectedTileMenuButton
 
 const SAVED_LEVELS_FILE_PATH = 'res://Data/saved_levels.txt'
 

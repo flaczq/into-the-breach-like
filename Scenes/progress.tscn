@@ -104,14 +104,17 @@ text = "KILL_ENEMIES"
 
 [node name="LevelType2Button2" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
+disabled = true
 text = "SURVIVE_TURNS"
 
 [node name="LevelType3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
+disabled = true
 text = "SAVE_CIVILIANS"
 
 [node name="LevelType4Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
+disabled = true
 text = "SAVE_TILES"
 
 [connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MenuButton" to="." method="_on_menu_button_pressed"]

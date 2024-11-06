@@ -185,7 +185,7 @@ func start_turn():
 	# ┗┛┛┗┛ ┗┗┛  ┛ ┗┛┗┗┛┗  ┗┛┗┛┗┛┣┛  ┗┛ ┻ ┛┗┛┗ ┻  #
 	###############################################
 	
-	level_manager_script.plan_events(map, level_data, current_turn)
+	await level_manager_script.plan_events(self)
 	
 	# actions order: events plan > civilians > enemies move and plan > players > enemies actions > events actions
 	var alive_civilians = civilians.filter(func(civilian): return civilian.is_alive)
@@ -279,7 +279,7 @@ func end_turn():
 		if enemy.is_alive:
 			await enemy.execute_planned_action()
 	
-	await level_manager_script.execute_events(map, level_data, current_turn)
+	await level_manager_script.execute_events(self)
 	
 	check_for_level_end()
 	
@@ -362,23 +362,23 @@ func level_lost():
 
 
 func show_turn_end_texture_rect(whose_turn):
-	pass
+	#pass
 	# FIXME hardcoded
-	#turn_end_label.text = whose_turn + ' TURN'
-	#turn_end_texture_rect.show()
-	#
-	#await get_tree().create_timer(0.5).timeout
-	#
-	#var turn_end_tween = create_tween()
-	#turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
-	#await turn_end_tween.finished
-	#
-	#turn_end_texture_rect.hide()
-	#turn_end_texture_rect.modulate.a = 1.0
-	#turn_end_label.text = ''
-	#
-	#if whose_turn == 'ENEMY':
-		#await get_tree().create_timer(0.5).timeout
+	turn_end_label.text = whose_turn + ' TURN'
+	turn_end_texture_rect.show()
+	
+	await get_tree().create_timer(0.5).timeout
+	
+	var turn_end_tween = create_tween()
+	turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
+	await turn_end_tween.finished
+	
+	turn_end_texture_rect.hide()
+	turn_end_texture_rect.modulate.a = 1.0
+	turn_end_label.text = ''
+	
+	if whose_turn == 'ENEMY':
+		await get_tree().create_timer(0.5).timeout
 
 
 func reset_ui():
@@ -779,7 +779,9 @@ func _on_tile_hovered(tile, is_hovered):
 			tile_info_label.text += '[ACTION ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_type])) + '\n'
 			tile_info_label.text += '[MOVE ICON] ' + tr('MOVE_' + str(character.move_distance)) + '\n'
 			if character.state_type != StateType.NONE:
-				tile_info_label.text += '[STATE ICON] ' + tr('STATE_TYPE_' + str(StateType.keys()[character.state_type]))
+				tile_info_label.text += '[STATE ICON] ' + tr('STATE_TYPE_' + str(StateType.keys()[character.state_type])) + '\n'
+			if character.is_in_group('ENEMIES'):
+				tile_info_label.text += '[ORDER ICON] ' + str(character.order) + '\n'
 	else:
 		debug_info_label.text = ''
 		tile_info_label.text = ''

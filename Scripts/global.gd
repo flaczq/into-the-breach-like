@@ -11,7 +11,7 @@ var editor: bool = false
 var tutorial: bool = true
 var antialiasing: bool = true
 
-var current_player_scenes: Array[int] = []
+var current_players_scenes: Array[int] = []
 
 
 func _ready():

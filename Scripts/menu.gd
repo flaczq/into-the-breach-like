@@ -3,6 +3,7 @@ extends Util
 @export var main_scene: PackedScene
 @export var editor_scene: PackedScene
 
+@onready var player_buttons = $CanvasLayer/UI/PlayerButtons
 @onready var main_menu_container = $CanvasLayer/UI/MainMenuContainer
 @onready var editor_button = $CanvasLayer/UI/MainMenuContainer/EditorButton
 @onready var tutorial_check_button = $CanvasLayer/UI/MainMenuContainer/TutorialCheckButton
@@ -11,7 +12,7 @@ extends Util
 @onready var language_option_button = $CanvasLayer/UI/OptionsContainer/LanguageOptionButton
 @onready var aa_check_box = $CanvasLayer/UI/OptionsContainer/AACheckBox
 @onready var players_container = $CanvasLayer/UI/PlayersContainer
-@onready var players_buttons = $CanvasLayer/UI/PlayersContainer/PlayersButtons
+@onready var players_grid_container = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer
 @onready var next_button = $CanvasLayer/UI/PlayersContainer/NextButton
 @onready var version_label = $CanvasLayer/UI/VersionLabel
 
@@ -35,6 +36,7 @@ func _ready():
 	
 	next_button.set_disabled(true)
 	
+	player_buttons.hide()
 	main_menu_container.show()
 	if Global.build_mode == Global.BuildMode.DEBUG:
 		editor_button.show()
@@ -61,6 +63,7 @@ func show_in_game_menu(new_last_screen):
 	
 	last_screen = new_last_screen
 	
+	player_buttons.hide()
 	main_menu_container.hide()
 	in_game_menu_container.show()
 	options_container.hide()
@@ -79,6 +82,7 @@ func _on_start_button_pressed():
 	if Global.tutorial:
 		start()
 	else:
+		player_buttons.show()
 		main_menu_container.hide()
 		in_game_menu_container.hide()
 		options_container.hide()
@@ -90,6 +94,7 @@ func _on_tutorial_check_button_toggled(toggled_on):
 
 
 func _on_options_button_pressed():
+	player_buttons.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.show()
@@ -115,11 +120,19 @@ func _on_save_button_pressed():
 
 func _on_main_menu_button_pressed():
 	Global.engine_mode = Global.EngineMode.MENU
+	Global.current_players_scenes = []
 	
+	player_buttons.hide()
 	main_menu_container.show()
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
+	next_button.set_disabled(true)
+	
+	# hardcoded
+	for player_texture_button in players_grid_container.get_children():
+		player_texture_button.set_pressed_no_signal(false)
+		player_texture_button.modulate.a = 0.5
 	
 	toggle_visibility(true)
 	
@@ -128,6 +141,8 @@ func _on_main_menu_button_pressed():
 
 
 func _on_back_button_pressed():
+	player_buttons.hide()
+	
 	if get_node_or_null('/root/Main'):
 		# in game
 		main_menu_container.hide()
@@ -155,21 +170,19 @@ func _on_aa_check_box_toggled(toggled_on):
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)
 
 
-func _on_player_option_button_item_selected(index):
-	print('you selected player scene: ' + str(index))
-	
-	Global.current_player_scenes = []
-	
-	var all_selected = true
-	
-	for player_button in players_buttons.get_children():
-		if player_button.get_selected_id() >= 0:
-			Global.current_player_scenes.push_back(player_button.get_selected_id())
-		else:
-			all_selected = false
-	
-	next_button.set_disabled(not all_selected)
-
-
 func _on_next_button_pressed():
 	start()
+
+
+func _on_player_texture_button_toggled(toggled_on, id):
+	var texture_player_button = players_grid_container.get_child(id - 1)
+	
+	# hardcoded
+	if toggled_on:
+		push_unique_to_array(Global.current_players_scenes, id)
+		texture_player_button.modulate.a = 1.0
+	else:
+		Global.current_players_scenes.erase(id)
+		texture_player_button.modulate.a = 0.5
+	
+	next_button.set_disabled(Global.current_players_scenes.size() != 3)

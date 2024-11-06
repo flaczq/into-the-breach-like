@@ -11,9 +11,9 @@ func _ready():
 	health = 3
 	damage = 1
 	move_distance = 3
-	action_min_distance = 1
+	action_min_distance = 2
 	action_max_distance = 7
-	action_direction = ActionDirection.HORIZONTAL_LINE
+	action_direction = ActionDirection.HORIZONTAL_DOT
 	action_type = ActionType.PULL_FRONT
 	action_damage = 0
 	can_fly = false

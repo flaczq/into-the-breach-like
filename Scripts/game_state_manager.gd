@@ -33,7 +33,6 @@ var level_end_clicked: bool = false
 var level: int
 var max_levels: int
 var current_turn: int
-var points: int
 var selected_player: Node3D
 var undo: Dictionary
 
@@ -43,7 +42,6 @@ func _ready():
 	
 	# FIXME
 	max_levels = 9
-	points = 0
 	
 	level_manager_script.connect('init_enemy_event', _on_init_enemy)
 	
@@ -296,7 +294,7 @@ func next_turn():
 	# UI
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info_label.text += 'POINTS: ' + str(points)
+	game_info_label.text += 'SCORE: ' + str(Global.score)
 	
 	start_turn()
 
@@ -339,7 +337,7 @@ func check_for_level_end(turn_ended = true):
 
 
 func level_won():
-	points += civilians.filter(func(civilian): return civilian.is_alive).size()
+	Global.score += civilians.filter(func(civilian): return civilian.is_alive).size()
 	
 	# TODO
 	if level < max_levels and not Global.editor:
@@ -362,29 +360,29 @@ func level_lost():
 
 
 func show_turn_end_texture_rect(whose_turn):
-	#pass
+	pass
 	# FIXME hardcoded
-	turn_end_label.text = whose_turn + ' TURN'
-	turn_end_texture_rect.show()
-	
-	await get_tree().create_timer(0.5).timeout
-	
-	var turn_end_tween = create_tween()
-	turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
-	await turn_end_tween.finished
-	
-	turn_end_texture_rect.hide()
-	turn_end_texture_rect.modulate.a = 1.0
-	turn_end_label.text = ''
-	
-	if whose_turn == 'ENEMY':
-		await get_tree().create_timer(0.5).timeout
+	#turn_end_label.text = whose_turn + ' TURN'
+	#turn_end_texture_rect.show()
+	#
+	#await get_tree().create_timer(0.5).timeout
+	#
+	#var turn_end_tween = create_tween()
+	#turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
+	#await turn_end_tween.finished
+	#
+	#turn_end_texture_rect.hide()
+	#turn_end_texture_rect.modulate.a = 1.0
+	#turn_end_label.text = ''
+	#
+	#if whose_turn == 'ENEMY':
+		#await get_tree().create_timer(0.5).timeout
 
 
 func reset_ui():
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info_label.text += 'POINTS: ' + str(points)
+	game_info_label.text += 'SCORE: ' + str(Global.score)
 	debug_info_label.text = ''
 	tile_info_label.text = ''
 
@@ -662,6 +660,15 @@ func recalculate_enemies_planned_actions():
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
+func check_for_pickable(target_character):
+	var pickable = target_character.tile.get_pickable()
+	if pickable:
+		pickable.queue_free()
+	
+	if target_character.is_in_group('PLAYERS'):
+		Global.loot_count += 1
+
+
 func on_shoot_action_button_toggled(toggled_on):
 	# order matters here!
 	if toggled_on:
@@ -782,6 +789,8 @@ func _on_tile_hovered(tile, is_hovered):
 				tile_info_label.text += '[STATE ICON] ' + tr('STATE_TYPE_' + str(StateType.keys()[character.state_type])) + '\n'
 			if character.is_in_group('ENEMIES'):
 				tile_info_label.text += '[ORDER ICON] ' + str(character.order) + '\n'
+		if tile.get_pickable():
+				tile_info_label.text += '[PICKABLE ICON]' + '\n'
 	else:
 		debug_info_label.text = ''
 		tile_info_label.text = ''
@@ -1071,6 +1080,7 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 					else:
 						enemy.plan_action(planned_tiles.front())
 	
+	check_for_pickable(target_character)
 	recalculate_enemies_planned_actions()
 
 
@@ -1107,8 +1117,9 @@ func _on_action_indicators_cross_push_back(target_character, origin_tile, first_
 func _on_recalculate_order_event():
 	var order = 1
 	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
-	for enemy in enemies:
-		enemy.order = order
+	for alive_enemy in enemies.filter(func(enemy): return enemy.is_alive):
+		alive_enemy.order = order
+		order += 1
 
 
 func _on_end_turn_button_pressed():
@@ -1155,19 +1166,19 @@ func _on_level_end_popup_gui_input(event):
 		
 		level_end_clicked = true
 		
-		for player in players:
+		for alive_player in players.filter(func(player): return player.is_alive):
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(player, 'position:y', 6, 0.5)
+			flying_tile_tween.tween_property(alive_player, 'position:y', 6, 0.5)
 			await flying_tile_tween.finished
 	
-		for enemy in enemies:
+		for alive_enemy in enemies.filter(func(enemy): return enemy.is_alive):
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(enemy, 'position:y', 6, 0.5)
+			flying_tile_tween.tween_property(alive_enemy, 'position:y', 6, 0.5)
 			await flying_tile_tween.finished
 		
-		for civilian in civilians:
+		for alive_civilian in civilians.filter(func(civilian): return civilian.is_alive):
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(civilian, 'position:y', 6, 0.5)
+			flying_tile_tween.tween_property(alive_civilian, 'position:y', 6, 0.5)
 			await flying_tile_tween.finished
 		
 		for tile in map.tiles:

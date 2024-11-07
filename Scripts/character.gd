@@ -25,6 +25,7 @@ var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
 var default_bullet_model: MeshInstance3D
 var default_forced_action_model: MeshInstance3D
+var default_loot_model: MeshInstance3D
 var max_health: int
 var health: int
 var damage: int
@@ -65,6 +66,8 @@ func _ready():
 			default_bullet_model = asset
 		elif asset.name == 'floor-small-diagonal':
 			default_forced_action_model = asset
+		elif asset.name == 'crate-color':
+			default_loot_model = asset
 
 
 func set_model_outlines(parent = model):
@@ -76,10 +79,38 @@ func set_model_outlines(parent = model):
 			set_model_outlines(child)
 
 
+func move(tiles_path, forced = false, outside_tile_position = null):
+	if not forced and state_type == StateType.MISS_ACTION:
+		print('chara ' + str(tile.coords) + ' -> missed action=move')
+		state_type = StateType.NONE
+		return
+	
+	# cannot move to INDESTRUCTIBLE_WALKABLE so any move resets this state
+	if not forced and state_type == StateType.SLOW_DOWN:
+		print('chara ' + str(tile.coords) + ' -> slowed down')
+		state_type = StateType.NONE
+	
+	toggle_health_bar(false)
+	
+	var target_tile = tiles_path.back()
+	if target_tile == tile:
+		if forced and outside_tile_position:
+			print('chara ' + str(tile.coords) + ' -> pushed into the wall')
+			get_shot(1)
+			await force_into_occupied_tile(outside_tile_position)
+		else:
+			print('chara ' + str(tile.coords) + ' -> is not moving')
+	else:
+		if target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
+			print('chara ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
+			get_shot(1)
+			await force_into_occupied_tile(target_tile.position, target_tile)
+
+
 func force_into_occupied_tile(target_tile_position, target_tile = null):
 	# remember position to bounce back to it
 	var origin_position = position
-	var duration = 0.4
+	var duration = 0.4 / Global.speed
 	var position_tween = create_tween()
 	position_tween.tween_property(self, 'position', target_tile_position, duration)
 	await position_tween.finished
@@ -324,7 +355,7 @@ func spawn_bullet(target):
 	
 	var position_tween = create_tween()
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
-		var duration = position_to_target.length() / 8.0
+		var duration = 0.2 * position_to_target.length() / Global.speed
 		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * position_to_target), duration)
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		var origin_position = get_vector3_on_map(Vector3.ZERO)
@@ -334,11 +365,11 @@ func spawn_bullet(target):
 		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		# more = smoother
 		var amount = maxi(2 * roundi(position_difference.length()), 6)
-		var duration = position_difference.length() / (amount * 6.0)
+		var duration = 0.1 / Global.speed#position_difference.length() / (amount * 6.0)
 		for i in range(1, amount + 1):
 			# manually slowing down the bullet in the top part of the trajectory
-			var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)
-			position_tween.tween_property(bullet_model, 'position', origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount)), current_duration)
+			#var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)
+			position_tween.tween_property(bullet_model, 'position', origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount)), duration)
 	await position_tween.finished
 	
 	bullet_model.queue_free()

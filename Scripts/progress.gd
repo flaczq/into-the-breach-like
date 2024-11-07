@@ -2,6 +2,7 @@ extends Util
 
 @onready var menu = $/root/Menu
 @onready var game_state_manager = $/root/Main/GameStateManager
+@onready var actions_label = $CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsLabel
 
 var selected_player_type: int
 var selected_action_type: int
@@ -9,6 +10,8 @@ var selected_action_type: int
 
 func _ready():
 	Global.engine_mode = Global.EngineMode.MENU
+	
+	actions_label = 'Some sort of upgrade system\nCurrent loot: ' + str(Global.loot_count)
 
 
 func show_back():

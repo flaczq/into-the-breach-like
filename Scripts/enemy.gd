@@ -6,6 +6,9 @@ signal recalculate_order_event()
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
+# 1/3 chance of droping loot
+var loot_chance: int = 3
+
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
 var planned_tile: Node3D
@@ -48,47 +51,26 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 	toggle_arrows(false)
 	toggle_action_indicators(false)
 	
-	if is_alive:
-		if not forced and state_type == StateType.MISS_ACTION:
-			print('enemy ' + str(tile.coords) + ' -> missed action=move')
-			state_type = StateType.NONE
-			return
-		
-		if not forced and state_type == StateType.SLOW_DOWN:
-			print('enemy ' + str(tile.coords) + ' -> slowed down')
-			state_type = StateType.NONE
-		
-		toggle_health_bar(false)
-		
-		var target_tile = tiles_path.back()
-		if target_tile == tile:
-			if forced and outside_tile_position:
-				print('enemy ' + str(tile.coords) + ' -> pushed into the wall')
-				get_shot(1)
-				await force_into_occupied_tile(outside_tile_position)
-			else:
-				print('enemy ' + str(tile.coords) + ' -> is not moving')
-		else:
-			if target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
-				print('enemy ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
-				get_shot(1)
-				await force_into_occupied_tile(target_tile.position, target_tile)
-			else:
-				clear_arrows()
-				clear_action_indicators()
+	await super(tiles_path, forced, outside_tile_position)
+	
+	var target_tile = tiles_path.back()
+	if target_tile != tile:
+		if not (target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character()):
+			clear_arrows()
+			clear_action_indicators()
+			
+			tile.set_enemy(null)
+			tile = target_tile
+			tile.set_enemy(self)
+			
+			var duration = 0.4 / Global.speed
+			for next_tile in tiles_path:
+				if not forced:
+					look_at_y(next_tile)
 				
-				tile.set_enemy(null)
-				tile = target_tile
-				tile.set_enemy(self)
-				
-				var duration = 0.2#0.4 / tiles_path.size()
-				for next_tile in tiles_path:
-					if not forced:
-						look_at_y(next_tile)
-					
-					var position_tween = create_tween()
-					position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
-					await position_tween.finished
+				var position_tween = create_tween()
+				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
+				await position_tween.finished
 	
 	toggle_arrows(true)
 	toggle_action_indicators(true)
@@ -141,6 +123,13 @@ func get_killed():
 	tile = null
 	
 	recalculate_order_event.emit()
+	
+	# maybe spawn loot
+	if (randi() % loot_chance) == (loot_chance - 1):
+		var loot_model = default_loot_model.duplicate()
+		loot_model.position = position
+		loot_model.show()
+		add_child(loot_model)
 
 
 func reset_planned_tile():

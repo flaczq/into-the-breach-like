@@ -8,7 +8,7 @@ func _ready():
 	max_health = 3
 	health = 3
 	damage = 1
-	move_distance = 3
+	move_distance = 2
 	action_min_distance = 2
 	action_max_distance = 7
 	action_direction = ActionDirection.HORIZONTAL_DOT

@@ -182,28 +182,54 @@ horizontal_alignment = 1
 
 [node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/UI/PlayersContainer"]
 layout_mode = 2
+theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="Player1TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+[node name="Player1Container" type="VBoxContainer" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="Player1TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 2
 toggle_mode = true
 texture_normal = ExtResource("4_xirb2")
 
-[node name="Player2TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+[node name="Player1Label" type="Label" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 3
+ACTION: PUSH_BACK"
+
+[node name="Player2Container" type="VBoxContainer" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="Player2TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
-size_flags_horizontal = 6
 toggle_mode = true
 texture_normal = ExtResource("5_gj3nh")
 
-[node name="Player3TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+[node name="Player2Label" type="Label" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 3
+ACTION: PULL_FRONT"
+
+[node name="Player3Container" type="VBoxContainer" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="Player3TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
-size_flags_horizontal = 10
 toggle_mode = true
 texture_normal = ExtResource("6_ejy54")
+
+[node name="Player3Label" type="Label" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 2
+ACTION: CROSS_PUSH_BACK"
 
 [node name="NextButton" type="Button" parent="CanvasLayer/UI/PlayersContainer"]
 layout_mode = 2
@@ -236,7 +262,7 @@ text = "1.0"
 [connection signal="pressed" from="CanvasLayer/UI/OptionsContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="item_selected" from="CanvasLayer/UI/OptionsContainer/LanguageOptionButton" to="." method="_on_language_option_button_item_selected"]
 [connection signal="toggled" from="CanvasLayer/UI/OptionsContainer/AACheckBox" to="." method="_on_aa_check_box_toggled"]
-[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1TextureButton" to="." method="_on_player_texture_button_toggled" binds= [1]]
-[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2TextureButton" to="." method="_on_player_texture_button_toggled" binds= [2]]
-[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3TextureButton" to="." method="_on_player_texture_button_toggled" binds= [3]]
+[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container/Player1TextureButton" to="." method="_on_player_texture_button_toggled" binds= [1]]
+[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container/Player2TextureButton" to="." method="_on_player_texture_button_toggled" binds= [2]]
+[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container/Player3TextureButton" to="." method="_on_player_texture_button_toggled" binds= [3]]
 [connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/NextButton" to="." method="_on_next_button_pressed"]

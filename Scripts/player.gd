@@ -50,31 +50,11 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 	if not forced and current_phase != PhaseType.MOVE:
 		return
 	
-	if not forced and state_type == StateType.MISS_ACTION:
-		print('enemy ' + str(tile.coords) + ' -> missed action=move')
-		state_type = StateType.NONE
-		return
-	
-	if not forced and state_type == StateType.SLOW_DOWN:
-		print('playe ' + str(tile.coords) + ' -> slowed down')
-		state_type = StateType.NONE
-	
-	toggle_health_bar(false)
+	await super(tiles_path, forced, outside_tile_position)
 	
 	var target_tile = tiles_path.back()
-	if target_tile == tile:
-		if forced and outside_tile_position:
-			print('playe ' + str(tile.coords) + ' -> pushed into the wall')
-			get_shot(1)
-			await force_into_occupied_tile(outside_tile_position)
-		else:
-			print('playe ' + str(tile.coords) + ' -> is not moving')
-	else:
-		if target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
-			print('playe ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
-			get_shot(1)
-			await force_into_occupied_tile(target_tile.position, target_tile)
-		else:
+	if target_tile != tile:
+		if not(target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character()):
 			tile.set_player(null)
 			tile = target_tile
 			
@@ -83,8 +63,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 			# need call set_player() after reset_tiles() to properly toggle target tile
 			tile.set_player(self)
 			
-			# TODO parameterized in options
-			var duration = 0.2#0.4 / tiles_path.size()
+			var duration = 0.4 / Global.speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)

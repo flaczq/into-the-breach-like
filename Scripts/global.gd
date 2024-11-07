@@ -10,8 +10,11 @@ var engine_mode: EngineMode = EngineMode.MENU
 var editor: bool = false
 var tutorial: bool = true
 var antialiasing: bool = true
+var speed: float = 1.0
 
-var current_players_scenes: Array[int] = []
+var score: int = 0
+var players_scenes: Array[int] = []
+var loot_count: int = 0
 
 
 func _ready():

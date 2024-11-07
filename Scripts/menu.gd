@@ -13,6 +13,9 @@ extends Util
 @onready var aa_check_box = $CanvasLayer/UI/OptionsContainer/AACheckBox
 @onready var players_container = $CanvasLayer/UI/PlayersContainer
 @onready var players_grid_container = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer
+@onready var player_1_texture_button = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container/Player1TextureButton
+@onready var player_2_texture_button = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container/Player2TextureButton
+@onready var player_3_texture_button = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container/Player3TextureButton
 @onready var next_button = $CanvasLayer/UI/PlayersContainer/NextButton
 @onready var version_label = $CanvasLayer/UI/VersionLabel
 
@@ -120,7 +123,7 @@ func _on_save_button_pressed():
 
 func _on_main_menu_button_pressed():
 	Global.engine_mode = Global.EngineMode.MENU
-	Global.current_players_scenes = []
+	Global.players_scenes = []
 	
 	player_buttons.hide()
 	main_menu_container.show()
@@ -130,9 +133,12 @@ func _on_main_menu_button_pressed():
 	next_button.set_disabled(true)
 	
 	# hardcoded
-	for player_texture_button in players_grid_container.get_children():
-		player_texture_button.set_pressed_no_signal(false)
-		player_texture_button.modulate.a = 0.5
+	player_1_texture_button.set_pressed_no_signal(false)
+	player_1_texture_button.modulate.a = 0.5
+	player_2_texture_button.set_pressed_no_signal(false)
+	player_2_texture_button.modulate.a = 0.5
+	player_3_texture_button.set_pressed_no_signal(false)
+	player_3_texture_button.modulate.a = 0.5
 	
 	toggle_visibility(true)
 	
@@ -175,14 +181,14 @@ func _on_next_button_pressed():
 
 
 func _on_player_texture_button_toggled(toggled_on, id):
-	var texture_player_button = players_grid_container.get_child(id - 1)
+	var texture_player_button = players_grid_container.get_child(id - 1).get_child(0)
 	
 	# hardcoded
 	if toggled_on:
-		push_unique_to_array(Global.current_players_scenes, id)
+		push_unique_to_array(Global.players_scenes, id)
 		texture_player_button.modulate.a = 1.0
 	else:
-		Global.current_players_scenes.erase(id)
+		Global.players_scenes.erase(id)
 		texture_player_button.modulate.a = 0.5
 	
-	next_button.set_disabled(Global.current_players_scenes.size() != 3)
+	next_button.set_disabled(Global.players_scenes.size() != 3)

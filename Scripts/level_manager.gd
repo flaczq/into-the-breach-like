@@ -61,7 +61,7 @@ func add_characters(level_data, enemy_scenes_size, civilian_scenes_size):
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 	else:
-		for current_player_scene in Global.current_players_scenes:
+		for current_player_scene in Global.players_scenes:
 			level_data.player_scenes.push_back(current_player_scene)
 		
 		# scene 0 is always tutorial

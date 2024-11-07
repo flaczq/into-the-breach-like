@@ -171,6 +171,10 @@ func set_character(character):
 		printerr('unknown character ' + str(character))
 
 
+func get_pickable():
+	return get_children().filter(func(child): return child.is_in_group('PICKABLES')).front()
+
+
 func is_occupied():
 	# is occupied by character or asset
 	return health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or health_type == TileHealthType.INDESTRUCTIBLE or get_character()

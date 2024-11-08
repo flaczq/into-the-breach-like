@@ -5,6 +5,8 @@ signal init_enemy_event(enemy_scene: int, spawn_tile: Node3D)
 const SAVED_LEVELS_FILE_PATH: String = 'res://Data/saved_levels.txt'
 const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
 
+var spawn_from_below: bool = false
+
 
 func generate_data(level_type, level, enemy_scenes_size, civilian_scenes_size):
 	var levels_file_path = get_levels_file_path(level_type)
@@ -86,14 +88,23 @@ func add_events_details(level_data, enemy_scenes_size):
 		return
 	
 	for level_event in level_data.level_events:
-		if level_event == LevelEvent.MORE_ENEMIES:
-			if not level_data.has('more_enemies'):
-				level_data.more_enemies = []
+		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
+			if not level_data.has('enemies_from_below'):
+				level_data.enemies_from_below = []
 			
-			level_data.more_enemies.push_back(randi_range(1, enemy_scenes_size - 1))
+			level_data.enemies_from_below.push_back(randi_range(1, enemy_scenes_size - 1))
 			# FIXME hardcoded
-			level_data.more_enemies_first_turn = 2
-			level_data.more_enemies_last_turn = 3
+			level_data.enemies_from_below_first_turn = 2
+			level_data.enemies_from_below_last_turn = 3
+		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
+			if not level_data.has('enemies_from_above'):
+				level_data.enemies_from_above = []
+			
+			level_data.enemies_from_above.push_back(randi_range(1, enemy_scenes_size - 1))
+			# FIXME hardcoded
+			level_data.enemies_from_above_first_turn = 2
+			level_data.enemies_from_above_last_turn = 3
+			
 
 
 func plan_events(game_state_manager):
@@ -104,14 +115,15 @@ func plan_events(game_state_manager):
 	if not level_data.has('level_events'):
 		return
 	
-	var more_enemies_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.MORE_ENEMIES).size()
+	var enemies_from_below_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
+	var enemies_from_above_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
 	for level_event in level_data.level_events:
-		# enemy spawned near spawn_enemy_coords
-		if level_event == LevelEvent.MORE_ENEMIES:
-			if current_turn >= level_data.more_enemies_first_turn and current_turn <= level_data.more_enemies_last_turn:
+		# enemy spawned near spawn_enemy_coords from below
+		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
+			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				# check if some indicators were left from the last turn
-				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).size()
-				if existing_event_tiles_count >= more_enemies_count:
+				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
+				if existing_event_tiles_count >= enemies_from_below_count:
 					return
 				
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
@@ -121,19 +133,49 @@ func plan_events(game_state_manager):
 				
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
 				var spawn_enemy_positions = map.tiles.filter(func(tile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
-				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return tile.is_free() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
-					print('no more enemies indicator spawned')
+					print('no more enemies from below indicator spawned')
 					return
 				
-				var event_tile = event_tiles.pick_random()
+				var empty_event_tiles = event_tiles.filter(func(event_tile): return not event_tile.get_character())
+				var event_tile = (event_tiles.pick_random()) if (empty_event_tiles.is_empty()) else (empty_event_tiles.pick_random())
 				event_tile.models.event_asset = event_asset.duplicate()
-				event_tile.models.event_asset.add_to_group('MORE_ENEMIES_INDICATORS')
+				event_tile.models.event_asset.add_to_group('ENEMIES_FROM_BELOW_INDICATORS')
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
 				
 				await game_state_manager.get_tree().create_timer(1.0).timeout
-				print('more enemy at ' + str(event_tile.coords))
+				print('more enemy from below at ' + str(event_tile.coords))
+		# enemy spawned near spawn_enemy_coords from above
+		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
+			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
+				# check if some indicators were left from the last turn
+				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
+				if existing_event_tiles_count >= enemies_from_above_count:
+					return
+				
+				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset_material = StandardMaterial3D.new()
+				event_asset_material.albedo_color = Color('FFFF00')#yellow
+				event_asset.set_surface_override_material(0, event_asset_material)
+				
+				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
+				var spawn_enemy_positions = map.tiles.filter(func(tile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
+				if event_tiles.is_empty():
+					print('no more enemies from above indicator spawned')
+					return
+				
+				var empty_event_tiles = event_tiles.filter(func(event_tile): return not event_tile.get_character())
+				var event_tile = (event_tiles.pick_random()) if (empty_event_tiles.is_empty()) else (empty_event_tiles.pick_random())
+				event_tile.models.event_asset = event_asset.duplicate()
+				event_tile.models.event_asset.add_to_group('ENEMIES_FROM_ABOVE_INDICATORS')
+				event_tile.models.event_asset.show()
+				event_tile.add_child(event_tile.models.event_asset)
+				
+				await game_state_manager.get_tree().create_timer(1.0).timeout
+				print('more enemy from above at ' + str(event_tile.coords))
 		# missle spawned at random tile
 		elif level_event == LevelEvent.FALLING_MISSLE:
 			if current_turn > 1:
@@ -190,25 +232,44 @@ func execute_events(game_state_manager):
 	if not level_data.has('level_events'):
 		return
 	
-	var more_enemies_index = 0
+	var enemies_from_below_index = 0
+	var enemies_from_above_index = 0
 	for level_event in level_data.level_events:
-		# enemy spawns at spawned indicators
-		if level_event == LevelEvent.MORE_ENEMIES:
-			if current_turn >= level_data.more_enemies_first_turn and current_turn <= level_data.more_enemies_last_turn:
-				var event_tile = map.tiles.filter(func(tile): return not tile.is_occupied() and tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS')).front()
+		# enemy spawns from below at spawned indicators - if occupied then do damage to character and try to spawn next turn
+		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
+			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
+				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile:
 					return
 				
+				var target_character = event_tile.get_character()
+				if target_character:
+					await event_tile.get_shot(1)
+					return
+				
 				# TODO animation
-				if level_data.has('more_enemies'):
-					init_enemy_event.emit(level_data.more_enemies[more_enemies_index], event_tile)
-				else:
-					printerr('wtf?! ' + str(level_data))
-					init_enemy_event.emit(0, event_tile)
+				var spawned_enemy_scene = (level_data.has('enemies_from_below')) if (level_data.enemies_from_below[enemies_from_below_index]) else (0)
+				init_enemy_event.emit(spawned_enemy_scene, event_tile)
 				
 				event_tile.models.event_asset.queue_free()
 				event_tile.models.erase('event_asset')
-				more_enemies_index += 1
+				enemies_from_below_index += 1
+				
+				await game_state_manager.get_tree().create_timer(1.0).timeout
+		# enemy spawns from above at spawned indicators - if occupied then don't spawn and try next turn
+		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
+			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
+				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				if not event_tile or event_tile.get_character():
+					return
+				
+				# TODO animation
+				var spawned_enemy_scene = (level_data.has('enemies_from_above')) if (level_data.enemies_from_above[enemies_from_above_index]) else (0)
+				init_enemy_event.emit(spawned_enemy_scene, event_tile)
+				
+				event_tile.models.event_asset.queue_free()
+				event_tile.models.erase('event_asset')
+				enemies_from_above_index += 1
 				
 				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# missle hits at spawned indicators

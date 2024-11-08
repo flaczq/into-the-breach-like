@@ -508,7 +508,7 @@ func calculate_tiles_for_action(active, character):
 		
 		# exclude tiles behind occupied tiles
 		if character.is_in_group('PLAYERS') and character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.VERTICAL_LINE:
-			var occupied_tiles = tiles_for_action.filter(func(tile): return tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE or tile.get_character())
+			var occupied_tiles = tiles_for_action.filter(func(tile): return tile.is_occupied())
 			if not occupied_tiles.is_empty():
 				for occupied_tile in occupied_tiles:
 					var origin_to_target_sign = (character.tile.coords - occupied_tile.coords).sign()
@@ -782,8 +782,10 @@ func _on_tile_hovered(tile, is_hovered):
 			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
 			debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
 		if tile.models.get('event_asset'):
-			if tile.models.event_asset.is_in_group('MORE_ENEMIES_INDICATORS'):
-				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.MORE_ENEMIES]) + '\n'
+			if tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'):
+				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_BELOW]) + '\n'
+			elif tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS'):
+				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_ABOVE]) + '\n'
 			elif tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
 			elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):

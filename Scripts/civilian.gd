@@ -31,7 +31,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 	
 	var target_tile = tiles_path.back()
 	if target_tile != tile:
-		if not (target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character()):
+		if not target_tile.is_occupied():
 			tile.set_civilian(null)
 			tile = target_tile
 			tile.set_civilian(self)

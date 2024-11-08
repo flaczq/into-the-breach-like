@@ -92,7 +92,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 		else:
 			print('chara ' + str(tile.coords) + ' -> is not moving')
 	else:
-		if target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE or target_tile.get_character():
+		if target_tile.is_occupied():
 			print('chara ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 			get_shot(1)
 			await force_into_occupied_tile(target_tile.position, target_tile)
@@ -384,7 +384,7 @@ func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
 func reset_states():
 	if is_alive:
 		if state_type == StateType.MISS_MOVE:
-			print('chara ' + str(tile.coords) + ' -> was immovable')
+			print('chara ' + str(tile.coords) + ' -> missed move')
 			state_type = StateType.NONE
 		elif state_type == StateType.MISS_ACTION:
 			print('chara ' + str(tile.coords) + ' -> missed action')

@@ -169,7 +169,7 @@ func calculate_level_data():
 	# FIXME all levels are 1 for now, later group them by levels and pick random
 	level_data.level = 1
 	level_data.level_type = 1
-	level_data.level_events = [LevelEvent.MORE_ENEMIES, LevelEvent.MORE_ENEMIES]
+	level_data.level_events = [LevelEvent.ENEMIES_FROM_ABOVE, LevelEvent.ENEMIES_FROM_ABOVE]
 	level_manager_script.add_level_type_details(level_data)
 	level_manager_script.add_events_details(level_data, enemy_scenes.size())
 	level_data.tiles = ''
@@ -303,9 +303,9 @@ func _on_save_button_pressed():
 	level_data.erase('enemy_scenes')
 	level_data.erase('civilians')
 	level_data.erase('civilian_scenes')
-	level_data.erase('more_enemies')
-	level_data.erase('more_enemies_first_turn')
-	level_data.erase('more_enemies_last_turn')
+	level_data.erase('enemies_from_below')
+	level_data.erase('enemies_from_below_first_turn')
+	level_data.erase('enemies_from_below_last_turn')
 	
 	content += '\n' + str(index) + prefix + 'START\n'
 	# make it pretty

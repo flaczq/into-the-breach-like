@@ -3,6 +3,8 @@ extends Character
 class_name Enemy
 
 signal recalculate_order_event()
+signal enemy_planned_action_miss_move(target_character: Character, is_applied: bool)
+signal enemy_planned_action_miss_action(target_character: Character, is_applied: bool)
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
@@ -48,6 +50,16 @@ func spawn(spawn_tile, new_order):
 
 
 func move(tiles_path, forced = false, outside_tile_position = null):
+	if not forced and state_type == StateType.MISS_MOVE:
+		print('evemy ' + str(tile.coords) + ' -> missed move')
+		state_type = StateType.NONE
+		return
+	
+	# cannot move to INDESTRUCTIBLE_WALKABLE so any move resets this state
+	if not forced and state_type == StateType.SLOW_DOWN:
+		print('evemy ' + str(tile.coords) + ' -> slowed down')
+		state_type = StateType.NONE
+	
 	toggle_arrows(false)
 	toggle_action_indicators(false)
 	
@@ -63,7 +75,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 			tile = target_tile
 			tile.set_enemy(self)
 			
-			var duration = 0.4 / Global.speed
+			var duration = Global.default_speed / Global.speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)
@@ -85,6 +97,9 @@ func plan_action(target_tile):
 		planned_tile = target_tile
 		planned_tile.set_planned_enemy_action(true)
 		
+		var target_character = planned_tile.get_character()
+		apply_planned_action(target_character)
+		
 		spawn_arrow(planned_tile)
 		spawn_action_indicators(planned_tile)
 		look_at_y(planned_tile)
@@ -97,6 +112,9 @@ func execute_planned_action():
 	
 	var temp_planned_tile = null
 	if planned_tile:
+		var target_character = planned_tile.get_character()
+		apply_planned_action(target_character, false)
+		
 		# remember planned tile to be able to unset it before shooting
 		temp_planned_tile = planned_tile
 		planned_tile.set_planned_enemy_action(false)
@@ -111,6 +129,16 @@ func execute_planned_action():
 		if temp_planned_tile:
 			await spawn_bullet(temp_planned_tile)
 			await temp_planned_tile.get_shot(damage, action_type, action_damage, tile.coords)
+
+
+func apply_planned_action(target_character, is_applied = true):
+	if not target_character:
+		return
+	
+	match action_type:
+		ActionType.MISS_MOVE: enemy_planned_action_miss_move.emit(target_character, is_applied)
+		ActionType.MISS_ACTION: enemy_planned_action_miss_action.emit(target_character, is_applied)
+		_: pass#print('no implementation of applied planned action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
 
 
 func get_killed():
@@ -137,6 +165,9 @@ func reset_planned_tile():
 	clear_action_indicators()
 	
 	if planned_tile:
+		var target_character = planned_tile.get_character()
+		apply_planned_action(target_character, false)
+		
 		planned_tile.set_planned_enemy_action(false)
 		planned_tile = null
 

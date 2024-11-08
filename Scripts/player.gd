@@ -63,7 +63,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 			# need call set_player() after reset_tiles() to properly toggle target tile
 			tile.set_player(self)
 			
-			var duration = 0.4 / Global.speed
+			var duration = Global.default_speed / Global.speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)
@@ -166,8 +166,9 @@ func start_turn():
 
 
 func reset_phase():
-	if is_alive and current_phase == PhaseType.ACTION and not no_more_moves_this_turn():
-		current_phase = PhaseType.MOVE
+	if is_alive:
+		if current_phase == PhaseType.ACTION and not no_more_moves_this_turn():
+			current_phase = PhaseType.MOVE
 
 
 func reset_tiles():
@@ -176,13 +177,6 @@ func reset_tiles():
 		clicked()
 	
 	mouse_exited()
-
-
-func reset_states():
-	if is_alive:
-		if state_type == StateType.MISS_ACTION:
-			print('playe ' + str(tile.coords) + ' -> missed action')
-			state_type = StateType.NONE
 
 
 func no_more_moves_this_turn():
@@ -200,7 +194,15 @@ func no_more_actions_this_turn():
 
 
 func can_be_interacted_with():
-	return current_phase != PhaseType.WAIT and (current_phase != PhaseType.ACTION or state_type != StateType.MISS_ACTION)
+	return current_phase != PhaseType.WAIT
+
+
+func can_move():
+	return current_phase == PhaseType.MOVE and state_type != StateType.MISS_MOVE
+
+
+func can_make_action():
+	return current_phase == PhaseType.ACTION and state_type != StateType.MISS_ACTION
 
 
 func clicked():

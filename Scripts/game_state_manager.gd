@@ -127,13 +127,16 @@ func init_players():
 		
 		#player_instance.init(current_level_player)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
+		if not spawn_tile:
+			print('no tiles to spawn for spawn player coords: ' + str(level_data.spawn_player_coords))
+			return
+		
 		player_instance.spawn(spawn_tile)
 		
 		player_instance.connect('hovered_event', _on_player_hovered)
 		player_instance.connect('clicked_event', _on_player_clicked)
 		player_instance.connect('action_push_back', _on_character_action_push_back)
 		player_instance.connect('action_pull_front', _on_character_action_pull_front)
-		player_instance.connect('action_miss_action', _on_character_action_miss_action)
 		player_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 		player_instance.connect('action_give_shield', _on_character_action_give_shield)
 		player_instance.connect('action_slow_down', _on_character_action_slow_down)
@@ -148,6 +151,10 @@ func init_enemies():
 	
 	for enemy_scene in level_data.enemy_scenes:
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_enemy_coords).pick_random()
+		if not spawn_tile:
+			print('no tiles to spawn for spawn enemy coords: ' + str(level_data.spawn_enemy_coords))
+			return
+		
 		_on_init_enemy(enemy_scene, spawn_tile)
 
 
@@ -162,11 +169,14 @@ func init_civilians():
 		
 		#civilian_instance.init(current_level_civilian)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_civilian_coords).pick_random()
+		if not spawn_tile:
+			print('no tiles to spawn for spawn civilian coords: ' + str(level_data.spawn_civilian_coords))
+			return
+		
 		civilian_instance.spawn(spawn_tile)
 		
 		civilian_instance.connect('action_push_back', _on_character_action_push_back)
 		civilian_instance.connect('action_pull_front', _on_character_action_pull_front)
-		civilian_instance.connect('action_miss_action', _on_character_action_miss_action)
 		civilian_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 		civilian_instance.connect('action_give_shield', _on_character_action_give_shield)
 		civilian_instance.connect('action_slow_down', _on_character_action_slow_down)
@@ -199,6 +209,8 @@ func start_turn():
 		var target_tile_for_movement = (tiles_for_movement[0]) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile): return tile != civilian.tile)).pick_random()
 		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
 		await civilian.move(tiles_path)
+		
+		civilian.reset_states()
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
 	
 	# NOT (enemy targets order: assets > civilians > players) -> all are of the same priority
@@ -683,7 +695,7 @@ func on_shoot_action_button_toggled(toggled_on):
 	temp_selected_player.reset_tiles()
 	temp_selected_player.clicked()
 	
-	if toggled_on and selected_player.current_phase == PhaseType.ACTION:
+	if toggled_on and selected_player.can_make_action():
 		var tiles_for_action = calculate_tiles_for_action(true, selected_player)
 		for tile in tiles_for_action:
 			tile.toggle_player_clicked(true)
@@ -703,13 +715,14 @@ func _on_init_enemy(enemy_scene, spawn_tile):
 	
 	enemy_instance.connect('action_push_back', _on_character_action_push_back)
 	enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
-	enemy_instance.connect('action_miss_action', _on_character_action_miss_action)
 	enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 	enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
 	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
 	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 	enemy_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
 	enemy_instance.connect('recalculate_order_event', _on_recalculate_order_event)
+	enemy_instance.connect('enemy_planned_action_miss_move', _on_enemy_planned_action_miss_move)
+	enemy_instance.connect('enemy_planned_action_miss_action', _on_enemy_planned_action_miss_action)
 	
 	enemies.push_back(enemy_instance)
 
@@ -841,7 +854,7 @@ func _on_tile_hovered(tile, is_hovered):
 	
 	# highlight tiles while player is clicked
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
-		if selected_player.current_phase == PhaseType.MOVE:
+		if selected_player.can_move():
 			#for other_tile in map.tiles.filter(func(current_tile): return current_tile != tile):
 				#other_tile.reset_tile_models()
 			
@@ -855,7 +868,7 @@ func _on_tile_hovered(tile, is_hovered):
 				tile.ghost = selected_player
 			
 			recalculate_enemies_planned_actions()
-		elif selected_player.current_phase == PhaseType.ACTION:
+		elif selected_player.can_make_action():
 			if is_hovered:
 				var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
 				if first_occupied_tile_in_line and first_occupied_tile_in_line != tile:
@@ -901,7 +914,7 @@ func _on_tile_clicked(tile):
 	
 	# highlighted tile is clicked while player is selected
 	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
-		if selected_player.current_phase == PhaseType.MOVE:
+		if selected_player.can_move():
 			# remember player's last tile
 			undo[selected_player.get_instance_id()] = selected_player.tile
 			undo_button.set_disabled(false)
@@ -910,7 +923,7 @@ func _on_tile_clicked(tile):
 			await selected_player.move(tiles_path, false)
 			
 			recalculate_enemies_planned_actions()
-		elif selected_player.current_phase == PhaseType.ACTION:
+		elif selected_player.can_make_action():
 			selected_player.clear_arrows()
 			selected_player.clear_action_indicators()
 		
@@ -961,7 +974,7 @@ func _on_player_hovered(player, is_hovered):
 		return
 	
 	if is_hovered:
-		if player.current_phase == PhaseType.MOVE:
+		if player.can_move():
 			var tiles_for_movement = calculate_tiles_for_movement(is_hovered, player)
 			for tile_for_movement in tiles_for_movement:
 				tile_for_movement.toggle_player_hovered(is_hovered)
@@ -992,7 +1005,7 @@ func _on_player_clicked(player, is_clicked):
 		#if not action_button.is_pressed() and selected_player.current_phase == PhaseType.ACTION:
 			#shoot_button.set_pressed_no_signal(true)
 		
-		if player.current_phase == PhaseType.MOVE:
+		if player.can_move():
 			var tiles_for_movement = calculate_tiles_for_movement(is_clicked, player)
 			for tile_for_movement in tiles_for_movement:
 				tile_for_movement.toggle_player_clicked(is_clicked)
@@ -1030,7 +1043,7 @@ func _on_character_action_push_back(target_character, action_damage, origin_tile
 		
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
-				# fell down
+				# pushed into a hole = dead
 				await target_character.get_killed()
 			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				target_character.state_type = StateType.SLOW_DOWN
@@ -1064,7 +1077,7 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 		
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
-				# fell down
+				# pulled into a hole = dead
 				await target_character.get_killed()
 			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				target_character.state_type = StateType.SLOW_DOWN
@@ -1082,14 +1095,6 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 	
 	check_for_pickable(target_character)
 	recalculate_enemies_planned_actions()
-
-
-func _on_character_action_miss_action(target_character):
-	target_character.state_type = StateType.MISS_ACTION
-	
-	if target_character.is_in_group('ENEMIES'):
-		var enemy = target_character
-		enemy.reset_planned_tile()
 
 
 func _on_character_action_hit_ally(target_character):
@@ -1120,6 +1125,24 @@ func _on_recalculate_order_event():
 	for alive_enemy in enemies.filter(func(enemy): return enemy.is_alive):
 		alive_enemy.order = order
 		order += 1
+
+
+func _on_enemy_planned_action_miss_move(target_character, is_applied):
+	if is_applied:
+		target_character.state_type = StateType.MISS_MOVE
+	elif target_character.state_type == StateType.MISS_MOVE:
+		target_character.state_type = StateType.NONE
+
+
+func _on_enemy_planned_action_miss_action(target_character, is_applied):
+	if is_applied:
+		target_character.state_type = StateType.MISS_ACTION
+	
+		if target_character.is_in_group('ENEMIES'):
+			var enemy = target_character
+			enemy.reset_planned_tile()
+	elif target_character.state_type == StateType.MISS_ACTION:
+		target_character.state_type = StateType.NONE
 
 
 func _on_end_turn_button_pressed():

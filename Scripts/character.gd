@@ -4,7 +4,8 @@ class_name Character
 
 signal action_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
-signal action_miss_action(target_character: Character)
+#signal action_miss_move(target_character: Character)
+#signal action_miss_action(target_character: Character)
 signal action_hit_ally(target_character: Character)
 signal action_give_shield(target_character: Character)
 signal action_slow_down(target_character: Character)
@@ -80,16 +81,6 @@ func set_model_outlines(parent = model):
 
 
 func move(tiles_path, forced = false, outside_tile_position = null):
-	if not forced and state_type == StateType.MISS_ACTION:
-		print('chara ' + str(tile.coords) + ' -> missed action=move')
-		state_type = StateType.NONE
-		return
-	
-	# cannot move to INDESTRUCTIBLE_WALKABLE so any move resets this state
-	if not forced and state_type == StateType.SLOW_DOWN:
-		print('chara ' + str(tile.coords) + ' -> slowed down')
-		state_type = StateType.NONE
-	
 	toggle_health_bar(false)
 	
 	var target_tile = tiles_path.back()
@@ -110,7 +101,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 func force_into_occupied_tile(target_tile_position, target_tile = null):
 	# remember position to bounce back to it
 	var origin_position = position
-	var duration = 0.4 / Global.speed
+	var duration = Global.default_speed / Global.speed
 	var position_tween = create_tween()
 	position_tween.tween_property(self, 'position', target_tile_position, duration)
 	await position_tween.finished
@@ -306,7 +297,7 @@ func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_posit
 		ActionType.CROSS_PUSH_BACK:
 			# 'target_tile' is origin, 'origin_tile.position' is first_origin_position
 			action_indicators_cross_push_back.emit(self, target_tile, origin_tile.position)
-		_: print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
+		_: pass#print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
 
 
 func clear_action_indicators():
@@ -380,12 +371,24 @@ func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
 		ActionType.NONE: print('no applied action for character: ' + str(self))
 		ActionType.PUSH_BACK: action_push_back.emit(self, action_damage, origin_tile_coords)
 		ActionType.PULL_FRONT: action_pull_front.emit(self, action_damage, origin_tile_coords)
-		ActionType.MISS_ACTION: action_miss_action.emit(self)
+		#ActionType.MISS_MOVE: action_miss_move.emit(self)
+		#ActionType.MISS_ACTION: action_miss_action.emit(self)
 		ActionType.HIT_ALLY: action_hit_ally.emit(self)
 		ActionType.GIVE_SHIELD: action_give_shield.emit(self)
 		ActionType.SLOW_DOWN: action_slow_down.emit(self)
 		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(self, action_damage, origin_tile_coords)
-		_: print('no implementation of applied action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
+		_: pass#print('no implementation of applied action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
+
+
+# not used by enemy because it's handled in move() and execute_planned_action()
+func reset_states():
+	if is_alive:
+		if state_type == StateType.MISS_MOVE:
+			print('chara ' + str(tile.coords) + ' -> was immovable')
+			state_type = StateType.NONE
+		elif state_type == StateType.MISS_ACTION:
+			print('chara ' + str(tile.coords) + ' -> missed action')
+			state_type = StateType.NONE
 
 
 func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_tile_coords = null):
@@ -393,6 +396,13 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 		damage = 0
 		print('chara ' + str(tile.coords) + ' -> was given shield')
 		state_type = StateType.NONE
+	
+	# reset applied planned actions for enemy target
+	if is_in_group('ENEMIES'):
+		var enemy = self
+		if enemy.planned_tile:
+			var target_character = enemy.planned_tile.get_character()
+			enemy.apply_planned_action(target_character, false)
 	
 	apply_action(action_type, action_damage, origin_tile_coords)
 	
@@ -441,11 +451,15 @@ func show_outline_with_predicted_health(target_tile, tiles, origin_action_type =
 				var push_direction = -1 * hit_direction_sign
 				var pushed_into_tile = tiles.filter(func(tile): return tile.coords == target_character.tile.coords + push_direction).front()
 				if pushed_into_tile:
-					# pushed into other character or asset
 					if pushed_into_tile.is_occupied():
+						# pushed into other character or asset
 						damage_dealt += 1
 						# to the same for hit character as well
 						target_character.show_outline_with_predicted_health(pushed_into_tile, tiles, ActionType.NONE, pushed_into_tile, 1, true)
+					elif pushed_into_tile.health_type == TileHealthType.DESTROYED:
+						# pushed into a hole = dead
+						damage_dealt = target_character.health
+						
 				else:
 					# pushed outside of the map
 					damage_dealt += 1
@@ -460,6 +474,9 @@ func show_outline_with_predicted_health(target_tile, tiles, origin_action_type =
 						damage_dealt += 1
 						# to the same for hit character as well
 						target_character.show_outline_with_predicted_health(pulled_into_tile, tiles, ActionType.NONE, pulled_into_tile, 1, true)
+					elif pulled_into_tile.health_type == TileHealthType.DESTROYED:
+						# pulled into a hole = dead
+						damage_dealt = target_character.health
 				else:
 					# pulled outside of the map
 					damage_dealt += 1

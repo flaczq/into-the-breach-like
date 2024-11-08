@@ -255,7 +255,7 @@ func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
 	match action_type:
 		ActionType.NONE: print('no applied action for tile coords ' + str(coords))
 		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(coords, action_damage, origin_tile_coords)
-		_: print('no need for applied action ' + ActionType.keys()[action_type] + ' for tile coords ' + str(coords))
+		_: pass#print('no need for applied action ' + ActionType.keys()[action_type] + ' for tile coords ' + str(coords))
 
 
 func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_tile_coords = null):

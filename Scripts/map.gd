@@ -46,6 +46,7 @@ func convert_tile_type_initial_to_enum(tile_type_initial):
 		'W': return TileType.WATER
 		'L': return TileType.LAVA
 		'F': return TileType.FLOOR
+		'H': return TileType.HOLE
 		_:
 			print('[convert_tile_type_initial_to_enum] -> unknown tile type initial: ' + tile_type_initial)
 			return TileType.PLAIN
@@ -61,6 +62,7 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 		TileType.WATER: return 'W'
 		TileType.LAVA: return 'L'
 		TileType.FLOOR: return 'F'
+		TileType.HOLE: return 'H'
 		_:
 			print('[convert_tile_type_enum_to_initial] -> unknown tile type enum: ' + str(tile_type_enum))
 			return 'P'
@@ -174,6 +176,8 @@ func get_color_by_tile_type(tile_type):
 			return Color('c54700')#orange
 		TileType.FLOOR:
 			return Color('b58450')#light brown
+		TileType.HOLE:
+			return Color('000000')#black
 		_:
 			print('[get_color_by_tile_type] -> unknown tile type: ' + str(tile_type))
 			return Color('e3cdaa')
@@ -200,6 +204,7 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 		TileType.WATER: return TileHealthType.INDESTRUCTIBLE_WALKABLE
 		TileType.LAVA: return TileHealthType.INDESTRUCTIBLE_WALKABLE
 		TileType.FLOOR: return TileHealthType.HEALTHY
+		TileType.HOLE: return TileHealthType.DESTROYED
 		_:
 			print('[get_health_type_by_tile_type] -> unknown tile type: ' + str(tile_type))
 			return TileHealthType.HEALTHY

@@ -121,7 +121,7 @@ func plan_events(game_state_manager):
 				
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
 				var spawn_enemy_positions = map.tiles.filter(func(tile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
-				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return not tile.is_occupied() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return tile.is_free() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no more enemies indicator spawned')
 					return

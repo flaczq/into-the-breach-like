@@ -17,6 +17,16 @@ func spawn(spawn_tile):
 
 
 func move(tiles_path, forced = false, outside_tile_position = null):
+	if not forced and state_type == StateType.MISS_MOVE:
+		print('civil ' + str(tile.coords) + ' -> missed move')
+		state_type = StateType.NONE
+		return
+	
+	# cannot move to INDESTRUCTIBLE_WALKABLE so any move resets this state
+	if not forced and state_type == StateType.SLOW_DOWN:
+		print('civil ' + str(tile.coords) + ' -> slowed down')
+		state_type = StateType.NONE
+	
 	await super(tiles_path, forced, outside_tile_position)
 	
 	var target_tile = tiles_path.back()
@@ -26,7 +36,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 			tile = target_tile
 			tile.set_civilian(self)
 			
-			var duration = 0.4 / Global.speed
+			var duration = Global.default_speed / Global.speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)

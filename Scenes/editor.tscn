@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=27 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://dliou6uj8vx8g" path="res://Scenes/enemy3.tscn" id="11_kt37j"]
 [ext_resource type="ButtonGroup" uid="uid://by0pbsfufftxo" path="res://Other/shoot_action_button_group.tres" id="12_yqnhu"]
 [ext_resource type="PackedScene" uid="uid://djb7hjxihkin0" path="res://Scenes/tutorial_player.tscn" id="16_b1rcx"]
+[ext_resource type="PackedScene" uid="uid://bj8bk338r75sx" path="res://Scenes/enemy4.tscn" id="17_60fhf"]
 [ext_resource type="PackedScene" uid="uid://cyk5jmmvp3sag" path="res://Scenes/tutorial_enemy.tscn" id="17_hdgpr"]
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="18_v5xqc"]
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="19_yyv2y"]
@@ -44,7 +45,7 @@ script = ExtResource("4_nvvvx")
 assets_scene = ExtResource("8_gfadf")
 map_scenes = Array[PackedScene]([ExtResource("6_f5ijx"), ExtResource("7_6jo0a"), ExtResource("2_u2oq0")])
 player_scenes = Array[PackedScene]([ExtResource("16_b1rcx"), ExtResource("8_wa28c"), ExtResource("7_j7ymc"), ExtResource("8_hcwj8")])
-enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j")])
+enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j"), ExtResource("17_60fhf")])
 civilian_scenes = Array[PackedScene]([ExtResource("18_v5xqc"), ExtResource("10_wdovn")])
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -61,7 +62,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0)
 script = ExtResource("5_phmd4")
 map_scenes = Array[PackedScene]([ExtResource("6_f5ijx"), ExtResource("7_6jo0a"), ExtResource("2_u2oq0")])
 player_scenes = Array[PackedScene]([ExtResource("16_b1rcx"), ExtResource("8_wa28c"), ExtResource("7_j7ymc"), ExtResource("8_hcwj8")])
-enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j")])
+enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j"), ExtResource("17_60fhf")])
 civilian_scenes = Array[PackedScene]([ExtResource("18_v5xqc"), ExtResource("10_wdovn")])
 progress_scene = ExtResource("11_4i00g")
 
@@ -207,7 +208,7 @@ disabled = true
 text = "TILES"
 flat = false
 expand_icon = true
-item_count = 8
+item_count = 9
 popup/item_0/text = "PLAIN"
 popup/item_0/id = 0
 popup/item_1/text = "GRASS"
@@ -226,6 +227,8 @@ popup/item_6/text = "LAVA"
 popup/item_6/id = 6
 popup/item_7/text = "FLOOR"
 popup/item_7/id = 7
+popup/item_8/text = "HOLE"
+popup/item_8/id = 8
 
 [node name="AssetsMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2
@@ -269,7 +272,7 @@ disabled = true
 text = "ENEMIES"
 flat = false
 expand_icon = true
-item_count = 4
+item_count = 5
 popup/item_0/text = "TUTORIAL ENEMY 1"
 popup/item_0/id = 0
 popup/item_1/text = "ENEMY 1"
@@ -278,6 +281,8 @@ popup/item_2/text = "ENEMY 2"
 popup/item_2/id = 2
 popup/item_3/text = "ENEMY 3"
 popup/item_3/id = 3
+popup/item_4/text = "ENEMY 4"
+popup/item_4/id = 4
 
 [node name="CiviliansMenuButton" type="MenuButton" parent="CanvasLayer/UI/EditorContainer"]
 layout_mode = 2

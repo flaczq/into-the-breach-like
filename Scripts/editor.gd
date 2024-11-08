@@ -303,9 +303,9 @@ func _on_save_button_pressed():
 	level_data.erase('enemy_scenes')
 	level_data.erase('civilians')
 	level_data.erase('civilian_scenes')
-	level_data.erase('level_event_more_enemies_first_turn')
-	level_data.erase('level_event_more_enemies_last_turn')
-	level_data.erase('level_event_more_enemies')
+	level_data.erase('more_enemies')
+	level_data.erase('more_enemies_first_turn')
+	level_data.erase('more_enemies_last_turn')
 	
 	content += '\n' + str(index) + prefix + 'START\n'
 	# make it pretty

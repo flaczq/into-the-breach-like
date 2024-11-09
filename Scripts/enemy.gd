@@ -2,7 +2,7 @@ extends Character
 
 class_name Enemy
 
-signal recalculate_order_event()
+signal enemy_killed_event(target_enemy: Enemy)
 signal enemy_planned_action_miss_move(target_character: Character, is_applied: bool)
 signal enemy_planned_action_miss_action(target_character: Character, is_applied: bool)
 
@@ -150,7 +150,7 @@ func get_killed():
 	tile.set_enemy(null)
 	tile = null
 	
-	recalculate_order_event.emit()
+	enemy_killed_event.emit(self)
 	
 	# maybe spawn loot
 	if (randi() % loot_chance) == (loot_chance - 1):

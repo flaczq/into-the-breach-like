@@ -13,7 +13,7 @@ func generate_data(level_type, level, enemy_scenes_size, civilian_scenes_size):
 	var file = FileAccess.open(levels_file_path, FileAccess.READ)
 	var file_content = file.get_as_text()
 	var level_data_string = select_random_level_data(file_content, level, level_type)
-	assert(level_data_string != file_content, 'Add level type ' + str(level_type) + ' to levels file: ' + str(levels_file_path))
+	assert(level_data_string != file_content, 'Add level type: ' + str(level_type) + ' to levels file: ' + str(levels_file_path))
 	var level_data = parse_data(level_data_string)
 	
 	add_characters(level_data, enemy_scenes_size, civilian_scenes_size)
@@ -77,7 +77,7 @@ func add_characters(level_data, enemy_scenes_size, civilian_scenes_size):
 func add_level_type_details(level_data):
 	if level_data.level_type == LevelType.KILL_ENEMIES:
 		# FIXME hardcoded, maybe not needed..?
-		level_data.max_enemies = 7
+		level_data.max_enemies = 4
 	elif level_data.level_type == LevelType.SURVIVE_TURNS:
 		# FIXME hardcoded
 		level_data.max_turns = 5
@@ -95,7 +95,7 @@ func add_events_details(level_data, enemy_scenes_size):
 			level_data.enemies_from_below.push_back(randi_range(1, enemy_scenes_size - 1))
 			# FIXME hardcoded
 			level_data.enemies_from_below_first_turn = 2
-			level_data.enemies_from_below_last_turn = 3
+			level_data.enemies_from_below_last_turn = 4
 		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
 			if not level_data.has('enemies_from_above'):
 				level_data.enemies_from_above = []
@@ -103,7 +103,7 @@ func add_events_details(level_data, enemy_scenes_size):
 			level_data.enemies_from_above.push_back(randi_range(1, enemy_scenes_size - 1))
 			# FIXME hardcoded
 			level_data.enemies_from_above_first_turn = 2
-			level_data.enemies_from_above_last_turn = 3
+			level_data.enemies_from_above_last_turn = 4
 			
 
 
@@ -120,6 +120,8 @@ func plan_events(game_state_manager):
 	for level_event in level_data.level_events:
 		# enemy spawned near spawn_enemy_coords from below
 		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
+			assert(level_data.get('enemies_from_below_first_turn'), 'Set enemies_from_below_first_turn for level_event: ENEMIES_FROM_BELOW')
+			assert(level_data.get('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				# check if some indicators were left from the last turn
 				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
@@ -149,6 +151,8 @@ func plan_events(game_state_manager):
 				print('more enemy from below at ' + str(event_tile.coords))
 		# enemy spawned near spawn_enemy_coords from above
 		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
+			assert(level_data.get('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
+			assert(level_data.get('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				# check if some indicators were left from the last turn
 				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
@@ -237,6 +241,9 @@ func execute_events(game_state_manager):
 	for level_event in level_data.level_events:
 		# enemy spawns from below at spawned indicators - if occupied then do damage to character and try to spawn next turn
 		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
+			assert(level_data.get('enemies_from_below_first_turn'), 'Set enemies_from_below_first_turn for level_event: ENEMIES_FROM_BELOW')
+			assert(level_data.get('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
+			assert(level_data.get('enemies_from_below'), 'Set enemies_from_below for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile:
@@ -248,7 +255,7 @@ func execute_events(game_state_manager):
 					return
 				
 				# TODO animation
-				var spawned_enemy_scene = (level_data.has('enemies_from_below')) if (level_data.enemies_from_below[enemies_from_below_index]) else (0)
+				var spawned_enemy_scene = level_data.enemies_from_below[enemies_from_below_index]
 				init_enemy_event.emit(spawned_enemy_scene, event_tile)
 				
 				event_tile.models.event_asset.queue_free()
@@ -258,13 +265,16 @@ func execute_events(game_state_manager):
 				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# enemy spawns from above at spawned indicators - if occupied then don't spawn and try next turn
 		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
+			assert(level_data.get('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
+			assert(level_data.get('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
+			assert(level_data.get('enemies_from_above'), 'Set enemies_from_above for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile or event_tile.get_character():
 					return
 				
 				# TODO animation
-				var spawned_enemy_scene = (level_data.has('enemies_from_above')) if (level_data.enemies_from_above[enemies_from_above_index]) else (0)
+				var spawned_enemy_scene = level_data.enemies_from_above[enemies_from_above_index]
 				init_enemy_event.emit(spawned_enemy_scene, event_tile)
 				
 				event_tile.models.event_asset.queue_free()

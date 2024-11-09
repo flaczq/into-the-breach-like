@@ -19,6 +19,10 @@ func _ready():
 
 
 func spawn(level_data):
+	assert(level_data.has('tiles'), 'Set tiles for level_data')
+	assert(level_data.has('tiles_assets'), 'Set tiles_assets for level_data')
+	assert(level_data.get('level_type'), 'Set level_type for level_data')
+	assert(level_data.get('level'), 'Set level for level_data')
 	for tile in tiles:
 		# file content index based on coords
 		var index = get_side_dimension() * (tile.coords.x - 1) + (tile.coords.y - 1)

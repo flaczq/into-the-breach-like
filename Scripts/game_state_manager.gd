@@ -33,13 +33,13 @@ var level_end_clicked: bool = false
 var level: int
 var max_levels: int
 var current_turn: int
+var enemies_killed: int
 var selected_player: Node3D
 var undo: Dictionary
 
 
 func _ready():
 	level = 0
-	
 	# FIXME
 	max_levels = 9
 	
@@ -88,6 +88,7 @@ func init(init_level_data = level_data):
 
 func init_game_state():
 	current_turn = 1
+	enemies_killed = 0
 	selected_player = null
 	undo = {}
 	
@@ -106,6 +107,7 @@ func init_game_state():
 
 
 func init_map():
+	assert(level_data.get('scene'), 'Set scene for level_data')
 	map = map_scenes[level_data.scene].instantiate()
 	add_sibling(map)
 	map.spawn(level_data)
@@ -117,6 +119,8 @@ func init_map():
 
 
 func init_players():
+	assert(level_data.has('player_scenes'), 'Set player_scenes for level_data')
+	assert(level_data.has('spawn_player_coords'), 'Set spawn_player_coords for level_data')
 	players = []
 	
 	for player_scene in level_data.player_scenes:
@@ -147,6 +151,8 @@ func init_players():
 
 
 func init_enemies():
+	assert(level_data.has('enemy_scenes'), 'Set enemy_scenes for level_data')
+	assert(level_data.has('spawn_enemy_coords'), 'Set spawn_enemy_coords for level_data')
 	enemies = []
 	
 	for enemy_scene in level_data.enemy_scenes:
@@ -159,6 +165,8 @@ func init_enemies():
 
 
 func init_civilians():
+	assert(level_data.has('civilian_scenes'), 'Set civilian_scenes for level_data')
+	assert(level_data.has('spawn_civilian_coords'), 'Set spawn_civilian_coords for level_data')
 	civilians = []
 	
 	for civilian_scene in level_data.civilian_scenes:
@@ -333,19 +341,25 @@ func next_level():
 
 
 func check_for_level_end(turn_ended = true):
-	if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
-		level_won()
-	elif turn_ended:
-		if players.filter(func(player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
-			level_lost()
-		elif level_data.level_type == LevelType.SURVIVE_TURNS:
+	if players.filter(func(player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
+		level_lost()
+		return
+	
+	match level_data.level_type:
+		LevelType.KILL_ENEMIES:
+			assert(level_data.get('max_enemies'), 'Set max_enemies for level_type: KILL_ENEMIES')
+			if enemies_killed >= level_data.max_enemies:#enemies.filter(func(enemy): return enemy.is_alive).is_empty():
+				level_won()
+				return
+		LevelType.SURVIVE_TURNS:
 			# turn not increased yet
 			if current_turn >= level_data.max_turns:
 				level_won()
-			else:
-				next_turn()
-		else:
-			next_turn()
+				return
+		_: print('no implementation of checking for level end for level type: ' + LevelEvent.keys()[level_data.level_type])
+	
+	if turn_ended:
+		next_turn()
 
 
 func level_won():
@@ -720,7 +734,7 @@ func _on_init_enemy(enemy_scene, spawn_tile):
 	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
 	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 	enemy_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
-	enemy_instance.connect('recalculate_order_event', _on_recalculate_order_event)
+	enemy_instance.connect('enemy_killed_event', _on_enemy_killed_event)
 	enemy_instance.connect('enemy_planned_action_miss_move', _on_enemy_planned_action_miss_move)
 	enemy_instance.connect('enemy_planned_action_miss_action', _on_enemy_planned_action_miss_action)
 	
@@ -1121,12 +1135,17 @@ func _on_action_indicators_cross_push_back(target_character, origin_tile, first_
 		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
 
 
-func _on_recalculate_order_event():
+func _on_enemy_killed_event(target_enemy):
+	enemies_killed += 1
+	
+	# recalculate enemies order
 	var order = 1
 	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for alive_enemy in enemies.filter(func(enemy): return enemy.is_alive):
 		alive_enemy.order = order
 		order += 1
+	
+	check_for_level_end(false)
 
 
 func _on_enemy_planned_action_miss_move(target_character, is_applied):

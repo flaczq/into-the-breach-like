@@ -368,7 +368,7 @@ func spawn_bullet(target):
 
 func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
 	match action_type:
-		ActionType.NONE: print('no applied action for character: ' + str(self))
+		ActionType.NONE: print('no applied action for character: ' + str(tile.coords))
 		ActionType.PUSH_BACK: action_push_back.emit(self, action_damage, origin_tile_coords)
 		ActionType.PULL_FRONT: action_pull_front.emit(self, action_damage, origin_tile_coords)
 		#ActionType.MISS_MOVE: action_miss_move.emit(self)

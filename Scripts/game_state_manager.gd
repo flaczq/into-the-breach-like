@@ -6,14 +6,14 @@ extends Util
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
 
-@onready var debug_info_label = $'../CanvasLayer/UI/PlayerInfoContainer/DebugInfoLabel'
-@onready var end_turn_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton'
-@onready var shoot_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton'
-@onready var action_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton'
-@onready var undo_button = $'../CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton'
+@onready var end_turn_texture_button = $'../CanvasLayer/UI/LeftContainer/LeftTopContainer/EndTurnTextureButton'
+@onready var action_1_texture_button = $'../CanvasLayer/UI/LeftContainer/LeftTopContainer/Action1TextureButton'
+@onready var undo_texture_button = $'../CanvasLayer/UI/LeftContainer/LeftTopContainer/UndoTextureButton'
+@onready var game_info_label = $'../CanvasLayer/UI/LeftContainer/LeftCenterContainer/GameInfoLabel'
+@onready var objectives_label = $'../CanvasLayer/UI/LeftContainer/LeftCenterContainer/ObjectivesLabel'
+@onready var debug_info_label = $'../CanvasLayer/UI/LeftContainer/LeftBottomContainer/DebugInfoLabel'
 @onready var tile_info_label = $'../CanvasLayer/UI/BottomContainer/TileInfoLabel'
-@onready var game_info_label = $"../CanvasLayer/UI/BottomContainer/GameInfoLabel"
-@onready var turn_end_texture_rect = $"../CanvasLayer/UI/TurnEndTextureRect"
+@onready var turn_end_texture_rect = $'../CanvasLayer/UI/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/UI/TurnEndTextureRect/TurnEndLabel'
 @onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
 @onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
@@ -94,10 +94,13 @@ func init_game_state():
 	
 	# UI
 	reset_ui()
-	end_turn_button.set_disabled(true)
-	shoot_button.set_disabled(true)
-	action_button.set_disabled(true)
-	undo_button.set_disabled(true)
+	# FIXME proper disabled icons
+	end_turn_texture_button.set_disabled(true)
+	end_turn_texture_button.modulate.a = 0.5
+	action_1_texture_button.set_disabled(true)
+	action_1_texture_button.modulate.a = 0.5
+	undo_texture_button.set_disabled(true)
+	undo_texture_button.modulate.a = 0.5
 	turn_end_texture_rect.hide()
 	turn_end_label.text = ''
 	level_end_popup.hide()
@@ -107,7 +110,7 @@ func init_game_state():
 
 
 func init_map():
-	assert(level_data.get('scene'), 'Set scene for level_data')
+	assert(level_data.has('scene'), 'Set scene for level_data')
 	map = map_scenes[level_data.scene].instantiate()
 	add_sibling(map)
 	map.spawn(level_data)
@@ -270,17 +273,19 @@ func start_turn():
 		player.start_turn()
 	
 	# UI
-	end_turn_button.set_disabled(false)
+	end_turn_texture_button.set_disabled(false)
+	end_turn_texture_button.modulate.a = 1.0
 	
 	await show_turn_end_texture_rect('PLAYER')
 
 
 func end_turn():
 	# UI
-	end_turn_button.set_disabled(true)
-	shoot_button.set_pressed_no_signal(false)
-	action_button.set_pressed_no_signal(false)
-	undo_button.set_disabled(true)
+	end_turn_texture_button.set_disabled(true)
+	end_turn_texture_button.modulate.a = 0.5
+	action_1_texture_button.set_pressed_no_signal(false)
+	undo_texture_button.set_disabled(true)
+	undo_texture_button.modulate.a = 0.5
 	undo = {}
 	
 	await show_turn_end_texture_rect('ENEMY')
@@ -345,18 +350,17 @@ func check_for_level_end(turn_ended = true):
 		level_lost()
 		return
 	
-	match level_data.level_type:
-		LevelType.KILL_ENEMIES:
-			assert(level_data.get('max_enemies'), 'Set max_enemies for level_type: KILL_ENEMIES')
-			if enemies_killed >= level_data.max_enemies:#enemies.filter(func(enemy): return enemy.is_alive).is_empty():
-				level_won()
-				return
-		LevelType.SURVIVE_TURNS:
-			# turn not increased yet
-			if current_turn >= level_data.max_turns:
-				level_won()
-				return
-		_: print('no implementation of checking for level end for level type: ' + LevelEvent.keys()[level_data.level_type])
+	if level_data.level_type == LevelType.KILL_ENEMIES:
+		assert(level_data.has('max_enemies'), 'Set max_enemies for level_type: KILL_ENEMIES')
+		if enemies_killed >= level_data.max_enemies:#enemies.filter(func(enemy): return enemy.is_alive).is_empty():
+			level_won()
+			return
+	
+	if level_data.level_type == LevelType.SURVIVE_TURNS:
+		# turn not increased yet
+		if current_turn >= level_data.max_turns:
+			level_won()
+			return
 	
 	if turn_ended:
 		next_turn()
@@ -790,6 +794,7 @@ func _on_tile_hovered(tile, is_hovered):
 		if character:
 			debug_info_label.text += '\n\n' + character.model_name + '\n'
 			debug_info_label.text += tr('INFO_HEALTH') + ': ' + str(character.health) + '/' + str(character.max_health) + '\n'
+			debug_info_label.text += 'DAMAGE: ' + str(character.damage) + '\n'
 			debug_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[character.action_type]) + '\n'
 			debug_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[character.action_direction]) + '\n'
 			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
@@ -834,7 +839,7 @@ func _on_tile_hovered(tile, is_hovered):
 			#tile.enemy.toggle_outline(true)
 			
 			if tile.enemy.planned_tile:
-				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed()
+				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_1_texture_button.is_pressed()
 				if not is_selected_player_action:
 					tile.enemy.toggle_arrow_highlight(true)
 					tile.enemy.planned_tile.toggle_asset_outline(true)
@@ -860,7 +865,7 @@ func _on_tile_hovered(tile, is_hovered):
 			#tile.toggle_shader(true)
 			#tile.toggle_asset_outline(true)
 			
-			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_button.is_pressed()
+			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_1_texture_button.is_pressed()
 			if not is_selected_player_action:
 				# find enemy whose planned tile is hovered
 				for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
@@ -933,7 +938,8 @@ func _on_tile_clicked(tile):
 		if selected_player.can_move():
 			# remember player's last tile
 			undo[selected_player.get_instance_id()] = selected_player.tile
-			undo_button.set_disabled(false)
+			undo_texture_button.set_disabled(false)
+			undo_texture_button.modulate.a = 1.0
 			
 			var tiles_path = calculate_tiles_path(selected_player, tile)
 			await selected_player.move(tiles_path, false)
@@ -947,23 +953,22 @@ func _on_tile_clicked(tile):
 			if not first_occupied_tile_in_line:
 				first_occupied_tile_in_line = tile
 			
-			if action_button.is_pressed():
+			if action_1_texture_button.is_pressed():
 				await selected_player.execute_action(first_occupied_tile_in_line)
 			else:
 				await selected_player.shoot(first_occupied_tile_in_line)
 			
 			# reset undo when action was executed
 			undo = {}
-			undo_button.set_disabled(true)
+			undo_texture_button.set_disabled(true)
+			undo_texture_button.modulate.a = 0.5
 			
 			check_for_level_end(false)
 	# other player or selected player is clicked
 	elif tile.player and (not selected_player or selected_player.tile == tile or selected_player.can_be_interacted_with()):
 		tile.player.reset_phase()
 		tile.player.on_clicked()
-		#shoot_button.set_pressed_no_signal(tile.player.current_phase == PhaseType.ACTION)
-		shoot_button.set_pressed_no_signal(false)
-		action_button.set_pressed_no_signal(false)
+		action_1_texture_button.set_pressed_no_signal(false)
 
 
 func _on_tile_action_cross_push_back(target_tile_coords, action_damage, origin_tile_coords):
@@ -1012,14 +1017,12 @@ func _on_player_clicked(player, is_clicked):
 		selected_player.reset_tiles()
 	
 	if is_clicked:
+		# UI
+		action_1_texture_button.set_disabled(false)
+		action_1_texture_button.modulate.a = 1.0
+		
 		selected_player = player
 		selected_player.toggle_health_bar(true)
-		
-		# UI
-		shoot_button.set_disabled(false)
-		action_button.set_disabled(false)
-		#if not action_button.is_pressed() and selected_player.current_phase == PhaseType.ACTION:
-			#shoot_button.set_pressed_no_signal(true)
 		
 		if player.can_move():
 			var tiles_for_movement = calculate_tiles_for_movement(is_clicked, player)
@@ -1030,12 +1033,12 @@ func _on_player_clicked(player, is_clicked):
 			#for tile_for_action in tiles_for_action:
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
+		# UI
+		action_1_texture_button.set_disabled(true)
+		action_1_texture_button.modulate.a = 0.5
+		
 		selected_player.toggle_health_bar(false)
 		selected_player = null
-		
-		# UI
-		shoot_button.set_disabled(true)
-		action_button.set_disabled(true)
 		
 		for tile in map.tiles:
 			#tile.toggle_player_hovered(false)
@@ -1166,25 +1169,15 @@ func _on_enemy_planned_action_miss_action(target_character, is_applied):
 		target_character.state_type = StateType.NONE
 
 
-func _on_end_turn_button_pressed():
+func _on_end_turn_texture_button_pressed():
 	end_turn()
 
 
-func _on_shoot_button_toggled(toggled_on):
-	#if toggled_on:
-		#action_button.set_pressed_no_signal(false)
-	
+func _on_action_texture_button_toggled(toggled_on):
 	on_shoot_action_button_toggled(toggled_on)
 
 
-func _on_action_button_toggled(toggled_on):
-	#if toggled_on:
-		#shoot_button.set_pressed_no_signal(false)
-	
-	on_shoot_action_button_toggled(toggled_on)
-
-
-func _on_undo_button_pressed():
+func _on_undo_texture_button_pressed():
 	if not undo.is_empty():
 		var last_undo_player_instance_id = undo.keys().back()
 		var last_undo_player = players.filter(func(player): return player.get_instance_id() == last_undo_player_instance_id).front()
@@ -1196,7 +1189,8 @@ func _on_undo_button_pressed():
 		
 		undo.erase(last_undo_player_instance_id)
 		if undo.is_empty():
-			undo_button.set_disabled(true)
+			undo_texture_button.set_disabled(true)
+			undo_texture_button.modulate.a = 0.5
 		
 		last_undo_player.start_turn()
 		

@@ -75,8 +75,7 @@ func _input(event):
 				
 				tile.reset_tile_models()
 			
-			game_state_manager.shoot_button.set_pressed_no_signal(false)
-			game_state_manager.action_button.set_pressed_no_signal(false)
+			game_state_manager.action_1_texture_button.set_pressed_no_signal(false)
 			
 			game_state_manager.recalculate_enemies_planned_actions()
 
@@ -87,8 +86,7 @@ func show_back():
 	toggle_visibility(true)
 
 
-func _on_settings_texture_rect_gui_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		toggle_visibility(false)
-		
-		menu.show_in_game_menu(self)
+func _on_settings_texture_button_pressed():
+	toggle_visibility(false)
+	
+	menu.show_in_game_menu(self)

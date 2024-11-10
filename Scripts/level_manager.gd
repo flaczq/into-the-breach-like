@@ -120,8 +120,8 @@ func plan_events(game_state_manager):
 	for level_event in level_data.level_events:
 		# enemy spawned near spawn_enemy_coords from below
 		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
-			assert(level_data.get('enemies_from_below_first_turn'), 'Set enemies_from_below_first_turn for level_event: ENEMIES_FROM_BELOW')
-			assert(level_data.get('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
+			assert(level_data.has('enemies_from_below_first_turn'), 'Set enemies_from_below_first_turn for level_event: ENEMIES_FROM_BELOW')
+			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				# check if some indicators were left from the last turn
 				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
@@ -151,8 +151,8 @@ func plan_events(game_state_manager):
 				print('more enemy from below at ' + str(event_tile.coords))
 		# enemy spawned near spawn_enemy_coords from above
 		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
-			assert(level_data.get('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
-			assert(level_data.get('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
+			assert(level_data.has('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
+			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				# check if some indicators were left from the last turn
 				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
@@ -241,8 +241,8 @@ func execute_events(game_state_manager):
 	for level_event in level_data.level_events:
 		# enemy spawns from below at spawned indicators - if occupied then do damage to character and try to spawn next turn
 		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
-			assert(level_data.get('enemies_from_below_first_turn'), 'Set enemies_from_below_first_turn for level_event: ENEMIES_FROM_BELOW')
-			assert(level_data.get('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
+			assert(level_data.has('enemies_from_below_first_turn'), 'Set enemies_from_below_first_turn for level_event: ENEMIES_FROM_BELOW')
+			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			assert(level_data.get('enemies_from_below'), 'Set enemies_from_below for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
@@ -265,8 +265,8 @@ func execute_events(game_state_manager):
 				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# enemy spawns from above at spawned indicators - if occupied then don't spawn and try next turn
 		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
-			assert(level_data.get('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
-			assert(level_data.get('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
+			assert(level_data.has('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
+			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			assert(level_data.get('enemies_from_above'), 'Set enemies_from_above for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=30 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -20,6 +20,9 @@
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="16_grlly"]
 [ext_resource type="Texture2D" uid="uid://danokvk15cayv" path="res://Assets/penzilla.vector-icon-pack/Icon_Settings.png" id="17_1dry2"]
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="18_m6tce"]
+[ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="19_mojst"]
+[ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="20_6obs3"]
+[ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="21_mwtkn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oi1vl"]
 
@@ -74,17 +77,71 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TopLeftContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
+[node name="LeftContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
-offset_right = 50.0
-offset_bottom = 50.0
+offset_right = 270.0
+offset_bottom = 181.0
+theme_override_constants/separation = 50
 
-[node name="SettingsTextureRect" type="TextureRect" parent="CanvasLayer/UI/TopLeftContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="LeftTopContainer" type="HBoxContainer" parent="CanvasLayer/UI/LeftContainer"]
 layout_mode = 2
-texture = ExtResource("17_1dry2")
-expand_mode = 1
-stretch_mode = 4
+
+[node name="SettingsTextureButton" type="TextureButton" parent="CanvasLayer/UI/LeftContainer/LeftTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture_normal = ExtResource("17_1dry2")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EndTurnTextureButton" type="TextureButton" parent="CanvasLayer/UI/LeftContainer/LeftTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture_normal = ExtResource("19_mojst")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Action1TextureButton" type="TextureButton" parent="CanvasLayer/UI/LeftContainer/LeftTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+disabled = true
+toggle_mode = true
+texture_normal = ExtResource("20_6obs3")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="UndoTextureButton" type="TextureButton" parent="CanvasLayer/UI/LeftContainer/LeftTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+disabled = true
+texture_normal = ExtResource("21_mwtkn")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LeftCenterContainer" type="VBoxContainer" parent="CanvasLayer/UI/LeftContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="GameInfoLabel" type="Label" parent="CanvasLayer/UI/LeftContainer/LeftCenterContainer"]
+layout_mode = 2
+text = "LEVEL: 0
+TURN: 0
+POINTS: 0"
+
+[node name="ObjectivesLabel" type="Label" parent="CanvasLayer/UI/LeftContainer/LeftCenterContainer"]
+layout_mode = 2
+text = "MAP OBJECTIVES:
+- kill all enemies
+BONUS:
+- all players survive
+- kill highlighted enemy in one turn"
+
+[node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/UI/LeftContainer"]
+layout_mode = 2
+
+[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/UI/LeftContainer/LeftBottomContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DEBUG INFO"
 
 [node name="PlayerInfoContainer" type="HBoxContainer" parent="CanvasLayer/UI"]
 layout_mode = 1
@@ -95,15 +152,12 @@ offset_left = -181.0
 offset_bottom = 101.0
 grow_horizontal = 0
 
-[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/UI/PlayerInfoContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "DEBUG INFO"
-
 [node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI/PlayerInfoContainer"]
+visible = false
 layout_mode = 2
 
 [node name="EndTurnButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+visible = false
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_oi1vl")
 disabled = true
@@ -121,6 +175,7 @@ shortcut = SubResource("Shortcut_8tcml")
 text = "SHOOT"
 
 [node name="ActionButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+visible = false
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_l1dh4")
 disabled = true
@@ -130,6 +185,7 @@ shortcut = SubResource("Shortcut_8tcml")
 text = "ACTION"
 
 [node name="UndoButton" type="Button" parent="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons"]
+visible = false
 layout_mode = 2
 disabled = true
 text = "UNDO"
@@ -141,8 +197,8 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -155.0
-offset_top = -75.0
+offset_left = -75.0
+offset_top = -23.0
 grow_horizontal = 0
 grow_vertical = 0
 
@@ -150,12 +206,6 @@ grow_vertical = 0
 layout_mode = 2
 size_flags_horizontal = 3
 text = "TILE INFO"
-
-[node name="GameInfoLabel" type="Label" parent="CanvasLayer/UI/BottomContainer"]
-layout_mode = 2
-text = "LEVEL: 0
-TURN: 0
-POINTS: 0"
 
 [node name="TurnEndTextureRect" type="TextureRect" parent="CanvasLayer/UI"]
 visible = false
@@ -219,7 +269,10 @@ text = "LEVEL WON/LOST"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="gui_input" from="CanvasLayer/UI/TopLeftContainer/SettingsTextureRect" to="." method="_on_settings_texture_rect_gui_input"]
+[connection signal="pressed" from="CanvasLayer/UI/LeftContainer/LeftTopContainer/SettingsTextureButton" to="." method="_on_settings_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/UI/LeftContainer/LeftTopContainer/Action1TextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/UI/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton" to="GameStateManager" method="_on_end_turn_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ShootButton" to="GameStateManager" method="_on_shoot_button_toggled"]
 [connection signal="toggled" from="CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/ActionButton" to="GameStateManager" method="_on_action_button_toggled"]

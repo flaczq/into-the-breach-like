@@ -1,13 +1,13 @@
 extends Util
 
-@onready var menu = $/root/Menu
-@onready var camera_3d = $Camera3D
-@onready var game_state_manager = $GameStateManager
+@onready var menu: Menu = $/root/Menu
+@onready var camera_3d: Camera3D = $Camera3D
+@onready var game_state_manager: GameStateManager = $GameStateManager
 
 var key_pressed: bool = false
 
 
-func _ready():
+func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.GAME
 	Global.editor = false
 	
@@ -19,12 +19,12 @@ func _ready():
 	game_state_manager.progress()
 
 
-func _process(delta):
+func _process(delta: float):
 	if not Input.is_anything_pressed():
 		key_pressed = false
 
 
-func _input(event):
+func _input(event: InputEvent):
 	if Global.engine_mode != Global.EngineMode.GAME:
 		return
 	

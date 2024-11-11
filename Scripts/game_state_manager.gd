@@ -1,32 +1,34 @@
 extends Util
 
+class_name GameStateManager
+
 @export var map_scenes: Array[PackedScene] = []
 @export var player_scenes: Array[PackedScene] = []
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
 
-@onready var end_turn_texture_button = $'../CanvasLayer/UI/LeftContainer/LeftTopContainer/EndTurnTextureButton'
-@onready var action_1_texture_button = $'../CanvasLayer/UI/LeftContainer/LeftTopContainer/Action1TextureButton'
-@onready var undo_texture_button = $'../CanvasLayer/UI/LeftContainer/LeftTopContainer/UndoTextureButton'
-@onready var game_info_label = $'../CanvasLayer/UI/LeftContainer/LeftCenterContainer/GameInfoLabel'
-@onready var objectives_label = $'../CanvasLayer/UI/LeftContainer/LeftCenterContainer/ObjectivesLabel'
-@onready var debug_info_label = $'../CanvasLayer/UI/LeftContainer/LeftBottomContainer/DebugInfoLabel'
-@onready var tile_info_label = $'../CanvasLayer/UI/BottomContainer/TileInfoLabel'
-@onready var turn_end_texture_rect = $'../CanvasLayer/UI/TurnEndTextureRect'
-@onready var turn_end_label = $'../CanvasLayer/UI/TurnEndTextureRect/TurnEndLabel'
-@onready var level_end_popup = $'../CanvasLayer/UI/LevelEndPopup'
-@onready var level_end_label = $'../CanvasLayer/UI/LevelEndPopup/LevelEndLabel'
+@onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
+@onready var action_1_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/Action1TextureButton'
+@onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
+@onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
+@onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
+@onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
+@onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightContainer/DebugInfoLabel'
+@onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
+@onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
+@onready var level_end_popup = $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup'
+@onready var level_end_label = $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup/LevelEndLabel'
 
 # FIXME hardcoded
 #const MAX_TUTORIAL_LEVELS: int = 6
 
-var tutorial_manager_script: Node = preload('res://Scripts/tutorial_manager.gd').new()
-var level_manager_script: Node = preload('res://Scripts/level_manager.gd').new()
-var map: Node3D = null
-var players: Array[Node3D] = []
-var enemies: Array[Node3D] = []
-var civilians: Array[Node3D] = []
+var tutorial_manager_script: TutorialManager = preload('res://Scripts/tutorial_manager.gd').new()
+var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
+var map: Map = null
+var players: Array[Player] = []
+var enemies: Array[Enemy] = []
+var civilians: Array[Civilian] = []
 var level_data: Dictionary = {}
 var level_end_clicked: bool = false
 
@@ -34,11 +36,11 @@ var level: int
 var max_levels: int
 var current_turn: int
 var enemies_killed: int
-var selected_player: Node3D
+var selected_player: Player
 var undo: Dictionary
 
 
-func _ready():
+func _ready() -> void:
 	level = 0
 	# FIXME
 	max_levels = 9
@@ -51,7 +53,7 @@ func _ready():
 		debug_info_label.hide()
 
 
-func progress():
+func progress() -> void:
 	if Global.tutorial:
 		init_by_level_type(LevelType.TUTORIAL)
 	else:
@@ -60,7 +62,7 @@ func progress():
 		get_tree().root.add_child(progress_scene.instantiate())
 
 
-func init_by_level_type(level_type):
+func init_by_level_type(level_type: LevelType) -> void:
 	# level not increased yet
 	level_data = level_manager_script.generate_data(level_type, level + 1, enemy_scenes.size(), civilian_scenes.size())
 	
@@ -68,7 +70,7 @@ func init_by_level_type(level_type):
 	init()
 
 
-func init(init_level_data = level_data):
+func init(init_level_data: Dictionary = level_data) -> void:
 	# already increased level
 	Global.engine_mode = Global.EngineMode.GAME
 	
@@ -86,7 +88,7 @@ func init(init_level_data = level_data):
 	start_turn()
 
 
-func init_game_state():
+func init_game_state() -> void:
 	current_turn = 1
 	enemies_killed = 0
 	selected_player = null
@@ -95,12 +97,9 @@ func init_game_state():
 	# UI
 	reset_ui()
 	# FIXME proper disabled icons
-	end_turn_texture_button.set_disabled(true)
-	end_turn_texture_button.modulate.a = 0.5
-	action_1_texture_button.set_disabled(true)
-	action_1_texture_button.modulate.a = 0.5
-	undo_texture_button.set_disabled(true)
-	undo_texture_button.modulate.a = 0.5
+	on_button_disabled(end_turn_texture_button, true)
+	on_button_disabled(action_1_texture_button, true)
+	on_button_disabled(undo_texture_button, true)
 	turn_end_texture_rect.hide()
 	turn_end_label.text = ''
 	level_end_popup.hide()
@@ -109,7 +108,7 @@ func init_game_state():
 	Global.tutorial = (level_data.level_type == LevelType.TUTORIAL)
 
 
-func init_map():
+func init_map() -> void:
 	assert(level_data.has('scene'), 'Set scene for level_data')
 	map = map_scenes[level_data.scene].instantiate()
 	add_sibling(map)
@@ -121,7 +120,7 @@ func init_map():
 		tile.connect('action_cross_push_back', _on_tile_action_cross_push_back)
 
 
-func init_players():
+func init_players() -> void:
 	assert(level_data.has('player_scenes'), 'Set player_scenes for level_data')
 	assert(level_data.has('spawn_player_coords'), 'Set spawn_player_coords for level_data')
 	players = []
@@ -153,7 +152,7 @@ func init_players():
 		players.push_back(player_instance)
 
 
-func init_enemies():
+func init_enemies() -> void:
 	assert(level_data.has('enemy_scenes'), 'Set enemy_scenes for level_data')
 	assert(level_data.has('spawn_enemy_coords'), 'Set spawn_enemy_coords for level_data')
 	enemies = []
@@ -167,7 +166,7 @@ func init_enemies():
 		_on_init_enemy(enemy_scene, spawn_tile)
 
 
-func init_civilians():
+func init_civilians() -> void:
 	assert(level_data.has('civilian_scenes'), 'Set civilian_scenes for level_data')
 	assert(level_data.has('spawn_civilian_coords'), 'Set spawn_civilian_coords for level_data')
 	civilians = []
@@ -197,7 +196,7 @@ func init_civilians():
 		civilians.push_back(civilian_instance)
 
 
-func start_turn():
+func start_turn() -> void:
 	###############################################
 	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓  ┏┓┏┳┓┏┓┳┓┏┳┓ #
 	# ┃┓┣┫┃┃┃┣   ┃┃┃┣┫┓┃┃  ┃ ┃┃┃┃┃┃  ┗┓ ┃ ┣┫┣┫ ┃  #
@@ -207,9 +206,9 @@ func start_turn():
 	await level_manager_script.plan_events(self)
 	
 	# actions order: events plan > civilians > enemies move and plan > players > enemies actions > events actions
-	var alive_civilians = civilians.filter(func(civilian): return civilian.is_alive)
-	var alive_enemies = enemies.filter(func(enemy): return enemy.is_alive)
-	var alive_players = players.filter(func(player): return player.is_alive)
+	var alive_civilians = civilians.filter(func(civilian: Civilian): return civilian.is_alive)
+	var alive_enemies: Array[Enemy] = enemies.filter(func(enemy: Enemy): return enemy.is_alive)
+	var alive_players = players.filter(func(player: Player): return player.is_alive)
 	
 	for civilian in alive_civilians:
 		var tiles_for_movement = calculate_tiles_for_movement(true, civilian)
@@ -226,8 +225,8 @@ func start_turn():
 	
 	# NOT (enemy targets order: assets > civilians > players) -> all are of the same priority
 	var target_tiles_for_enemy = [
-		alive_civilians.map(func(alive_civilian): return alive_civilian.tile) +
-		alive_players.map(func(alive_player): return alive_player.tile)
+		alive_civilians.map(func(alive_civilian: Civilian): return alive_civilian.tile) +
+		alive_players.map(func(alive_player: Player): return alive_player.tile)
 	]
 	var targetable_tiles = map.get_targetable_tiles()
 	if not targetable_tiles.is_empty():
@@ -273,24 +272,21 @@ func start_turn():
 		player.start_turn()
 	
 	# UI
-	end_turn_texture_button.set_disabled(false)
-	end_turn_texture_button.modulate.a = 1.0
+	on_button_disabled(end_turn_texture_button, false)
 	
 	await show_turn_end_texture_rect('PLAYER')
 
 
-func end_turn():
+func end_turn() -> void:
 	# UI
-	end_turn_texture_button.set_disabled(true)
-	end_turn_texture_button.modulate.a = 0.5
+	on_button_disabled(end_turn_texture_button, true)
+	on_button_disabled(undo_texture_button, true)
 	action_1_texture_button.set_pressed_no_signal(false)
-	undo_texture_button.set_disabled(true)
-	undo_texture_button.modulate.a = 0.5
 	undo = {}
 	
 	await show_turn_end_texture_rect('ENEMY')
 	
-	for player in players.filter(func(player): return player.is_alive):
+	for player in players.filter(func(player: Player): return player.is_alive):
 		#player.reset_phase()
 		player.reset_tiles()
 		player.reset_states()
@@ -313,7 +309,7 @@ func end_turn():
 	#########################################
 
 
-func next_turn():
+func next_turn() -> void:
 	current_turn += 1
 	
 	# UI
@@ -324,7 +320,7 @@ func next_turn():
 	start_turn()
 
 
-func next_level():
+func next_level() -> void:
 	if map:
 		map.queue_free()
 		map = null
@@ -345,8 +341,8 @@ func next_level():
 	level += 1
 
 
-func check_for_level_end(turn_ended = true):
-	if players.filter(func(player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
+func check_for_level_end(turn_ended: bool = true) -> void:
+	if players.filter(func(player: Player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
 		level_lost()
 		return
 	
@@ -366,8 +362,8 @@ func check_for_level_end(turn_ended = true):
 		next_turn()
 
 
-func level_won():
-	Global.score += civilians.filter(func(civilian): return civilian.is_alive).size()
+func level_won() -> void:
+	Global.score += civilians.filter(func(civilian: Civilian): return civilian.is_alive).size()
 	
 	# TODO
 	if level < max_levels and not Global.editor:
@@ -379,7 +375,7 @@ func level_won():
 		print('WINNER WINNER!!!')
 
 
-func level_lost():
+func level_lost() -> void:
 	if not Global.editor:
 		level_end_label.text = 'LEVEL LOST'
 		level_end_popup.show()
@@ -389,7 +385,7 @@ func level_lost():
 		print('achievement unlocked: you\'re a game journalist now')
 
 
-func show_turn_end_texture_rect(whose_turn):
+func show_turn_end_texture_rect(whose_turn: String) -> void:
 	pass
 	# FIXME hardcoded
 	#turn_end_label.text = whose_turn + ' TURN'
@@ -413,12 +409,12 @@ func reset_ui():
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
 	game_info_label.text += 'SCORE: ' + str(Global.score)
-	debug_info_label.text = ''
 	tile_info_label.text = ''
+	debug_info_label.text = ''
 
 
-func calculate_tiles_for_movement(active, character):
-	var tiles_for_movement = []
+func calculate_tiles_for_movement(active: bool, character: Character) -> Array[MapTile]:
+	var tiles_for_movement: Array[MapTile] = []
 	
 	if active:
 		#tiles_for_movement.push_back(character.tile)
@@ -433,14 +429,14 @@ func calculate_tiles_for_movement(active, character):
 			
 			for origin_tile in origin_tiles:
 				# can't walk into water/lava, can only be pushed there
-				for tile in map.tiles.filter(func(tile): return tile.health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE):
+				for tile in map.tiles.filter(func(tile: MapTile): return tile.health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE):
 					# characters can move through other characters of the same type
 					var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
 					if not occupied_by_characters and not tiles_for_movement.has(tile):
-						if is_tile_adjacent(tile, origin_tile):
+						if is_tile_adjacent(origin_tile, tile):
 							push_unique_to_array(tiles_for_movement, tile)
 							push_unique_to_array(temp_origin_tiles, tile)
-						elif is_tile_adjacent(tile, origin_tile, not character.can_fly):
+						elif is_tile_adjacent(origin_tile, tile, not character.can_fly):
 							push_unique_to_array(temp_origin_tiles, tile)
 			
 			origin_tiles = temp_origin_tiles
@@ -449,17 +445,17 @@ func calculate_tiles_for_movement(active, character):
 		return map.tiles
 	
 	# remove occupied tiles as target movement tiles
-	return tiles_for_movement.filter(func(tile): return not tile.player and not tile.enemy and not tile.civilian)
+	return tiles_for_movement.filter(func(tile: MapTile): return not tile.player and not tile.enemy and not tile.civilian)
 
 
-func is_tile_adjacent(tile, origin_tile, check_for_movement = true):
-	if check_for_movement and (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE):
+func is_tile_adjacent(origin_tile: MapTile, target_tile: MapTile, check_for_movement = true) -> bool:
+	if check_for_movement and (target_tile.health_type == TileHealthType.DESTROYED or target_tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or target_tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or target_tile.health_type == TileHealthType.INDESTRUCTIBLE):
 		return false
 	
-	return is_tile_adjacent_by_coords(tile.coords, origin_tile.coords)
+	return is_tile_adjacent_by_coords(origin_tile.coords, target_tile.coords)
 
 
-func calculate_tiles_path(character, target_tile):
+func calculate_tiles_path(character: Character, target_tile: MapTile) -> Array[MapTile]:
 	var map_dimension = map.get_side_dimension()
 	var astar_grid_map = AStarGrid2D.new()
 	astar_grid_map.region = Rect2i(1, 1, map_dimension, map_dimension)
@@ -479,7 +475,9 @@ func calculate_tiles_path(character, target_tile):
 	if tiles_coords_path.size() > character.move_distance:
 		printerr('wtf?! ' + str(tiles_coords_path) + ' ' + str(character))
 	
-	return tiles_coords_path.map(func(tile_coords): return map.tiles.filter(func(tile): return tile.coords == tile_coords).front())
+	var tiles_path: Array[MapTile] = []
+	tiles_path.append_array(tiles_coords_path.map(func(tile_coords: Vector2i): return map.tiles.filter(func(tile: MapTile): return tile.coords == tile_coords).front()))
+	return tiles_path
 
 
 func calculate_tiles_for_action(active, character):
@@ -490,7 +488,7 @@ func calculate_tiles_for_action(active, character):
 		tiles_for_action = []
 		
 		if character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.HORIZONTAL_DOT:
-			for tile in map.tiles.filter(func(tile): return not tile.coords == character.tile.coords):
+			for tile in map.tiles.filter(func(tile: MapTile): return not tile.coords == character.tile.coords):
 				if (tile.coords.x == origin_tile.coords.x and absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) \
 					or (tile.coords.y == origin_tile.coords.y and absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance):
 					# include all tiles in path
@@ -507,7 +505,7 @@ func calculate_tiles_for_action(active, character):
 			var max_range = mini(map.get_side_dimension(), character.action_max_distance)
 			for i in range(min_range, max_range + 1):
 				var counter = 0
-				for tile in map.tiles.filter(func(tile): return not tiles_for_action.has(tile)):
+				for tile in map.tiles.filter(func(tile: MapTile): return not tiles_for_action.has(tile)):
 					if abs(tile.coords - origin_tile.coords) == Vector2i(i, i):
 						# include all tiles in path
 						if character.is_in_group('PLAYERS'):
@@ -627,7 +625,7 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character, o
 		var min_range = maxi(1, origin_character.action_min_distance)
 		var max_range = mini(map.get_side_dimension(), origin_character.action_max_distance)
 		for i in range(min_range, max_range + 1):
-			var current_tiles_in_line = map.tiles.filter(func(tile): return tile.coords == origin_tile_coords - hit_direction * i)
+			var current_tiles_in_line = map.tiles.filter(func(tile: MapTile): return tile.coords == origin_tile_coords - hit_direction * i)
 			if not current_tiles_in_line.is_empty():
 				push_unique_to_array(tiles_in_line, current_tiles_in_line.front())
 		
@@ -690,15 +688,6 @@ func recalculate_enemies_planned_actions():
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
-func check_for_pickable(target_character):
-	var pickable = target_character.tile.get_pickable()
-	if pickable:
-		pickable.queue_free()
-	
-	if target_character.is_in_group('PLAYERS'):
-		Global.loot_count += 1
-
-
 func on_shoot_action_button_toggled(toggled_on):
 	# order matters here!
 	if toggled_on:
@@ -717,6 +706,13 @@ func on_shoot_action_button_toggled(toggled_on):
 		var tiles_for_action = calculate_tiles_for_action(true, selected_player)
 		for tile in tiles_for_action:
 			tile.toggle_player_clicked(true)
+
+
+func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:
+	if is_disabled:
+		button.modulate.a = 0.5
+	else:
+		button.modulate.a = 1.0
 
 
 func _on_init_enemy(enemy_scene, spawn_tile):
@@ -745,7 +741,7 @@ func _on_init_enemy(enemy_scene, spawn_tile):
 	enemies.push_back(enemy_instance)
 
 
-func _on_tile_hovered(tile, is_hovered):
+func _on_tile_hovered(tile: MapTile, is_hovered: bool):
 	# reset all kinds of arrows, indicators, outlines, ...
 	for current_player in players:
 		current_player.is_ghost = false
@@ -800,7 +796,7 @@ func _on_tile_hovered(tile, is_hovered):
 			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
 			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
 			debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
-		if tile.models.get('event_asset'):
+		if tile.models.event_asset:
 			if tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_BELOW]) + '\n'
 			elif tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS'):
@@ -826,8 +822,8 @@ func _on_tile_hovered(tile, is_hovered):
 		if tile.get_pickable():
 				tile_info_label.text += '[PICKABLE ICON]' + '\n'
 	else:
-		debug_info_label.text = ''
 		tile_info_label.text = ''
+		debug_info_label.text = ''
 	
 	if is_hovered:
 		# show health bar for hovered character
@@ -938,8 +934,7 @@ func _on_tile_clicked(tile):
 		if selected_player.can_move():
 			# remember player's last tile
 			undo[selected_player.get_instance_id()] = selected_player.tile
-			undo_texture_button.set_disabled(false)
-			undo_texture_button.modulate.a = 1.0
+			on_button_disabled(undo_texture_button, false)
 			
 			var tiles_path = calculate_tiles_path(selected_player, tile)
 			await selected_player.move(tiles_path, false)
@@ -960,8 +955,7 @@ func _on_tile_clicked(tile):
 			
 			# reset undo when action was executed
 			undo = {}
-			undo_texture_button.set_disabled(true)
-			undo_texture_button.modulate.a = 0.5
+			on_button_disabled(undo_texture_button, true)
 			
 			check_for_level_end(false)
 	# other player or selected player is clicked
@@ -1018,8 +1012,7 @@ func _on_player_clicked(player, is_clicked):
 	
 	if is_clicked:
 		# UI
-		action_1_texture_button.set_disabled(false)
-		action_1_texture_button.modulate.a = 1.0
+		on_button_disabled(action_1_texture_button, false)
 		
 		selected_player = player
 		selected_player.toggle_health_bar(true)
@@ -1034,8 +1027,7 @@ func _on_player_clicked(player, is_clicked):
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
 		# UI
-		action_1_texture_button.set_disabled(true)
-		action_1_texture_button.modulate.a = 0.5
+		on_button_disabled(action_1_texture_button, true)
 		
 		selected_player.toggle_health_bar(false)
 		selected_player = null
@@ -1051,14 +1043,14 @@ func _on_character_action_push_back(target_character, action_damage, origin_tile
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
 	# find tile pushed into
-	var pushed_into_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + push_direction)
+	var pushed_into_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + push_direction)
 	if pushed_into_tiles.is_empty():
 		var outside_tile_position = target_character.tile.position + Vector3(push_direction.y, 0, push_direction.x)
 		# pushed outside of the map
-		await target_character.move([target_character.tile], true, outside_tile_position)
+		await target_character.move([target_character.tile] as Array[MapTile], true, outside_tile_position)
 	else:
 		var pushed_into_tile = pushed_into_tiles.front()
-		await target_character.move([pushed_into_tile], true)
+		await target_character.move([pushed_into_tile] as Array[MapTile], true)
 		
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
@@ -1068,10 +1060,10 @@ func _on_character_action_push_back(target_character, action_damage, origin_tile
 				target_character.state_type = StateType.SLOW_DOWN
 			elif target_character.tile == pushed_into_tile and target_character.is_in_group('ENEMIES'):
 				# enemy actually moved
-				var enemy = target_character
+				var enemy: Enemy = target_character
 				if enemy.planned_tile:
 					# push planned tile with pushed enemy
-					var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + push_direction)
+					var planned_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == enemy.planned_tile.coords + push_direction)
 					if planned_tiles.is_empty():
 						print('enemy ' + str(enemy.tile.coords) + ' -> planned tile cannot be pushed back')
 						enemy.reset_planned_tile()
@@ -1085,14 +1077,14 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var pull_direction = hit_direction
 	# find tile pulled into
-	var pulled_into_tiles = map.tiles.filter(func(tile): return tile.coords == target_character.tile.coords + pull_direction)
+	var pulled_into_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction)
 	if pulled_into_tiles.is_empty():
 		var outside_tile_position = target_character.tile.position + Vector3(pull_direction.y, 0, pull_direction.x)
 		# pulled outside of the map - is this even possible?
-		await target_character.move([target_character.tile], true, outside_tile_position)
+		await target_character.move([target_character.tile] as Array[MapTile], true, outside_tile_position)
 	else:
 		var pulled_into_tile = pulled_into_tiles.front()
-		await target_character.move([pulled_into_tile], true)
+		await target_character.move([pulled_into_tile] as Array[MapTile], true)
 		
 		if target_character.is_alive and target_character.tile:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
@@ -1102,17 +1094,16 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 				target_character.state_type = StateType.SLOW_DOWN
 			elif target_character.tile == pulled_into_tile and target_character.is_in_group('ENEMIES'):
 				# enemy actually moved
-				var enemy = target_character
+				var enemy: Enemy = target_character
 				if enemy.planned_tile:
 					# pull planned tile with pulled enemy
-					var planned_tiles = map.tiles.filter(func(tile): return tile.coords == enemy.planned_tile.coords + pull_direction)
+					var planned_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == enemy.planned_tile.coords + pull_direction)
 					if planned_tiles.is_empty():
 						print('enemy ' + str(enemy.tile.coords) + ' -> planned tile cannot be pulled front')
 						enemy.reset_planned_tile()
 					else:
 						enemy.plan_action(planned_tiles.front())
 	
-	check_for_pickable(target_character)
 	recalculate_enemies_planned_actions()
 
 
@@ -1134,7 +1125,7 @@ func _on_character_action_cross_push_back(target_character, action_damage, origi
 
 
 func _on_action_indicators_cross_push_back(target_character, origin_tile, first_origin_position):
-	for tile in map.tiles.filter(func(tile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)):
+	for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)):
 		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
 
 
@@ -1163,7 +1154,7 @@ func _on_enemy_planned_action_miss_action(target_character, is_applied):
 		target_character.state_type = StateType.MISS_ACTION
 	
 		if target_character.is_in_group('ENEMIES'):
-			var enemy = target_character
+			var enemy: Enemy = target_character
 			enemy.reset_planned_tile()
 	elif target_character.state_type == StateType.MISS_ACTION:
 		target_character.state_type = StateType.NONE
@@ -1180,7 +1171,7 @@ func _on_action_texture_button_toggled(toggled_on):
 func _on_undo_texture_button_pressed():
 	if not undo.is_empty():
 		var last_undo_player_instance_id = undo.keys().back()
-		var last_undo_player = players.filter(func(player): return player.get_instance_id() == last_undo_player_instance_id).front()
+		var last_undo_player = players.filter(func(player: Player): return player.get_instance_id() == last_undo_player_instance_id).front()
 		var last_undo_tile = undo[last_undo_player_instance_id]
 		last_undo_player.position = last_undo_tile.position
 		last_undo_player.tile.set_player(null)
@@ -1189,8 +1180,7 @@ func _on_undo_texture_button_pressed():
 		
 		undo.erase(last_undo_player_instance_id)
 		if undo.is_empty():
-			undo_texture_button.set_disabled(true)
-			undo_texture_button.modulate.a = 0.5
+			on_button_disabled(undo_texture_button, true)
 		
 		last_undo_player.start_turn()
 		
@@ -1204,17 +1194,17 @@ func _on_level_end_popup_gui_input(event):
 		
 		level_end_clicked = true
 		
-		for alive_player in players.filter(func(player): return player.is_alive):
+		for alive_player in players.filter(func(player: Player): return player.is_alive):
 			var flying_tile_tween = create_tween()
 			flying_tile_tween.tween_property(alive_player, 'position:y', 6, 0.5)
 			await flying_tile_tween.finished
 	
-		for alive_enemy in enemies.filter(func(enemy): return enemy.is_alive):
+		for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive):
 			var flying_tile_tween = create_tween()
 			flying_tile_tween.tween_property(alive_enemy, 'position:y', 6, 0.5)
 			await flying_tile_tween.finished
 		
-		for alive_civilian in civilians.filter(func(civilian): return civilian.is_alive):
+		for alive_civilian in civilians.filter(func(civilian: Civilian): return civilian.is_alive):
 			var flying_tile_tween = create_tween()
 			flying_tile_tween.tween_property(alive_civilian, 'position:y', 6, 0.5)
 			await flying_tile_tween.finished

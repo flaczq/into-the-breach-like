@@ -1,7 +1,7 @@
 extends Player
 
 
-func _ready():
+func _ready() -> void:
 	super()
 	# TODO custom name
 	model_name = 'Player 2'

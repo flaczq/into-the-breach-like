@@ -41,7 +41,7 @@ var tile: Node3D
 var health_bar_tween: Tween
 
 
-func _ready():
+func _ready() -> void:
 	name = name + '_' + str(randi())
 	
 	# to move properly among available positions
@@ -71,7 +71,7 @@ func _ready():
 			default_loot_model = asset
 
 
-func set_model_outlines(parent = model):
+func set_model_outlines(parent: MeshInstance3D = model) -> void:
 	for child in parent.get_children():
 		if child.is_in_group('OUTLINES'):
 			model_outlines.append(child)
@@ -80,12 +80,12 @@ func set_model_outlines(parent = model):
 			set_model_outlines(child)
 
 
-func move(tiles_path, forced = false, outside_tile_position = null):
+func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
 	toggle_health_bar(false)
 	
 	var target_tile = tiles_path.back()
 	if target_tile == tile:
-		if forced and outside_tile_position:
+		if forced and outside_tile_position != Vector3.ZERO:
 			print('chara ' + str(tile.coords) + ' -> pushed into the wall')
 			get_shot(1)
 			await force_into_occupied_tile(outside_tile_position)
@@ -96,9 +96,11 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 			print('chara ' + str(tile.coords) + ' -> forced into (in)destructible tile or other character')
 			get_shot(1)
 			await force_into_occupied_tile(target_tile.position, target_tile)
+		else:
+			collect_if_pickable(target_tile)
 
 
-func force_into_occupied_tile(target_tile_position, target_tile = null):
+func force_into_occupied_tile(target_tile_position: Vector3, target_tile: MapTile = null) -> void:
 	# remember position to bounce back to it
 	var origin_position = position
 	var duration = Global.default_speed / Global.speed
@@ -115,8 +117,8 @@ func force_into_occupied_tile(target_tile_position, target_tile = null):
 	await position_tween.finished
 
 
-func spawn_arrow(target):
-	var position_to_target = get_vector3_on_map(position - target.position)
+func spawn_arrow(target_tile: MapTile) -> void:
+	var position_to_target = get_vector3_on_map(position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
@@ -191,12 +193,12 @@ func spawn_arrow(target):
 	add_child(arrow_model)
 
 
-func clear_arrows():
+func clear_arrows() -> void:
 	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
 		child.queue_free()
 
 
-func toggle_arrows(is_toggled):
+func toggle_arrows(is_toggled: bool) -> void:
 	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
 		if is_toggled:
 			child.show()
@@ -204,7 +206,7 @@ func toggle_arrows(is_toggled):
 			child.hide()
 
 
-func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_position = origin_tile.position, target_action_type = action_type):
+func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, first_origin_position: Vector3 = origin_tile.position, target_action_type: ActionType = action_type) -> void:
 	var position_to_target = get_vector3_on_map(origin_tile.position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
@@ -300,12 +302,12 @@ func spawn_action_indicators(target_tile, origin_tile = tile, first_origin_posit
 		_: pass#print('no implementation of indicator for applied action ' + ActionType.keys()[target_action_type] + ' for character ' + str(tile.coords))
 
 
-func clear_action_indicators():
+func clear_action_indicators() -> void:
 	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
 		child.queue_free()
 
 
-func toggle_action_indicators(is_toggled):
+func toggle_action_indicators(is_toggled: bool) -> void:
 	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
 		if is_toggled:
 			child.show()
@@ -313,8 +315,8 @@ func toggle_action_indicators(is_toggled):
 			child.hide()
 
 
-func spawn_bullet(target):
-	var position_to_target = get_vector3_on_map(position - target.position)
+func spawn_bullet(target_tile: MapTile) -> void:
+	var position_to_target = get_vector3_on_map(position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
@@ -366,7 +368,7 @@ func spawn_bullet(target):
 	bullet_model.queue_free()
 
 
-func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
+func apply_action(action_type: ActionType, action_damage: int = 0, origin_tile_coords: Vector2i = Vector2i.ZERO) -> void:
 	match action_type:
 		ActionType.NONE: print('no applied action for character: ' + str(tile.coords))
 		ActionType.PUSH_BACK: action_push_back.emit(self, action_damage, origin_tile_coords)
@@ -381,7 +383,7 @@ func apply_action(action_type, action_damage = 0, origin_tile_coords = null):
 
 
 # not used by enemy because it's handled in move() and execute_planned_action()
-func reset_states():
+func reset_states() -> void:
 	if is_alive:
 		if state_type == StateType.MISS_MOVE:
 			print('chara ' + str(tile.coords) + ' -> missed move')
@@ -391,7 +393,7 @@ func reset_states():
 			state_type = StateType.NONE
 
 
-func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_tile_coords = null):
+func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_damage: int = 0, origin_tile_coords: Vector2i = Vector2i.ZERO) -> void:
 	if state_type == StateType.GIVE_SHIELD:
 		damage = 0
 		print('chara ' + str(tile.coords) + ' -> was given shield')
@@ -399,10 +401,11 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 	
 	# reset applied planned actions for enemy target
 	if is_in_group('ENEMIES'):
-		var enemy = self
+		var enemy: Enemy = self
 		if enemy.planned_tile:
 			var target_character = enemy.planned_tile.get_character()
-			enemy.apply_planned_action(target_character, false)
+			if target_character:
+				enemy.apply_planned_action(target_character, false)
 	
 	apply_action(action_type, action_damage, origin_tile_coords)
 	
@@ -421,7 +424,7 @@ func get_shot(damage, action_type = ActionType.NONE, action_damage = 0, origin_t
 		print('chara ' + str(tile.coords) + ' -> got shot with 0 damage')
 
 
-func get_killed():
+func get_killed() -> void:
 	is_alive = false
 	
 	#model.scale.y /= 2
@@ -434,8 +437,17 @@ func get_killed():
 	model.scale = Vector3.ZERO
 
 
+func collect_if_pickable(target_tile: MapTile) -> void:
+	var pickable = target_tile.get_pickable()
+	if pickable:
+		pickable.queue_free()
+		
+		if is_in_group('PLAYERS'):
+			Global.loot_count += 1
+
+
 # FIXME maybe too many parameters..?
-func show_outline_with_predicted_health(target_tile, tiles, origin_action_type = action_type, origin_tile = target_tile, damage_dealt = damage, next_call = false):
+func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTile], origin_action_type: ActionType = action_type, origin_tile: MapTile = target_tile, damage_dealt: int = damage, next_call: bool = false):
 	var target_character = target_tile.get_character()
 	if target_character:
 		target_character.toggle_outline(true)
@@ -449,7 +461,7 @@ func show_outline_with_predicted_health(target_tile, tiles, origin_action_type =
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var push_direction = -1 * hit_direction_sign
-				var pushed_into_tile = tiles.filter(func(tile): return tile.coords == target_character.tile.coords + push_direction).front()
+				var pushed_into_tile = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + push_direction).front()
 				if pushed_into_tile:
 					if pushed_into_tile.is_occupied():
 						# pushed into other character or asset
@@ -467,7 +479,7 @@ func show_outline_with_predicted_health(target_tile, tiles, origin_action_type =
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var pull_direction = hit_direction_sign
-				var pulled_into_tile = tiles.filter(func(tile): return tile.coords == target_character.tile.coords + pull_direction).front()
+				var pulled_into_tile = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
 				if pulled_into_tile:
 					# pulled into other character or asset
 					if pulled_into_tile.is_occupied():

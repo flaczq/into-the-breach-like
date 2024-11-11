@@ -6,25 +6,25 @@ extends Util
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
 
-@onready var menu = $/root/Menu
-@onready var camera_3d = $Camera3D
-@onready var game_state_manager = $GameStateManager
-@onready var editor_label = $CanvasLayer/UI/EditorLabel
-@onready var end_turn_button = $CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/EndTurnButton
-@onready var undo_button = $CanvasLayer/UI/PlayerInfoContainer/PlayerButtons/UndoButton
-@onready var editor_container = $CanvasLayer/UI/EditorContainer
-@onready var play_button = $CanvasLayer/UI/EditorContainer/PlayButton
-@onready var reset_button = $CanvasLayer/UI/EditorContainer/ResetButton
-@onready var delete_button = $CanvasLayer/UI/EditorContainer/DeleteButton
-@onready var save_button = $CanvasLayer/UI/EditorContainer/SaveButton
-@onready var load_menu_button = $CanvasLayer/UI/EditorContainer/LoadMenuButton
-@onready var maps_menu_button = $CanvasLayer/UI/EditorContainer/MapsMenuButton
-@onready var tiles_menu_button = $CanvasLayer/UI/EditorContainer/TilesContainer/TilesMenuButton
-@onready var assets_menu_button = $CanvasLayer/UI/EditorContainer/AssetsMenuButton
-@onready var players_menu_button = $CanvasLayer/UI/EditorContainer/PlayersMenuButton
-@onready var enemies_menu_button = $CanvasLayer/UI/EditorContainer/EnemiesMenuButton
-@onready var civilians_menu_button = $CanvasLayer/UI/EditorContainer/CiviliansMenuButton
-@onready var selected_tile_menu_button = $CanvasLayer/UI/BottomContainer/SelectedTileMenuButton
+@onready var menu: Menu = $/root/Menu
+@onready var camera_3d: Camera3D = $Camera3D
+@onready var game_state_manager: GameStateManager = $GameStateManager
+@onready var editor_label = $CanvasLayer/EditorLabel
+@onready var end_turn_texture_button = $CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton
+@onready var action_1_texture_button = $CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/Action1TextureButton
+@onready var undo_texture_button = $CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton
+@onready var play_button = $CanvasLayer/PanelRightContainer/RightContainer/PlayButton
+@onready var reset_button = $CanvasLayer/PanelRightContainer/RightContainer/ResetButton
+@onready var delete_button = $CanvasLayer/PanelRightContainer/RightContainer/DeleteButton
+@onready var save_button = $CanvasLayer/PanelRightContainer/RightContainer/SaveButton
+@onready var load_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/LoadMenuButton
+@onready var maps_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/MapsMenuButton
+@onready var tiles_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/TilesContainer/TilesMenuButton
+@onready var assets_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/AssetsMenuButton
+@onready var players_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/PlayersMenuButton
+@onready var enemies_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/EnemiesMenuButton
+@onready var civilians_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/CiviliansMenuButton
+@onready var selected_tile_menu_button = $CanvasLayer/PanelRightContainer/RightContainer/SelectedTileMenuButton
 
 const SAVED_LEVELS_FILE_PATH = 'res://Data/saved_levels.txt'
 
@@ -35,14 +35,14 @@ var is_deleting: bool = false
 var new_selected: bool = false
 
 var level_data: Dictionary
-var map: Node3D
+var map: Map
 var tile_to_placed: Dictionary
-var selected_tile: Node3D
-var selected_asset: Node3D
+var selected_tile: MapTile
+var selected_asset: Asset
 var selected: Node3D
 
 
-func _ready():
+func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.EDITOR
 	Global.editor = true
 	
@@ -62,12 +62,12 @@ func _ready():
 	init()
 
 
-func _process(delta):
+func _process(delta: float) -> void:
 	if not Input.is_anything_pressed():
 		key_pressed = false
 
 
-func _input(event):
+func _input(event: InputEvent) -> void:
 	if key_pressed:
 		return
 	
@@ -96,27 +96,27 @@ func _input(event):
 		# LOG TILES
 		if Input.is_key_pressed(KEY_T):
 			key_pressed = true
-			print('tiles: ' + str(map.tiles.map(func(tile): return str(tile.coords) + ' ' + str(TileHealthType.keys()[tile.health_type]))))
+			print('tiles: ' + str(map.tiles.map(func(tile: MapTile): return str(tile.coords) + ' ' + str(TileHealthType.keys()[tile.health_type]))))
 		
 		# LOG PLAYERS TILES
 		if Input.is_key_pressed(KEY_P):
 			key_pressed = true
-			print('players tiles: ' + str(map.tiles.filter(func(tile): return tile.player).map(func(tile): return tile.coords)))
+			print('players tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.player).map(func(tile): return tile.coords)))
 		
 		# LOG ENEMIES TILES
 		if Input.is_key_pressed(KEY_E):
 			key_pressed = true
-			print('enemies tiles: ' + str(map.tiles.filter(func(tile): return tile.enemy).map(func(tile): return tile.coords)))
+			print('enemies tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.enemy).map(func(tile): return tile.coords)))
 		
 		# LOG CIVILIANS TILES
 		if Input.is_key_pressed(KEY_C):
 			key_pressed = true
-			print('civilians tiles: ' + str(map.tiles.filter(func(tile): return tile.civilian).map(func(tile): return tile.coords)))
+			print('civilians tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.civilian).map(func(tile): return tile.coords)))
 		
 		# LOG ASSETS TILES
 		if Input.is_key_pressed(KEY_A):
 			key_pressed = true
-			print('assets tiles: ' + str(map.tiles.filter(func(tile): return tile.models.get('asset')).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
+			print('assets tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.models.asset).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
 	
 	if Global.engine_mode != Global.EngineMode.EDITOR:
 		return
@@ -125,11 +125,12 @@ func _input(event):
 		reset()
 
 
-func init():
+func init() -> void:
 	reset()
 	
-	end_turn_button.set_disabled(true)
-	undo_button.set_disabled(true)
+	on_button_disabled(end_turn_texture_button, true)
+	on_button_disabled(action_1_texture_button, true)
+	on_button_disabled(undo_texture_button, true)
 	play_button.set_disabled(true)
 	reset_button.set_disabled(true)
 	delete_button.set_disabled(true)
@@ -146,7 +147,7 @@ func init():
 	}
 
 
-func reset():
+func reset() -> void:
 	delete_button.set_pressed_no_signal(false)
 	selected_tile_menu_button.set_disabled(true)
 	
@@ -159,7 +160,7 @@ func reset():
 	selected = null
 
 
-func calculate_level_data():
+func calculate_level_data() -> void:
 	#########################
 	# ┓ ┏┓┓┏┏┓┓   ┳┓┏┓┏┳┓┏┓ #
 	# ┃ ┣ ┃┃┣ ┃   ┃┃┣┫ ┃ ┣┫ #
@@ -181,7 +182,7 @@ func calculate_level_data():
 	for tile in map.tiles:
 		level_data.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
 		
-		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else null
+		var asset = (tile.models.asset.name) if (tile.models.asset) else ''
 		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
 	if get_children().all(func(child): return not child.is_in_group('PLAYERS') and not child.is_in_group('ENEMIES') and not child.is_in_group('CIVILIANS')):
@@ -203,17 +204,37 @@ func calculate_level_data():
 				level_data.civilian_scenes.push_back(civilian_scene)
 
 
-func _on_main_menu_button_pressed():
+func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:
+	if is_disabled:
+		button.modulate.a = 0.5
+	else:
+		button.modulate.a = 1.0
+
+
+func _on_settings_texture_button_pressed() -> void:
 	menu._on_main_menu_button_pressed()
 	
 	queue_free()
 
 
-func _on_play_button_toggled(toggled_on):
+func _on_end_turn_texture_button_pressed() -> void:
+	game_state_manager._on_end_turn_texture_button_pressed()
+
+
+func _on_action_texture_button_toggled(toggled_on: bool) -> void:
+	game_state_manager._on_action_texture_button_toggled(toggled_on)
+
+
+func _on_undo_texture_button_pressed() -> void:
+	game_state_manager._on_undo_texture_button_pressed()
+
+
+func _on_play_button_toggled(toggled_on: bool) -> void:
 	reset()
 	
-	end_turn_button.set_disabled(not toggled_on)
-	undo_button.set_disabled(not toggled_on)
+	on_button_disabled(end_turn_texture_button, not toggled_on)
+	on_button_disabled(action_1_texture_button, not toggled_on)
+	on_button_disabled(undo_texture_button, not toggled_on)
 	reset_button.set_disabled(toggled_on)
 	delete_button.set_disabled(toggled_on)
 	save_button.set_disabled(toggled_on)
@@ -261,7 +282,7 @@ func _on_play_button_toggled(toggled_on):
 				child.show()
 
 
-func _on_reset_button_pressed():
+func _on_reset_button_pressed() -> void:
 	init()
 	reset()
 	
@@ -274,7 +295,7 @@ func _on_reset_button_pressed():
 		child = null
 
 
-func _on_delete_button_toggled(toggled_on):
+func _on_delete_button_toggled(toggled_on: bool) -> void:
 	is_deleting = toggled_on
 	if is_deleting:
 		editor_label.text = 'deleting'
@@ -287,7 +308,7 @@ func _on_delete_button_toggled(toggled_on):
 	selected = null
 
 
-func _on_save_button_pressed():
+func _on_save_button_pressed() -> void:
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
 	var content = file.get_as_text()
 	var index = content.count('->START') + 1
@@ -317,7 +338,7 @@ func _on_save_button_pressed():
 	editor_label.text = 'map "' + str(index) + '" saved'
 
 
-func _on_load_menu_button_about_to_popup():
+func _on_load_menu_button_about_to_popup() -> void:
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
 	var content = file.get_as_text()
 	var index = content.count('->START')
@@ -329,7 +350,7 @@ func _on_load_menu_button_about_to_popup():
 			load_menu_button.get_popup().add_item(str(i), i)
 
 
-func _on_load_id_pressed(id):
+func _on_load_id_pressed(id: int) -> void:
 	_on_reset_button_pressed()
 	
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
@@ -365,7 +386,7 @@ func _on_load_id_pressed(id):
 			tile.add_child(spawn_indicator)
 
 
-func _on_maps_id_pressed(id):
+func _on_maps_id_pressed(id: int) -> void:
 	is_deleting = false
 	
 	play_button.set_disabled(false)
@@ -395,13 +416,16 @@ func _on_maps_id_pressed(id):
 		tile.tile_type = TileType.PLAIN
 		tile.model_material.albedo_color = Color('e3cdaa')
 		tile_asset.set_surface_override_material(1, tile.model_material)
-		tile.models = {'tile': tile_asset}
+		tile.models = {
+			'tile': tile_asset,
+			'asset': null
+		}
 		tile.add_child(tile.models.tile)
 	
 	editor_label.text = 'placed "' + map.name + '"'
 
 
-func _on_color_picker_button_color_changed(color):
+func _on_color_picker_button_color_changed(color: Color) -> void:
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	selected_tile = null
@@ -412,7 +436,7 @@ func _on_color_picker_button_color_changed(color):
 	tile_to_placed = {'color': color, 'tile_type': TileType.PLAIN}
 
 
-func _on_tiles_id_pressed(id):
+func _on_tiles_id_pressed(id: int):
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	selected_tile = null
@@ -424,7 +448,7 @@ func _on_tiles_id_pressed(id):
 	editor_label.text = 'placing tile "' + TileType.keys()[tile_to_placed.tile_type] + '"'
 
 
-func _on_assets_id_pressed(id):
+func _on_assets_id_pressed(id: int) -> void:
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	tile_to_placed = {}
@@ -442,7 +466,7 @@ func _on_assets_id_pressed(id):
 	
 	editor_label.text = 'placing asset "' + selected_asset.name + '"'
 
-func _on_players_id_pressed(id):
+func _on_players_id_pressed(id: int) -> void:
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	tile_to_placed = {}
@@ -454,7 +478,7 @@ func _on_players_id_pressed(id):
 	
 	editor_label.text = 'placing "' + selected.name + '"'
 
-func _on_enemies_id_pressed(id):
+func _on_enemies_id_pressed(id: int) -> void:
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	tile_to_placed = {}
@@ -466,7 +490,7 @@ func _on_enemies_id_pressed(id):
 	
 	editor_label.text = 'placing "' + selected.name + '"'
 
-func _on_civilians_id_pressed(id):
+func _on_civilians_id_pressed(id: int) -> void:
 	delete_button.set_pressed_no_signal(false)
 	is_deleting = false
 	tile_to_placed = {}
@@ -479,7 +503,7 @@ func _on_civilians_id_pressed(id):
 	editor_label.text = 'placing "' + selected.name + '"'
 
 
-func _on_selected_tile_id_pressed(id):
+func _on_selected_tile_id_pressed(id: int) -> void:
 	selected_tile_menu_button.get_popup().set_item_checked(id, not selected_tile_menu_button.get_popup().is_item_checked(id))
 	
 	if selected_tile_menu_button.get_popup().is_item_checked(id):
@@ -513,7 +537,7 @@ func _on_selected_tile_id_pressed(id):
 			spawn_indicator = null
 
 
-func _on_editor_tile_clicked(tile):
+func _on_editor_tile_clicked(tile: MapTile) -> void:
 	selected_tile = tile
 	selected_tile_menu_button.text = 'SELECTED TILE ' + str(tile.coords)
 	selected_tile_menu_button.set_disabled(false)
@@ -533,7 +557,7 @@ func _on_editor_tile_clicked(tile):
 			selected_asset = null
 			editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
 			new_selected = false
-		elif tile.models.get('asset'):
+		elif tile.models.asset:
 			selected = null
 			tile_to_placed = {}
 			selected_asset = tile.models.asset
@@ -554,7 +578,7 @@ func _on_editor_tile_clicked(tile):
 				new_selected = false
 			elif selected_asset:
 				if selected_asset.has_meta('tile'):
-					var old_tile = map.tiles.filter(func(tile): return tile == selected_asset.get_meta('tile')).front()
+					var old_tile = map.tiles.filter(func(tile: MapTile): return tile == selected_asset.get_meta('tile')).front()
 					old_tile.models.asset.reparent(tile, false)
 					old_tile.models.erase('asset')
 				else:
@@ -575,7 +599,7 @@ func _on_editor_tile_clicked(tile):
 			else:
 				selected = character
 				editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
-		elif tile.models.get('asset'):
+		elif tile.models.asset:
 			if is_deleting:
 				editor_label.text = 'deleted asset "' + tile.models.asset.name + '" from tile ' + str(tile.coords)
 				tile.models.asset.queue_free()

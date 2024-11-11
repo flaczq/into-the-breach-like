@@ -18,5 +18,5 @@ var players_scenes: Array[int] = []
 var loot_count: int = 0
 
 
-func _ready():
+func _ready() -> void:
 	add_to_group('NEVER_FREED')

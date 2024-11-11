@@ -1,15 +1,17 @@
 extends Util
 
+class_name Map
+
 @export var assets_scene: PackedScene
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 const OUTLINE_SHADER: Resource = preload('res://Other/outline_shader.gdshader')
 
-var tiles: Array[Node3D] = []
+var tiles: Array[MapTile] = []
 var assets: Array[Node3D] = []
 
 
-func _ready():
+func _ready() -> void:
 	name = name + '_' + str(randi())
 	
 	for child in get_children().filter(func(child): return child.is_in_group('TILES')):
@@ -18,7 +20,7 @@ func _ready():
 	assets.append_array(assets_scene.instantiate().get_children())
 
 
-func spawn(level_data):
+func spawn(level_data: Dictionary) -> void:
 	assert(level_data.has('tiles'), 'Set tiles for level_data')
 	assert(level_data.has('tiles_assets'), 'Set tiles_assets for level_data')
 	assert(level_data.has('level_type'), 'Set level_type for level_data')
@@ -40,7 +42,7 @@ func spawn(level_data):
 		tile.init(tile_init_data)
 
 
-func convert_tile_type_initial_to_enum(tile_type_initial):
+func convert_tile_type_initial_to_enum(tile_type_initial: String) -> TileType:
 	match tile_type_initial:
 		'P': return TileType.PLAIN
 		'G': return TileType.GRASS
@@ -56,7 +58,7 @@ func convert_tile_type_initial_to_enum(tile_type_initial):
 			return TileType.PLAIN
 
 
-func convert_tile_type_enum_to_initial(tile_type_enum):
+func convert_tile_type_enum_to_initial(tile_type_enum: TileType) -> String:
 	match tile_type_enum:
 		TileType.PLAIN: return 'P'
 		TileType.GRASS: return 'G'
@@ -73,9 +75,9 @@ func convert_tile_type_enum_to_initial(tile_type_enum):
 
 
 # maybe change this to enum?
-func convert_asset_initial_to_filename(asset_initial):
+func convert_asset_initial_to_filename(asset_initial: String) -> String:
 	match asset_initial:
-		'0': return null
+		'0': return ''
 		'T': return 'tree'
 		'M': return 'mountain'
 		'V': return 'volcano'
@@ -84,10 +86,10 @@ func convert_asset_initial_to_filename(asset_initial):
 		'H': return 'house'
 		_:
 			print('[convert_asset_initial_to_filename] -> unknown asset initial: ' + asset_initial)
-			return null
+			return ''
 
 
-func convert_asset_filename_to_initial(asset_filename):
+func convert_asset_filename_to_initial(asset_filename: String) -> String:
 	if not asset_filename:
 		return '0'
 	
@@ -113,8 +115,16 @@ func convert_asset_filename_to_initial(asset_filename):
 	return '0'
 
 
-func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
-	var models = {'tile_shader': FLASHING_SHADER}
+func get_models_by_tile_type(tile_type: TileType, asset_filename: String, level_type: LevelType, level: int) -> Dictionary:
+	var models = {
+		'tile_shader': FLASHING_SHADER,
+		'tile_texture': null,
+		'asset': null,
+		'asset_outline': null,
+		'asset_damaged': null,
+		'asset_damaged_outline': null,
+		'event_asset': null
+	}
 	
 	for asset in assets:
 		if asset.name == 'ground_grass':
@@ -134,25 +144,25 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 		elif asset.name == 'indicator-square-c':
 			models.indicator_corners = asset.duplicate()
 		
-		if asset_filename and asset.name == asset_filename:
+		if asset.name == asset_filename:
 			models.asset = asset.duplicate()
 			
-			var asset_damaged = assets.filter(func(asset): return asset.name == asset_filename + '_damaged').front()
-			if asset_damaged:
-				models.asset_damaged = asset_damaged.duplicate()
-			else:
+			var assets_damaged = assets.filter(func(asset): return asset.name == asset_filename + '_damaged')
+			if assets_damaged.is_empty():
 				models.asset_damaged = asset.duplicate()
+			else:
+				models.asset_damaged = assets_damaged.front().duplicate()
 			
 			# change name for custom translations
 			if models.asset.name == 'sign' and level_type == LevelType.TUTORIAL:
 				models.asset.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
 				models.asset_damaged.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
 	
-	if models.get('asset'):
+	if models.asset:
 		for child in models.asset.get_children():
 			if child.is_in_group('OUTLINES'):
 				models.asset_outline = child
-	if models.get('asset_damaged'):
+	if models.asset_damaged:
 		for child in models.asset_damaged.get_children():
 			if child.is_in_group('OUTLINES'):
 				models.asset_damaged_outline = child
@@ -162,7 +172,7 @@ func get_models_by_tile_type(tile_type, asset_filename, level_type, level):
 	return models
 
 
-func get_color_by_tile_type(tile_type):
+func get_color_by_tile_type(tile_type: TileType) -> Color:
 	match tile_type:
 		TileType.PLAIN:
 			return Color('e3cdaa')#beige
@@ -187,7 +197,7 @@ func get_color_by_tile_type(tile_type):
 			return Color('e3cdaa')
 
 
-func get_health_type_by_tile_type(tile_type, asset_filename):
+func get_health_type_by_tile_type(tile_type: TileType, asset_filename: String) -> TileHealthType:
 	# FIXME hardcoded
 	if asset_filename:
 		if asset_filename == 'house':
@@ -214,39 +224,39 @@ func get_health_type_by_tile_type(tile_type, asset_filename):
 			return TileHealthType.HEALTHY
 
 
-func get_side_dimension():
+func get_side_dimension() -> int:
 	return sqrt(tiles.size())
 
 
-func get_horizontal_diagonal_dimension(coords):
+func get_horizontal_diagonal_dimension(coords: Vector2i) -> int:
 	return get_side_dimension() - absi(get_side_dimension() + 1 - (coords.x + coords.y))
 
 
-func get_vertical_diagonal_dimension(coords):
+func get_vertical_diagonal_dimension(coords: Vector2i) -> int:
 	return get_side_dimension() - absi(coords.x - coords.y)
 
 
-func get_available_tiles():
-	return tiles.filter(func(tile): return tile.is_free())
+func get_available_tiles() -> Array[MapTile]:
+	return tiles.filter(func(tile: MapTile): return tile.is_free())
 
 
-func get_spawnable_tiles(tiles_coords):
+func get_spawnable_tiles(tiles_coords: Array) -> Array[MapTile]:
 	if tiles_coords.is_empty():
 		return get_available_tiles()
 	
 	var vector2i_tiles_coords = convert_spawn_coords_to_vector_coords(tiles_coords)
-	var spawnable_tiles = get_available_tiles().filter(func(tile): return vector2i_tiles_coords.has(tile.coords))
+	var spawnable_tiles = get_available_tiles().filter(func(tile: MapTile): return vector2i_tiles_coords.has(tile.coords))
 	if spawnable_tiles.is_empty():
 		return get_available_tiles()
 	
 	return spawnable_tiles
 
 
-func get_targetable_tiles():
+func get_targetable_tiles() -> Array[MapTile]:
 	# add asset to group 'TARGETABLES' to make the enemy try to target it
-	return tiles.filter(func(tile): return (is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES')) \
+	return tiles.filter(func(tile: MapTile): return (is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES')) \
 		or (is_instance_valid(tile.models.get('asset_damaged')) and not tile.models.asset_damaged.is_queued_for_deletion() and tile.models.asset_damaged.is_in_group('TARGETABLES')))
 
 
-func get_untargetable_tiles():
-	return tiles.filter(func(tile): return not get_targetable_tiles().has(tile) and (not tile.models.has('event_asset') or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))
+func get_untargetable_tiles() -> Array[MapTile]:
+	return tiles.filter(func(tile: MapTile): return not get_targetable_tiles().has(tile) and (not tile.models.has('event_asset') or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))

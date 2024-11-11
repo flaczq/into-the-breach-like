@@ -3,20 +3,20 @@ extends Character
 class_name Civilian
 
 
-func _ready():
+func _ready() -> void:
 	super()
 	
 	#model = $Princess_Head
 
 
-func spawn(spawn_tile):
+func spawn(spawn_tile: MapTile):
 	tile = spawn_tile
 	tile.set_civilian(self)
 	
 	position = Vector3(tile.position.x, 0.0, tile.position.z)
 
 
-func move(tiles_path, forced = false, outside_tile_position = null):
+func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO):
 	if not forced and state_type == StateType.MISS_MOVE:
 		print('civil ' + str(tile.coords) + ' -> missed move')
 		state_type = StateType.NONE
@@ -54,7 +54,7 @@ func get_killed():
 	tile = null
 
 
-func toggle_health_bar(is_toggled, displayed_health = health):
+func toggle_health_bar(is_toggled: bool, displayed_health: int = health):
 	super(is_toggled, displayed_health)
 	
 	if health_bar:

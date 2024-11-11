@@ -1,7 +1,7 @@
 extends Civilian
 
 
-func _ready():
+func _ready() -> void:
 	super()
 	
 	model_name = 'One civilian'

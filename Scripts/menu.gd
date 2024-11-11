@@ -1,5 +1,7 @@
 extends Util
 
+class_name Menu
+
 @export var main_scene: PackedScene
 @export var editor_scene: PackedScene
 
@@ -19,10 +21,10 @@ extends Util
 @onready var next_button = $CanvasLayer/UI/PlayersContainer/NextButton
 @onready var version_label = $CanvasLayer/UI/VersionLabel
 
-var last_screen: Node3D
+var last_screen: Util
 
 
-func _ready():
+func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
 	TranslationServer.set_locale('en')
@@ -50,7 +52,7 @@ func _ready():
 	players_container.hide()
 
 
-func _input(event):
+func _input(event: InputEvent):
 	if Global.engine_mode != Global.EngineMode.MENU:
 		return
 
@@ -61,7 +63,7 @@ func start():
 	get_tree().root.add_child(main_scene.instantiate())
 
 
-func show_in_game_menu(new_last_screen):
+func show_in_game_menu(new_last_screen: Util):
 	Global.engine_mode = Global.EngineMode.MENU
 	
 	last_screen = new_last_screen
@@ -92,7 +94,7 @@ func _on_start_button_pressed():
 		players_container.show()
 
 
-func _on_tutorial_check_button_toggled(toggled_on):
+func _on_tutorial_check_button_toggled(toggled_on: bool):
 	Global.tutorial = toggled_on
 
 
@@ -161,13 +163,13 @@ func _on_back_button_pressed():
 	players_container.hide()
 
 
-func _on_language_option_button_item_selected(index):
+func _on_language_option_button_item_selected(index: int):
 	Global.language = index
 	
 	TranslationServer.set_locale(Global.Language.keys()[Global.language].to_lower())
 
 
-func _on_aa_check_box_toggled(toggled_on):
+func _on_aa_check_box_toggled(toggled_on: bool):
 	Global.antialiasing = toggled_on
 	
 	if Global.antialiasing:
@@ -180,7 +182,7 @@ func _on_next_button_pressed():
 	start()
 
 
-func _on_player_texture_button_toggled(toggled_on, id):
+func _on_player_texture_button_toggled(toggled_on: bool, id: int):
 	var texture_player_button = players_grid_container.get_child(id - 1).get_child(0)
 	
 	# hardcoded

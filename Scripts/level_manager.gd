@@ -1,6 +1,8 @@
 extends Util
 
-signal init_enemy_event(enemy_scene: int, spawn_tile: Node3D)
+class_name LevelManager
+
+signal init_enemy_event(enemy_scene: int, spawn_tile: MapTile)
 
 const SAVED_LEVELS_FILE_PATH: String = 'res://Data/saved_levels.txt'
 const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
@@ -8,7 +10,7 @@ const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
 var spawn_from_below: bool = false
 
 
-func generate_data(level_type, level, enemy_scenes_size, civilian_scenes_size):
+func generate_data(level_type: LevelType, level: int, enemy_scenes_size: int, civilian_scenes_size: int):
 	var levels_file_path = get_levels_file_path(level_type)
 	var file = FileAccess.open(levels_file_path, FileAccess.READ)
 	var file_content = file.get_as_text()
@@ -23,21 +25,21 @@ func generate_data(level_type, level, enemy_scenes_size, civilian_scenes_size):
 	return level_data
 
 
-func parse_data(level_data_string):
+func parse_data(level_data_string: String):
 	var json = JSON.new()
 	var parse_status = json.parse(level_data_string)
 	assert(parse_status == OK, json.get_error_message() + ' in ' + level_data_string.split('\n')[json.get_error_line()])
 	return json.data
 
 
-func get_levels_file_path(level_type):
+func get_levels_file_path(level_type: LevelType):
 	if level_type == LevelType.TUTORIAL:
 		return TUTORIAL_LEVELS_FILE_PATH
 	
 	return SAVED_LEVELS_FILE_PATH
 
 
-func select_random_level_data(file_content, level, level_type):
+func select_random_level_data(file_content: String, level: int, level_type: LevelType):
 	var prefix = '-' + str(level) + '-' + str(level_type) + '->'
 	
 	if level_type == LevelType.TUTORIAL:
@@ -49,7 +51,7 @@ func select_random_level_data(file_content, level, level_type):
 	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()
 
 
-func add_characters(level_data, enemy_scenes_size, civilian_scenes_size):
+func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_scenes_size: int):
 	level_data.player_scenes = []
 	level_data.enemy_scenes = []
 	level_data.civilian_scenes = []
@@ -66,15 +68,24 @@ func add_characters(level_data, enemy_scenes_size, civilian_scenes_size):
 		for current_player_scene in Global.players_scenes:
 			level_data.player_scenes.push_back(current_player_scene)
 		
-		# scene 0 is always tutorial
-		# TODO pick enemies and civilians by random(?) based on level type and level number
-		level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
-		level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
-		level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
-		level_data.civilian_scenes.push_back(randi_range(1, civilian_scenes_size - 1))
+		if level_data.level_type == LevelType.KILL_ENEMIES:
+			# scene 0 is always tutorial
+			# TODO pick enemies and civilians by random(?) based on level type and level number
+			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+		else:
+			# FIXME
+			for current_player_scene in Global.players_scenes:
+				level_data.player_scenes.push_back(current_player_scene)
+			
+			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
+			level_data.civilian_scenes.push_back(randi_range(1, civilian_scenes_size - 1))
 
 
-func add_level_type_details(level_data):
+func add_level_type_details(level_data: Dictionary):
 	if level_data.level_type == LevelType.KILL_ENEMIES:
 		# FIXME hardcoded, maybe not needed..?
 		level_data.max_enemies = 4
@@ -83,7 +94,7 @@ func add_level_type_details(level_data):
 		level_data.max_turns = 5
 
 
-func add_events_details(level_data, enemy_scenes_size):
+func add_events_details(level_data: Dictionary, enemy_scenes_size: int):
 	if not level_data.has('level_events'):
 		return
 	
@@ -107,7 +118,7 @@ func add_events_details(level_data, enemy_scenes_size):
 			
 
 
-func plan_events(game_state_manager):
+func plan_events(game_state_manager: GameStateManager):
 	var map = game_state_manager.map
 	var level_data = game_state_manager.level_data
 	var current_turn = game_state_manager.current_turn
@@ -124,7 +135,7 @@ func plan_events(game_state_manager):
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				# check if some indicators were left from the last turn
-				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
+				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
 				if existing_event_tiles_count >= enemies_from_below_count:
 					return
 				
@@ -134,7 +145,7 @@ func plan_events(game_state_manager):
 				event_asset.set_surface_override_material(0, event_asset_material)
 				
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
-				var spawn_enemy_positions = map.tiles.filter(func(tile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
+				var spawn_enemy_positions = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
 				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no more enemies from below indicator spawned')
@@ -155,7 +166,7 @@ func plan_events(game_state_manager):
 			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				# check if some indicators were left from the last turn
-				var existing_event_tiles_count = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
+				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
 				if existing_event_tiles_count >= enemies_from_above_count:
 					return
 				
@@ -165,7 +176,7 @@ func plan_events(game_state_manager):
 				event_asset.set_surface_override_material(0, event_asset_material)
 				
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
-				var spawn_enemy_positions = map.tiles.filter(func(tile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
+				var spawn_enemy_positions = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile): return tile.position)
 				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no more enemies from above indicator spawned')
@@ -209,7 +220,7 @@ func plan_events(game_state_manager):
 				event_asset_material.albedo_color = Color('7A5134')#brown
 				event_asset.set_surface_override_material(0, event_asset_material)
 				
-				var mountain_positions = map.tiles.filter(func(tile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile): return tile.position)
+				var mountain_positions = map.tiles.filter(func(tile: MapTile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile): return tile.position)
 				var event_tiles = map.get_untargetable_tiles().filter(func(tile): return not mountain_positions.has(tile.position) and mountain_positions.any(func(mountain_position): return mountain_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no rock indicator spawned')
@@ -228,7 +239,7 @@ func plan_events(game_state_manager):
 			print('no implementation of planning level event: ' + LevelEvent.keys()[level_event])
 
 
-func execute_events(game_state_manager):
+func execute_events(game_state_manager: GameStateManager):
 	var map = game_state_manager.map
 	var level_data = game_state_manager.level_data
 	var current_turn = game_state_manager.current_turn
@@ -245,7 +256,7 @@ func execute_events(game_state_manager):
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			assert(level_data.get('enemies_from_below'), 'Set enemies_from_below for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
-				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile:
 					return
 				
@@ -269,7 +280,7 @@ func execute_events(game_state_manager):
 			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			assert(level_data.get('enemies_from_above'), 'Set enemies_from_above for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
-				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile or event_tile.get_character():
 					return
 				
@@ -285,7 +296,7 @@ func execute_events(game_state_manager):
 		# missle hits at spawned indicators
 		elif level_event == LevelEvent.FALLING_MISSLE:
 			if current_turn > 1:
-				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')).front()
 				if not event_tile:
 					return
 				
@@ -297,7 +308,7 @@ func execute_events(game_state_manager):
 		# rock hits at spawned indicators
 		elif level_event == LevelEvent.FALLING_ROCK:
 			if current_turn > 1:
-				var event_tile = map.tiles.filter(func(tile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')).front()
 				if not event_tile:
 					return
 				

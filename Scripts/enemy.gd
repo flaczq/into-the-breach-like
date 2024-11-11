@@ -19,7 +19,7 @@ var highlight_tween: Tween
 var arrow_color: Color
 
 
-func _ready():
+func _ready() -> void:
 	super()
 	
 	#model = $Skeleton_Head
@@ -40,7 +40,7 @@ func _ready():
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
-func spawn(spawn_tile, new_order):
+func spawn(spawn_tile: MapTile, new_order: int) -> void:
 	tile = spawn_tile
 	tile.set_enemy(self)
 	
@@ -49,7 +49,7 @@ func spawn(spawn_tile, new_order):
 	order = new_order
 
 
-func move(tiles_path, forced = false, outside_tile_position = null):
+func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
 	if not forced and state_type == StateType.MISS_MOVE:
 		print('evemy ' + str(tile.coords) + ' -> missed move')
 		state_type = StateType.NONE
@@ -88,17 +88,20 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 	toggle_action_indicators(true)
 
 
-func plan_action(target_tile):
+func plan_action(target_tile: MapTile) -> void:
 	# refresh arrows and indicators
-	#if planned_tile != target_tile:
 	reset_planned_tile()
 	
 	if is_alive:
+		var same_tile = (planned_tile == target_tile)
+		
 		planned_tile = target_tile
 		planned_tile.set_planned_enemy_action(true)
 		
-		var target_character = planned_tile.get_character()
-		apply_planned_action(target_character)
+		if not same_tile:
+			var target_character = planned_tile.get_character()
+			if target_character:
+				apply_planned_action(target_character)
 		
 		spawn_arrow(planned_tile)
 		spawn_action_indicators(planned_tile)
@@ -106,14 +109,15 @@ func plan_action(target_tile):
 		#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 
 
-func execute_planned_action():
+func execute_planned_action() -> void:
 	clear_arrows()
 	clear_action_indicators()
 	
 	var temp_planned_tile = null
 	if planned_tile:
 		var target_character = planned_tile.get_character()
-		apply_planned_action(target_character, false)
+		if target_character:
+			apply_planned_action(target_character, false)
 		
 		# remember planned tile to be able to unset it before shooting
 		temp_planned_tile = planned_tile
@@ -131,19 +135,18 @@ func execute_planned_action():
 			await temp_planned_tile.get_shot(damage, action_type, action_damage, tile.coords)
 
 
-func apply_planned_action(target_character, is_applied = true):
-	if not target_character:
-		return
-	
+func apply_planned_action(target_character, is_applied = true) -> void:
 	match action_type:
 		ActionType.MISS_MOVE: enemy_planned_action_miss_move.emit(target_character, is_applied)
 		ActionType.MISS_ACTION: enemy_planned_action_miss_action.emit(target_character, is_applied)
 		_: pass#print('no implementation of applied planned action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
 
 
-func get_killed():
+func get_killed() -> void:
 	super()
 	print('enemy ' + str(tile.coords) + ' -> dead!')
+	
+	spawn_loot()
 	
 	reset_planned_tile()
 	
@@ -151,28 +154,30 @@ func get_killed():
 	tile = null
 	
 	enemy_killed_event.emit(self)
-	
-	# maybe spawn loot
+
+
+func spawn_loot() -> void:
 	if (randi() % loot_chance) == (loot_chance - 1):
 		var loot_model = default_loot_model.duplicate()
-		loot_model.position = position
+		loot_model.position = Vector3(0, 0.2, 0)
 		loot_model.show()
-		add_child(loot_model)
+		tile.add_child(loot_model)
 
 
-func reset_planned_tile():
+func reset_planned_tile() -> void:
 	clear_arrows()
 	clear_action_indicators()
 	
 	if planned_tile:
 		var target_character = planned_tile.get_character()
-		apply_planned_action(target_character, false)
+		if target_character:
+			apply_planned_action(target_character, false)
 		
 		planned_tile.set_planned_enemy_action(false)
 		planned_tile = null
 
 
-func toggle_health_bar(is_toggled, displayed_health = health):
+func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void:
 	super(is_toggled, displayed_health)
 	
 	if health_bar:
@@ -190,7 +195,7 @@ func toggle_health_bar(is_toggled, displayed_health = health):
 				health_bar.position.y -= 44
 
 
-func toggle_arrow_highlight(is_toggled):
+func toggle_arrow_highlight(is_toggled: bool) -> void:
 	# MAYBE show arrows only when hovered
 	#for child in get_children().filter(func(child): return child.is_in_group('ARROW') and child.name != 'ArrowSignContainer'):
 		#if is_toggled:

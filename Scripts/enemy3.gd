@@ -1,7 +1,7 @@
 extends Enemy
 
 
-func _ready():
+func _ready() -> void:
 	arrow_color = ENEMY_3_ARROW_COLOR
 	
 	super()

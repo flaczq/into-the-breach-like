@@ -15,7 +15,7 @@ var is_clicked: bool = false
 var is_ghost: bool = false
 
 
-func _ready():
+func _ready() -> void:
 	super()
 	
 	#model = $Tank
@@ -37,7 +37,7 @@ func _ready():
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
-func spawn(spawn_tile):
+func spawn(spawn_tile: MapTile):
 	tile = spawn_tile
 	tile.set_player(self)
 	
@@ -46,7 +46,7 @@ func spawn(spawn_tile):
 	#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(moves_per_turn) + ' MOVE(S) / ' + str(actions_per_turn) + ' ACTION(S)')
 
 
-func move(tiles_path, forced = false, outside_tile_position = null):
+func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO):
 	if not forced and current_phase != PhaseType.MOVE:
 		return
 	
@@ -87,7 +87,7 @@ func move(tiles_path, forced = false, outside_tile_position = null):
 					clicked()
 
 
-func execute_action(target_tile):
+func execute_action(target_tile: MapTile):
 	if current_phase != PhaseType.ACTION:
 		return
 	
@@ -99,7 +99,7 @@ func execute_action(target_tile):
 	after_action()
 
 
-func shoot(target_tile):
+func shoot(target_tile: MapTile):
 	if current_phase != PhaseType.ACTION:
 		return
 	
@@ -136,7 +136,7 @@ func get_killed():
 	tile = null
 
 
-func toggle_health_bar(is_toggled, displayed_health = health):
+func toggle_health_bar(is_toggled: bool, displayed_health: int = health):
 	super(is_toggled, displayed_health)
 	
 	if health_bar:

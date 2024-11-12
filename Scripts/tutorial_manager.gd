@@ -3,7 +3,7 @@ extends Util
 class_name TutorialManager
 
 
-func init_player(player: Player, level: int):
+func init_player(player: Player, level: int) -> void:
 	if level == 1 or level == 2:
 		player.model_name = 'Tutorial player 1'
 		player.max_health = 3
@@ -20,7 +20,7 @@ func init_player(player: Player, level: int):
 	player.set_health_bar()
 
 
-func init_enemy(enemy: Enemy, level: int):
+func init_enemy(enemy: Enemy, level: int) -> void:
 	if level == 1:
 		enemy.arrow_color = ENEMY_1_ARROW_COLOR
 		enemy.model_name = 'Tutorial enemy 1'
@@ -51,7 +51,7 @@ func init_enemy(enemy: Enemy, level: int):
 	#enemy.set_health_bar()
 
 
-func init_civilian(civilian: Civilian, level: int):
+func init_civilian(civilian: Civilian, level: int) -> void:
 	if level == 1 or level == 2:
 		civilian.model_name = 'Tutorial civilian 1'
 		civilian.max_health = 2

@@ -37,7 +37,7 @@ var action_direction: ActionDirection
 var action_type: ActionType
 var action_damage: int
 var can_fly: bool
-var tile: Node3D
+var tile: MapTile
 var health_bar_tween: Tween
 
 

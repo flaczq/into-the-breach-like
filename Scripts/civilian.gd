@@ -9,14 +9,14 @@ func _ready() -> void:
 	#model = $Princess_Head
 
 
-func spawn(spawn_tile: MapTile):
+func spawn(spawn_tile: MapTile) -> void:
 	tile = spawn_tile
 	tile.set_civilian(self)
 	
 	position = Vector3(tile.position.x, 0.0, tile.position.z)
 
 
-func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO):
+func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
 	if not forced and state_type == StateType.MISS_MOVE:
 		print('civil ' + str(tile.coords) + ' -> missed move')
 		state_type = StateType.NONE
@@ -46,7 +46,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 				await position_tween.finished
 
 
-func get_killed():
+func get_killed() -> void:
 	super()
 	print('civil ' + str(tile.coords) + ' -> dead!')
 	
@@ -54,7 +54,7 @@ func get_killed():
 	tile = null
 
 
-func toggle_health_bar(is_toggled: bool, displayed_health: int = health):
+func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void:
 	super(is_toggled, displayed_health)
 	
 	if health_bar:

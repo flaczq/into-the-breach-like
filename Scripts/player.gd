@@ -37,7 +37,7 @@ func _ready() -> void:
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
-func spawn(spawn_tile: MapTile):
+func spawn(spawn_tile: MapTile) -> void:
 	tile = spawn_tile
 	tile.set_player(self)
 	
@@ -46,7 +46,7 @@ func spawn(spawn_tile: MapTile):
 	#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(moves_per_turn) + ' MOVE(S) / ' + str(actions_per_turn) + ' ACTION(S)')
 
 
-func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO):
+func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
 	if not forced and current_phase != PhaseType.MOVE:
 		return
 	
@@ -87,7 +87,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 					clicked()
 
 
-func execute_action(target_tile: MapTile):
+func execute_action(target_tile: MapTile) -> void:
 	if current_phase != PhaseType.ACTION:
 		return
 	
@@ -99,7 +99,7 @@ func execute_action(target_tile: MapTile):
 	after_action()
 
 
-func shoot(target_tile: MapTile):
+func shoot(target_tile: MapTile) -> void:
 	if current_phase != PhaseType.ACTION:
 		return
 	
@@ -111,7 +111,7 @@ func shoot(target_tile: MapTile):
 	after_action()
 
 
-func after_action():
+func after_action() -> void:
 	#reset_tiles()
 	
 	actions_made_current_turn += 1
@@ -128,7 +128,7 @@ func after_action():
 		clicked()
 
 
-func get_killed():
+func get_killed() -> void:
 	super()
 	print('playe ' + str(tile.coords) + ' -> dead!')
 	
@@ -136,7 +136,7 @@ func get_killed():
 	tile = null
 
 
-func toggle_health_bar(is_toggled: bool, displayed_health: int = health):
+func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void:
 	super(is_toggled, displayed_health)
 	
 	if health_bar:
@@ -154,7 +154,7 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health):
 				health_bar.position.y -= 64
 
 
-func start_turn():
+func start_turn() -> void:
 	if is_alive:
 		current_phase = PhaseType.MOVE
 		#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(moves_per_turn) + ' MOVE(S)')
@@ -165,13 +165,13 @@ func start_turn():
 		reset_tiles()
 
 
-func reset_phase():
+func reset_phase() -> void:
 	if is_alive:
 		if current_phase == PhaseType.ACTION and not no_more_moves_this_turn():
 			current_phase = PhaseType.MOVE
 
 
-func reset_tiles():
+func reset_tiles() -> void:
 	if is_clicked:
 		# unclick
 		clicked()
@@ -179,33 +179,33 @@ func reset_tiles():
 	mouse_exited()
 
 
-func no_more_moves_this_turn():
+func no_more_moves_this_turn() -> bool:
 	if moves_made_current_turn > moves_per_turn:
 		printerr('wtf?! ' + str(moves_made_current_turn) + ' ' + str(moves_per_turn))
 	
 	return moves_made_current_turn == moves_per_turn
 
 
-func no_more_actions_this_turn():
+func no_more_actions_this_turn() -> bool:
 	if actions_made_current_turn > actions_per_turn:
 		printerr('wtf?! ' + str(actions_made_current_turn) + ' ' + str(actions_per_turn))
 	
 	return actions_made_current_turn == actions_per_turn
 
 
-func can_be_interacted_with():
+func can_be_interacted_with() -> bool:
 	return current_phase != PhaseType.WAIT
 
 
-func can_move():
+func can_move() -> bool:
 	return current_phase == PhaseType.MOVE and state_type != StateType.MISS_MOVE
 
 
-func can_make_action():
+func can_make_action() -> bool:
 	return current_phase == PhaseType.ACTION and state_type != StateType.MISS_ACTION
 
 
-func clicked():
+func clicked() -> void:
 	if not can_be_interacted_with():
 		return
 	
@@ -223,7 +223,7 @@ func clicked():
 		hovered_event.emit(self, true)
 
 
-func on_mouse_entered():
+func on_mouse_entered() -> void:
 	if not can_be_interacted_with():
 		return
 	
@@ -239,13 +239,13 @@ func on_mouse_entered():
 			print('playe ' + str(tile.coords) + ' -> dead, cannot hover')
 
 
-func mouse_exited():
+func mouse_exited() -> void:
 	#is_hovered = false
 	
 	hovered_event.emit(self, false)
 
 
-func on_mouse_exited():
+func on_mouse_exited() -> void:
 	#Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	
 	#if is_hovered and not is_clicked:
@@ -254,7 +254,7 @@ func on_mouse_exited():
 			mouse_exited()
 
 
-func on_clicked():
+func on_clicked() -> void:
 	if not can_be_interacted_with():
 		return
 	

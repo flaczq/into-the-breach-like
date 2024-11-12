@@ -1,0 +1,268 @@
+[gd_scene load_steps=13 format=3 uid="uid://dfwqyoo6wacnd"]
+
+[ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
+[ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_0ykcs"]
+[ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
+[ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="4_xirb2"]
+[ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="5_gj3nh"]
+[ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="6_ejy54"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8re6"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_c3o0l"]
+device = -1
+keycode = 32
+unicode = 32
+
+[sub_resource type="Shortcut" id="Shortcut_mwrvv"]
+events = [SubResource("InputEventKey_c3o0l")]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5okir"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_bfwhq"]
+device = -1
+keycode = 32
+unicode = 32
+
+[sub_resource type="Shortcut" id="Shortcut_fmudf"]
+events = [SubResource("InputEventKey_bfwhq")]
+
+[node name="Menu" type="Node3D" groups=["NEVER_FREED"]]
+script = ExtResource("1_ybquj")
+main_scene = ExtResource("2_0ykcs")
+editor_scene = ExtResource("3_kwi8q")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -104.0
+offset_bottom = 31.0
+grow_horizontal = 0
+
+[node name="MainMenuButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_e8re6")
+shortcut = SubResource("Shortcut_mwrvv")
+text = "MAIN_MENU"
+
+[node name="MainMenuContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -62.5
+offset_top = -33.0
+offset_right = 62.5
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EditorButton" type="Button" parent="CanvasLayer/UI/MainMenuContainer"]
+layout_mode = 2
+text = "! EDITOR !"
+
+[node name="StartButton" type="Button" parent="CanvasLayer/UI/MainMenuContainer"]
+layout_mode = 2
+text = "START"
+
+[node name="TutorialCheckButton" type="CheckButton" parent="CanvasLayer/UI/MainMenuContainer"]
+layout_mode = 2
+button_pressed = true
+text = "TUTORIAL"
+
+[node name="OptionsButton" type="Button" parent="CanvasLayer/UI/MainMenuContainer"]
+layout_mode = 2
+text = "MENU_OPTIONS"
+
+[node name="ExitButton" type="Button" parent="CanvasLayer/UI/MainMenuContainer"]
+layout_mode = 2
+text = "EXIT"
+
+[node name="InGameMenuContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -62.5
+offset_top = -33.0
+offset_right = 62.5
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResumeButton" type="Button" parent="CanvasLayer/UI/InGameMenuContainer"]
+layout_mode = 2
+text = "RESUME"
+
+[node name="OptionsButton" type="Button" parent="CanvasLayer/UI/InGameMenuContainer"]
+layout_mode = 2
+text = "MENU_OPTIONS"
+
+[node name="SaveButton" type="Button" parent="CanvasLayer/UI/InGameMenuContainer"]
+layout_mode = 2
+text = "SAVE"
+
+[node name="MainMenuButton" type="Button" parent="CanvasLayer/UI/InGameMenuContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_5okir")
+shortcut = SubResource("Shortcut_fmudf")
+text = "MAIN_MENU"
+
+[node name="OptionsContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -89.5
+offset_top = -15.5
+offset_right = 89.5
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackButton" type="Button" parent="CanvasLayer/UI/OptionsContainer"]
+layout_mode = 2
+text = "BACK"
+
+[node name="LanguageOptionButton" type="OptionButton" parent="CanvasLayer/UI/OptionsContainer"]
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "ENGLISH"
+popup/item_0/id = 0
+popup/item_1/text = "POLISH"
+popup/item_1/id = 1
+
+[node name="AACheckBox" type="CheckBox" parent="CanvasLayer/UI/OptionsContainer"]
+visible = false
+layout_mode = 2
+button_pressed = true
+text = "ANTI-ALIASING"
+
+[node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -63.5
+offset_right = 170.0
+offset_bottom = 63.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+
+[node name="PlayersLabel" type="Label" parent="CanvasLayer/UI/PlayersContainer"]
+layout_mode = 2
+text = "Select group of three players to start with:"
+horizontal_alignment = 1
+
+[node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/UI/PlayersContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 50
+columns = 3
+
+[node name="Player1Container" type="VBoxContainer" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="Player1TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 2
+toggle_mode = true
+texture_normal = ExtResource("4_xirb2")
+
+[node name="Player1Label" type="Label" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 3
+ACTION: PUSH_BACK"
+
+[node name="Player2Container" type="VBoxContainer" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="Player2TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("5_gj3nh")
+
+[node name="Player2Label" type="Label" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 3
+ACTION: PULL_FRONT"
+
+[node name="Player3Container" type="VBoxContainer" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="Player3TextureButton" type="TextureButton" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("6_ejy54")
+
+[node name="Player3Label" type="Label" parent="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 2
+ACTION: CROSS_PUSH_BACK"
+
+[node name="NextButton" type="Button" parent="CanvasLayer/UI/PlayersContainer"]
+layout_mode = 2
+disabled = true
+text = "NEXT"
+
+[node name="VersionLabel" type="Label" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "1.0"
+
+[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/MainMenuContainer/EditorButton" to="." method="_on_editor_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/MainMenuContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/UI/MainMenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/UI/MainMenuContainer/OptionsButton" to="." method="_on_options_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/MainMenuContainer/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/InGameMenuContainer/ResumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/InGameMenuContainer/OptionsButton" to="." method="_on_options_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/InGameMenuContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/InGameMenuContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/UI/OptionsContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="item_selected" from="CanvasLayer/UI/OptionsContainer/LanguageOptionButton" to="." method="_on_language_option_button_item_selected"]
+[connection signal="toggled" from="CanvasLayer/UI/OptionsContainer/AACheckBox" to="." method="_on_aa_check_box_toggled"]
+[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container/Player1TextureButton" to="." method="_on_player_texture_button_toggled" binds= [1]]
+[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container/Player2TextureButton" to="." method="_on_player_texture_button_toggled" binds= [2]]
+[connection signal="toggled" from="CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container/Player3TextureButton" to="." method="_on_player_texture_button_toggled" binds= [3]]
+[connection signal="pressed" from="CanvasLayer/UI/PlayersContainer/NextButton" to="." method="_on_next_button_pressed"]

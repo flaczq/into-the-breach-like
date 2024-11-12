@@ -86,7 +86,6 @@ stretch_mode = 5
 [node name="Action1TextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
-disabled = true
 toggle_mode = true
 texture_normal = ExtResource("20_6obs3")
 ignore_texture_size = true

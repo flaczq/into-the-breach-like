@@ -224,7 +224,7 @@ func start_turn() -> void:
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
 	
 	# NOT (enemy targets order: assets > civilians > players) -> all are of the same priority
-	var target_tiles_for_enemy = [
+	var target_tiles_for_enemy: Array[Array] = [
 		alive_civilians.map(func(alive_civilian: Civilian): return alive_civilian.tile) +
 		alive_players.map(func(alive_player: Player): return alive_player.tile)
 	]
@@ -480,9 +480,9 @@ func calculate_tiles_path(character: Character, target_tile: MapTile) -> Array[M
 	return tiles_path
 
 
-func calculate_tiles_for_action(active, character):
+func calculate_tiles_for_action(active: bool, character: Character) -> Array[MapTile]:
 	var origin_tile = character.tile
-	var tiles_for_action
+	var tiles_for_action: Array[MapTile]
 	
 	if active:
 		tiles_for_action = []
@@ -551,7 +551,7 @@ func calculate_tiles_for_action(active, character):
 	return tiles_for_action
 
 
-func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_character, different_target_tiles):
+func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[MapTile], origin_character: Character, different_target_tiles: Array[Array]) -> MapTile:
 	for target_tiles in different_target_tiles:
 		var valid_tiles_for_movement = []
 		var target_tile_for_movement = null
@@ -606,7 +606,7 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement, origin_c
 	return null
 
 
-func calculate_tile_for_action_towards_characters(tiles_for_action, different_target_tiles):
+func calculate_tile_for_action_towards_characters(tiles_for_action: Array[MapTile], different_target_tiles: Array[Array]) -> MapTile:
 	for target_tiles in different_target_tiles:
 		# make it random
 		tiles_for_action.shuffle()
@@ -618,7 +618,7 @@ func calculate_tile_for_action_towards_characters(tiles_for_action, different_ta
 	return null
 
 
-func calculate_first_occupied_tile_for_action_direction_line(origin_character, origin_tile_coords, target_tile_coords):
+func calculate_first_occupied_tile_for_action_direction_line(origin_character: Character, origin_tile_coords: Vector2i, target_tile_coords: Vector2i) -> MapTile:
 	if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE:
 		var hit_direction = (origin_tile_coords - target_tile_coords).sign()
 		var tiles_in_line = []
@@ -674,7 +674,7 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character, o
 			#return character_tile_coords.y - 1 - (map.get_side_dimension() - map.get_horizontal_diagonal_dimension(character_tile_coords))
 
 
-func recalculate_enemies_planned_actions():
+func recalculate_enemies_planned_actions() -> void:
 	for enemy in enemies.filter(func(enemy): return enemy.is_alive and enemy.planned_tile):
 		var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(enemy, enemy.tile.coords, enemy.planned_tile.coords)
 		if first_occupied_tile_in_line:# and first_occupied_tile_in_line != enemy.planned_tile:
@@ -688,7 +688,7 @@ func recalculate_enemies_planned_actions():
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
-func on_shoot_action_button_toggled(toggled_on):
+func on_shoot_action_button_toggled(toggled_on: bool) -> void:
 	# order matters here!
 	if toggled_on:
 		if selected_player.current_phase == PhaseType.MOVE and not selected_player.no_more_actions_this_turn():
@@ -709,13 +709,14 @@ func on_shoot_action_button_toggled(toggled_on):
 
 
 func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:
+	button.set_disabled(is_disabled)
 	if is_disabled:
 		button.modulate.a = 0.5
 	else:
 		button.modulate.a = 1.0
 
 
-func _on_init_enemy(enemy_scene, spawn_tile):
+func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	var enemy_instance = enemy_scenes[enemy_scene].instantiate()
 	if Global.tutorial:
 		tutorial_manager_script.init_enemy(enemy_instance, level)
@@ -741,7 +742,7 @@ func _on_init_enemy(enemy_scene, spawn_tile):
 	enemies.push_back(enemy_instance)
 
 
-func _on_tile_hovered(tile: MapTile, is_hovered: bool):
+func _on_tile_hovered(tile: MapTile, is_hovered: bool) -> void:
 	# reset all kinds of arrows, indicators, outlines, ...
 	for current_player in players:
 		current_player.is_ghost = false
@@ -920,7 +921,7 @@ func _on_tile_hovered(tile: MapTile, is_hovered: bool):
 				selected_player.clear_action_indicators()
 
 
-func _on_tile_clicked(tile):
+func _on_tile_clicked(target_tile: MapTile) -> void:
 	for current_player in players:
 		current_player.is_ghost = false
 	
@@ -930,13 +931,13 @@ func _on_tile_clicked(tile):
 	recalculate_enemies_planned_actions()
 	
 	# highlighted tile is clicked while player is selected
-	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
+	if selected_player and selected_player.tile != target_tile and target_tile.is_player_clicked:
 		if selected_player.can_move():
 			# remember player's last tile
 			undo[selected_player.get_instance_id()] = selected_player.tile
 			on_button_disabled(undo_texture_button, false)
 			
-			var tiles_path = calculate_tiles_path(selected_player, tile)
+			var tiles_path = calculate_tiles_path(selected_player, target_tile)
 			await selected_player.move(tiles_path, false)
 			
 			recalculate_enemies_planned_actions()
@@ -944,9 +945,9 @@ func _on_tile_clicked(tile):
 			selected_player.clear_arrows()
 			selected_player.clear_action_indicators()
 		
-			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
+			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
 			if not first_occupied_tile_in_line:
-				first_occupied_tile_in_line = tile
+				first_occupied_tile_in_line = target_tile
 			
 			if action_1_texture_button.is_pressed():
 				await selected_player.execute_action(first_occupied_tile_in_line)
@@ -959,13 +960,13 @@ func _on_tile_clicked(tile):
 			
 			check_for_level_end(false)
 	# other player or selected player is clicked
-	elif tile.player and (not selected_player or selected_player.tile == tile or selected_player.can_be_interacted_with()):
-		tile.player.reset_phase()
-		tile.player.on_clicked()
+	elif target_tile.player and (not selected_player or selected_player.tile == target_tile or selected_player.can_be_interacted_with()):
+		target_tile.player.reset_phase()
+		target_tile.player.on_clicked()
 		action_1_texture_button.set_pressed_no_signal(false)
 
 
-func _on_tile_action_cross_push_back(target_tile_coords, action_damage, origin_tile_coords):
+func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	var tiles_to_be_pushed = []
 	for tile in map.tiles:
 		if is_tile_adjacent_by_coords(target_tile_coords, tile.coords):
@@ -984,7 +985,7 @@ func _on_tile_action_cross_push_back(target_tile_coords, action_damage, origin_t
 			await tile_to_be_pushed.get_shot(action_damage, ActionType.PUSH_BACK, 0, target_tile_coords)
 
 
-func _on_player_hovered(player, is_hovered):
+func _on_player_hovered(player: Player, is_hovered: bool) -> void:
 	if selected_player and selected_player != player:
 		return
 	
@@ -1005,7 +1006,7 @@ func _on_player_hovered(player, is_hovered):
 				#tile.toggle_player_clicked(false)
 
 
-func _on_player_clicked(player, is_clicked):
+func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	# reset tiles for selected player if new player is selected
 	if selected_player and selected_player != player and selected_player.can_be_interacted_with():
 		selected_player.reset_tiles()
@@ -1039,7 +1040,7 @@ func _on_player_clicked(player, is_clicked):
 	player.tile.on_mouse_entered()
 
 
-func _on_character_action_push_back(target_character, action_damage, origin_tile_coords):
+func _on_character_action_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var push_direction = -1 * hit_direction
 	# find tile pushed into
@@ -1073,7 +1074,7 @@ func _on_character_action_push_back(target_character, action_damage, origin_tile
 	recalculate_enemies_planned_actions()
 
 
-func _on_character_action_pull_front(target_character, action_damage, origin_tile_coords):
+func _on_character_action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var pull_direction = hit_direction
 	# find tile pulled into
@@ -1107,29 +1108,29 @@ func _on_character_action_pull_front(target_character, action_damage, origin_til
 	recalculate_enemies_planned_actions()
 
 
-func _on_character_action_hit_ally(target_character):
+func _on_character_action_hit_ally(target_character: Character) -> void:
 	target_character.state_type = StateType.HIT_ALLY
 
 
-func _on_character_action_give_shield(target_character):
+func _on_character_action_give_shield(target_character: Character) -> void:
 	target_character.state_type = StateType.GIVE_SHIELD
 
 
-func _on_character_action_slow_down(target_character):
+func _on_character_action_slow_down(target_character: Character) -> void:
 	target_character.state_type = StateType.SLOW_DOWN
 
 
-func _on_character_action_cross_push_back(target_character, action_damage, origin_tile_coords):
+func _on_character_action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	# does this even work if it's called from signal? i don't think so...
 	await _on_tile_action_cross_push_back(target_character.tile.coords, action_damage, origin_tile_coords)
 
 
-func _on_action_indicators_cross_push_back(target_character, origin_tile, first_origin_position):
+func _on_action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3) -> void:
 	for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)):
 		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
 
 
-func _on_enemy_killed_event(target_enemy):
+func _on_enemy_killed_event(target_enemy: Enemy) -> void:
 	enemies_killed += 1
 	
 	# recalculate enemies order
@@ -1142,14 +1143,14 @@ func _on_enemy_killed_event(target_enemy):
 	check_for_level_end(false)
 
 
-func _on_enemy_planned_action_miss_move(target_character, is_applied):
+func _on_enemy_planned_action_miss_move(target_character: Character, is_applied: bool) -> void:
 	if is_applied:
 		target_character.state_type = StateType.MISS_MOVE
 	elif target_character.state_type == StateType.MISS_MOVE:
 		target_character.state_type = StateType.NONE
 
 
-func _on_enemy_planned_action_miss_action(target_character, is_applied):
+func _on_enemy_planned_action_miss_action(target_character: Character, is_applied: bool) -> void:
 	if is_applied:
 		target_character.state_type = StateType.MISS_ACTION
 	
@@ -1160,15 +1161,15 @@ func _on_enemy_planned_action_miss_action(target_character, is_applied):
 		target_character.state_type = StateType.NONE
 
 
-func _on_end_turn_texture_button_pressed():
+func _on_end_turn_texture_button_pressed() -> void:
 	end_turn()
 
 
-func _on_action_texture_button_toggled(toggled_on):
+func _on_action_texture_button_toggled(toggled_on: bool) -> void:
 	on_shoot_action_button_toggled(toggled_on)
 
 
-func _on_undo_texture_button_pressed():
+func _on_undo_texture_button_pressed() -> void:
 	if not undo.is_empty():
 		var last_undo_player_instance_id = undo.keys().back()
 		var last_undo_player = players.filter(func(player: Player): return player.get_instance_id() == last_undo_player_instance_id).front()
@@ -1187,7 +1188,7 @@ func _on_undo_texture_button_pressed():
 		recalculate_enemies_planned_actions()
 
 
-func _on_level_end_popup_gui_input(event):
+func _on_level_end_popup_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if level_end_clicked:
 			return

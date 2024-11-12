@@ -52,18 +52,18 @@ func _ready() -> void:
 	players_container.hide()
 
 
-func _input(event: InputEvent):
+func _input(event: InputEvent) -> void:
 	if Global.engine_mode != Global.EngineMode.MENU:
 		return
 
 
-func start():
+func start() -> void:
 	toggle_visibility(false)
 	
 	get_tree().root.add_child(main_scene.instantiate())
 
 
-func show_in_game_menu(new_last_screen: Util):
+func show_in_game_menu(new_last_screen: Util) -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
 	last_screen = new_last_screen
@@ -77,13 +77,13 @@ func show_in_game_menu(new_last_screen: Util):
 	toggle_visibility(true)
 
 
-func _on_editor_button_pressed():
+func _on_editor_button_pressed() -> void:
 	toggle_visibility(false)
 	
 	get_tree().root.add_child(editor_scene.instantiate())
 
 
-func _on_start_button_pressed():
+func _on_start_button_pressed() -> void:
 	if Global.tutorial:
 		start()
 	else:
@@ -94,11 +94,11 @@ func _on_start_button_pressed():
 		players_container.show()
 
 
-func _on_tutorial_check_button_toggled(toggled_on: bool):
+func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
 	Global.tutorial = toggled_on
 
 
-func _on_options_button_pressed():
+func _on_options_button_pressed() -> void:
 	player_buttons.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
@@ -106,24 +106,24 @@ func _on_options_button_pressed():
 	players_container.hide()
 
 
-func _on_exit_button_pressed():
+func _on_exit_button_pressed() -> void:
 	# TODO prompt for confirmation and save
 	get_tree().quit()
 
 
-func _on_resume_button_pressed():
+func _on_resume_button_pressed() -> void:
 	toggle_visibility(false)
 	
 	last_screen.show_back()
 	last_screen = null
 
 
-func _on_save_button_pressed():
+func _on_save_button_pressed() -> void:
 	# TODO
 	print('saved')
 
 
-func _on_main_menu_button_pressed():
+func _on_main_menu_button_pressed() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	Global.players_scenes = []
 	
@@ -148,7 +148,7 @@ func _on_main_menu_button_pressed():
 		child_to_queue.queue_free()
 
 
-func _on_back_button_pressed():
+func _on_back_button_pressed() -> void:
 	player_buttons.hide()
 	
 	if get_node_or_null('/root/Main'):
@@ -163,13 +163,13 @@ func _on_back_button_pressed():
 	players_container.hide()
 
 
-func _on_language_option_button_item_selected(index: int):
+func _on_language_option_button_item_selected(index: int) -> void:
 	Global.language = index
 	
 	TranslationServer.set_locale(Global.Language.keys()[Global.language].to_lower())
 
 
-func _on_aa_check_box_toggled(toggled_on: bool):
+func _on_aa_check_box_toggled(toggled_on: bool) -> void:
 	Global.antialiasing = toggled_on
 	
 	if Global.antialiasing:
@@ -178,11 +178,11 @@ func _on_aa_check_box_toggled(toggled_on: bool):
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)
 
 
-func _on_next_button_pressed():
+func _on_next_button_pressed() -> void:
 	start()
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: int):
+func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
 	var texture_player_button = players_grid_container.get_child(id - 1).get_child(0)
 	
 	# hardcoded

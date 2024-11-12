@@ -19,12 +19,12 @@ func _ready() -> void:
 	game_state_manager.progress()
 
 
-func _process(delta: float):
+func _process(delta: float) -> void:
 	if not Input.is_anything_pressed():
 		key_pressed = false
 
 
-func _input(event: InputEvent):
+func _input(event: InputEvent) -> void:
 	if Global.engine_mode != Global.EngineMode.GAME:
 		return
 	
@@ -80,13 +80,13 @@ func _input(event: InputEvent):
 			game_state_manager.recalculate_enemies_planned_actions()
 
 
-func show_back():
+func show_back() -> void:
 	Global.engine_mode = Global.EngineMode.GAME
 	
 	toggle_visibility(true)
 
 
-func _on_settings_texture_button_pressed():
+func _on_settings_texture_button_pressed() -> void:
 	toggle_visibility(false)
 	
 	menu.show_in_game_menu(self)

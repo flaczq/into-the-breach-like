@@ -25,6 +25,10 @@ Global="*res://Scripts/global.gd"
 window/size/viewport_width=1280
 window/size/viewport_height=720
 
+[gui]
+
+theme/custom="res://Other/default_theme.tres"
+
 [internationalization]
 
 locale/translations=PackedStringArray("res://I18n/text.en.translation", "res://I18n/text.pl.translation")

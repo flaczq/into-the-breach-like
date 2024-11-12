@@ -17,7 +17,7 @@ func init_player(player: Player, level: int) -> void:
 		player.action_damage = 0
 		player.can_fly = false
 	
-	player.set_health_bar()
+	player.init_health_bar()
 
 
 func init_enemy(enemy: Enemy, level: int) -> void:
@@ -48,7 +48,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_damage = 0
 		enemy.can_fly = false
 	
-	#enemy.set_health_bar()
+	enemy.init_health_bar()
 
 
 func init_civilian(civilian: Civilian, level: int) -> void:
@@ -65,4 +65,4 @@ func init_civilian(civilian: Civilian, level: int) -> void:
 		civilian.action_damage = 0
 		civilian.can_fly = false
 	
-	civilian.set_health_bar()
+	civilian.init_health_bar()

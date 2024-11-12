@@ -1,128 +1,117 @@
-[gd_scene load_steps=5 format=3 uid="uid://8bvhgfxla8ng"]
+[gd_scene load_steps=3 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u7n8s"]
-
-[sub_resource type="InputEventKey" id="InputEventKey_c3o0l"]
-device = -1
-keycode = 32
-unicode = 32
-
-[sub_resource type="Shortcut" id="Shortcut_57jbp"]
-events = [SubResource("InputEventKey_c3o0l")]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v81p6"]
 
 [node name="Progress" type="Node3D"]
 script = ExtResource("1_2mc5y")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="UI" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="PlayerButtons" type="VBoxContainer" parent="CanvasLayer/UI"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -104.0
-offset_bottom = 31.0
-grow_horizontal = 0
-
-[node name="MenuButton" type="Button" parent="CanvasLayer/UI/PlayerButtons"]
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_u7n8s")
-shortcut = SubResource("Shortcut_57jbp")
-text = "MENU"
-
-[node name="ProgressContainer" type="VBoxContainer" parent="CanvasLayer/UI"]
-layout_mode = 1
+[node name="PanelCenterContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -257.5
-offset_top = -42.0
-offset_right = 257.5
-offset_bottom = 42.0
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="ProgressContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+layout_mode = 2
 theme_override_constants/separation = 100
 
-[node name="ActionsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
+[node name="ActionsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/ProgressContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 50
 
-[node name="ActionsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
+[node name="ActionsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer"]
 layout_mode = 2
 text = "Some sort of upgrade system
 Current loot: 0"
 horizontal_alignment = 1
 
-[node name="ActionsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer"]
+[node name="ActionsButtons" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
 theme_override_constants/separation = 50
 
-[node name="Action1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
+[node name="Action1Button" type="Button" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer/ActionsButtons"]
 layout_mode = 2
 disabled = true
 text = "UPGRADE 1"
 
-[node name="Action2Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
+[node name="Action2Button" type="Button" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer/ActionsButtons"]
 layout_mode = 2
 disabled = true
 text = "UPGRADE 2"
 
-[node name="Action3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons"]
+[node name="Action3Button" type="Button" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer/ActionsButtons"]
 layout_mode = 2
 disabled = true
 text = "UPGRADE 3"
 
-[node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/UI/ProgressContainer"]
-layout_mode = 2
-theme_override_constants/separation = 50
-
-[node name="LevelsLabel" type="Label" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer"]
-layout_mode = 2
-text = "Select next level type:"
-horizontal_alignment = 1
-
-[node name="LevelsButtons" type="HBoxContainer" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer"]
+[node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/ProgressContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 50
 
-[node name="LevelType1Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
+[node name="LevelsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer"]
+layout_mode = 2
+text = "Select next level type:"
+horizontal_alignment = 1
+
+[node name="LevelsButtons" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="LevelType1Button" type="Button" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
 text = "KILL_ENEMIES"
 
-[node name="LevelType2Button2" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
+[node name="LevelType2Button" type="Button" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
 disabled = true
 text = "SURVIVE_TURNS"
 
-[node name="LevelType3Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
+[node name="LevelType3Button" type="Button" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
 disabled = true
 text = "SAVE_CIVILIANS"
 
-[node name="LevelType4Button" type="Button" parent="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons"]
+[node name="LevelType4Button" type="Button" parent="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons"]
 layout_mode = 2
 disabled = true
 text = "SAVE_TILES"
 
-[connection signal="pressed" from="CanvasLayer/UI/PlayerButtons/MenuButton" to="." method="_on_menu_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action1Button" to="." method="_on_action_button_pressed" binds= [0]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action2Button" to="." method="_on_action_button_pressed" binds= [1]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/ActionsContainer/ActionsButtons/Action3Button" to="." method="_on_action_button_pressed" binds= [2]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType2Button2" to="." method="_on_level_type_button_pressed" binds= [2]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]
-[connection signal="pressed" from="CanvasLayer/UI/ProgressContainer/LevelsContainer/LevelsButtons/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [4]]
+[node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -106.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="MainMenuButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_v81p6")
+text = "MAIN_MENU"
+
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer/ActionsButtons/Action1Button" to="." method="_on_action_button_pressed" binds= [0]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer/ActionsButtons/Action2Button" to="." method="_on_action_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/ProgressContainer/ActionsContainer/ActionsButtons/Action3Button" to="." method="_on_action_button_pressed" binds= [2]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [2]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/ProgressContainer/LevelsContainer/LevelsButtons/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [4]]
+[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]

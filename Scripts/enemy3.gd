@@ -18,4 +18,4 @@ func _ready() -> void:
 	action_damage = 0
 	can_fly = false
 	
-	set_health_bar()
+	init_health_bar()

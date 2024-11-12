@@ -12,10 +12,8 @@ signal action_slow_down(target_character: Character)
 signal action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_indicators_cross_push_back(target_character: Character, origin_tile: Node3D, first_origin_position: Vector3)
 
-@export var assets_scene: PackedScene
-
-@onready var health_bar = $HealthProgressBar
-
+var assets_scene: Node3D = preload("res://Scenes/assets.tscn").instantiate()
+var health_bar_scene: CanvasLayer = preload("res://Scenes/health_bar.tscn").instantiate()
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
 var model_outlines: Array[Node] = []
@@ -27,6 +25,9 @@ var default_arrow_sphere_model: MeshInstance3D
 var default_bullet_model: MeshInstance3D
 var default_forced_action_model: MeshInstance3D
 var default_loot_model: MeshInstance3D
+var health_bar: TextureProgressBar
+var health_bar_tween: Tween
+var tile: MapTile
 var max_health: int
 var health: int
 var damage: int
@@ -37,8 +38,6 @@ var action_direction: ActionDirection
 var action_type: ActionType
 var action_damage: int
 var can_fly: bool
-var tile: MapTile
-var health_bar_tween: Tween
 
 
 func _ready() -> void:
@@ -52,14 +51,13 @@ func _ready() -> void:
 	model.mesh.surface_set_material(0, model.get_active_material(0).duplicate())
 	model.show()
 	
-	set_model_outlines()
+	init_model_outlines()
 	for model_outline in model_outlines:
 		model_outline.hide()
 	
-	health_bar.hide()
+	health_bar_scene.hide()
 	
-	var assets_instance = assets_scene.instantiate()
-	for asset in assets_instance.get_children():
+	for asset in assets_scene.get_children():
 		if asset.name == 'ArrowSignContainer':
 			default_arrow_model = asset
 		elif asset.name == 'sphere':
@@ -71,13 +69,13 @@ func _ready() -> void:
 			default_loot_model = asset
 
 
-func set_model_outlines(parent: MeshInstance3D = model) -> void:
+func init_model_outlines(parent: MeshInstance3D = model) -> void:
 	for child in parent.get_children():
 		if child.is_in_group('OUTLINES'):
 			model_outlines.append(child)
 		
 		if child.get_child_count() > 0:
-			set_model_outlines(child)
+			init_model_outlines(child)
 
 
 func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
@@ -511,14 +509,21 @@ func toggle_outline(is_toggled):
 			model_outline.hide()
 
 
-func toggle_health_bar(is_toggled, displayed_health = health):
-	if health_bar:
-		set_health_bar(displayed_health)
-		
-		if is_toggled:
-			health_bar.show()
+func init_health_bar():
+	assert(max_health != null, 'Set max_health for character')
+	assert(health != null, 'Set health for character')
+	for child in health_bar_scene.get_children():
+		if child.is_in_group('HEALTH_BAR_' + str(max_health)):
+			child.show()
+			health_bar = child
 		else:
-			health_bar.hide()
+			child.hide()
+	
+	assert(health_bar, 'Not found health_bar for character')
+	health_bar.set_max(max_health)
+	health_bar.set_value(health)
+	health_bar_scene.hide()
+	add_child(health_bar_scene)
 
 
 func set_health_bar_value(displayed_health = health):
@@ -526,7 +531,6 @@ func set_health_bar_value(displayed_health = health):
 
 
 func set_health_bar(displayed_health = health):
-	health_bar.set_max(max_health)
 	set_health_bar_value()
 	
 	if health_bar_tween:
@@ -535,17 +539,16 @@ func set_health_bar(displayed_health = health):
 	health_bar_tween = create_tween().set_loops()
 	health_bar_tween.tween_callback(set_health_bar_value.bind(displayed_health)).set_delay(0.5)
 	health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.5)
-	
-	# FIXME hacky wacky health bar segments
-	if health_bar.get_child_count() > 0:
-		if max_health == 1:
-			health_bar.get_child(0).text = ''
-		elif max_health == 2:
-			health_bar.get_child(0).text = '|'
-		elif max_health == 3:
-			health_bar.get_child(0).text = '|       |'
-		elif max_health == 4:
-			health_bar.get_child(0).text = '|     |     |'
+
+
+func toggle_health_bar(is_toggled, displayed_health = health):
+	if health_bar:
+		set_health_bar(displayed_health)
+		
+		if is_toggled:
+			health_bar_scene.show()
+		else:
+			health_bar_scene.hide()
 
 
 func reset_health_bar():

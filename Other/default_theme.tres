@@ -1,0 +1,12 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://bl431255d3vtg"]
+
+[ext_resource type="FontFile" uid="uid://chy0rikx47idn" path="res://Assets/kmlgames.friendly-scribbles/friendlyscribbles.ttf" id="1_3kflh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vxr55"]
+
+[resource]
+Button/font_sizes/font_size = 18
+Button/fonts/font = ExtResource("1_3kflh")
+Label/font_sizes/font_size = 18
+Label/fonts/font = ExtResource("1_3kflh")
+PanelContainer/styles/panel = SubResource("StyleBoxEmpty_vxr55")

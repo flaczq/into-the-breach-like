@@ -184,15 +184,15 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void
 		if is_toggled:
 			var top_model_position = Vector3(model.global_position.x, model.global_position.y, model.global_position.z)
 			health_bar.position = get_viewport().get_camera_3d().unproject_position(model.global_transform.origin)
-			health_bar.position.x -= 33
+			health_bar.position.x -= 30
 			
 			# hardcoded
 			if is_close(get_viewport().get_camera_3d().rotation_degrees.x, -50):
 				health_bar.position.y -= 41
 			elif is_close(get_viewport().get_camera_3d().rotation_degrees.x, -40):
-				health_bar.position.y -= 43
+				health_bar.position.y -= 45
 			else:
-				health_bar.position.y -= 44
+				health_bar.position.y -= 49
 
 
 func toggle_arrow_highlight(is_toggled: bool) -> void:

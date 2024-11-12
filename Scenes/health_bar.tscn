@@ -1,0 +1,105 @@
+[gd_scene load_steps=8 format=3 uid="uid://b7oaoycrqolqh"]
+
+[ext_resource type="Texture2D" uid="uid://5h64b1rg3euh" path="res://Assets/healthbar_under.png" id="1_y75mh"]
+[ext_resource type="Texture2D" uid="uid://cmtjlb0kyq0bp" path="res://Assets/healthbar_over_2.png" id="2_66a0t"]
+[ext_resource type="Texture2D" uid="uid://cyf4lru6501um" path="res://Assets/healthbar_over_1.png" id="2_tsg04"]
+[ext_resource type="Texture2D" uid="uid://q1wc407kprpn" path="res://Assets/healthbar_progress.png" id="3_aabvc"]
+[ext_resource type="Texture2D" uid="uid://bqdkbgj0efdc5" path="res://Assets/healthbar_over_3.png" id="5_2fked"]
+[ext_resource type="Texture2D" uid="uid://bgy5pr0eq8ctx" path="res://Assets/healthbar_over_4.png" id="6_rbopy"]
+[ext_resource type="Texture2D" uid="uid://c45p8qfb3haix" path="res://Assets/healthbar_over_5.png" id="7_2sbhm"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="HealthProgressBar1" type="TextureProgressBar" parent="." groups=["HEALTH_BAR_1"]]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = -6.0
+offset_right = 30.5
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+max_value = 1.0
+value = 1.0
+texture_under = ExtResource("1_y75mh")
+texture_over = ExtResource("2_tsg04")
+texture_progress = ExtResource("3_aabvc")
+
+[node name="HealthProgressBar2" type="TextureProgressBar" parent="." groups=["HEALTH_BAR_2"]]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = -6.0
+offset_right = 30.5
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+max_value = 2.0
+value = 1.0
+texture_under = ExtResource("1_y75mh")
+texture_over = ExtResource("2_66a0t")
+texture_progress = ExtResource("3_aabvc")
+
+[node name="HealthProgressBar3" type="TextureProgressBar" parent="." groups=["HEALTH_BAR_3"]]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = -6.0
+offset_right = 30.5
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+max_value = 3.0
+value = 2.0
+texture_under = ExtResource("1_y75mh")
+texture_over = ExtResource("5_2fked")
+texture_progress = ExtResource("3_aabvc")
+
+[node name="HealthProgressBar4" type="TextureProgressBar" parent="." groups=["HEALTH_BAR_4"]]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = -6.0
+offset_right = 30.5
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+max_value = 4.0
+value = 1.0
+texture_under = ExtResource("1_y75mh")
+texture_over = ExtResource("6_rbopy")
+texture_progress = ExtResource("3_aabvc")
+
+[node name="HealthProgressBar5" type="TextureProgressBar" parent="." groups=["HEALTH_BAR_5"]]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = -6.0
+offset_right = 30.5
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+max_value = 5.0
+value = 3.0
+texture_under = ExtResource("1_y75mh")
+texture_over = ExtResource("7_2sbhm")
+texture_progress = ExtResource("3_aabvc")

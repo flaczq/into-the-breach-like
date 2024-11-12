@@ -32,14 +32,11 @@ func spawn(level_data: Dictionary) -> void:
 		var asset_filename = convert_asset_initial_to_filename(level_data.tiles_assets[index])
 		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.level_type, level_data.level)
 		var health_type = get_health_type_by_tile_type(tile_type, asset_filename)
-		var tile_init_data = {
-			'models': models,
-			'tile_type': tile_type,
-			'health_type': health_type,
-		};
+		var map_tile_object: MapTileObject = MapTileObject.new()
+		map_tile_object.init(models, tile_type, health_type)
 		
 		tile.reset()
-		tile.init(tile_init_data)
+		tile.init(map_tile_object)
 
 
 func convert_tile_type_initial_to_enum(tile_type_initial: String) -> TileType:

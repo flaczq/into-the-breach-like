@@ -35,6 +35,14 @@ func toggle_visibility(is_toggled: bool) -> void:
 			child.hide()
 
 
+func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:
+	button.set_disabled(is_disabled)
+	if is_disabled:
+		button.modulate.a = 0.5
+	else:
+		button.modulate.a = 1.0
+
+
 func push_unique_to_array(array: Array, item) -> void:
 	if not array.has(item):
 		array.push_back(item)

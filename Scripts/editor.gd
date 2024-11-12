@@ -28,7 +28,7 @@ extends Util
 
 const SAVED_LEVELS_FILE_PATH = 'res://Data/saved_levels.txt'
 
-var level_manager_script: Node = preload('res://Scripts/level_manager.gd').new()
+var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
 var assets: Array[Node3D] = []
 var key_pressed: bool = false
 var is_deleting: bool = false
@@ -202,13 +202,6 @@ func calculate_level_data() -> void:
 			if child.is_in_group('CIVILIANS'):
 				var civilian_scene = int(child.name.substr(8, 1))
 				level_data.civilian_scenes.push_back(civilian_scene)
-
-
-func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:
-	if is_disabled:
-		button.modulate.a = 0.5
-	else:
-		button.modulate.a = 1.0
 
 
 func _on_settings_texture_button_pressed() -> void:
@@ -519,15 +512,15 @@ func _on_selected_tile_id_pressed(id: int) -> void:
 		selected_tile.add_child(spawn_indicator)
 	else:
 		if id == 0:
-			var tile_coords = level_data.spawn_player_coords.filter(func(tile_coords): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			var tile_coords = level_data.spawn_player_coords.filter(func(tile_coords: Vector2i): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
 			if tile_coords:
 				level_data.spawn_player_coords.erase(tile_coords)
 		elif id == 1:
-			var tile_coords = level_data.spawn_enemy_coords.filter(func(tile_coords): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			var tile_coords = level_data.spawn_enemy_coords.filter(func(tile_coords: Vector2i): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
 			if tile_coords:
 				level_data.spawn_enemy_coords.erase(tile_coords)
 		elif id == 2:
-			var tile_coords = level_data.spawn_civilian_coords.filter(func(tile_coords): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			var tile_coords = level_data.spawn_civilian_coords.filter(func(tile_coords: Vector2i): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
 			if tile_coords:
 				level_data.spawn_civilian_coords.erase(tile_coords)
 		

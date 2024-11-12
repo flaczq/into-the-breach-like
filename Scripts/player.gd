@@ -143,7 +143,7 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void
 		if is_toggled:
 			var top_model_position = Vector3(model.global_position.x, model.global_position.y, model.global_position.z)
 			health_bar.position = get_viewport().get_camera_3d().unproject_position(top_model_position)
-			health_bar.position.x -= 35
+			health_bar.position.x -= 30
 			
 			# hardcoded
 			if is_close(get_viewport().get_camera_3d().rotation_degrees.x, -50):

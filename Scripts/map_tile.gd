@@ -41,13 +41,13 @@ func _ready() -> void:
 	shader_material = ShaderMaterial.new()
 
 
-func init(tile_init_data: Dictionary) -> void:
+func init(map_tile_object: MapTileObject) -> void:
 	# remove default model
 	get_child(0).queue_free()
 	
-	models = tile_init_data.models
-	tile_type = tile_init_data.tile_type
-	health_type = tile_init_data.health_type
+	models = map_tile_object.models
+	tile_type = map_tile_object.tile_type
+	health_type = map_tile_object.health_type
 	
 	# setup model with texture/shader/color
 	shader_material.set_shader(models.tile_shader)

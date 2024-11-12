@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=24 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
@@ -23,12 +23,6 @@
 [ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="20_qtn6l"]
 [ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="21_cb0vv"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="22_nxh73"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_inols"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f5avm"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a30ye"]
 
 [node name="Editor" type="Node3D"]
 script = ExtResource("4_nvvvx")
@@ -75,7 +69,6 @@ anchor_bottom = 1.0
 offset_right = 270.0
 grow_vertical = 2
 mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxEmpty_inols")
 
 [node name="LeftContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer"]
 layout_mode = 2
@@ -150,7 +143,6 @@ offset_left = -164.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxEmpty_f5avm")
 
 [node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer"]
 layout_mode = 2
@@ -335,7 +327,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxEmpty_a30ye")
 
 [node name="TurnEndTextureRect" type="TextureRect" parent="CanvasLayer/PanelFullScreenContainer"]
 custom_minimum_size = Vector2(500, 200)

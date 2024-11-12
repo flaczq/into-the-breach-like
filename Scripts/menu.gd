@@ -5,21 +5,21 @@ class_name Menu
 @export var main_scene: PackedScene
 @export var editor_scene: PackedScene
 
-@onready var player_buttons = $CanvasLayer/UI/PlayerButtons
-@onready var main_menu_container = $CanvasLayer/UI/MainMenuContainer
-@onready var editor_button = $CanvasLayer/UI/MainMenuContainer/EditorButton
-@onready var tutorial_check_button = $CanvasLayer/UI/MainMenuContainer/TutorialCheckButton
-@onready var in_game_menu_container = $CanvasLayer/UI/InGameMenuContainer
-@onready var options_container = $CanvasLayer/UI/OptionsContainer
-@onready var language_option_button = $CanvasLayer/UI/OptionsContainer/LanguageOptionButton
-@onready var aa_check_box = $CanvasLayer/UI/OptionsContainer/AACheckBox
-@onready var players_container = $CanvasLayer/UI/PlayersContainer
-@onready var players_grid_container = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer
-@onready var player_1_texture_button = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player1Container/Player1TextureButton
-@onready var player_2_texture_button = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player2Container/Player2TextureButton
-@onready var player_3_texture_button = $CanvasLayer/UI/PlayersContainer/PlayersGridContainer/Player3Container/Player3TextureButton
-@onready var next_button = $CanvasLayer/UI/PlayersContainer/NextButton
-@onready var version_label = $CanvasLayer/UI/VersionLabel
+@onready var main_menu_container = $CanvasLayer/PanelCenterContainer/MainMenuContainer
+@onready var editor_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorButton
+@onready var tutorial_check_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
+@onready var in_game_menu_container = $CanvasLayer/PanelCenterContainer/InGameMenuContainer
+@onready var options_container = $CanvasLayer/PanelCenterContainer/OptionsContainer
+@onready var language_option_button = $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageOptionButton
+@onready var aa_check_box = $CanvasLayer/PanelCenterContainer/OptionsContainer/AACheckBox
+@onready var players_container = $CanvasLayer/PanelCenterContainer/PlayersContainer
+@onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
+@onready var player_1_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/Player1Container/Player1TextureButton
+@onready var player_2_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/Player2Container/Player2TextureButton
+@onready var player_3_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/Player3Container/Player3TextureButton
+@onready var next_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextButton
+@onready var right_container = $CanvasLayer/PanelRightContainer/RightContainer
+@onready var version_label = $CanvasLayer/PanelRightContainer/RightBottomContainer/VersionLabel
 
 var last_screen: Util
 
@@ -41,7 +41,7 @@ func _ready() -> void:
 	
 	next_button.set_disabled(true)
 	
-	player_buttons.hide()
+	right_container.hide()
 	main_menu_container.show()
 	if Global.build_mode == Global.BuildMode.DEBUG:
 		editor_button.show()
@@ -68,7 +68,7 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	
 	last_screen = new_last_screen
 	
-	player_buttons.hide()
+	right_container.hide()
 	main_menu_container.hide()
 	in_game_menu_container.show()
 	options_container.hide()
@@ -87,7 +87,7 @@ func _on_start_button_pressed() -> void:
 	if Global.tutorial:
 		start()
 	else:
-		player_buttons.show()
+		right_container.show()
 		main_menu_container.hide()
 		in_game_menu_container.hide()
 		options_container.hide()
@@ -99,7 +99,7 @@ func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
 
 
 func _on_options_button_pressed() -> void:
-	player_buttons.hide()
+	right_container.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.show()
@@ -127,7 +127,7 @@ func _on_main_menu_button_pressed() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	Global.players_scenes = []
 	
-	player_buttons.hide()
+	right_container.hide()
 	main_menu_container.show()
 	in_game_menu_container.hide()
 	options_container.hide()
@@ -136,11 +136,11 @@ func _on_main_menu_button_pressed() -> void:
 	
 	# hardcoded
 	player_1_texture_button.set_pressed_no_signal(false)
-	player_1_texture_button.modulate.a = 0.5
+	on_button_disabled(player_1_texture_button, true)
 	player_2_texture_button.set_pressed_no_signal(false)
-	player_2_texture_button.modulate.a = 0.5
+	on_button_disabled(player_2_texture_button, true)
 	player_3_texture_button.set_pressed_no_signal(false)
-	player_3_texture_button.modulate.a = 0.5
+	on_button_disabled(player_3_texture_button, true)
 	
 	toggle_visibility(true)
 	
@@ -149,7 +149,7 @@ func _on_main_menu_button_pressed() -> void:
 
 
 func _on_back_button_pressed() -> void:
-	player_buttons.hide()
+	right_container.hide()
 	
 	if get_node_or_null('/root/Main'):
 		# in game
@@ -183,14 +183,17 @@ func _on_next_button_pressed() -> void:
 
 
 func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	var texture_player_button = players_grid_container.get_child(id - 1).get_child(0)
+	if id == 1:
+		player_1_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	elif id == 2:
+		player_2_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	elif id == 3:
+		player_3_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	# hardcoded
 	if toggled_on:
 		push_unique_to_array(Global.players_scenes, id)
-		texture_player_button.modulate.a = 1.0
 	else:
 		Global.players_scenes.erase(id)
-		texture_player_button.modulate.a = 0.5
 	
 	next_button.set_disabled(Global.players_scenes.size() != 3)

@@ -708,14 +708,6 @@ func on_shoot_action_button_toggled(toggled_on: bool) -> void:
 			tile.toggle_player_clicked(true)
 
 
-func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:
-	button.set_disabled(is_disabled)
-	if is_disabled:
-		button.modulate.a = 0.5
-	else:
-		button.modulate.a = 1.0
-
-
 func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	var enemy_instance = enemy_scenes[enemy_scene].instantiate()
 	if Global.tutorial:

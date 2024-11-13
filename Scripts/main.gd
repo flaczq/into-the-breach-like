@@ -75,7 +75,7 @@ func _input(event: InputEvent) -> void:
 				
 				tile.reset_tile_models()
 			
-			game_state_manager.action_1_texture_button.set_pressed_no_signal(false)
+			game_state_manager.action_first_texture_button.set_pressed_no_signal(false)
 			
 			game_state_manager.recalculate_enemies_planned_actions()
 

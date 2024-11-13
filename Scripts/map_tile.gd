@@ -117,10 +117,10 @@ func reset_tile_models() -> void:
 		toggle_asset_outline(true)
 	elif health_type == TileHealthType.DESTROYED:
 		# hardcoded
-		position.y = -0.3
+		position.y = -0.15
 	elif tile_type == TileType.WATER:
 		# hardcoded
-		position.y = -0.3
+		position.y = -0.15
 	else:
 		models.indicator_solid.hide()
 		models.indicator_dashed.hide()

@@ -3,6 +3,8 @@ extends Player
 
 func _ready() -> void:
 	super()
+	
+	id = 1
 	# TODO custom name
 	model_name = 'Player 1'
 	max_health = 3
@@ -14,6 +16,7 @@ func _ready() -> void:
 	action_direction = ActionDirection.HORIZONTAL_LINE
 	action_type = ActionType.PUSH_BACK
 	action_damage = 0
+	passive_type = PassiveType.NONE
 	can_fly = false
 	
 	init_health_bar()

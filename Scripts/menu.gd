@@ -134,13 +134,13 @@ func _on_main_menu_button_pressed() -> void:
 	players_container.hide()
 	next_button.set_disabled(true)
 	
-	# hardcoded
+	# FIXME disable state
 	player_1_texture_button.set_pressed_no_signal(false)
-	on_button_disabled(player_1_texture_button, true)
+	player_1_texture_button.modulate.a = 0.5
 	player_2_texture_button.set_pressed_no_signal(false)
-	on_button_disabled(player_2_texture_button, true)
+	player_2_texture_button.modulate.a = 0.5
 	player_3_texture_button.set_pressed_no_signal(false)
-	on_button_disabled(player_3_texture_button, true)
+	player_3_texture_button.modulate.a = 0.5
 	
 	toggle_visibility(true)
 	
@@ -183,6 +183,7 @@ func _on_next_button_pressed() -> void:
 
 
 func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
+	assert(id >= 1 and id <= 3, 'Wrong id')
 	if id == 1:
 		player_1_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	elif id == 2:
@@ -190,7 +191,6 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
 	elif id == 3:
 		player_3_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
-	# hardcoded
 	if toggled_on:
 		push_unique_to_array(Global.players_scenes, id)
 	else:

@@ -9,13 +9,14 @@ class_name GameStateManager
 @export var progress_scene: PackedScene
 
 @onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
-@onready var action_1_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/Action1TextureButton'
+@onready var action_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton'
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
-@onready var player_1_texture_button = $"../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player1TextureButton"
-@onready var player_2_texture_button = $"../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player2TextureButton"
-@onready var player_3_texture_button = $"../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player3TextureButton"
+@onready var players_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer'
+@onready var player_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerFirstTextureButton'
+@onready var player_second_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerSecondTextureButton'
+@onready var player_third_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerThirdTextureButton'
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightContainer/DebugInfoLabel'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
@@ -28,6 +29,10 @@ class_name GameStateManager
 
 var tutorial_manager_script: TutorialManager = preload('res://Scripts/tutorial_manager.gd').new()
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
+var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
+var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
+var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
+
 var map: Map = null
 var players: Array[Player] = []
 var enemies: Array[Enemy] = []
@@ -85,6 +90,7 @@ func init(init_level_data: Dictionary = level_data) -> void:
 	init_players()
 	init_enemies()
 	init_civilians()
+	init_ui()
 	
 	await show_turn_end_texture_rect('ENEMY')
 	
@@ -101,7 +107,7 @@ func init_game_state() -> void:
 	reset_ui()
 	# FIXME proper disabled icons
 	on_button_disabled(end_turn_texture_button, true)
-	on_button_disabled(action_1_texture_button, true)
+	on_button_disabled(action_first_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
 	turn_end_texture_rect.hide()
 	turn_end_label.text = ''
@@ -199,6 +205,34 @@ func init_civilians() -> void:
 		civilians.push_back(civilian_instance)
 
 
+func init_ui() -> void:
+	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
+	if players.size() == 1:
+		player_first_texture_button.show()
+		player_second_texture_button.hide()
+		player_third_texture_button.hide()
+	elif players.size() == 2:
+		player_first_texture_button.show()
+		player_second_texture_button.show()
+		player_third_texture_button.hide()
+	elif players.size() == 3:
+		player_first_texture_button.show()
+		player_second_texture_button.show()
+		player_third_texture_button.show()
+	
+	for player in players:
+		assert(player.id >= 0 and player.id <= 3, 'Wrong player id')
+		if player.id == 0 or player.id == 1:
+			on_button_disabled(player_first_texture_button, false)
+			player_first_texture_button.texture_normal = player_1_texture
+		elif player.id == 2:
+			on_button_disabled(player_second_texture_button, false)
+			player_second_texture_button.texture_normal = player_2_texture
+		elif player.id == 3:
+			on_button_disabled(player_third_texture_button, false)
+			player_third_texture_button.texture_normal = player_3_texture
+
+
 func start_turn() -> void:
 	###############################################
 	# ┏┓┏┓┳┳┓┏┓  ┳┳┓┏┓•┳┓  ┓ ┏┓┏┓┏┓  ┏┓┏┳┓┏┓┳┓┏┳┓ #
@@ -219,7 +253,7 @@ func start_turn() -> void:
 			tiles_for_movement.push_back(civilian.tile)
 		
 		# prefer to move if possible
-		var target_tile_for_movement = (tiles_for_movement[0]) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile): return tile != civilian.tile)).pick_random()
+		var target_tile_for_movement = (tiles_for_movement[0]) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile: MapTile): return tile != civilian.tile)).pick_random()
 		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
 		await civilian.move(tiles_path)
 		
@@ -262,7 +296,7 @@ func start_turn() -> void:
 			var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, target_tiles_for_enemy)
 			if not target_tile_for_action:
 				# no friendly fire preferred
-				var no_ff_tiles = tiles_for_action.filter(func(tile): return not tile.enemy)
+				var no_ff_tiles = tiles_for_action.filter(func(tile: MapTile): return not tile.enemy)
 				if no_ff_tiles.is_empty():
 					target_tile_for_action = tiles_for_action.pick_random()
 				else:
@@ -284,7 +318,7 @@ func end_turn() -> void:
 	# UI
 	on_button_disabled(end_turn_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
-	action_1_texture_button.set_pressed_no_signal(false)
+	action_first_texture_button.set_pressed_no_signal(false)
 	undo = {}
 	
 	await show_turn_end_texture_rect('ENEMY')
@@ -527,27 +561,27 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 		
 		# exclude tiles behind occupied tiles
 		if character.is_in_group('PLAYERS') and character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.VERTICAL_LINE:
-			var occupied_tiles = tiles_for_action.filter(func(tile): return tile.is_occupied())
+			var occupied_tiles = tiles_for_action.filter(func(tile: MapTile): return tile.is_occupied())
 			if not occupied_tiles.is_empty():
 				for occupied_tile in occupied_tiles:
 					var origin_to_target_sign = (character.tile.coords - occupied_tile.coords).sign()
 					var hit_direction = get_hit_direction(origin_to_target_sign)
 					if hit_direction == HitDirection.DOWN_LEFT:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
 					elif hit_direction == HitDirection.UP_RIGHT:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
 					elif hit_direction == HitDirection.RIGHT_DOWN:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y <= occupied_tile.coords.y)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y <= occupied_tile.coords.y)
 					elif hit_direction == HitDirection.LEFT_UP:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y >= occupied_tile.coords.y)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y >= occupied_tile.coords.y)
 					elif hit_direction == HitDirection.DOWN:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
 					elif hit_direction == HitDirection.UP:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
 					elif hit_direction == HitDirection.RIGHT:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y >= occupied_tile.coords.x - occupied_tile.coords.y)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y >= occupied_tile.coords.x - occupied_tile.coords.y)
 					elif hit_direction == HitDirection.LEFT:
-						tiles_for_action = tiles_for_action.filter(func(tile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
+						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
 	else:
 		tiles_for_action = map.tiles
 	
@@ -632,7 +666,7 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character: C
 			if not current_tiles_in_line.is_empty():
 				push_unique_to_array(tiles_in_line, current_tiles_in_line.front())
 		
-		var occupied_tiles_in_line = tiles_in_line.filter(func(tile): return (tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE or (tile.player and not tile.player.is_ghost) or tile.ghost or tile.enemy or tile.civilian) and tile != origin_character.tile)
+		var occupied_tiles_in_line = tiles_in_line.filter(func(tile: MapTile): return (tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE or (tile.player and not tile.player.is_ghost) or tile.ghost or tile.enemy or tile.civilian) and tile != origin_character.tile)
 		if not occupied_tiles_in_line.is_empty():
 			return occupied_tiles_in_line.front()
 		
@@ -692,6 +726,9 @@ func recalculate_enemies_planned_actions() -> void:
 
 
 func on_shoot_action_button_toggled(toggled_on: bool) -> void:
+	if not selected_player:
+		return
+	
 	# order matters here!
 	if toggled_on:
 		if selected_player.current_phase == PhaseType.MOVE and not selected_player.no_more_actions_this_turn():
@@ -709,6 +746,135 @@ func on_shoot_action_button_toggled(toggled_on: bool) -> void:
 		var tiles_for_action = calculate_tiles_for_action(true, selected_player)
 		for tile in tiles_for_action:
 			tile.toggle_player_clicked(true)
+
+
+func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
+	# reset all kinds of arrows, indicators, outlines, ...
+	for player in players:
+		player.is_ghost = false
+		player.reset_health_bar()
+		
+		if player != selected_player:
+			player.toggle_outline(false)
+			player.toggle_health_bar(false)
+	
+	for tile in map.tiles:
+		tile.ghost = null
+		tile.toggle_shader(false)
+		
+		if not is_hovered:
+			tile.toggle_asset_outline(false)
+		
+		# reset other tiles
+		if tile != target_tile:
+			tile.is_hovered = false
+			tile.reset_tile_models()
+	
+	for enemy in enemies:
+		enemy.toggle_arrow_highlight(false)
+		enemy.toggle_outline(false)
+		enemy.toggle_health_bar(false)
+		enemy.reset_health_bar()
+	
+	for civilian in civilians:
+		civilian.toggle_outline(false)
+		civilian.toggle_health_bar(false)
+		civilian.reset_health_bar()
+	
+	if is_hovered:
+		var character = target_tile.get_character()
+		# show health bar for hovered character
+		if character:
+			character.toggle_health_bar(true)
+		
+		# outline hovered enemy and highlight his attack arrows
+		if target_tile.enemy:
+			#target_tile.enemy.toggle_outline(true)
+			
+			if target_tile.enemy.planned_tile:
+				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_first_texture_button.is_pressed()
+				if not is_selected_player_action:
+					target_tile.enemy.toggle_arrow_highlight(true)
+					target_tile.enemy.planned_tile.toggle_asset_outline(true)
+					
+					# highlight tile itself if it's empty
+					if not target_tile.enemy.planned_tile.is_occupied():
+						target_tile.enemy.planned_tile.toggle_shader(true)
+					
+					# show outline with predicted health for enemy targets
+					if target_tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
+						# only for target tile
+						target_tile.enemy.show_outline_with_predicted_health(target_tile.enemy.planned_tile, map.tiles, ActionType.NONE)
+						
+						# only for tiles to be cross pushed back
+						for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(target_tile.enemy.planned_tile.coords, tile.coords)):
+							# show outline with predicted health for enemy cross pushed targets
+							target_tile.enemy.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, target_tile.enemy.planned_tile, target_tile.enemy.action_damage)
+					else:
+						target_tile.enemy.show_outline_with_predicted_health(target_tile.enemy.planned_tile, map.tiles, target_tile.enemy.action_type)
+		
+		# highlight attack arrows of hovered planned target
+		if target_tile.is_planned_enemy_action:
+			#target_tile.toggle_shader(true)
+			#target_tile.toggle_asset_outline(true)
+			
+			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_first_texture_button.is_pressed()
+			if not is_selected_player_action:
+				# find enemy whose planned tile is hovered
+				for enemy in enemies.filter(func(enemy): return enemy.planned_tile == target_tile):
+					enemy.toggle_outline(true)
+					enemy.toggle_health_bar(true)
+					#enemy.toggle_arrow_highlight(true)
+	
+	# highlight tiles while player is clicked
+	if selected_player and selected_player.tile != target_tile and target_tile.is_player_clicked:
+		if selected_player.can_move():
+			#for other_tile in map.tiles.filter(func(tile: MapTile): return tile != target_tile):
+				#other_tile.reset_tile_models()
+			
+			if is_hovered:
+				var tiles_path = calculate_tiles_path(selected_player, target_tile)
+				for next_tile in tiles_path:
+					next_tile.on_mouse_entered()
+				
+				selected_player.look_at_y(target_tile)
+				selected_player.is_ghost = true
+				target_tile.ghost = selected_player
+			
+			recalculate_enemies_planned_actions()
+		elif selected_player.can_make_action():
+			if is_hovered:
+				var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
+				if first_occupied_tile_in_line and first_occupied_tile_in_line != target_tile:
+					target_tile.is_hovered = false
+					target_tile.reset_tile_models()
+				
+					first_occupied_tile_in_line.is_hovered = true
+					first_occupied_tile_in_line.reset_tile_models()
+				else:
+					first_occupied_tile_in_line = target_tile
+				
+				selected_player.look_at_y(first_occupied_tile_in_line)
+				selected_player.spawn_arrow(first_occupied_tile_in_line)
+				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
+				
+				# highlight tile itself if it's empty
+				if not first_occupied_tile_in_line.is_occupied():
+					first_occupied_tile_in_line.toggle_shader(true)
+				
+				# show outline with predicted health for player targets
+				if selected_player.action_type == ActionType.CROSS_PUSH_BACK:
+					# only for target tile
+					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, ActionType.NONE)
+					
+					# only for tiles to be cross pushed back
+					for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(first_occupied_tile_in_line.coords, tile.coords)):
+						selected_player.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, first_occupied_tile_in_line, selected_player.action_damage)
+				else:
+					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, selected_player.action_type)
+			else:
+				selected_player.clear_arrows()
+				selected_player.clear_action_indicators()
 
 
 func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
@@ -737,40 +903,8 @@ func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	enemies.push_back(enemy_instance)
 
 
-func _on_tile_hovered(tile: MapTile, is_hovered: bool) -> void:
-	# reset all kinds of arrows, indicators, outlines, ...
-	for current_player in players:
-		current_player.is_ghost = false
-		current_player.reset_health_bar()
-		
-		if current_player != selected_player:
-			current_player.toggle_outline(false)
-			current_player.toggle_health_bar(false)
-	
-	for current_tile in map.tiles:
-		current_tile.ghost = null
-		current_tile.toggle_shader(false)
-		
-		if not is_hovered:
-			current_tile.toggle_asset_outline(false)
-		
-		# reset other tiles
-		if current_tile != tile:
-			current_tile.is_hovered = false
-			current_tile.reset_tile_models()
-	
-	for current_enemy in enemies:
-		current_enemy.toggle_arrow_highlight(false)
-		current_enemy.toggle_outline(false)
-		current_enemy.toggle_health_bar(false)
-		current_enemy.reset_health_bar()
-	
-	for current_civilian in civilians:
-		current_civilian.toggle_outline(false)
-		current_civilian.toggle_health_bar(false)
-		current_civilian.reset_health_bar()
-	
-	var character = tile.get_character()
+func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
+	on_tile_hovered(target_tile, is_hovered)
 	
 	# UI
 	if is_hovered:
@@ -778,11 +912,12 @@ func _on_tile_hovered(tile: MapTile, is_hovered: bool) -> void:
 		#  ┃ ┓┃ ┣   ┓┃┃┣ ┃┃
 		#  ┻ ┗┗┛┗┛  ┗┛┗┻ ┗┛
 		
+		var character = target_tile.get_character()
 		# DEBUG
-		debug_info_label.text = 'POSITION: ' + str(tile.position) + '\n'
-		debug_info_label.text += 'COORDS: ' + str(tile.coords) + '\n'
-		debug_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[tile.health_type]) + '\n\n'
-		debug_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[tile.tile_type]) + '\n'
+		debug_info_label.text = 'POSITION: ' + str(target_tile.position) + '\n'
+		debug_info_label.text += 'COORDS: ' + str(target_tile.coords) + '\n'
+		debug_info_label.text += 'HEALTH TYPE: ' + str(TileHealthType.keys()[target_tile.health_type]) + '\n\n'
+		debug_info_label.text += 'TILE TYPE: ' + str(TileType.keys()[target_tile.tile_type]) + '\n'
 		if character:
 			debug_info_label.text += '\n\n' + character.model_name + '\n'
 			debug_info_label.text += tr('INFO_HEALTH') + ': ' + str(character.health) + '/' + str(character.max_health) + '\n'
@@ -792,22 +927,22 @@ func _on_tile_hovered(tile: MapTile, is_hovered: bool) -> void:
 			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
 			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
 			debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
-		if tile.models.event_asset:
-			if tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'):
+		if target_tile.models.event_asset:
+			if target_tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_BELOW]) + '\n'
-			elif tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS'):
+			elif target_tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_ABOVE]) + '\n'
-			elif tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
+			elif target_tile.models.event_asset.is_in_group('MISSLES_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_MISSLE]) + '\n'
-			elif tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
+			elif target_tile.models.event_asset.is_in_group('ROCKS_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.FALLING_ROCK]) + '\n'
 		
-		if tile.info and not tile.info.is_empty():
-			debug_info_label.text += '\n\n' + tile.info
+		if target_tile.info and not target_tile.info.is_empty():
+			debug_info_label.text += '\n\n' + target_tile.info
 		
 		# tile and character hover info
 		# TODO
-		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[tile.tile_type])) + '\n'
+		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[target_tile.tile_type])) + '\n'
 		if character:
 			tile_info_label.text += '[ACTION ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_type])) + '\n'
 			tile_info_label.text += '[MOVE ICON] ' + tr('MOVE_' + str(character.move_distance)) + '\n'
@@ -815,113 +950,19 @@ func _on_tile_hovered(tile: MapTile, is_hovered: bool) -> void:
 				tile_info_label.text += '[STATE ICON] ' + tr('STATE_TYPE_' + str(StateType.keys()[character.state_type])) + '\n'
 			if character.is_in_group('ENEMIES'):
 				tile_info_label.text += '[ORDER ICON] ' + str(character.order) + '\n'
-		if tile.get_pickable():
+		if target_tile.get_pickable():
 				tile_info_label.text += '[PICKABLE ICON]' + '\n'
 	else:
 		tile_info_label.text = ''
 		debug_info_label.text = ''
-	
-	if is_hovered:
-		# show health bar for hovered character
-		if character:
-			character.toggle_health_bar(true)
-		
-		# outline hovered enemy and highlight his attack arrows
-		if tile.enemy:
-			#tile.enemy.toggle_outline(true)
-			
-			if tile.enemy.planned_tile:
-				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_1_texture_button.is_pressed()
-				if not is_selected_player_action:
-					tile.enemy.toggle_arrow_highlight(true)
-					tile.enemy.planned_tile.toggle_asset_outline(true)
-					
-					# highlight tile itself if it's empty
-					if not tile.enemy.planned_tile.is_occupied():
-						tile.enemy.planned_tile.toggle_shader(true)
-					
-					# show outline with predicted health for enemy targets
-					if tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
-						# only for target tile
-						tile.enemy.show_outline_with_predicted_health(tile.enemy.planned_tile, map.tiles, ActionType.NONE)
-						
-						# only for tiles to be cross pushed back
-						for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(tile.enemy.planned_tile.coords, current_tile.coords)):
-							# show outline with predicted health for enemy cross pushed targets
-							tile.enemy.show_outline_with_predicted_health(current_tile, map.tiles, ActionType.CROSS_PUSH_BACK, tile.enemy.planned_tile, tile.enemy.action_damage)
-					else:
-						tile.enemy.show_outline_with_predicted_health(tile.enemy.planned_tile, map.tiles, tile.enemy.action_type)
-		
-		# highlight attack arrows of hovered planned target
-		if tile.is_planned_enemy_action:
-			#tile.toggle_shader(true)
-			#tile.toggle_asset_outline(true)
-			
-			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_1_texture_button.is_pressed()
-			if not is_selected_player_action:
-				# find enemy whose planned tile is hovered
-				for current_enemy in enemies.filter(func(enemy): return enemy.planned_tile == tile):
-					current_enemy.toggle_outline(true)
-					current_enemy.toggle_health_bar(true)
-					#current_enemy.toggle_arrow_highlight(true)
-	
-	# highlight tiles while player is clicked
-	if selected_player and selected_player.tile != tile and tile.is_player_clicked:
-		if selected_player.can_move():
-			#for other_tile in map.tiles.filter(func(current_tile): return current_tile != tile):
-				#other_tile.reset_tile_models()
-			
-			if is_hovered:
-				var tiles_path = calculate_tiles_path(selected_player, tile)
-				for next_tile in tiles_path:
-					next_tile.on_mouse_entered()
-				
-				selected_player.look_at_y(tile)
-				selected_player.is_ghost = true
-				tile.ghost = selected_player
-			
-			recalculate_enemies_planned_actions()
-		elif selected_player.can_make_action():
-			if is_hovered:
-				var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, tile.coords)
-				if first_occupied_tile_in_line and first_occupied_tile_in_line != tile:
-					tile.is_hovered = false
-					tile.reset_tile_models()
-				
-					first_occupied_tile_in_line.is_hovered = true
-					first_occupied_tile_in_line.reset_tile_models()
-				else:
-					first_occupied_tile_in_line = tile
-				
-				selected_player.look_at_y(first_occupied_tile_in_line)
-				selected_player.spawn_arrow(first_occupied_tile_in_line)
-				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
-				
-				# highlight tile itself if it's empty
-				if not first_occupied_tile_in_line.is_occupied():
-					first_occupied_tile_in_line.toggle_shader(true)
-				
-				# show outline with predicted health for player targets
-				if selected_player.action_type == ActionType.CROSS_PUSH_BACK:
-					# only for target tile
-					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, ActionType.NONE)
-					
-					# only for tiles to be cross pushed back
-					for current_tile in map.tiles.filter(func(current_tile): return is_tile_adjacent_by_coords(first_occupied_tile_in_line.coords, current_tile.coords)):
-						selected_player.show_outline_with_predicted_health(current_tile, map.tiles, ActionType.CROSS_PUSH_BACK, first_occupied_tile_in_line, selected_player.action_damage)
-				else:
-					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, selected_player.action_type)
-			else:
-				selected_player.clear_arrows()
-				selected_player.clear_action_indicators()
 
 
 func _on_tile_clicked(target_tile: MapTile) -> void:
-	for current_player in players:
-		current_player.is_ghost = false
+	for player in players:
+		player.is_ghost = false
 	
-	for current_tile in map.tiles:
-		current_tile.ghost = null
+	for tile in map.tiles:
+		tile.ghost = null
 	
 	recalculate_enemies_planned_actions()
 	
@@ -944,7 +985,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			if not first_occupied_tile_in_line:
 				first_occupied_tile_in_line = target_tile
 			
-			if action_1_texture_button.is_pressed():
+			if action_first_texture_button.is_pressed():
 				await selected_player.execute_action(first_occupied_tile_in_line)
 			else:
 				await selected_player.shoot(first_occupied_tile_in_line)
@@ -952,13 +993,21 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			# reset undo when action was executed
 			undo = {}
 			on_button_disabled(undo_texture_button, true)
+			var player_texture_button
+			if selected_player.id == 0 or selected_player.id == 1:
+				player_texture_button = player_first_texture_button
+			elif selected_player.id == 2:
+				player_texture_button = player_second_texture_button
+			elif selected_player.id == 3:
+				player_texture_button = player_third_texture_button
+			on_button_disabled(player_texture_button, true)
 			
-			check_for_level_end(false)
+			#check_for_level_end(false)
 	# other player or selected player is clicked
 	elif target_tile.player and (not selected_player or selected_player.tile == target_tile or selected_player.can_be_interacted_with()):
 		target_tile.player.reset_phase()
 		target_tile.player.on_clicked()
-		action_1_texture_button.set_pressed_no_signal(false)
+		action_first_texture_button.set_pressed_no_signal(false)
 
 
 func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1007,14 +1056,15 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 		selected_player.reset_tiles()
 	
 	# UI
-	on_button_disabled(action_1_texture_button, false)
+	on_button_disabled(action_first_texture_button, false)
 	var player_index = players.find(player)
+	assert(player_index >= 0 and player_index <= 2, 'Player not found in players')
 	if player_index == 0:
-		player_1_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+		player_first_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
 	elif player_index == 1:
-		player_2_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+		player_second_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
 	elif player_index == 2:
-		player_3_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+		player_third_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
 	
 	if is_clicked:
 		selected_player = player
@@ -1187,27 +1237,39 @@ func _on_undo_texture_button_pressed() -> void:
 		recalculate_enemies_planned_actions()
 
 
-func _on_player_texture_button_mouse_entered(id: int) -> void:
-	var target_player = players[id - 1]
-	target_player.tile._on_area_3d_mouse_entered()
+func _on_player_texture_button_mouse_entered(index: int) -> void:
+	if players.is_empty():
+		return
+	
+	assert(index >= 0 and index <= 2, 'Wrong index for players')
+	var target_player = players[index]
+	on_tile_hovered(target_player.tile, true)
 
 
-func _on_player_texture_button_mouse_exited(id: int) -> void:
-	var target_player = players[id - 1]
-	target_player.tile._on_area_3d_mouse_exited()
+func _on_player_texture_button_mouse_exited(index: int) -> void:
+	if players.is_empty():
+		return
+	
+	assert(index >= 0 and index <= 2, 'Wrong index for players')
+	var target_player = players[index]
+	on_tile_hovered(target_player.tile, false)
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	var target_player = players[id - 1]
+func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
+	if players.is_empty():
+		return
+	
+	assert(index >= 0 and index <= 2, 'Wrong index for players')
+	var target_player = players[index]
 	if not target_player.is_alive or not target_player.can_be_interacted_with():
 		return
 	
-	if id == 1:
-		player_1_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	elif id == 2:
-		player_2_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	elif id == 3:
-		player_3_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	if index == 0:
+		player_first_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	elif index == 1:
+		player_second_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	elif index == 2:
+		player_third_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	_on_tile_clicked(target_player.tile)
 

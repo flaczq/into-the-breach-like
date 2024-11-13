@@ -6,6 +6,7 @@ func _ready() -> void:
 	
 	super()
 	
+	id = 1
 	model_name = 'Enemy 1'
 	max_health = 2
 	health = 2
@@ -16,6 +17,7 @@ func _ready() -> void:
 	action_direction = ActionDirection.HORIZONTAL_LINE
 	action_type = ActionType.MISS_MOVE
 	action_damage = 0
+	passive_type = PassiveType.NONE
 	can_fly = false
 	
 	init_health_bar()

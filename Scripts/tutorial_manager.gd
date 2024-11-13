@@ -15,6 +15,7 @@ func init_player(player: Player, level: int) -> void:
 		player.action_direction = ActionDirection.HORIZONTAL_LINE
 		player.action_type = ActionType.PUSH_BACK
 		player.action_damage = 0
+		player.passive_type = PassiveType.NONE
 		player.can_fly = false
 	
 	player.init_health_bar()
@@ -33,6 +34,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_LINE
 		enemy.action_type = ActionType.PUSH_BACK
 		enemy.action_damage = 0
+		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 	elif level == 2:
 		enemy.arrow_color = ENEMY_1_ARROW_COLOR
@@ -46,6 +48,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_DOT
 		enemy.action_type = ActionType.NONE
 		enemy.action_damage = 0
+		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 	
 	enemy.init_health_bar()
@@ -63,6 +66,7 @@ func init_civilian(civilian: Civilian, level: int) -> void:
 		civilian.action_direction = ActionDirection.NONE
 		civilian.action_type = ActionType.NONE
 		civilian.action_damage = 0
+		civilian.passive_type = PassiveType.NONE
 		civilian.can_fly = false
 	
 	civilian.init_health_bar()

@@ -4,6 +4,7 @@ extends Civilian
 func _ready() -> void:
 	super()
 	
+	id = 1
 	model_name = 'One civilian'
 	max_health = 2
 	health = 2
@@ -14,6 +15,7 @@ func _ready() -> void:
 	action_direction = ActionDirection.NONE
 	action_type = ActionType.NONE
 	action_damage = 0
+	passive_type = PassiveType.NONE
 	can_fly = false
 	
 	init_health_bar()

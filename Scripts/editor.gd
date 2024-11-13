@@ -11,7 +11,7 @@ extends Util
 @onready var game_state_manager: GameStateManager = $GameStateManager
 @onready var editor_label = $CanvasLayer/EditorLabel
 @onready var end_turn_texture_button = $CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton
-@onready var action_1_texture_button = $CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/Action1TextureButton
+@onready var action_first_texture_button = $CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton
 @onready var undo_texture_button = $CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton
 @onready var play_button = $CanvasLayer/PanelRightContainer/RightContainer/PlayButton
 @onready var reset_button = $CanvasLayer/PanelRightContainer/RightContainer/ResetButton
@@ -29,6 +29,7 @@ extends Util
 const SAVED_LEVELS_FILE_PATH = 'res://Data/saved_levels.txt'
 
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
+
 var assets: Array[Node3D] = []
 var key_pressed: bool = false
 var is_deleting: bool = false
@@ -101,22 +102,22 @@ func _input(event: InputEvent) -> void:
 		# LOG PLAYERS TILES
 		if Input.is_key_pressed(KEY_P):
 			key_pressed = true
-			print('players tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.player).map(func(tile): return tile.coords)))
+			print('players tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.player).map(func(tile: MapTile): return tile.coords)))
 		
 		# LOG ENEMIES TILES
 		if Input.is_key_pressed(KEY_E):
 			key_pressed = true
-			print('enemies tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.enemy).map(func(tile): return tile.coords)))
+			print('enemies tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.enemy).map(func(tile: MapTile): return tile.coords)))
 		
 		# LOG CIVILIANS TILES
 		if Input.is_key_pressed(KEY_C):
 			key_pressed = true
-			print('civilians tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.civilian).map(func(tile): return tile.coords)))
+			print('civilians tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.civilian).map(func(tile: MapTile): return tile.coords)))
 		
 		# LOG ASSETS TILES
 		if Input.is_key_pressed(KEY_A):
 			key_pressed = true
-			print('assets tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.models.asset).map(func(tile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
+			print('assets tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.models.asset).map(func(tile: MapTile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
 	
 	if Global.engine_mode != Global.EngineMode.EDITOR:
 		return
@@ -129,7 +130,7 @@ func init() -> void:
 	reset()
 	
 	on_button_disabled(end_turn_texture_button, true)
-	on_button_disabled(action_1_texture_button, true)
+	on_button_disabled(action_first_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
 	play_button.set_disabled(true)
 	reset_button.set_disabled(true)
@@ -192,16 +193,11 @@ func calculate_level_data() -> void:
 	else:
 		for child in get_children():
 			if child.is_in_group('PLAYERS'):
-				var player_scene = int(child.name.substr(6, 1))
-				level_data.player_scenes.push_back(player_scene)
-			
-			if child.is_in_group('ENEMIES'):
-				var enemy_scene = int(child.name.substr(5, 1))
-				level_data.enemy_scenes.push_back(enemy_scene)
-			
-			if child.is_in_group('CIVILIANS'):
-				var civilian_scene = int(child.name.substr(8, 1))
-				level_data.civilian_scenes.push_back(civilian_scene)
+				level_data.player_scenes.push_back(child.id)
+			elif child.is_in_group('ENEMIES'):
+				level_data.enemy_scenes.push_back(child.id)
+			elif child.is_in_group('CIVILIANS'):
+				level_data.civilian_scenes.push_back(child.id)
 
 
 func _on_settings_texture_button_pressed() -> void:
@@ -214,7 +210,7 @@ func _on_play_button_toggled(toggled_on: bool) -> void:
 	reset()
 	
 	on_button_disabled(end_turn_texture_button, not toggled_on)
-	on_button_disabled(action_1_texture_button, not toggled_on)
+	on_button_disabled(action_first_texture_button, not toggled_on)
 	on_button_disabled(undo_texture_button, not toggled_on)
 	reset_button.set_disabled(toggled_on)
 	delete_button.set_disabled(toggled_on)

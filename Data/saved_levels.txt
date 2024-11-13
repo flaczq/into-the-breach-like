@@ -1,7 +1,7 @@
 #SAVED LEVELS
 
 1-1-1->START
-{ "scene": 2, "level": 1, "level_type": 1, "tiles": "MMWWMMTMMTTWTTTTTTTTTTTTTTTTTTTWTTTTTTTWTTTTTTWWMTTTTWWWMMTTMWWW", "tiles_assets": "MM00MMTMM00000000000000000000000T0000000T0000000M0000000MMTTM000", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [] }
+{ "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0], "tiles": "MMWWMMTMMTTWTTTTTTTTTTTTTTTTTTTWTTTTTTTWTTTTTTWWMTTTTWWWMMTTMWWW", "tiles_assets": "MM00MMTMM00000000000000000000000T0000000T0000000M0000000MMTTM000", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [] }
 1-1-1->STOP
 
 2-1-1->START
@@ -9,7 +9,7 @@
 2-1-1->STOP
 
 3-1-1->START
-{ "scene": 2, "level": 1, "level_type": 1, "level_events": [4, 4], "tiles": "MMMWWWWWWWWWWWWWTPTTWTPPTPPPPTPPPPPTPPPTTPTTWPPPPPPTPPPWPPWWWWWW", "tiles_assets": "MMM0000000000000T0TT0T000000000000000000T0TT00000000000000000000", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [] }
+{ "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0, 4, 4], "tiles": "MMMWWWWWWWWWWWWWTPTTWTPPTPPPPTPPPPPTPPPTTPTTWPPPPPPTPPPWPPWWWWWW", "tiles_assets": "MMM0000000000000T0TT0T000000000000000000T0TT00000000000000000000", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [] }
 3-1-1->STOP
 
 4-1-1->START

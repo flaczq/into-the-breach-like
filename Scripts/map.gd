@@ -174,9 +174,9 @@ func get_color_by_tile_type(tile_type: TileType) -> Color:
 		TileType.PLAIN:
 			return Color('e3cdaa')#beige
 		TileType.GRASS:
-			return Color('66ff3e')#green
+			return Color('0cae5b')#dark green
 		TileType.TREE:
-			return Color('66ff3e')#green
+			return Color('0cae5b')#dark green
 		TileType.MOUNTAIN:
 			return Color('4e3214')#dark brown
 		TileType.VOLCANO:
@@ -256,4 +256,4 @@ func get_targetable_tiles() -> Array[MapTile]:
 
 
 func get_untargetable_tiles() -> Array[MapTile]:
-	return tiles.filter(func(tile: MapTile): return not get_targetable_tiles().has(tile) and (not tile.models.has('event_asset') or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))
+	return tiles.filter(func(tile: MapTile): return not get_targetable_tiles().has(tile) and (not tile.models.get('event_asset') or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))

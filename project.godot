@@ -32,7 +32,3 @@ theme/custom="res://Other/default_theme.tres"
 [internationalization]
 
 locale/translations=PackedStringArray("res://I18n/text.en.translation", "res://I18n/text.pl.translation")
-
-[rendering]
-
-anti_aliasing/quality/use_taa=true

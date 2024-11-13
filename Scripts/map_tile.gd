@@ -118,6 +118,9 @@ func reset_tile_models() -> void:
 	elif health_type == TileHealthType.DESTROYED:
 		# hardcoded
 		position.y = -0.3
+	elif tile_type == TileType.WATER:
+		# hardcoded
+		position.y = -0.3
 	else:
 		models.indicator_solid.hide()
 		models.indicator_dashed.hide()

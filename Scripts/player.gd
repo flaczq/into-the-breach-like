@@ -227,12 +227,9 @@ func on_mouse_entered() -> void:
 	if not can_be_interacted_with():
 		return
 	
-	#if not is_hovered and not is_clicked:
 	if not is_clicked:
 		if is_alive:
 			#Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
-			
-			#is_hovered = true
 			
 			hovered_event.emit(self, true)
 		else:
@@ -240,15 +237,12 @@ func on_mouse_entered() -> void:
 
 
 func mouse_exited() -> void:
-	#is_hovered = false
-	
 	hovered_event.emit(self, false)
 
 
 func on_mouse_exited() -> void:
 	#Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	
-	#if is_hovered and not is_clicked:
 	if not is_clicked:
 		if is_alive:
 			mouse_exited()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=29 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -22,6 +22,9 @@
 [ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="19_mojst"]
 [ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="20_6obs3"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="21_mwtkn"]
+[ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="22_r3qts"]
+[ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="23_gkeuf"]
+[ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="24_0ovau"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kjqoi"]
 
@@ -119,11 +122,37 @@ BONUS:
 
 [node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer"]
 layout_mode = 2
+size_flags_vertical = 10
+theme_override_constants/separation = 20
 
 [node name="TileInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "TILE INFO"
+
+[node name="PlayersContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
+layout_mode = 2
+
+[node name="Player1TextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("22_r3qts")
+
+[node name="Player2TextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("23_gkeuf")
+
+[node name="Player3TextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("24_0ovau")
 
 [node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 11
@@ -200,4 +229,13 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/Action1TextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
+[connection signal="mouse_entered" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player1TextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_entered" binds= [1]]
+[connection signal="mouse_exited" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player1TextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_exited" binds= [1]]
+[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player1TextureButton" to="GameStateManager" method="_on_player_texture_button_toggled" binds= [1]]
+[connection signal="mouse_entered" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player2TextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_entered" binds= [2]]
+[connection signal="mouse_exited" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player2TextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_exited" binds= [2]]
+[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player2TextureButton" to="GameStateManager" method="_on_player_texture_button_toggled" binds= [2]]
+[connection signal="mouse_entered" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player3TextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_entered" binds= [3]]
+[connection signal="mouse_exited" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player3TextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_exited" binds= [3]]
+[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player3TextureButton" to="GameStateManager" method="_on_player_texture_button_toggled" binds= [3]]
 [connection signal="gui_input" from="CanvasLayer/PanelFullScreenContainer/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

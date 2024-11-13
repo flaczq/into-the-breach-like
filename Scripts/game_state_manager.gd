@@ -13,6 +13,9 @@ class_name GameStateManager
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
+@onready var player_1_texture_button = $"../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player1TextureButton"
+@onready var player_2_texture_button = $"../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player2TextureButton"
+@onready var player_3_texture_button = $"../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/Player3TextureButton"
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightContainer/DebugInfoLabel'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
@@ -1003,10 +1006,17 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	if selected_player and selected_player != player and selected_player.can_be_interacted_with():
 		selected_player.reset_tiles()
 	
+	# UI
+	on_button_disabled(action_1_texture_button, false)
+	var player_index = players.find(player)
+	if player_index == 0:
+		player_1_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+	elif player_index == 1:
+		player_2_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+	elif player_index == 2:
+		player_3_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+	
 	if is_clicked:
-		# UI
-		on_button_disabled(action_1_texture_button, false)
-		
 		selected_player = player
 		selected_player.toggle_health_bar(true)
 		
@@ -1019,9 +1029,6 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 			#for tile_for_action in tiles_for_action:
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
-		# UI
-		on_button_disabled(action_1_texture_button, true)
-		
 		selected_player.toggle_health_bar(false)
 		selected_player = null
 		
@@ -1178,6 +1185,31 @@ func _on_undo_texture_button_pressed() -> void:
 		last_undo_player.start_turn()
 		
 		recalculate_enemies_planned_actions()
+
+
+func _on_player_texture_button_mouse_entered(id: int) -> void:
+	var target_player = players[id - 1]
+	target_player.tile._on_area_3d_mouse_entered()
+
+
+func _on_player_texture_button_mouse_exited(id: int) -> void:
+	var target_player = players[id - 1]
+	target_player.tile._on_area_3d_mouse_exited()
+
+
+func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
+	var target_player = players[id - 1]
+	if not target_player.is_alive or not target_player.can_be_interacted_with():
+		return
+	
+	if id == 1:
+		player_1_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	elif id == 2:
+		player_2_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	elif id == 3:
+		player_3_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	
+	_on_tile_clicked(target_player.tile)
 
 
 func _on_level_end_popup_gui_input(event: InputEvent) -> void:

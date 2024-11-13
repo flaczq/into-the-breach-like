@@ -210,18 +210,6 @@ func _on_settings_texture_button_pressed() -> void:
 	queue_free()
 
 
-func _on_end_turn_texture_button_pressed() -> void:
-	game_state_manager._on_end_turn_texture_button_pressed()
-
-
-func _on_action_texture_button_toggled(toggled_on: bool) -> void:
-	game_state_manager._on_action_texture_button_toggled(toggled_on)
-
-
-func _on_undo_texture_button_pressed() -> void:
-	game_state_manager._on_undo_texture_button_pressed()
-
-
 func _on_play_button_toggled(toggled_on: bool) -> void:
 	reset()
 	

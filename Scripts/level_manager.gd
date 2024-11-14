@@ -135,7 +135,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				# check if some indicators were left from the last turn
-				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
+				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
 				if existing_event_tiles_count >= enemies_from_below_count:
 					return
 				
@@ -166,7 +166,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				# check if some indicators were left from the last turn
-				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
+				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
 				if existing_event_tiles_count >= enemies_from_above_count:
 					return
 				
@@ -256,7 +256,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			assert(level_data.get('enemies_from_below'), 'Set enemies_from_below for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
-				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile:
 					return
 				
@@ -280,7 +280,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			assert(level_data.get('enemies_from_above'), 'Set enemies_from_above for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
-				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile or event_tile.get_character():
 					return
 				
@@ -296,7 +296,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 		# missle hits at spawned indicators
 		elif level_event == LevelEvent.FALLING_MISSLE:
 			if current_turn > 1:
-				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')).front()
 				if not event_tile:
 					return
 				
@@ -308,7 +308,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 		# rock hits at spawned indicators
 		elif level_event == LevelEvent.FALLING_ROCK:
 			if current_turn > 1:
-				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.event_asset and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')).front()
 				if not event_tile:
 					return
 				

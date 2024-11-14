@@ -1084,14 +1084,14 @@ mesh = SubResource("ArrayMesh_v32f8")
 skeleton = NodePath("")
 
 [node name="TileHighlighted" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
 visible = false
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ih35y")
 skeleton = NodePath("")
 
 [node name="TileTargeted" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
 visible = false
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_cuku6")

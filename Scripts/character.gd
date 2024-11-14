@@ -84,7 +84,7 @@ func init_model_outlines(parent: MeshInstance3D = model) -> void:
 func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
 	toggle_health_bar(false)
 	
-	var target_tile = tiles_path.back()
+	var target_tile = tiles_path.back() as MapTile
 	if target_tile == tile:
 		if forced and outside_tile_position != Vector3.ZERO:
 			print('chara ' + str(tile.coords) + ' -> pushed into the wall')
@@ -462,40 +462,36 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var push_direction = -1 * hit_direction_sign
-				var pushed_into_tiles = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + push_direction)
-				if pushed_into_tiles.is_empty():
+				var pushed_into_tile = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + push_direction).front()
+				if pushed_into_tile:
+					# pushed into other character or asset
+					if pushed_into_tile.is_occupied():
+						damage_dealt += 1
+						# to the same for hit character as well
+						target_character.show_outline_with_predicted_health(pushed_into_tile, tiles, ActionType.NONE, pushed_into_tile, 1, true)
+					elif pushed_into_tile.health_type == TileHealthType.DESTROYED:
+						# pushed into a hole = dead
+						damage_dealt = target_character.health
+				else:
 					# pushed outside of the map
 					damage_dealt += 1
-				else:
-					var pushed_into_tile = pushed_into_tiles.front()
-					if pushed_into_tile:
-						# pushed into other character or asset
-						if pushed_into_tile.is_occupied():
-							damage_dealt += 1
-							# to the same for hit character as well
-							target_character.show_outline_with_predicted_health(pushed_into_tile, tiles, ActionType.NONE, pushed_into_tile, 1, true)
-						elif pushed_into_tile.health_type == TileHealthType.DESTROYED:
-							# pushed into a hole = dead
-							damage_dealt = target_character.health
 			elif origin_action_type == ActionType.PULL_FRONT:
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var pull_direction = hit_direction_sign
-				var pulled_into_tiles = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction)
-				if pulled_into_tiles.is_empty():
+				var pulled_into_tile = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
+				if pulled_into_tile:
+					# pulled into other character or asset
+					if pulled_into_tile.is_occupied():
+						damage_dealt += 1
+						# to the same for hit character as well
+						target_character.show_outline_with_predicted_health(pulled_into_tile, tiles, ActionType.NONE, pulled_into_tile, 1, true)
+					elif pulled_into_tile.health_type == TileHealthType.DESTROYED:
+						# pulled into a hole = dead
+						damage_dealt = target_character.health
+				else:
 					# pulled outside of the map
 					damage_dealt += 1
-				else:
-					var pulled_into_tile = pulled_into_tiles.front()
-					if pulled_into_tile:
-						# pulled into other character or asset
-						if pulled_into_tile.is_occupied():
-							damage_dealt += 1
-							# to the same for hit character as well
-							target_character.show_outline_with_predicted_health(pulled_into_tile, tiles, ActionType.NONE, pulled_into_tile, 1, true)
-						elif pulled_into_tile.health_type == TileHealthType.DESTROYED:
-							# pulled into a hole = dead
-							damage_dealt = target_character.health
 			
 			if damage_dealt > 0:
 				var predicted_health = maxi(0, target_character.health - damage_dealt)

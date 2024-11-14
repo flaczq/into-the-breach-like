@@ -207,30 +207,30 @@ func init_civilians() -> void:
 
 func init_ui() -> void:
 	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
-	if players.size() == 1:
-		player_first_texture_button.show()
-		player_second_texture_button.hide()
-		player_third_texture_button.hide()
-	elif players.size() == 2:
-		player_first_texture_button.show()
-		player_second_texture_button.show()
-		player_third_texture_button.hide()
-	elif players.size() == 3:
-		player_first_texture_button.show()
-		player_second_texture_button.show()
-		player_third_texture_button.show()
+	player_first_texture_button.hide()
+	player_second_texture_button.hide()
+	player_third_texture_button.hide()
 	
+	var index = 0
 	for player in players:
 		assert(player.id >= 0 and player.id <= 3, 'Wrong player id')
+		var player_texture
+		# tutorial and first scene
 		if player.id == 0 or player.id == 1:
-			on_button_disabled(player_first_texture_button, false)
-			player_first_texture_button.texture_normal = player_1_texture
+			player_texture = player_1_texture
 		elif player.id == 2:
-			on_button_disabled(player_second_texture_button, false)
-			player_second_texture_button.texture_normal = player_2_texture
+			player_texture = player_2_texture
 		elif player.id == 3:
-			on_button_disabled(player_third_texture_button, false)
-			player_third_texture_button.texture_normal = player_3_texture
+			player_texture = player_3_texture
+		
+		var player_texture_button = get_player_texture_button_by_index(index)
+		player_texture_button.texture_normal = player_texture
+		player_texture_button.set_disabled(false)
+		# hardcoded enabled but not clicked
+		player_texture_button.modulate.a = 0.75
+		player_texture_button.show()
+		
+		index += 1
 
 
 func start_turn() -> void:
@@ -353,6 +353,13 @@ func next_turn() -> void:
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
 	game_info_label.text += 'SCORE: ' + str(Global.score)
+	
+	var index = 0
+	for player in players:
+		var player_texture_button = get_player_texture_button_by_index(index)
+		on_button_disabled(player_texture_button, not player.is_alive)
+		
+		index += 1
 	
 	start_turn()
 
@@ -725,6 +732,14 @@ func recalculate_enemies_planned_actions() -> void:
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
+func get_player_texture_button_by_index(index: int) -> TextureButton:
+	assert(index >= 0 and index <= 2, 'Wrong index')
+	if index == 0: return player_first_texture_button
+	elif index == 1: return player_second_texture_button
+	elif index == 2: return player_third_texture_button
+	return null
+
+
 func on_shoot_action_button_toggled(toggled_on: bool) -> void:
 	if not selected_player:
 		return
@@ -927,7 +942,7 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
 			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
 			debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
-		if target_tile.models.event_asset:
+		if target_tile.models.get('event_asset'):
 			if target_tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_BELOW]) + '\n'
 			elif target_tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS'):
@@ -981,6 +996,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			selected_player.clear_arrows()
 			selected_player.clear_action_indicators()
 		
+			var selected_player_index = players.find(selected_player)
 			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
 			if not first_occupied_tile_in_line:
 				first_occupied_tile_in_line = target_tile
@@ -993,13 +1009,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			# reset undo when action was executed
 			undo = {}
 			on_button_disabled(undo_texture_button, true)
-			var player_texture_button
-			if selected_player.id == 0 or selected_player.id == 1:
-				player_texture_button = player_first_texture_button
-			elif selected_player.id == 2:
-				player_texture_button = player_second_texture_button
-			elif selected_player.id == 3:
-				player_texture_button = player_third_texture_button
+			var player_texture_button = get_player_texture_button_by_index(selected_player_index)
 			on_button_disabled(player_texture_button, true)
 			
 			#check_for_level_end(false)
@@ -1058,13 +1068,8 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	# UI
 	on_button_disabled(action_first_texture_button, false)
 	var player_index = players.find(player)
-	assert(player_index >= 0 and player_index <= 2, 'Player not found in players')
-	if player_index == 0:
-		player_first_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
-	elif player_index == 1:
-		player_second_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
-	elif player_index == 2:
-		player_third_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+	var player_texture_button = get_player_texture_button_by_index(player_index)
+	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.75)
 	
 	if is_clicked:
 		selected_player = player
@@ -1103,6 +1108,7 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 		await target_character.move([pushed_into_tile] as Array[MapTile], true)
 		
 		if target_character.is_alive and target_character.tile:
+			# tile type hole or other destroyed tile
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# pushed into a hole = dead
 				await target_character.get_killed()
@@ -1137,6 +1143,7 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 		await target_character.move([pulled_into_tile] as Array[MapTile], true)
 		
 		if target_character.is_alive and target_character.tile:
+			# tile type hole or other destroyed tile
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# pulled into a hole = dead
 				await target_character.get_killed()
@@ -1264,12 +1271,8 @@ func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
 	if not target_player.is_alive or not target_player.can_be_interacted_with():
 		return
 	
-	if index == 0:
-		player_first_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	elif index == 1:
-		player_second_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	elif index == 2:
-		player_third_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	var player_texture_button = get_player_texture_button_by_index(index)
+	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.75)
 	
 	_on_tile_clicked(target_player.tile)
 

@@ -171,7 +171,7 @@ func calculate_level_data() -> void:
 	# FIXME all levels are 1 for now, later group them by levels and pick random
 	level_data.level = 1
 	level_data.level_type = 1
-	level_data.level_events = [LevelEvent.ENEMIES_FROM_ABOVE, LevelEvent.ENEMIES_FROM_ABOVE]
+	level_data.level_events = [LevelEvent.ENEMIES_FROM_BELOW, LevelEvent.ENEMIES_FROM_BELOW]
 	level_manager_script.add_level_type_details(level_data)
 	level_manager_script.add_events_details(level_data, enemy_scenes.size())
 	level_data.tiles = ''
@@ -183,7 +183,7 @@ func calculate_level_data() -> void:
 	for tile in map.tiles:
 		level_data.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
 		
-		var asset = (tile.models.asset.name) if (tile.models.asset) else ''
+		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else ''
 		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
 	if get_children().all(func(child): return not child.is_in_group('PLAYERS') and not child.is_in_group('ENEMIES') and not child.is_in_group('CIVILIANS')):
@@ -301,9 +301,13 @@ func _on_save_button_pressed() -> void:
 	level_data.erase('enemy_scenes')
 	level_data.erase('civilians')
 	level_data.erase('civilian_scenes')
+	level_data.erase('max_enemies')
 	level_data.erase('enemies_from_below')
 	level_data.erase('enemies_from_below_first_turn')
 	level_data.erase('enemies_from_below_last_turn')
+	level_data.erase('enemies_from_above')
+	level_data.erase('enemies_from_above_first_turn')
+	level_data.erase('enemies_from_above_last_turn')
 	
 	content += '\n' + str(index) + prefix + 'START\n'
 	# make it pretty
@@ -496,15 +500,15 @@ func _on_selected_tile_id_pressed(id: int) -> void:
 		selected_tile.add_child(spawn_indicator)
 	else:
 		if id == 0:
-			var tile_coords = level_data.spawn_player_coords.filter(func(tile_coords: Vector2i): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			var tile_coords = level_data.spawn_player_coords.filter(func(tile_coords: Dictionary): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
 			if tile_coords:
 				level_data.spawn_player_coords.erase(tile_coords)
 		elif id == 1:
-			var tile_coords = level_data.spawn_enemy_coords.filter(func(tile_coords: Vector2i): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			var tile_coords = level_data.spawn_enemy_coords.filter(func(tile_coords: Dictionary): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
 			if tile_coords:
 				level_data.spawn_enemy_coords.erase(tile_coords)
 		elif id == 2:
-			var tile_coords = level_data.spawn_civilian_coords.filter(func(tile_coords: Vector2i): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
+			var tile_coords = level_data.spawn_civilian_coords.filter(func(tile_coords: Dictionary): return tile_coords.x == selected_tile.coords.x and tile_coords.y == selected_tile.coords.y).front()
 			if tile_coords:
 				level_data.spawn_civilian_coords.erase(tile_coords)
 		
@@ -534,7 +538,7 @@ func _on_editor_tile_clicked(tile: MapTile) -> void:
 			selected_asset = null
 			editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
 			new_selected = false
-		elif tile.models.asset:
+		elif tile.models.get('asset'):
 			selected = null
 			tile_to_placed = {}
 			selected_asset = tile.models.asset
@@ -576,7 +580,7 @@ func _on_editor_tile_clicked(tile: MapTile) -> void:
 			else:
 				selected = character
 				editor_label.text = 'selected "' + selected.name + '" from tile ' + str(tile.coords)
-		elif tile.models.asset:
+		elif tile.models.get('asset'):
 			if is_deleting:
 				editor_label.text = 'deleted asset "' + tile.models.asset.name + '" from tile ' + str(tile.coords)
 				tile.models.asset.queue_free()

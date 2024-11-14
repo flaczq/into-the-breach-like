@@ -169,11 +169,7 @@ func set_character(character: Character) -> void:
 
 
 func get_pickable() -> Node3D:
-	var pickables = get_children().filter(func(child): return child.is_in_group('PICKABLES'))
-	if pickables.is_empty():
-		return null
-	
-	return pickables.front()
+	return get_children().filter(func(child): return child.is_in_group('PICKABLES')).front()
 
 
 func is_movable() -> bool:

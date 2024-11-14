@@ -29,7 +29,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 	
 	await super(tiles_path, forced, outside_tile_position)
 	
-	var target_tile = tiles_path.back()
+	var target_tile = tiles_path.back() as MapTile
 	if target_tile != tile:
 		if not target_tile.is_occupied():
 			tile.set_civilian(null)

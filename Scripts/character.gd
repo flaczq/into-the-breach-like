@@ -17,7 +17,7 @@ var health_bar_scene: CanvasLayer = preload('res://Scenes/health_bar.tscn').inst
 
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
-var model_outlines: Array[Node] = []
+var model_outlines: Array[MeshInstance3D] = []
 
 var id: int
 var model_name: String
@@ -49,7 +49,7 @@ func _ready() -> void:
 	# to move properly among available positions
 	position = Vector3.ZERO
 	
-	model = get_children().filter(func(child): return child.is_visible() and child is MeshInstance3D).front()
+	model = get_children().filter(func(child: Node3D): return child.is_visible() and child is MeshInstance3D).front()
 	# make materials unique
 	model.mesh.surface_set_material(0, model.get_active_material(0).duplicate())
 	model.show()
@@ -60,7 +60,7 @@ func _ready() -> void:
 	
 	health_bar_scene.hide()
 	
-	for asset in assets_scene.get_children():
+	for asset in assets_scene.get_children() as Array[Node3D]:
 		if asset.name == 'ArrowSignContainer':
 			default_arrow_model = asset
 		elif asset.name == 'sphere':
@@ -195,12 +195,12 @@ func spawn_arrow(target_tile: MapTile) -> void:
 
 
 func clear_arrows() -> void:
-	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
+	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ARROW')) as Array[Node3D]:
 		child.queue_free()
 
 
 func toggle_arrows(is_toggled: bool) -> void:
-	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
+	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ARROW')) as Array[Node3D]:
 		if is_toggled:
 			child.show()
 		else:
@@ -304,12 +304,12 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 
 
 func clear_action_indicators() -> void:
-	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
+	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ACTION_INDICATORS')) as Array[Node3D]:
 		child.queue_free()
 
 
 func toggle_action_indicators(is_toggled: bool) -> void:
-	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
+	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ACTION_INDICATORS')) as Array[Node3D]:
 		if is_toggled:
 			child.show()
 		else:
@@ -402,7 +402,7 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 	
 	# reset applied planned actions for enemy target
 	if is_in_group('ENEMIES'):
-		var enemy: Enemy = self
+		var enemy: Enemy = self as Enemy
 		if enemy.planned_tile:
 			var target_character = enemy.planned_tile.get_character()
 			if target_character:
@@ -421,8 +421,8 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 		if health <= 0 and is_alive:
 			await get_killed()
 	else:
-		await get_tree().create_timer(1.0).timeout
 		print('chara ' + str(tile.coords) + ' -> got shot with 0 damage')
+		await get_tree().create_timer(1.0).timeout
 
 
 func get_killed() -> void:

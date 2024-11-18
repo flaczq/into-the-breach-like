@@ -13,7 +13,7 @@ var loot_chance: int = 3
 
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
-var planned_tile: Node3D
+var planned_tile: MapTile
 var order: int
 var highlight_tween: Tween
 var arrow_color: Color
@@ -89,16 +89,15 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 
 
 func plan_action(target_tile: MapTile) -> void:
+	var different_tile: bool = (planned_tile != target_tile)
 	# refresh arrows and indicators
-	reset_planned_tile()
+	reset_planned_tile(different_tile)
 	
 	if is_alive:
-		var same_tile = (planned_tile == target_tile)
-		
 		planned_tile = target_tile
 		planned_tile.set_planned_enemy_action(true)
 		
-		if not same_tile:
+		if different_tile:
 			var target_character = planned_tile.get_character()
 			if target_character:
 				apply_planned_action(target_character)
@@ -135,7 +134,7 @@ func execute_planned_action() -> void:
 			await temp_planned_tile.get_shot(damage, action_type, action_damage, tile.coords)
 
 
-func apply_planned_action(target_character, is_applied = true) -> void:
+func apply_planned_action(target_character: Character, is_applied = true) -> void:
 	match action_type:
 		ActionType.MISS_MOVE: enemy_planned_action_miss_move.emit(target_character, is_applied)
 		ActionType.MISS_ACTION: enemy_planned_action_miss_action.emit(target_character, is_applied)
@@ -157,21 +156,22 @@ func get_killed() -> void:
 
 
 func spawn_loot() -> void:
-	if (randi() % loot_chance) == (loot_chance - 1):
+	if tile.is_movable() and (randi() % loot_chance) == (loot_chance - 1):
 		var loot_model = default_loot_model.duplicate()
 		loot_model.position = Vector3(0, 0.2, 0)
 		loot_model.show()
 		tile.add_child(loot_model)
 
 
-func reset_planned_tile() -> void:
+func reset_planned_tile(reset_planned_action: bool = true) -> void:
 	clear_arrows()
 	clear_action_indicators()
 	
 	if planned_tile:
-		var target_character = planned_tile.get_character()
-		if target_character:
-			apply_planned_action(target_character, false)
+		if reset_planned_action:
+			var target_character = planned_tile.get_character()
+			if target_character:
+				apply_planned_action(target_character, false)
 		
 		planned_tile.set_planned_enemy_action(false)
 		planned_tile = null

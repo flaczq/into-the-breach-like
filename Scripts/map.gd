@@ -14,7 +14,7 @@ var assets: Array[Node3D] = []
 func _ready() -> void:
 	name = name + '_' + str(randi())
 	
-	for child in get_children().filter(func(child): return child.is_in_group('TILES')):
+	for child in get_children().filter(func(child: Node3D): return child.is_in_group('TILES')) as Array[MapTile]:
 		tiles.push_back(child)
 	
 	assets.append_array(assets_scene.instantiate().get_children())
@@ -144,7 +144,7 @@ func get_models_by_tile_type(tile_type: TileType, asset_filename: String, level_
 		if asset.name == asset_filename:
 			models.asset = asset.duplicate()
 			
-			var assets_damaged = assets.filter(func(asset): return asset.name == asset_filename + '_damaged')
+			var assets_damaged = assets.filter(func(asset: Node3D): return asset.name == asset_filename + '_damaged')
 			if assets_damaged.is_empty():
 				models.asset_damaged = asset.duplicate()
 			else:
@@ -156,11 +156,11 @@ func get_models_by_tile_type(tile_type: TileType, asset_filename: String, level_
 				models.asset_damaged.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
 	
 	if models.asset:
-		for child in models.asset.get_children():
+		for child in models.asset.get_children() as Array[Node3D]:
 			if child.is_in_group('OUTLINES'):
 				models.asset_outline = child
 	if models.asset_damaged:
-		for child in models.asset_damaged.get_children():
+		for child in models.asset_damaged.get_children() as Array[Node3D]:
 			if child.is_in_group('OUTLINES'):
 				models.asset_damaged_outline = child
 	

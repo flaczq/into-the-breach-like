@@ -11,10 +11,9 @@ func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.GAME
 	Global.editor = false
 	
-	var default_maps = get_children().filter(func(child): return child.is_in_group('MAPS'))
-	if default_maps:
-		for default_map in default_maps:
-			default_map.queue_free()
+	var default_maps = get_children().filter(func(child: Node3D): return child.is_in_group('MAPS')) as Array[Node3D]
+	for default_map in default_maps:
+		default_map.queue_free()
 	
 	game_state_manager.progress()
 

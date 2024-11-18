@@ -119,7 +119,7 @@ func init_game_state() -> void:
 
 func init_map() -> void:
 	assert(level_data.has('scene'), 'Set scene for level_data')
-	map = map_scenes[level_data.scene].instantiate()
+	map = map_scenes[level_data.scene].instantiate() as Map
 	add_sibling(map)
 	map.spawn(level_data)
 	
@@ -135,7 +135,7 @@ func init_players() -> void:
 	players = []
 	
 	for player_scene in level_data.player_scenes:
-		var player_instance = player_scenes[player_scene].instantiate()
+		var player_instance = player_scenes[player_scene].instantiate() as Player
 		add_sibling(player_instance)
 		if Global.tutorial:
 			tutorial_manager_script.init_player(player_instance, level)
@@ -181,7 +181,7 @@ func init_civilians() -> void:
 	civilians = []
 	
 	for civilian_scene in level_data.civilian_scenes:
-		var civilian_instance = civilian_scenes[civilian_scene].instantiate()
+		var civilian_instance = civilian_scenes[civilian_scene].instantiate() as Civilian
 		add_sibling(civilian_instance)
 		if Global.tutorial:
 			tutorial_manager_script.init_civilian(civilian_instance, level)
@@ -227,7 +227,8 @@ func init_ui() -> void:
 		player_texture_button.texture_normal = player_texture
 		player_texture_button.set_disabled(false)
 		# hardcoded enabled but not clicked
-		player_texture_button.modulate.a = 0.75
+		player_texture_button.flip_v = false
+		player_texture_button.modulate.a = 0.5
 		player_texture_button.show()
 		
 		index += 1
@@ -243,21 +244,21 @@ func start_turn() -> void:
 	await level_manager_script.plan_events(self)
 	
 	# actions order: events plan > civilians > enemies move and plan > players > enemies actions > events actions
-	var alive_civilians = civilians.filter(func(civilian: Civilian): return civilian.is_alive)
+	var alive_civilians: Array[Civilian] = civilians.filter(func(civilian: Civilian): return civilian.is_alive)
 	var alive_enemies: Array[Enemy] = enemies.filter(func(enemy: Enemy): return enemy.is_alive)
-	var alive_players = players.filter(func(player: Player): return player.is_alive)
+	var alive_players: Array[Player] = players.filter(func(player: Player): return player.is_alive)
 	
-	for civilian in alive_civilians:
-		var tiles_for_movement = calculate_tiles_for_movement(true, civilian)
+	for alive_civilian in alive_civilians:
+		var tiles_for_movement = calculate_tiles_for_movement(true, alive_civilian)
 		if tiles_for_movement.is_empty():
-			tiles_for_movement.push_back(civilian.tile)
+			tiles_for_movement.push_back(alive_civilian.tile)
 		
 		# prefer to move if possible
-		var target_tile_for_movement = (tiles_for_movement[0]) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile: MapTile): return tile != civilian.tile)).pick_random()
-		var tiles_path = calculate_tiles_path(civilian, target_tile_for_movement)
-		await civilian.move(tiles_path)
+		var target_tile_for_movement = (tiles_for_movement[0]) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile: MapTile): return tile != alive_civilian.tile)).pick_random()
+		var tiles_path = calculate_tiles_path(alive_civilian, target_tile_for_movement)
+		await alive_civilian.move(tiles_path)
 		
-		civilian.reset_states()
+		alive_civilian.reset_states()
 		# recalculate_enemies_planned_actions is not necessary because civilians move before enemies plan their actions
 	
 	# NOT (enemy targets order: assets > civilians > players) -> all are of the same priority
@@ -272,16 +273,16 @@ func start_turn() -> void:
 	
 	# sort by order
 	alive_enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
-	for enemy in alive_enemies:
-		var tiles_for_movement = calculate_tiles_for_movement(true, enemy)
-		tiles_for_movement.push_back(enemy.tile)
-		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, enemy, target_tiles_for_enemy)
+	for alive_enemy in alive_enemies:
+		var tiles_for_movement = calculate_tiles_for_movement(true, alive_enemy)
+		tiles_for_movement.push_back(alive_enemy.tile)
+		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, alive_enemy, target_tiles_for_enemy)
 		if not target_tile_for_movement:
 			target_tile_for_movement = tiles_for_movement.pick_random()
-			print('enemy ' + str(enemy.tile.coords) + ' -> random move ' + str(target_tile_for_movement.coords))
+			print('enemy ' + str(alive_enemy.tile.coords) + ' -> random move ' + str(target_tile_for_movement.coords))
 		
-		var tiles_path = calculate_tiles_path(enemy, target_tile_for_movement)
-		await enemy.move(tiles_path)
+		var tiles_path = calculate_tiles_path(alive_enemy, target_tile_for_movement)
+		await alive_enemy.move(tiles_path)
 		
 		# wait for 'thinking' about action
 		await get_tree().create_timer(0.3).timeout
@@ -289,9 +290,9 @@ func start_turn() -> void:
 		# enemy shouldn't but could have moved in front of the other enemy attack line
 		recalculate_enemies_planned_actions()
 		
-		var tiles_for_action = calculate_tiles_for_action(true, enemy)
+		var tiles_for_action = calculate_tiles_for_action(true, alive_enemy)
 		if tiles_for_action.is_empty():
-			print('enemy ' + str(enemy.tile.coords) + ' -> no actions available')
+			print('enemy ' + str(alive_enemy.tile.coords) + ' -> no actions available')
 		else:
 			var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, target_tiles_for_enemy)
 			if not target_tile_for_action:
@@ -301,12 +302,12 @@ func start_turn() -> void:
 					target_tile_for_action = tiles_for_action.pick_random()
 				else:
 					target_tile_for_action = no_ff_tiles.pick_random()
-				print('enemy ' + str(enemy.tile.coords) + ' -> random action ' + str(target_tile_for_action.coords))
+				print('enemy ' + str(alive_enemy.tile.coords) + ' -> random action ' + str(target_tile_for_action.coords))
 			
-			enemy.plan_action(target_tile_for_action)
+			alive_enemy.plan_action(target_tile_for_action)
 	
-	for player in alive_players:
-		player.start_turn()
+	for alive_player in alive_players:
+		alive_player.start_turn()
 	
 	# UI
 	on_button_disabled(end_turn_texture_button, false)
@@ -323,7 +324,7 @@ func end_turn() -> void:
 	
 	await show_turn_end_texture_rect('ENEMY')
 	
-	for player in players.filter(func(player: Player): return player.is_alive):
+	for player in players.filter(func(player: Player): return player.is_alive) as Array[Player]:
 		#player.reset_phase()
 		player.reset_tiles()
 		player.reset_states()
@@ -358,6 +359,7 @@ func next_turn() -> void:
 	for player in players:
 		var player_texture_button = get_player_texture_button_by_index(index)
 		on_button_disabled(player_texture_button, not player.is_alive)
+		player_texture_button.flip_v = not player.is_alive
 		
 		index += 1
 	
@@ -473,7 +475,7 @@ func calculate_tiles_for_movement(active: bool, character: Character) -> Array[M
 			
 			for origin_tile in origin_tiles:
 				# can't walk into water/lava, can only be pushed there
-				for tile in map.tiles.filter(func(tile: MapTile): return tile.health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE):
+				for tile in map.tiles.filter(func(tile: MapTile): return tile.health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE) as Array[MapTile]:
 					# characters can move through other characters of the same type
 					var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
 					if not occupied_by_characters and not tiles_for_movement.has(tile):
@@ -532,7 +534,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 		tiles_for_action = []
 		
 		if character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.HORIZONTAL_DOT:
-			for tile in map.tiles.filter(func(tile: MapTile): return not tile.coords == character.tile.coords):
+			for tile in map.tiles.filter(func(tile: MapTile): return not tile.coords == character.tile.coords) as Array[MapTile]:
 				if (tile.coords.x == origin_tile.coords.x and absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) \
 					or (tile.coords.y == origin_tile.coords.y and absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance):
 					# include all tiles in path
@@ -549,7 +551,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 			var max_range = mini(map.get_side_dimension(), character.action_max_distance)
 			for i in range(min_range, max_range + 1):
 				var counter = 0
-				for tile in map.tiles.filter(func(tile: MapTile): return not tiles_for_action.has(tile)):
+				for tile in map.tiles.filter(func(tile: MapTile): return not tiles_for_action.has(tile)) as Array[MapTile]:
 					if abs(tile.coords - origin_tile.coords) == Vector2i(i, i):
 						# include all tiles in path
 						if character.is_in_group('PLAYERS'):
@@ -568,7 +570,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 		
 		# exclude tiles behind occupied tiles
 		if character.is_in_group('PLAYERS') and character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.VERTICAL_LINE:
-			var occupied_tiles = tiles_for_action.filter(func(tile: MapTile): return tile.is_occupied())
+			var occupied_tiles = tiles_for_action.filter(func(tile: MapTile): return tile.is_occupied()) as Array[MapTile]
 			if not occupied_tiles.is_empty():
 				for occupied_tile in occupied_tiles:
 					var origin_to_target_sign = (character.tile.coords - occupied_tile.coords).sign()
@@ -610,7 +612,7 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[Ma
 		
 		for tile_for_movement in tiles_for_movement:
 			if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.HORIZONTAL_DOT:
-				valid_tiles_for_movement = target_tiles.filter(func(target_tile): return \
+				valid_tiles_for_movement = target_tiles.filter(func(target_tile: MapTile): return \
 					(target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) >= origin_character.action_min_distance and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_max_distance) \
 					or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) >= origin_character.action_min_distance and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_max_distance))
 				if not valid_tiles_for_movement.is_empty():
@@ -619,7 +621,7 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[Ma
 				var min_range = maxi(1, origin_character.action_min_distance)
 				var max_range = mini(map.get_side_dimension(), origin_character.action_max_distance)
 				for i in range(min_range, max_range + 1):
-					var valid_tiles = target_tiles.filter(func(target_tile): return abs(target_tile.coords - tile_for_movement.coords) == Vector2i(i, i))
+					var valid_tiles = target_tiles.filter(func(target_tile: MapTile): return abs(target_tile.coords - tile_for_movement.coords) == Vector2i(i, i))
 					if not valid_tiles.is_empty():
 						valid_tiles_for_movement.append_array(valid_tiles)
 			
@@ -628,14 +630,14 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[Ma
 			
 			# exclude tiles behind occupied tiles
 			if target_tile_for_movement and (origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE):
-				if valid_tiles_for_movement.all(func(target_tile): return target_tile != calculate_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_tile.coords)):
+				if valid_tiles_for_movement.all(func(target_tile: MapTile): return target_tile != calculate_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_tile.coords)):
 					valid_tiles_for_movement = []
 					target_tile_for_movement = null
 			
 			if target_tile_for_movement:
 				# exlude tiles in front of the other enemy attack line
 				if origin_character.is_in_group('ENEMIES'):
-					for other_enemy in enemies.filter(func(enemy): return enemy != origin_character and enemy.planned_tile and (enemy.action_direction == ActionDirection.HORIZONTAL_LINE or enemy.action_direction == ActionDirection.VERTICAL_LINE)):
+					for other_enemy in enemies.filter(func(enemy: Enemy): return enemy != origin_character and enemy.planned_tile and (enemy.action_direction == ActionDirection.HORIZONTAL_LINE or enemy.action_direction == ActionDirection.VERTICAL_LINE)) as Array[Enemy]:
 						var other_enemy_to_planned_sign = (other_enemy.tile.coords - other_enemy.planned_tile.coords).sign()
 						var target_tile_to_other_enemy_planned_sign = (target_tile_for_movement.coords - other_enemy.planned_tile.coords).sign()
 						var target_tile_to_other_enemy_sign = (target_tile_for_movement.coords - other_enemy.tile.coords).sign()
@@ -656,7 +658,7 @@ func calculate_tile_for_action_towards_characters(tiles_for_action: Array[MapTil
 		tiles_for_action.shuffle()
 		
 		for tile_for_action in tiles_for_action:
-			if target_tiles.any(func(target_tile): return target_tile.coords == tile_for_action.coords):
+			if target_tiles.any(func(target_tile: MapTile): return target_tile.coords == tile_for_action.coords):
 				return tile_for_action
 	
 	return null
@@ -719,7 +721,7 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character: C
 
 
 func recalculate_enemies_planned_actions() -> void:
-	for enemy in enemies.filter(func(enemy): return enemy.is_alive and enemy.planned_tile):
+	for enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive and enemy.planned_tile) as Array[Enemy]:
 		var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(enemy, enemy.tile.coords, enemy.planned_tile.coords)
 		if first_occupied_tile_in_line:# and first_occupied_tile_in_line != enemy.planned_tile:
 			enemy.plan_action(first_occupied_tile_in_line)
@@ -836,7 +838,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_first_texture_button.is_pressed()
 			if not is_selected_player_action:
 				# find enemy whose planned tile is hovered
-				for enemy in enemies.filter(func(enemy): return enemy.planned_tile == target_tile):
+				for enemy in enemies.filter(func(enemy: Enemy): return enemy.planned_tile == target_tile) as Array[Enemy]:
 					enemy.toggle_outline(true)
 					enemy.toggle_health_bar(true)
 					#enemy.toggle_arrow_highlight(true)
@@ -893,7 +895,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 
 
 func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
-	var enemy_instance = enemy_scenes[enemy_scene].instantiate()
+	var enemy_instance = enemy_scenes[enemy_scene].instantiate() as Enemy
 	if Global.tutorial:
 		tutorial_manager_script.init_enemy(enemy_instance, level)
 	
@@ -1008,9 +1010,11 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			
 			# reset undo when action was executed
 			undo = {}
+			on_button_disabled(action_first_texture_button, true)
 			on_button_disabled(undo_texture_button, true)
 			var player_texture_button = get_player_texture_button_by_index(selected_player_index)
 			on_button_disabled(player_texture_button, true)
+			player_texture_button.flip_v = true
 			
 			#check_for_level_end(false)
 	# other player or selected player is clicked
@@ -1021,7 +1025,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 
 
 func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	var tiles_to_be_pushed = []
+	var tiles_to_be_pushed: Array[MapTile] = []
 	for tile in map.tiles:
 		if is_tile_adjacent_by_coords(target_tile_coords, tile.coords):
 			tiles_to_be_pushed.push_back(tile)
@@ -1069,7 +1073,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	on_button_disabled(action_first_texture_button, false)
 	var player_index = players.find(player)
 	var player_texture_button = get_player_texture_button_by_index(player_index)
-	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.75)
+	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
 	
 	if is_clicked:
 		selected_player = player
@@ -1196,7 +1200,7 @@ func _on_enemy_killed_event(target_enemy: Enemy) -> void:
 	# recalculate enemies order
 	var order = 1
 	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
-	for alive_enemy in enemies.filter(func(enemy): return enemy.is_alive):
+	for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive) as Array[Enemy]:
 		alive_enemy.order = order
 		order += 1
 	
@@ -1213,7 +1217,7 @@ func _on_enemy_planned_action_miss_move(target_character: Character, is_applied:
 func _on_enemy_planned_action_miss_action(target_character: Character, is_applied: bool) -> void:
 	if is_applied:
 		target_character.state_type = StateType.MISS_ACTION
-	
+		
 		if target_character.is_in_group('ENEMIES'):
 			var enemy: Enemy = target_character
 			enemy.reset_planned_tile()
@@ -1254,6 +1258,9 @@ func _on_player_texture_button_mouse_entered(index: int) -> void:
 	
 	assert(index >= 0 and index <= 2, 'Wrong index for players')
 	var target_player = players[index]
+	if not target_player.is_alive:
+		return
+	
 	on_tile_hovered(target_player.tile, true)
 
 
@@ -1263,6 +1270,9 @@ func _on_player_texture_button_mouse_exited(index: int) -> void:
 	
 	assert(index >= 0 and index <= 2, 'Wrong index for players')
 	var target_player = players[index]
+	if not target_player.is_alive:
+		return
+	
 	on_tile_hovered(target_player.tile, false)
 
 
@@ -1276,7 +1286,7 @@ func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
 		return
 	
 	var player_texture_button = get_player_texture_button_by_index(index)
-	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.75)
+	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	_on_tile_clicked(target_player.tile)
 

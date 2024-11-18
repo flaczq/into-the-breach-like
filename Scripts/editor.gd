@@ -186,12 +186,12 @@ func calculate_level_data() -> void:
 		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else ''
 		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
 	
-	if get_children().all(func(child): return not child.is_in_group('PLAYERS') and not child.is_in_group('ENEMIES') and not child.is_in_group('CIVILIANS')):
+	if get_children().all(func(child: Node3D): return not child.is_in_group('PLAYERS') and not child.is_in_group('ENEMIES') and not child.is_in_group('CIVILIANS')):
 		# place 3 default players and enemies
 		level_data.player_scenes = [1,2,3]
 		level_data.enemy_scenes = [1,2,3]
 	else:
-		for child in get_children():
+		for child in get_children() as Array[Node3D]:
 			if child.is_in_group('PLAYERS'):
 				level_data.player_scenes.push_back(child.id)
 			elif child.is_in_group('ENEMIES'):
@@ -229,7 +229,7 @@ func _on_play_button_toggled(toggled_on: bool) -> void:
 		
 		map.hide()
 		
-		for child in get_children():
+		for child in get_children() as Array[Node3D]:
 			if child.is_in_group('PLAYERS'):
 				child.hide()
 			
@@ -248,7 +248,7 @@ func _on_play_button_toggled(toggled_on: bool) -> void:
 		
 		map.show()
 		
-		for child in get_children():
+		for child in get_children() as Array[Node3D]:
 			if child.is_in_group('PLAYERS'):
 				child.show()
 			
@@ -267,7 +267,7 @@ func _on_reset_button_pressed() -> void:
 		map.queue_free()
 		map = null
 	
-	for child in get_children().filter(func(child): return child.is_in_group('PLAYERS') or child.is_in_group('ENEMIES') or child.is_in_group('CIVILIANS')):
+	for child in get_children().filter(func(child: Node3D): return child.is_in_group('PLAYERS') or child.is_in_group('ENEMIES') or child.is_in_group('CIVILIANS')) as Array[Node3D]:
 		child.queue_free()
 		child = null
 
@@ -352,7 +352,7 @@ func _on_load_id_pressed(id: int) -> void:
 		
 		var asset_filename = map.convert_asset_initial_to_filename(level_data.tiles_assets[index])
 		if asset_filename:
-			var asset = assets.filter(func(asset): return asset.name == asset_filename).front().duplicate()
+			var asset = assets.filter(func(asset: Node3D): return asset.name == asset_filename).front().duplicate()
 			asset.set_meta('tile', tile)
 			asset.show()
 			tile.add_child(asset)
@@ -362,7 +362,7 @@ func _on_load_id_pressed(id: int) -> void:
 		vector2i_tiles_coords += convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
 		vector2i_tiles_coords += convert_spawn_coords_to_vector_coords(level_data.spawn_civilian_coords)
 		if vector2i_tiles_coords.has(tile.coords):
-			var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
+			var spawn_indicator = assets.filter(func(asset: Node3D): return asset.is_in_group('INDICATORS')).front().duplicate()
 			spawn_indicator.show()
 			tile.add_child(spawn_indicator)
 
@@ -393,7 +393,7 @@ func _on_maps_id_pressed(id: int) -> void:
 		#tile.area_3d.disconnect('input_event', tile._on_area_3d_input_event)
 		tile.connect('clicked_event', _on_editor_tile_clicked)
 		tile.get_child(0).queue_free()
-		var tile_asset = assets.filter(func(asset): return asset.name == 'ground_grass').front().duplicate()
+		var tile_asset = assets.filter(func(asset: Node3D): return asset.name == 'ground_grass').front().duplicate()
 		tile.tile_type = TileType.PLAIN
 		tile.model_material.albedo_color = Color('e3cdaa')
 		tile_asset.set_surface_override_material(1, tile.model_material)
@@ -438,12 +438,12 @@ func _on_assets_id_pressed(id: int) -> void:
 	new_selected = true
 	
 	match id:
-		0: selected_asset = assets.filter(func(asset): return asset.name == 'tree').front().duplicate()
-		1: selected_asset = assets.filter(func(asset): return asset.name == 'mountain').front().duplicate()
-		2: selected_asset = assets.filter(func(asset): return asset.name == 'volcano').front().duplicate()
-		3: selected_asset = assets.filter(func(asset): return asset.name == 'sign').front().duplicate()
-		4: selected_asset = assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
-		5: selected_asset = assets.filter(func(asset): return asset.name == 'house').front().duplicate()
+		0: selected_asset = assets.filter(func(asset: Node3D): return asset.name == 'tree').front().duplicate()
+		1: selected_asset = assets.filter(func(asset: Node3D): return asset.name == 'mountain').front().duplicate()
+		2: selected_asset = assets.filter(func(asset: Node3D): return asset.name == 'volcano').front().duplicate()
+		3: selected_asset = assets.filter(func(asset: Node3D): return asset.name == 'sign').front().duplicate()
+		4: selected_asset = assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
+		5: selected_asset = assets.filter(func(asset: Node3D): return asset.name == 'house').front().duplicate()
 	
 	editor_label.text = 'placing asset "' + selected_asset.name + '"'
 
@@ -495,7 +495,7 @@ func _on_selected_tile_id_pressed(id: int) -> void:
 		elif id == 2:
 			push_unique_to_array(level_data.spawn_civilian_coords, {'x': selected_tile.coords.x, 'y': selected_tile.coords.y})
 		
-		var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
+		var spawn_indicator = assets.filter(func(asset: Node3D): return asset.is_in_group('INDICATORS')).front().duplicate()
 		spawn_indicator.show()
 		selected_tile.add_child(spawn_indicator)
 	else:
@@ -512,7 +512,7 @@ func _on_selected_tile_id_pressed(id: int) -> void:
 			if tile_coords:
 				level_data.spawn_civilian_coords.erase(tile_coords)
 		
-		var spawn_indicator = selected_tile.get_children().filter(func(child): return child.is_in_group('INDICATORS')).front()
+		var spawn_indicator = selected_tile.get_children().filter(func(child: Node3D): return child.is_in_group('INDICATORS')).front()
 		if spawn_indicator:
 			spawn_indicator.queue_free()
 			spawn_indicator = null
@@ -570,7 +570,7 @@ func _on_editor_tile_clicked(tile: MapTile) -> void:
 				tile.models.asset = selected_asset
 				editor_label.text = 'placed asset "' + selected_asset.name + '" on tile ' + str(tile.coords)
 				if new_selected:
-					selected_asset = assets.filter(func(asset): return selected_asset.name.begins_with(asset.name)).front().duplicate()
+					selected_asset = assets.filter(func(asset: Node3D): return selected_asset.name.begins_with(asset.name)).front().duplicate()
 	else:
 		if character:
 			if is_deleting:

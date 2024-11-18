@@ -29,7 +29,7 @@ func toggle_visibility(is_toggled: bool) -> void:
 	else:
 		hide()
 	
-	for child in get_children():
+	for child in get_children() as Array[Node3D]:
 		if is_toggled:
 			child.show()
 		else:
@@ -44,7 +44,7 @@ func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:
 		button.modulate.a = 1.0
 
 
-func push_unique_to_array(array: Array, item) -> void:
+func push_unique_to_array(array: Array[Node3D], item: Node3D) -> void:
 	if not array.has(item):
 		array.push_back(item)
 

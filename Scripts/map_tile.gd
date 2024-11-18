@@ -96,6 +96,9 @@ func reset_tile_models() -> void:
 	models.tile_targeted.hide()
 	models.tile_damaged.hide()
 	models.tile_destroyed.hide()
+	models.indicator_solid.hide()
+	models.indicator_dashed.hide()
+	models.indicator_corners.hide()
 	
 	if is_player_clicked:
 		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.75)
@@ -121,10 +124,7 @@ func reset_tile_models() -> void:
 	elif tile_type == TileType.WATER:
 		# hardcoded
 		position.y = -0.15
-	else:
-		models.indicator_solid.hide()
-		models.indicator_dashed.hide()
-		models.indicator_corners.hide()
+
 
 func reset() -> void:
 	player = null
@@ -169,7 +169,11 @@ func set_character(character: Character) -> void:
 
 
 func get_pickable() -> Node3D:
-	return get_children().filter(func(child): return child.is_in_group('PICKABLES')).front()
+	var pickables = get_children().filter(func(child: Node3D): return child.is_in_group('PICKABLES'))
+	if pickables.is_empty():
+		return null
+	
+	return pickables.front()
 
 
 func is_movable() -> bool:
@@ -329,8 +333,8 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 			elif health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
 				print('ttile ' + str(coords) + ' -> indestructible walkable, nothing happens')
 		else:
-			await get_tree().create_timer(1.0).timeout
 			print('ttile ' + str(coords) + ' -> got shot with 0 damage')
+			await get_tree().create_timer(1.0).timeout
 
 
 func on_mouse_entered() -> void:

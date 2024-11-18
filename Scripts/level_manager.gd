@@ -139,11 +139,12 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				if existing_event_tiles_count >= enemies_from_below_count:
 					return
 				
-				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FFFF00')#yellow
 				event_asset.set_surface_override_material(0, event_asset_material)
 				
+				assert(level_data.has('spawn_enemy_coords'), 'Set spawn_enemy_coords for level_event: ENEMIES_FROM_BELOW')
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
 				var spawn_enemy_positions = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile: MapTile): return tile.position)
 				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
@@ -158,8 +159,8 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
 				
-				await game_state_manager.get_tree().create_timer(1.0).timeout
 				print('more enemy from below at ' + str(event_tile.coords))
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# enemy spawned near spawn_enemy_coords from above
 		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
 			assert(level_data.has('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
@@ -170,14 +171,15 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				if existing_event_tiles_count >= enemies_from_above_count:
 					return
 				
-				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FFFF00')#yellow
 				event_asset.set_surface_override_material(0, event_asset_material)
 				
+				assert(level_data.has('spawn_enemy_coords'), 'Set spawn_enemy_coords for level_event: ENEMIES_FROM_ABOVE')
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
-				var spawn_enemy_positions = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile: MapTile): return tile.position)
-				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
+				var spawn_enemy_positions: Array[Vector3] = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile: MapTile): return tile.position)
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position: Vector3): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no more enemies from above indicator spawned')
 					return
@@ -189,12 +191,12 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
 				
-				await game_state_manager.get_tree().create_timer(1.0).timeout
 				print('more enemy from above at ' + str(event_tile.coords))
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# missle spawned at random tile
 		elif level_event == LevelEvent.FALLING_MISSLE:
 			if current_turn > 1:
-				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FF0000')#red
 				event_asset.set_surface_override_material(0, event_asset_material)
@@ -210,18 +212,19 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
 				
-				await game_state_manager.get_tree().create_timer(1.0).timeout
 				print('spawned missle at ' + str(event_tile.coords))
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# rock spawned near mountains
 		elif level_event == LevelEvent.FALLING_ROCK:
 			if current_turn > 1:
-				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('7A5134')#brown
 				event_asset.set_surface_override_material(0, event_asset_material)
 				
-				var mountain_positions = map.tiles.filter(func(tile: MapTile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile: MapTile): return tile.position)
-				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return not mountain_positions.has(tile.position) and mountain_positions.any(func(mountain_position): return mountain_position.distance_to(tile.position) <= 1.5))
+				var mountain_positions: Array[Vector3] = map.tiles.filter(func(tile: MapTile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile: MapTile): return tile.position)
+				assert(not mountain_positions.is_empty(), 'Set mountain_positions for level_event: FALLING_ROCK')
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return not mountain_positions.has(tile.position) and mountain_positions.any(func(mountain_position: Vector3): return mountain_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no rock indicator spawned')
 					return
@@ -232,8 +235,8 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				event_tile.models.event_asset.show()
 				event_tile.add_child(event_tile.models.event_asset)
 				
-				await game_state_manager.get_tree().create_timer(1.0).timeout
 				print('spawned rock at ' + str(event_tile.coords))
+				await game_state_manager.get_tree().create_timer(1.0).timeout
 		#TODO more
 		else:
 			print('no implementation of planning level event: ' + LevelEvent.keys()[level_event])
@@ -258,6 +261,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile:
+					print('no event tiles for ENEMIES_FROM_BELOW');
 					return
 				
 				var target_character = event_tile.get_character()
@@ -282,6 +286,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile or event_tile.get_character():
+					print('no event tiles or character on tile for ENEMIES_FROM_ABOVE');
 					return
 				
 				# TODO animation

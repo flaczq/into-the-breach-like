@@ -168,7 +168,7 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -164.0
+offset_left = -247.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 1
@@ -180,7 +180,7 @@ alignment = 2
 [node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightContainer"]
 layout_mode = 2
 text = "DEBUG INFO"
-text_overrun_behavior = 2
+text_overrun_behavior = 3
 
 [node name="PlayButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightContainer"]
 layout_mode = 2

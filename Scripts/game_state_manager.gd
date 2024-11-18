@@ -1112,19 +1112,21 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# pushed into a hole = dead
 				await target_character.get_killed()
-			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-				target_character.state_type = StateType.SLOW_DOWN
-			elif target_character.tile == pushed_into_tile and target_character.is_in_group('ENEMIES'):
-				# enemy actually moved
-				var enemy: Enemy = target_character
-				if enemy.planned_tile:
-					# push planned tile with pushed enemy
-					var planned_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == enemy.planned_tile.coords + push_direction)
-					if planned_tiles.is_empty():
-						print('enemy ' + str(enemy.tile.coords) + ' -> planned tile cannot be pushed back')
-						enemy.reset_planned_tile()
-					else:
-						enemy.plan_action(planned_tiles.front())
+			else:
+				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
+					target_character.state_type = StateType.SLOW_DOWN
+				
+				if target_character.tile == pushed_into_tile and target_character.is_in_group('ENEMIES'):
+					# enemy actually moved
+					var enemy: Enemy = target_character
+					if enemy.planned_tile:
+						# push planned tile with pushed enemy
+						var planned_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == enemy.planned_tile.coords + push_direction)
+						if planned_tiles.is_empty():
+							print('enemy ' + str(enemy.tile.coords) + ' -> planned tile cannot be pushed back')
+							enemy.reset_planned_tile()
+						else:
+							enemy.plan_action(planned_tiles.front())
 	
 	recalculate_enemies_planned_actions()
 
@@ -1147,19 +1149,21 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 			if target_character.tile.health_type == TileHealthType.DESTROYED:
 				# pulled into a hole = dead
 				await target_character.get_killed()
-			elif target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-				target_character.state_type = StateType.SLOW_DOWN
-			elif target_character.tile == pulled_into_tile and target_character.is_in_group('ENEMIES'):
-				# enemy actually moved
-				var enemy: Enemy = target_character
-				if enemy.planned_tile:
-					# pull planned tile with pulled enemy
-					var planned_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == enemy.planned_tile.coords + pull_direction)
-					if planned_tiles.is_empty():
-						print('enemy ' + str(enemy.tile.coords) + ' -> planned tile cannot be pulled front')
-						enemy.reset_planned_tile()
-					else:
-						enemy.plan_action(planned_tiles.front())
+			else:
+				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
+					target_character.state_type = StateType.SLOW_DOWN
+				
+				if target_character.tile == pulled_into_tile and target_character.is_in_group('ENEMIES'):
+					# enemy actually moved
+					var enemy: Enemy = target_character
+					if enemy.planned_tile:
+						# pull planned tile with pulled enemy
+						var planned_tiles = map.tiles.filter(func(tile: MapTile): return tile.coords == enemy.planned_tile.coords + pull_direction)
+						if planned_tiles.is_empty():
+							print('enemy ' + str(enemy.tile.coords) + ' -> planned tile cannot be pulled front')
+							enemy.reset_planned_tile()
+						else:
+							enemy.plan_action(planned_tiles.front())
 	
 	recalculate_enemies_planned_actions()
 

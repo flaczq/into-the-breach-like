@@ -42,7 +42,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 					look_at_y(next_tile)
 				
 				var position_tween = create_tween()
-				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
+				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
 				await position_tween.finished
 
 

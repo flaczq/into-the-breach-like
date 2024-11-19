@@ -2,8 +2,8 @@ extends Character
 
 class_name Player
 
-signal hovered_event(player: Node3D, is_hovered: bool)
-signal clicked_event(player: Node3D, is_clicked: bool)
+signal hovered_event(player: Player, is_hovered: bool)
+signal clicked_event(player: Player, is_clicked: bool)
 
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0
@@ -69,7 +69,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 					look_at_y(next_tile)
 				
 				var position_tween = create_tween()
-				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
+				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
 				await position_tween.finished
 			
 			if not forced:

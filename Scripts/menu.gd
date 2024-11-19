@@ -144,7 +144,7 @@ func _on_main_menu_button_pressed() -> void:
 	
 	toggle_visibility(true)
 	
-	for child_to_queue in get_tree().root.get_children().filter(func(child: Node3D): return is_instance_valid(child) and not child.is_queued_for_deletion() and not child.is_in_group('NEVER_FREED')) as Array[Node3D]:
+	for child_to_queue in get_tree().root.get_children().filter(func(child): return is_instance_valid(child) and not child.is_queued_for_deletion() and not child.is_in_group('NEVER_FREED')):
 		child_to_queue.queue_free()
 
 

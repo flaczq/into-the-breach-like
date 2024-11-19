@@ -14,7 +14,8 @@ func generate_data(level_type: LevelType, level: int, enemy_scenes_size: int, ci
 	var levels_file_path = get_levels_file_path(level_type)
 	var file = FileAccess.open(levels_file_path, FileAccess.READ)
 	var file_content = file.get_as_text()
-	var level_data_string = select_random_level_data(file_content, level, level_type)
+	# FIXME use level
+	var level_data_string = select_random_level_data(file_content, 1, level_type)
 	assert(level_data_string != file_content, 'Add level type: ' + str(level_type) + ' to levels file: ' + str(levels_file_path))
 	var level_data = parse_data(level_data_string)
 	
@@ -46,7 +47,17 @@ func select_random_level_data(file_content: String, level: int, level_type: Leve
 		return file_content.get_slice(str(level) + prefix + 'START', 1).get_slice(str(level) + prefix + 'STOP', 0)#.strip_escapes()
 	
 	var index = file_content.count(prefix + 'START')
-	var random_index = randi_range(1, index)
+	var indices_range = range(1, index)
+	if Global.played_maps_indices.size() < indices_range.size():
+		# prevent selecting already played maps
+		indices_range = indices_range.filter(func(index): return not Global.played_maps_indices.has(index))
+		assert(not indices_range.is_empty(), 'Empty indices for selected maps')
+	else:
+		# clear if all maps were already played (sic!)
+		Global.played_maps_indices.clear()
+	
+	var random_index = indices_range.pick_random()
+	Global.played_maps_indices.push_back(random_index)
 	print('selected level: ' + str(random_index) + prefix)
 	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()
 
@@ -139,7 +150,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				if existing_event_tiles_count >= enemies_from_below_count:
 					return
 				
-				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FFFF00')#yellow
 				event_asset.set_surface_override_material(0, event_asset_material)
@@ -171,7 +182,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				if existing_event_tiles_count >= enemies_from_above_count:
 					return
 				
-				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FFFF00')#yellow
 				event_asset.set_surface_override_material(0, event_asset_material)
@@ -196,7 +207,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 		# missle spawned at random tile
 		elif level_event == LevelEvent.FALLING_MISSLE:
 			if current_turn > 1:
-				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FF0000')#red
 				event_asset.set_surface_override_material(0, event_asset_material)
@@ -217,7 +228,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 		# rock spawned near mountains
 		elif level_event == LevelEvent.FALLING_ROCK:
 			if current_turn > 1:
-				var event_asset = map.assets.filter(func(asset: Node3D): return asset.name == 'indicator-special-cross').front().duplicate()
+				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('7A5134')#brown
 				event_asset.set_surface_override_material(0, event_asset_material)

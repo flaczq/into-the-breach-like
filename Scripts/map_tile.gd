@@ -2,8 +2,8 @@ extends Util
 
 class_name MapTile
 
-signal hovered_event(tile: Node3D, is_hovered: bool)
-signal clicked_event(tile: Node3D)
+signal hovered_event(tile: MapTile, is_hovered: bool)
+signal clicked_event(tile: MapTile)
 signal action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i)
 
 @onready var area_3d = $Area3D
@@ -169,7 +169,7 @@ func set_character(character: Character) -> void:
 
 
 func get_pickable() -> Node3D:
-	var pickables = get_children().filter(func(child: Node3D): return child.is_in_group('PICKABLES'))
+	var pickables = get_children().filter(func(child): return child.is_in_group('PICKABLES'))
 	if pickables.is_empty():
 		return null
 	

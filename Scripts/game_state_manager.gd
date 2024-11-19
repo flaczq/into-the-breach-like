@@ -19,6 +19,7 @@ class_name GameStateManager
 @onready var player_third_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerThirdTextureButton'
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightContainer/DebugInfoLabel'
+@onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
 @onready var level_end_popup = $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup'
@@ -109,6 +110,7 @@ func init_game_state() -> void:
 	on_button_disabled(end_turn_texture_button, true)
 	on_button_disabled(action_first_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
+	panel_full_screen_container.hide()
 	turn_end_texture_rect.hide()
 	turn_end_label.text = ''
 	level_end_popup.hide()
@@ -415,6 +417,7 @@ func level_won() -> void:
 	if level < max_levels and not Global.editor:
 		level_end_label.text = 'LEVEL WON'
 		level_end_popup.show()
+		panel_full_screen_container.show()
 		#next_level()
 		#init(LevelType.TUTORIAL)
 	else:
@@ -425,6 +428,7 @@ func level_lost() -> void:
 	if not Global.editor:
 		level_end_label.text = 'LEVEL LOST'
 		level_end_popup.show()
+		panel_full_screen_container.show()
 	else:
 		print('LOOOOOOST!!!')
 		# TODO achievements
@@ -432,23 +436,25 @@ func level_lost() -> void:
 
 
 func show_turn_end_texture_rect(whose_turn: String) -> void:
-	pass
+	#pass
 	# FIXME hardcoded
-	#turn_end_label.text = whose_turn + ' TURN'
-	#turn_end_texture_rect.show()
-	#
-	#await get_tree().create_timer(0.5).timeout
-	#
-	#var turn_end_tween = create_tween()
-	#turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
-	#await turn_end_tween.finished
-	#
-	#turn_end_texture_rect.hide()
-	#turn_end_texture_rect.modulate.a = 1.0
-	#turn_end_label.text = ''
-	#
-	#if whose_turn == 'ENEMY':
-		#await get_tree().create_timer(0.5).timeout
+	turn_end_label.text = whose_turn + ' TURN'
+	turn_end_texture_rect.show()
+	panel_full_screen_container.show()
+	
+	await get_tree().create_timer(0.5).timeout
+	
+	var turn_end_tween = create_tween()
+	turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
+	await turn_end_tween.finished
+	
+	panel_full_screen_container.hide()
+	turn_end_texture_rect.hide()
+	turn_end_texture_rect.modulate.a = 1.0
+	turn_end_label.text = ''
+	
+	if whose_turn == 'ENEMY':
+		await get_tree().create_timer(0.5).timeout
 
 
 func reset_ui():
@@ -1070,12 +1076,13 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 		selected_player.reset_tiles()
 	
 	# UI
-	on_button_disabled(action_first_texture_button, false)
 	var player_index = players.find(player)
 	var player_texture_button = get_player_texture_button_by_index(player_index)
 	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
 	
 	if is_clicked:
+		on_button_disabled(action_first_texture_button, false)
+		
 		selected_player = player
 		selected_player.toggle_health_bar(true)
 		
@@ -1088,6 +1095,8 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 			#for tile_for_action in tiles_for_action:
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
+		on_button_disabled(action_first_texture_button, true)
+		
 		selected_player.toggle_health_bar(false)
 		selected_player = null
 		
@@ -1313,11 +1322,16 @@ func _on_level_end_popup_gui_input(event: InputEvent) -> void:
 			flying_tile_tween.tween_property(alive_civilian, 'position:y', 6, 0.5)
 			await flying_tile_tween.finished
 		
+		var index: float = 0.0
 		for tile in map.tiles:
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(tile, 'position:y', 6, 0.2)
+			# speed up
+			var duration = maxf(0.05, 0.2 - index)
+			flying_tile_tween.tween_property(tile, 'position:y', 6, duration)
 			await flying_tile_tween.finished
+			index += 0.005
 		
+		panel_full_screen_container.hide()
 		level_end_popup.hide()
 		level_end_label.text = ''
 		

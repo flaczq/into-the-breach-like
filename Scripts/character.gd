@@ -10,10 +10,10 @@ signal action_hit_ally(target_character: Character)
 signal action_give_shield(target_character: Character)
 signal action_slow_down(target_character: Character)
 signal action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
-signal action_indicators_cross_push_back(target_character: Character, origin_tile: Node3D, first_origin_position: Vector3)
+signal action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3)
 
-var assets_scene: Node3D = preload('res://Scenes/assets.tscn').instantiate()
-var health_bar_scene: CanvasLayer = preload('res://Scenes/health_bar.tscn').instantiate()
+var assets_scene: Node = preload('res://Scenes/assets.tscn').instantiate()
+var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate()
 
 var is_alive: bool = true
 var state_type: StateType = StateType.NONE
@@ -49,7 +49,7 @@ func _ready() -> void:
 	# to move properly among available positions
 	position = Vector3.ZERO
 	
-	model = get_children().filter(func(child: Node3D): return child.is_visible() and child is MeshInstance3D).front()
+	model = get_children().filter(func(child): return child.is_visible() and child is MeshInstance3D).front()
 	# make materials unique
 	model.mesh.surface_set_material(0, model.get_active_material(0).duplicate())
 	model.show()
@@ -60,7 +60,7 @@ func _ready() -> void:
 	
 	health_bar_scene.hide()
 	
-	for asset in assets_scene.get_children() as Array[Node3D]:
+	for asset in assets_scene.get_children():
 		if asset.name == 'ArrowSignContainer':
 			default_arrow_model = asset
 		elif asset.name == 'sphere':
@@ -195,12 +195,12 @@ func spawn_arrow(target_tile: MapTile) -> void:
 
 
 func clear_arrows() -> void:
-	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ARROW')) as Array[Node3D]:
+	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
 		child.queue_free()
 
 
 func toggle_arrows(is_toggled: bool) -> void:
-	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ARROW')) as Array[Node3D]:
+	for child in get_children().filter(func(child): return child.is_in_group('ARROW')):
 		if is_toggled:
 			child.show()
 		else:
@@ -304,12 +304,12 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 
 
 func clear_action_indicators() -> void:
-	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ACTION_INDICATORS')) as Array[Node3D]:
+	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
 		child.queue_free()
 
 
 func toggle_action_indicators(is_toggled: bool) -> void:
-	for child in get_children().filter(func(child: Node3D): return child.is_in_group('ACTION_INDICATORS')) as Array[Node3D]:
+	for child in get_children().filter(func(child): return child.is_in_group('ACTION_INDICATORS')):
 		if is_toggled:
 			child.show()
 		else:
@@ -462,8 +462,12 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var push_direction = -1 * hit_direction_sign
-				var pushed_into_tile = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + push_direction).front()
-				if pushed_into_tile:
+				var pushed_into_tiles = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + push_direction)
+				if pushed_into_tiles.is_empty():
+					# pushed outside of the map
+					damage_dealt += 1
+				else:
+					var pushed_into_tile = pushed_into_tiles.front() as MapTile
 					# pushed into other character or asset
 					if pushed_into_tile.is_occupied():
 						damage_dealt += 1
@@ -472,15 +476,16 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 					elif pushed_into_tile.health_type == TileHealthType.DESTROYED:
 						# pushed into a hole = dead
 						damage_dealt = target_character.health
-				else:
-					# pushed outside of the map
-					damage_dealt += 1
 			elif origin_action_type == ActionType.PULL_FRONT:
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var pull_direction = hit_direction_sign
-				var pulled_into_tile = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
-				if pulled_into_tile:
+				var pulled_into_tiles = tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction)
+				if pulled_into_tiles.is_empty():
+					# pulled outside of the map
+					damage_dealt += 1
+				else:
+					var pulled_into_tile = pulled_into_tiles.front() as MapTile
 					# pulled into other character or asset
 					if pulled_into_tile.is_occupied():
 						damage_dealt += 1
@@ -489,9 +494,6 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 					elif pulled_into_tile.health_type == TileHealthType.DESTROYED:
 						# pulled into a hole = dead
 						damage_dealt = target_character.health
-				else:
-					# pulled outside of the map
-					damage_dealt += 1
 			
 			if damage_dealt > 0:
 				var predicted_health = maxi(0, target_character.health - damage_dealt)

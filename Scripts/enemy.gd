@@ -9,7 +9,7 @@ signal enemy_planned_action_miss_action(target_character: Character, is_applied:
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
 # 1/3 chance of droping loot
-var loot_chance: int = 3
+var loot_chance: int = 5
 
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
@@ -81,7 +81,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 					look_at_y(next_tile)
 				
 				var position_tween = create_tween()
-				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.1)
+				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
 				await position_tween.finished
 	
 	toggle_arrows(true)

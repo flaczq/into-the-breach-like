@@ -14,8 +14,9 @@ var default_speed: float = 0.3
 var speed: float = 1.0
 
 var score: int = 0
-var players_scenes: Array[int] = []
 var loot_count: int = 0
+var players_scenes: Array[int] = []
+var played_maps_indices: Array[int] = []
 
 
 func _ready() -> void:

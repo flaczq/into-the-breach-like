@@ -98,8 +98,9 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 
 func add_level_type_details(level_data: Dictionary) -> void:
 	if level_data.level_type == LevelType.KILL_ENEMIES:
-		# FIXME hardcoded, maybe not needed..?
-		level_data.max_enemies = 4
+		# 3 starting enemies + more from level events
+		var more_enemies_count: int = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW or level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
+		level_data.max_enemies = 3 + more_enemies_count
 	elif level_data.level_type == LevelType.SURVIVE_TURNS:
 		# FIXME hardcoded
 		level_data.max_turns = 5
@@ -158,7 +159,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				assert(level_data.has('spawn_enemy_coords'), 'Set spawn_enemy_coords for level_event: ENEMIES_FROM_BELOW')
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
 				var spawn_enemy_positions = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile: MapTile): return tile.position)
-				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.can_be_occupied() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no more enemies from below indicator spawned')
 					return
@@ -190,7 +191,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				assert(level_data.has('spawn_enemy_coords'), 'Set spawn_enemy_coords for level_event: ENEMIES_FROM_ABOVE')
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
 				var spawn_enemy_positions: Array[Vector3] = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile: MapTile): return tile.position)
-				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.is_movable() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position: Vector3): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
+				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.can_be_occupied() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position: Vector3): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no more enemies from above indicator spawned')
 					return

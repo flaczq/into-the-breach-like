@@ -178,7 +178,7 @@ func get_pickable() -> Node3D:
 	return pickables.front()
 
 
-func is_movable() -> bool:
+func can_be_occupied() -> bool:
 	return health_type != TileHealthType.DESTRUCTIBLE_HEALTHY and health_type != TileHealthType.DESTRUCTIBLE_DAMAGED and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
 
 
@@ -190,6 +190,10 @@ func is_occupied() -> bool:
 func is_free() -> bool:
 	# is occupied by character or asset
 	return not is_occupied() and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
+
+
+func is_movable() -> bool:
+	return get_character() != null
 
 
 func setup_assets() -> void:

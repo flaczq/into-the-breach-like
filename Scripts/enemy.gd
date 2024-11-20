@@ -157,7 +157,7 @@ func get_killed() -> void:
 
 
 func spawn_loot() -> void:
-	if tile.is_movable() and (randi() % loot_chance) == (loot_chance - 1):
+	if tile.can_be_occupied() and (randi() % loot_chance) == (loot_chance - 1):
 		var loot_model = default_loot_model.duplicate()
 		loot_model.position = Vector3(0, 0.2, 0)
 		loot_model.show()

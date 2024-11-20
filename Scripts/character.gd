@@ -218,6 +218,9 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 	match target_action_type:
 		ActionType.NONE: pass
 		ActionType.PUSH_BACK:
+			if not target_tile.is_movable():
+				return
+			
 			var forced_action_model = default_forced_action_model.duplicate()
 			# near tile floor
 			forced_action_model.position = Vector3(0, 0.1, 0)
@@ -259,6 +262,9 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.PULL_FRONT:
+			if not target_tile.is_movable():
+				return
+			
 			var forced_action_model = default_forced_action_model.duplicate()
 			# near tile floor
 			forced_action_model.position = Vector3(0, 0.1, 0)
@@ -448,7 +454,7 @@ func collect_if_pickable(target_tile: MapTile) -> void:
 
 
 # FIXME maybe too many parameters..?
-func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTile], origin_action_type: ActionType = action_type, origin_tile: MapTile = target_tile, damage_dealt: int = damage, next_call: bool = false):
+func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTile], origin_action_type: ActionType = action_type, origin_tile: MapTile = target_tile, damage_dealt: int = damage, next_call: bool = false) -> void:
 	var target_character = target_tile.get_character()
 	if target_character:
 		target_character.toggle_outline(true)
@@ -503,7 +509,7 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 		target_tile.toggle_asset_outline(true)
 
 
-func toggle_outline(is_toggled):
+func toggle_outline(is_toggled: bool) -> void:
 	for model_outline in model_outlines:
 		if is_toggled:
 			var outline_color = get_character_color(self)
@@ -513,7 +519,7 @@ func toggle_outline(is_toggled):
 			model_outline.hide()
 
 
-func init_health_bar():
+func init_health_bar() -> void:
 	assert(max_health != null, 'Set max_health for character')
 	assert(health != null, 'Set health for character')
 	for child in health_bar_scene.get_children():
@@ -530,11 +536,11 @@ func init_health_bar():
 	add_child(health_bar_scene)
 
 
-func set_health_bar_value(displayed_health = health):
+func set_health_bar_value(displayed_health: int = health) -> void:
 	health_bar.set_value(displayed_health)
 
 
-func set_health_bar(displayed_health = health):
+func set_health_bar(displayed_health: int = health) -> void:
 	set_health_bar_value()
 	
 	if health_bar_tween:
@@ -545,7 +551,7 @@ func set_health_bar(displayed_health = health):
 	health_bar_tween.tween_callback(set_health_bar_value).set_delay(0.5)
 
 
-func toggle_health_bar(is_toggled, displayed_health = health):
+func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void:
 	if health_bar:
 		set_health_bar(displayed_health)
 		
@@ -555,14 +561,14 @@ func toggle_health_bar(is_toggled, displayed_health = health):
 			health_bar_scene.hide()
 
 
-func reset_health_bar():
+func reset_health_bar() -> void:
 	set_health_bar_value()
 	
 	if health_bar_tween:
 		health_bar_tween.kill()
 
 
-func look_at_y(target):
+func look_at_y(target: MapTile) -> void:
 	model.look_at(target.position, Vector3.UP, true)
 	model.rotation_degrees.x = 0
 	model.rotation_degrees.z = 0

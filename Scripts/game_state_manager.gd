@@ -1209,7 +1209,7 @@ func _on_character_action_cross_push_back(target_character: Character, action_da
 
 
 func _on_action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3) -> void:
-	for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)):
+	for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)) as Array[MapTile]:
 		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
 
 

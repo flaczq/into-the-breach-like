@@ -784,6 +784,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 	for tile in map.tiles:
 		tile.ghost = null
 		tile.toggle_shader(false)
+		tile.toggle_text(false)
 		
 		if not is_hovered:
 			tile.toggle_asset_outline(false)
@@ -795,6 +796,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 	
 	for enemy in enemies:
 		enemy.toggle_arrow_highlight(false)
+		enemy.toggle_action_indicators(false)
 		enemy.toggle_outline(false)
 		enemy.toggle_health_bar(false)
 		enemy.reset_health_bar()
@@ -805,24 +807,31 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 		civilian.reset_health_bar()
 	
 	if is_hovered:
+		var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_first_texture_button.is_pressed()
 		var character = target_tile.get_character()
 		# show health bar for hovered character
 		if character:
 			character.toggle_health_bar(true)
+			
+			if character.is_in_group('ENEMIES'):
+				var enemy: Enemy = character
+				if not is_selected_player_action:
+					enemy.toggle_action_indicators(true)
 		
 		# outline hovered enemy and highlight his attack arrows
 		if target_tile.enemy:
 			#target_tile.enemy.toggle_outline(true)
 			
 			if target_tile.enemy.planned_tile:
-				var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_first_texture_button.is_pressed()
 				if not is_selected_player_action:
 					target_tile.enemy.toggle_arrow_highlight(true)
 					target_tile.enemy.planned_tile.toggle_asset_outline(true)
 					
 					# highlight tile itself if it's empty
 					if not target_tile.enemy.planned_tile.is_occupied():
-						target_tile.enemy.planned_tile.toggle_shader(true)
+						#target_tile.enemy.planned_tile.toggle_shader(true)
+						if target_tile.enemy.planned_tile.is_free():
+							target_tile.enemy.planned_tile.toggle_text(true, str(target_tile.enemy.damage))
 					
 					# show outline with predicted health for enemy targets
 					if target_tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
@@ -841,7 +850,6 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			#target_tile.toggle_shader(true)
 			#target_tile.toggle_asset_outline(true)
 			
-			var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_first_texture_button.is_pressed()
 			if not is_selected_player_action:
 				# find enemy whose planned tile is hovered
 				for enemy in enemies.filter(func(enemy: Enemy): return enemy.planned_tile == target_tile) as Array[Enemy]:
@@ -883,7 +891,9 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 				
 				# highlight tile itself if it's empty
 				if not first_occupied_tile_in_line.is_occupied():
-					first_occupied_tile_in_line.toggle_shader(true)
+					#first_occupied_tile_in_line.toggle_shader(true)
+					if first_occupied_tile_in_line.is_free():
+						first_occupied_tile_in_line.toggle_text(true, str(selected_player.damage))
 				
 				# show outline with predicted health for player targets
 				if selected_player.action_type == ActionType.CROSS_PUSH_BACK:

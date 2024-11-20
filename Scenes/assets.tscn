@@ -1,10 +1,11 @@
-[gd_scene load_steps=87 format=3 uid="uid://d0dm54nlu3hbr"]
+[gd_scene load_steps=90 format=3 uid="uid://d0dm54nlu3hbr"]
 
 [ext_resource type="Material" uid="uid://ckugw863i3koj" path="res://Other/outline_material.tres" id="1_fpwv7"]
 [ext_resource type="Material" uid="uid://02s77grdtqbj" path="res://Other/outline_no_fade_material.tres" id="1_pq3cv"]
 [ext_resource type="Texture2D" uid="uid://1v2hwuehojpn" path="res://Assets/loafbrr.basic-platforming-pack/props/Pallete3.png" id="4_abx10"]
 [ext_resource type="Script" path="res://Scripts/asset.gd" id="5_4g6f2"]
 [ext_resource type="Texture2D" uid="uid://o8jtnohtfapr" path="res://Assets/Prototype/Textures/colormap.png" id="5_55487"]
+[ext_resource type="FontFile" uid="uid://chy0rikx47idn" path="res://Assets/kmlgames.friendly-scribbles/friendlyscribbles.ttf" id="6_pe8si"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uf2gi"]
 resource_name = "colormap"
@@ -1076,6 +1077,16 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_b72p7")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_24heg"]
+grow_amount = 0.192
+
+[sub_resource type="TextMesh" id="TextMesh_rycou"]
+material = SubResource("StandardMaterial3D_24heg")
+text = "1"
+font = ExtResource("6_pe8si")
+font_size = 100
+depth = 0.0
+
 [node name="Assets" type="Node3D"]
 
 [node name="floor-thick" type="MeshInstance3D" parent="."]
@@ -1172,6 +1183,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_l7r3e")
 
 [node name="floor-small-diagonal" type="MeshInstance3D" parent="." groups=["ACTION_INDICATORS"]]
 transform = Transform3D(0.424264, 0, -0.424264, 0, 0.6, 0, 0.424264, 0, 0.424264, 0, 0.21, 0)
+visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_hhqyr")
 surface_material_override/0 = SubResource("StandardMaterial3D_lnv2f")
@@ -1250,4 +1262,10 @@ mesh = SubResource("ArrayMesh_nygkd")
 
 [node name="crate-color" type="MeshInstance3D" parent="." groups=["PICKABLES"]]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 0.2, 0)
+visible = false
 mesh = SubResource("ArrayMesh_p1fxp")
+
+[node name="tile-text" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.353553, -0.353553, -1.54543e-08, 0, -2.18557e-08, 0.5, -0.353553, -0.353553, -1.54543e-08, 0, 0.22, 0)
+cast_shadow = 0
+mesh = SubResource("TextMesh_rycou")

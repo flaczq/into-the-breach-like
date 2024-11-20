@@ -134,6 +134,9 @@ func get_models_by_tile_type(tile_type: TileType, asset_filename: String, level_
 			models.tile_damaged = asset.duplicate()
 		elif asset.name == 'TileDestroyed':
 			models.tile_destroyed = asset.duplicate()
+		elif asset.name == 'tile-text':
+			models.tile_text = asset.duplicate()
+			models.tile_text.mesh = asset.mesh.duplicate()
 		elif asset.name == 'indicator-square-a':
 			models.indicator_solid = asset.duplicate()
 		elif asset.name == 'indicator-square-b':

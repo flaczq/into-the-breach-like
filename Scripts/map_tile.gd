@@ -66,6 +66,7 @@ func init(map_tile_object: MapTileObject) -> void:
 	models.tile_targeted.hide()
 	models.tile_damaged.hide()
 	models.tile_destroyed.hide()
+	models.tile_text.hide()
 	models.indicator_solid.hide()
 	models.indicator_dashed.hide()
 	models.indicator_corners.hide()
@@ -76,6 +77,7 @@ func init(map_tile_object: MapTileObject) -> void:
 	add_child(models.tile_targeted)
 	add_child(models.tile_damaged)
 	add_child(models.tile_destroyed)
+	add_child(models.tile_text)
 	add_child(models.indicator_solid)
 	add_child(models.indicator_dashed)
 	add_child(models.indicator_corners)
@@ -220,22 +222,30 @@ func toggle_shader(is_toggled: bool) -> void:
 		model_material.set_next_pass(null)
 
 
-func toggle_asset_outline(is_outlined: bool) -> void:
+func toggle_asset_outline(is_toggled: bool) -> void:
 	if health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
 		if is_instance_valid(models.get('asset_damaged_outline')) and not models.asset_damaged_outline.is_queued_for_deletion():
-			if is_outlined:
+			if is_toggled:
 				models.asset_damaged_outline.show()
 			else:
 				models.asset_damaged_outline.hide()
 	else:
 		if is_instance_valid(models.get('asset_outline')) and not models.asset_outline.is_queued_for_deletion():
-			if is_outlined:
+			if is_toggled:
 				models.asset_outline.show()
 			else:
 				models.asset_outline.hide()
 		
 		if is_instance_valid(models.get('asset_damaged_outline')) and not models.asset_damaged_outline.is_queued_for_deletion():
 			models.asset_damaged_outline.hide()
+
+
+func toggle_text(is_toggled: bool, text: String = '') -> void:
+	if is_toggled:
+		models.tile_text.mesh.text = text
+		models.tile_text.show()
+	else:
+		models.tile_text.hide()
 
 
 func toggle_player_hovered(is_toggled: bool) -> void:

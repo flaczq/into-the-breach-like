@@ -61,7 +61,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 		state_type = StateType.NONE
 	
 	toggle_arrows(false)
-	toggle_action_indicators(false)
+	#toggle_action_indicators(false)
 	
 	await super(tiles_path, forced, outside_tile_position)
 	
@@ -85,7 +85,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 				await position_tween.finished
 	
 	toggle_arrows(true)
-	toggle_action_indicators(true)
+	#toggle_action_indicators(true)
 
 
 func plan_action(target_tile: MapTile) -> void:
@@ -104,6 +104,7 @@ func plan_action(target_tile: MapTile) -> void:
 		
 		spawn_arrow(planned_tile)
 		spawn_action_indicators(planned_tile)
+		toggle_action_indicators(false)
 		look_at_y(planned_tile)
 		#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))
 

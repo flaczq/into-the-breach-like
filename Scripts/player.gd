@@ -85,6 +85,8 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 				elif not is_clicked:
 					# click again if moves are available
 					clicked()
+			
+			collect_if_collectable(target_tile)
 
 
 func execute_action(target_tile: MapTile) -> void:
@@ -198,11 +200,11 @@ func can_be_interacted_with() -> bool:
 
 
 func can_move() -> bool:
-	return current_phase == PhaseType.MOVE and state_type != StateType.MISS_MOVE
+	return current_phase == PhaseType.MOVE and not state_types.has(StateType.MISSED_MOVE)
 
 
 func can_make_action() -> bool:
-	return current_phase == PhaseType.ACTION and state_type != StateType.MISS_ACTION
+	return current_phase == PhaseType.ACTION and not state_types.has(StateType.MISSED_ACTION)
 
 
 func clicked() -> void:

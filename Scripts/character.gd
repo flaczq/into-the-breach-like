@@ -11,12 +11,13 @@ signal action_give_shield(target_character: Character)
 signal action_slow_down(target_character: Character)
 signal action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3)
+signal collectable_picked_event(target_character: Character)
 
 var assets_scene: Node = preload('res://Scenes/assets.tscn').instantiate()
 var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate()
 
 var is_alive: bool = true
-var state_type: StateType = StateType.NONE
+var state_types: Array[StateType] = []
 var model_outlines: Array[MeshInstance3D] = []
 
 var id: int
@@ -98,7 +99,10 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			get_shot(1)
 			await force_into_occupied_tile(target_tile.position, target_tile)
 		else:
-			collect_if_pickable(target_tile)
+			# moved out of water
+			if target_tile.health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE and state_types.has(StateType.MISSED_ACTION):
+				print('chara ' + str(tile.coords) + ' -> reset missed action')
+				state_types.erase(StateType.MISSED_ACTION)
 
 
 func force_into_occupied_tile(target_tile_position: Vector3, target_tile: MapTile = null) -> void:
@@ -218,8 +222,8 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 	match target_action_type:
 		ActionType.NONE: pass
 		ActionType.PUSH_BACK:
-			if not target_tile.is_movable():
-				return
+			#if not target_tile.is_movable():
+				#return
 			
 			var forced_action_model = default_forced_action_model.duplicate()
 			# near tile floor
@@ -257,13 +261,13 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 			else:
 				# hide indicator a little if nothing will be pushed
 				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_ALPHA
-				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 0.5)
+				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 0.3)
 			
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.PULL_FRONT:
-			if not target_tile.is_movable():
-				return
+			#if not target_tile.is_movable():
+				#return
 			
 			var forced_action_model = default_forced_action_model.duplicate()
 			# near tile floor
@@ -299,7 +303,7 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 			else:
 				# hide indicator a little if nothing will be pulled
 				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_ALPHA
-				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 0.5)
+				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 0.3)
 			
 			forced_action_model.show()
 			add_child(forced_action_model)
@@ -392,19 +396,20 @@ func apply_action(action_type: ActionType, action_damage: int = 0, origin_tile_c
 # not used by enemy because it's handled in move() and execute_planned_action()
 func reset_states() -> void:
 	if is_alive:
-		if state_type == StateType.MISS_MOVE:
+		# maybe reset all states..?
+		if state_types.has(StateType.MISSED_MOVE):
 			print('chara ' + str(tile.coords) + ' -> missed move')
-			state_type = StateType.NONE
-		elif state_type == StateType.MISS_ACTION:
+			state_types.erase(StateType.MISSED_MOVE)
+		elif state_types.has(StateType.MISSED_ACTION):
 			print('chara ' + str(tile.coords) + ' -> missed action')
-			state_type = StateType.NONE
+			state_types.erase(StateType.MISSED_ACTION)
 
 
 func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_damage: int = 0, origin_tile_coords: Vector2i = Vector2i.ZERO) -> void:
-	if state_type == StateType.GIVE_SHIELD:
+	if state_types.has(StateType.GAVE_SHIELD):
 		damage = 0
 		print('chara ' + str(tile.coords) + ' -> was given shield')
-		state_type = StateType.NONE
+		state_types.erase(StateType.GAVE_SHIELD)
 	
 	# reset applied planned actions for enemy target
 	if is_in_group('ENEMIES'):
@@ -444,13 +449,15 @@ func get_killed() -> void:
 	model.scale = Vector3.ZERO
 
 
-func collect_if_pickable(target_tile: MapTile) -> void:
-	var pickable = target_tile.get_pickable()
-	if pickable:
-		pickable.queue_free()
+func collect_if_collectable(target_tile: MapTile) -> void:
+	var collectable = target_tile.get_collectable()
+	if collectable:
+		collectable.queue_free()
 		
 		if is_in_group('PLAYERS'):
 			Global.loot_count += 1
+		
+		collectable_picked_event.emit(self)
 
 
 # FIXME maybe too many parameters..?
@@ -459,7 +466,7 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 	if target_character:
 		target_character.toggle_outline(true)
 		
-		if target_character.state_type == StateType.GIVE_SHIELD:
+		if target_character.state_types.has(StateType.GAVE_SHIELD):
 			# FIXME show crossed shield icon
 			target_character.toggle_health_bar(true)
 		else:

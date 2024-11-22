@@ -2,9 +2,9 @@ extends Character
 
 class_name Enemy
 
-signal enemy_killed_event(target_enemy: Enemy)
 signal enemy_planned_action_miss_move(target_character: Character, is_applied: bool)
 signal enemy_planned_action_miss_action(target_character: Character, is_applied: bool)
+signal enemy_killed_event(target_enemy: Enemy)
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
@@ -50,15 +50,15 @@ func spawn(spawn_tile: MapTile, new_order: int) -> void:
 
 
 func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
-	if not forced and state_type == StateType.MISS_MOVE:
+	if not forced and state_types.has(StateType.MISSED_MOVE):
 		print('evemy ' + str(tile.coords) + ' -> missed move')
-		state_type = StateType.NONE
+		state_types.erase(StateType.MISSED_MOVE)
 		return
 	
 	# cannot move to INDESTRUCTIBLE_WALKABLE so any move resets this state
-	if not forced and state_type == StateType.SLOW_DOWN:
+	if not forced and state_types.has(StateType.SLOWED_DOWN):
 		print('evemy ' + str(tile.coords) + ' -> slowed down')
-		state_type = StateType.NONE
+		state_types.erase(StateType.SLOWED_DOWN)
 	
 	toggle_arrows(false)
 	#toggle_action_indicators(false)
@@ -83,6 +83,8 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 				var position_tween = create_tween()
 				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
 				await position_tween.finished
+			
+			collect_if_pickable(target_tile)
 	
 	toggle_arrows(true)
 	#toggle_action_indicators(true)
@@ -125,9 +127,9 @@ func execute_planned_action() -> void:
 		planned_tile = null
 	
 	if is_alive:
-		if state_type == StateType.MISS_ACTION:
+		if state_types.has(StateType.MISSED_ACTION):
 			print('enemy ' + str(tile.coords) + ' -> missed action')
-			state_type = StateType.NONE
+			state_types.erase(StateType.MISSED_ACTION)
 			return
 		
 		if temp_planned_tile:

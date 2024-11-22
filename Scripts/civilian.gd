@@ -17,15 +17,15 @@ func spawn(spawn_tile: MapTile) -> void:
 
 
 func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_position: Vector3 = Vector3.ZERO) -> void:
-	if not forced and state_type == StateType.MISS_MOVE:
+	if not forced and state_types.has(StateType.MISSED_MOVE):
 		print('civil ' + str(tile.coords) + ' -> missed move')
-		state_type = StateType.NONE
+		state_types.erase(StateType.MISSED_MOVE)
 		return
 	
 	# cannot move to INDESTRUCTIBLE_WALKABLE so any move resets this state
-	if not forced and state_type == StateType.SLOW_DOWN:
+	if not forced and state_types.has(StateType.SLOWED_DOWN):
 		print('civil ' + str(tile.coords) + ' -> slowed down')
-		state_type = StateType.NONE
+		state_types.erase(StateType.SLOWED_DOWN)
 	
 	await super(tiles_path, forced, outside_tile_position)
 	
@@ -44,6 +44,8 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 				var position_tween = create_tween()
 				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
 				await position_tween.finished
+			
+			collect_if_collectable(target_tile)
 
 
 func get_killed() -> void:

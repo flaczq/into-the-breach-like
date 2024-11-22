@@ -159,6 +159,7 @@ func init_players() -> void:
 		player_instance.connect('action_slow_down', _on_character_action_slow_down)
 		player_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 		player_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
+		player_instance.connect('collectable_picked_event', _on_collectable_picked_event)
 		
 		players.push_back(player_instance)
 
@@ -203,6 +204,7 @@ func init_civilians() -> void:
 		civilian_instance.connect('action_slow_down', _on_character_action_slow_down)
 		civilian_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 		civilian_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
+		civilian_instance.connect('collectable_picked_event', _on_collectable_picked_event)
 		
 		civilians.push_back(civilian_instance)
 
@@ -390,21 +392,15 @@ func next_level() -> void:
 
 
 func check_for_level_end(turn_ended: bool = true) -> void:
-	if players.filter(func(player: Player): return player.is_alive).is_empty():# or civilians.filter(func(civilian): return civilian.is_alive).is_empty():
+	var is_level_lost = level_manager_script.check_if_level_lost(self)
+	if is_level_lost:
 		level_lost()
 		return
 	
-	if level_data.level_type == LevelType.KILL_ENEMIES:
-		assert(level_data.has('max_enemies'), 'Set max_enemies for level_type: KILL_ENEMIES')
-		if enemies_killed >= level_data.max_enemies:#enemies.filter(func(enemy): return enemy.is_alive).is_empty():
-			level_won()
-			return
-	
-	if level_data.level_type == LevelType.SURVIVE_TURNS:
-		# turn not increased yet
-		if current_turn >= level_data.max_turns:
-			level_won()
-			return
+	var is_level_won = level_manager_script.check_if_level_won(self)
+	if is_level_won:
+		level_won()
+		return
 	
 	if turn_ended:
 		next_turn()
@@ -436,25 +432,25 @@ func level_lost() -> void:
 
 
 func show_turn_end_texture_rect(whose_turn: String) -> void:
-	#pass
+	pass
 	# FIXME hardcoded
-	turn_end_label.text = whose_turn + ' TURN'
-	turn_end_texture_rect.show()
-	panel_full_screen_container.show()
-	
-	await get_tree().create_timer(0.5).timeout
-	
-	var turn_end_tween = create_tween()
-	turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
-	await turn_end_tween.finished
-	
-	panel_full_screen_container.hide()
-	turn_end_texture_rect.hide()
-	turn_end_texture_rect.modulate.a = 1.0
-	turn_end_label.text = ''
-	
-	if whose_turn == 'ENEMY':
-		await get_tree().create_timer(0.5).timeout
+	#turn_end_label.text = whose_turn + ' TURN'
+	#turn_end_texture_rect.show()
+	#panel_full_screen_container.show()
+	#
+	#await get_tree().create_timer(0.5).timeout
+	#
+	#var turn_end_tween = create_tween()
+	#turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
+	#await turn_end_tween.finished
+	#
+	#panel_full_screen_container.hide()
+	#turn_end_texture_rect.hide()
+	#turn_end_texture_rect.modulate.a = 1.0
+	#turn_end_label.text = ''
+	#
+	#if whose_turn == 'ENEMY':
+		#await get_tree().create_timer(0.5).timeout
 
 
 func reset_ui():
@@ -474,7 +470,7 @@ func calculate_tiles_for_movement(active: bool, character: Character) -> Array[M
 		
 		# don't even ask how this works
 		var origin_tiles = [character.tile]
-		var move_distance = (1) if (character.state_type == StateType.SLOW_DOWN) else (character.move_distance)
+		var move_distance = (1) if (character.state_types.has(StateType.SLOWED_DOWN)) else (character.move_distance)
 		
 		while i <= move_distance:
 			var temp_origin_tiles = []
@@ -929,9 +925,10 @@ func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
 	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
 	enemy_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
-	enemy_instance.connect('enemy_killed_event', _on_enemy_killed_event)
 	enemy_instance.connect('enemy_planned_action_miss_move', _on_enemy_planned_action_miss_move)
 	enemy_instance.connect('enemy_planned_action_miss_action', _on_enemy_planned_action_miss_action)
+	enemy_instance.connect('enemy_killed_event', _on_enemy_killed_event)
+	enemy_instance.connect('collectable_picked_event', _on_collectable_picked_event)
 	
 	enemies.push_back(enemy_instance)
 
@@ -959,7 +956,7 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			debug_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[character.action_direction]) + '\n'
 			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
 			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
-			debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_type])
+			debug_info_label.text += 'STATE TYPE: ' + str(character.state_types)
 		if target_tile.models.get('event_asset'):
 			if target_tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_BELOW]) + '\n'
@@ -979,12 +976,12 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 		if character:
 			tile_info_label.text += '[ACTION ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_type])) + '\n'
 			tile_info_label.text += '[MOVE ICON] ' + tr('MOVE_' + str(character.move_distance)) + '\n'
-			if character.state_type != StateType.NONE:
-				tile_info_label.text += '[STATE ICON] ' + tr('STATE_TYPE_' + str(StateType.keys()[character.state_type])) + '\n'
+			if not character.state_types.is_empty():
+				tile_info_label.text += '[STATE ICON] ' + str(character.state_types) + '\n'
 			if character.is_in_group('ENEMIES'):
 				tile_info_label.text += '[ORDER ICON] ' + str(character.order) + '\n'
-		if target_tile.get_pickable():
-				tile_info_label.text += '[PICKABLE ICON]' + '\n'
+		if target_tile.get_collectable():
+				tile_info_label.text += '[COLLECTABLE ICON]' + '\n'
 	else:
 		tile_info_label.text = ''
 		debug_info_label.text = ''
@@ -1032,7 +1029,8 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			on_button_disabled(player_texture_button, true)
 			player_texture_button.flip_v = true
 			
-			#check_for_level_end(false)
+			# maybe not needed, because it's also checked after enemy death
+			check_for_level_end(false)
 	# other player or selected player is clicked
 	elif target_tile.player and (not selected_player or selected_player.tile == target_tile or selected_player.can_be_interacted_with()):
 		target_tile.player.reset_phase()
@@ -1137,7 +1135,8 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 				await target_character.get_killed()
 			else:
 				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-					target_character.state_type = StateType.SLOW_DOWN
+					push_unique_to_array(target_character.state_types, StateType.MISSED_ACTION)
+					push_unique_to_array(target_character.state_types, StateType.SLOWED_DOWN)
 				
 				if target_character.tile == pushed_into_tile and target_character.is_in_group('ENEMIES'):
 					# enemy actually moved
@@ -1174,7 +1173,8 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 				await target_character.get_killed()
 			else:
 				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-					target_character.state_type = StateType.SLOW_DOWN
+					push_unique_to_array(target_character.state_types, StateType.MISSED_ACTION)
+					push_unique_to_array(target_character.state_types, StateType.SLOWED_DOWN)
 				
 				if target_character.tile == pulled_into_tile and target_character.is_in_group('ENEMIES'):
 					# enemy actually moved
@@ -1192,15 +1192,15 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 
 
 func _on_character_action_hit_ally(target_character: Character) -> void:
-	target_character.state_type = StateType.HIT_ALLY
+	push_unique_to_array(target_character.state_types, StateType.MADE_HIT_ALLY)
 
 
 func _on_character_action_give_shield(target_character: Character) -> void:
-	target_character.state_type = StateType.GIVE_SHIELD
+	push_unique_to_array(target_character.state_types, StateType.GAVE_SHIELD)
 
 
 func _on_character_action_slow_down(target_character: Character) -> void:
-	target_character.state_type = StateType.SLOW_DOWN
+	push_unique_to_array(target_character.state_types, StateType.SLOWED_DOWN)
 
 
 func _on_character_action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1211,6 +1211,29 @@ func _on_character_action_cross_push_back(target_character: Character, action_da
 func _on_action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3) -> void:
 	for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(origin_tile.coords, tile.coords)) as Array[MapTile]:
 		target_character.spawn_action_indicators(tile, origin_tile, first_origin_position, ActionType.PUSH_BACK)
+
+
+func _on_collectable_picked_event(target_character: Character):
+	undo = {}
+	on_button_disabled(undo_texture_button, true)
+
+
+func _on_enemy_planned_action_miss_move(target_character: Character, is_applied: bool) -> void:
+	if is_applied:
+		push_unique_to_array(target_character.state_types, StateType.MISSED_MOVE)
+	else:
+		target_character.state_types.erase(StateType.MISSED_MOVE)
+
+
+func _on_enemy_planned_action_miss_action(target_character: Character, is_applied: bool) -> void:
+	if is_applied:
+		push_unique_to_array(target_character.state_types, StateType.MISSED_ACTION)
+		
+		if target_character.is_in_group('ENEMIES'):
+			var enemy: Enemy = target_character
+			enemy.reset_planned_tile()
+	else:
+		target_character.state_types.erase(StateType.MISSED_ACTION)
 
 
 func _on_enemy_killed_event(target_enemy: Enemy) -> void:
@@ -1224,24 +1247,6 @@ func _on_enemy_killed_event(target_enemy: Enemy) -> void:
 		order += 1
 	
 	check_for_level_end(false)
-
-
-func _on_enemy_planned_action_miss_move(target_character: Character, is_applied: bool) -> void:
-	if is_applied:
-		target_character.state_type = StateType.MISS_MOVE
-	elif target_character.state_type == StateType.MISS_MOVE:
-		target_character.state_type = StateType.NONE
-
-
-func _on_enemy_planned_action_miss_action(target_character: Character, is_applied: bool) -> void:
-	if is_applied:
-		target_character.state_type = StateType.MISS_ACTION
-		
-		if target_character.is_in_group('ENEMIES'):
-			var enemy: Enemy = target_character
-			enemy.reset_planned_tile()
-	elif target_character.state_type == StateType.MISS_ACTION:
-		target_character.state_type = StateType.NONE
 
 
 func _on_end_turn_texture_button_pressed() -> void:

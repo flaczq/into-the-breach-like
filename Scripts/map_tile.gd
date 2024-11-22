@@ -170,12 +170,12 @@ func set_character(character: Character) -> void:
 		printerr('unknown character ' + str(character))
 
 
-func get_pickable() -> Node3D:
-	var pickables = get_children().filter(func(child): return child.is_in_group('PICKABLES'))
-	if pickables.is_empty():
+func get_collectable() -> Node3D:
+	var collectables = get_children().filter(func(child): return child.is_in_group('COLLECTABLES'))
+	if collectables.is_empty():
 		return null
 	
-	return pickables.front()
+	return collectables.front()
 
 
 func can_be_occupied() -> bool:
@@ -292,9 +292,9 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 			color_tween.tween_property(model_material, 'albedo_color', model_material.albedo_color, 1.0).from(Color.RED)
 			await color_tween.finished
 			
-			var pickable = get_pickable()
-			if pickable:
-				pickable.queue_free()
+			var collectable = get_collectable()
+			if collectable:
+				collectable.queue_free()
 			
 			if health_type == TileHealthType.DESTRUCTIBLE_HEALTHY:
 				health_type = TileHealthType.DESTRUCTIBLE_DAMAGED

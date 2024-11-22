@@ -98,9 +98,12 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 
 func add_level_type_details(level_data: Dictionary) -> void:
 	if level_data.level_type == LevelType.KILL_ENEMIES:
-		# 3 starting enemies + more from level events
-		var more_enemies_count: int = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW or level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
-		level_data.max_enemies = 3 + more_enemies_count
+		var enemies_from_below_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
+		var enemies_from_below_turns_count = (1 + level_data.enemies_from_below_last_turn - level_data.enemies_from_below_first_turn) if (enemies_from_below_count > 0) else (0)
+		var enemies_from_above_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
+		var enemies_from_above_turns_count = (1 + level_data.enemies_from_above_last_turn - level_data.enemies_from_above_first_turn) if (enemies_from_above_count > 0) else (0)
+		# FIXME hardcoded
+		level_data.max_enemies = 3 + enemies_from_below_count * enemies_from_below_turns_count + enemies_from_above_count * enemies_from_above_turns_count
 	elif level_data.level_type == LevelType.SURVIVE_TURNS:
 		# FIXME hardcoded
 		level_data.max_turns = 5
@@ -271,15 +274,15 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			assert(level_data.get('enemies_from_below'), 'Set enemies_from_below for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
-				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				var event_tile: MapTile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile:
 					print('no event tiles for ENEMIES_FROM_BELOW');
-					return
+					continue
 				
 				var target_character = event_tile.get_character()
 				if target_character:
 					await event_tile.get_shot(1)
-					return
+					continue
 				
 				# TODO animation
 				var spawned_enemy_scene = level_data.enemies_from_below[enemies_from_below_index]
@@ -299,7 +302,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
 				if not event_tile or event_tile.get_character():
 					print('no event tiles or character on tile for ENEMIES_FROM_ABOVE');
-					return
+					continue
 				
 				# TODO animation
 				var spawned_enemy_scene = level_data.enemies_from_above[enemies_from_above_index]
@@ -315,7 +318,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			if current_turn > 1:
 				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('MISSLES_INDICATORS')).front()
 				if not event_tile:
-					return
+					continue
 				
 				# TODO add bullet spawn
 				await event_tile.get_shot(1)
@@ -327,7 +330,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			if current_turn > 1:
 				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ROCKS_INDICATORS')).front()
 				if not event_tile:
-					return
+					continue
 				
 				# TODO add bullet spawn
 				await event_tile.get_shot(1)
@@ -336,3 +339,44 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 				event_tile.models.erase('event_asset')
 		#TODO else...
 		else: print('no implementation of executing level event: ' + LevelEvent.keys()[level_event])
+
+
+func check_if_level_lost(game_state_manager: GameStateManager) -> bool:
+	if game_state_manager.players.filter(func(player: Player): return player.is_alive).is_empty():
+		return true
+	
+	return false
+
+
+func check_if_level_won(game_state_manager: GameStateManager) -> bool:
+	var map = game_state_manager.map
+	var enemies = game_state_manager.enemies
+	var level_data = game_state_manager.level_data
+	var current_turn = game_state_manager.current_turn
+	var enemies_killed = game_state_manager.enemies_killed
+	
+	if level_data.level_type == LevelType.KILL_ENEMIES:
+		assert(level_data.has('max_enemies'), 'Set max_enemies for level_type: KILL_ENEMIES')
+		if enemies_killed >= level_data.max_enemies:
+			return true
+		
+		# no alive enemies and no will spawn
+		if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
+			var enemies_from_below_event = not level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).is_empty()
+			if enemies_from_below_event:
+				var any_event_tiles = map.tiles.any(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'))
+				if (not level_data.enemies_from_below_last_turn or current_turn >= level_data.enemies_from_below_last_turn) and not any_event_tiles:
+					return true
+			
+			var enemies_from_above_event = not level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).is_empty()
+			if enemies_from_above_event:
+				var any_event_tiles = map.tiles.any(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS'))
+				if (not level_data.enemies_from_above_last_turn or current_turn >= level_data.enemies_from_above_last_turn) and not any_event_tiles:
+					return true
+	
+	if level_data.level_type == LevelType.SURVIVE_TURNS:
+		# turn not increased yet
+		if current_turn >= level_data.max_turns:
+			return true
+	
+	return false

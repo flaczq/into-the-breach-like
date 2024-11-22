@@ -1260,7 +1260,7 @@ visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_nygkd")
 
-[node name="crate-color" type="MeshInstance3D" parent="." groups=["PICKABLES"]]
+[node name="crate-color" type="MeshInstance3D" parent="." groups=["COLLECTABLES"]]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 0.2, 0)
 visible = false
 mesh = SubResource("ArrayMesh_p1fxp")

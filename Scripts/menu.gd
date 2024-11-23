@@ -14,12 +14,16 @@ class_name Menu
 @onready var aa_check_box = $CanvasLayer/PanelCenterContainer/OptionsContainer/AACheckBox
 @onready var players_container = $CanvasLayer/PanelCenterContainer/PlayersContainer
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
-@onready var player_1_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/Player1Container/Player1TextureButton
-@onready var player_2_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/Player2Container/Player2TextureButton
-@onready var player_3_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/Player3Container/Player3TextureButton
 @onready var next_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextButton
 @onready var right_container = $CanvasLayer/PanelRightContainer/RightContainer
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightBottomContainer/VersionLabel
+
+var player_1_script: Player = preload('res://Scripts/player1.gd').new()
+var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
+var player_2_script: Player = preload('res://Scripts/player2.gd').new()
+var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
+var player_3_script: Player = preload('res://Scripts/player3.gd').new()
+var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
 
 var last_screen: Util
 
@@ -50,6 +54,12 @@ func _ready() -> void:
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
+	
+	Global.init_available_players(player_1_script)
+	Global.init_available_players(player_2_script)
+	Global.init_available_players(player_3_script)
+	
+	init_ui()
 
 
 func _input(event: InputEvent) -> void:
@@ -75,6 +85,46 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	players_container.hide()
 	
 	toggle_visibility(true)
+
+
+func init_ui() -> void:
+	assert(Global.available_players.size() >= 3, 'Wrong available players size')
+	var default_player_containers = players_grid_container.get_children().filter(func(child): return child.is_in_group('HIDE'))
+	for default_player_container in default_player_containers:
+		default_player_container.queue_free()
+	
+	for available_player in Global.available_players as Array[PlayerObject]:
+		assert(available_player.id >= 1, 'Wrong available player id')
+		var player_texture
+		# tutorial and first scene
+		if available_player.id == 0 or available_player.id == 1:
+			player_texture = player_1_texture
+		elif available_player.id == 2:
+			player_texture = player_2_texture
+		elif available_player.id == 3:
+			player_texture = player_3_texture
+		
+		var player_container = VBoxContainer.new()
+		player_container.name = 'Player' + str(available_player.id) + 'Container'
+		
+		var player_texture_button = TextureButton.new()
+		player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(available_player.id - 1))
+		player_texture_button.name = 'Player' + str(available_player.id) + 'TextureButton'
+		player_texture_button.toggle_mode = true
+		player_texture_button.texture_normal = player_texture
+		player_texture_button.modulate.a = 0.5
+		
+		var player_label = Label.new()
+		player_label.name = 'Player' + str(available_player.id) + 'Label'
+		player_label.text = 'HEALTH: ' + str(available_player.max_health) + \
+			'\n' + 'MOVE DISTANCE: ' + str(available_player.move_distance) + \
+			'\n' + 'ACTION: ' + str(ActionType.keys()[available_player.action_type])
+		
+		player_container.add_child(player_texture_button)
+		player_container.add_child(player_label)
+		players_grid_container.add_child(player_container)
+		
+		player_container.show()
 
 
 func _on_editor_button_pressed() -> void:
@@ -125,7 +175,7 @@ func _on_save_button_pressed() -> void:
 
 func _on_main_menu_button_pressed() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
-	Global.players_scenes = []
+	Global.selected_players_scenes = []
 	
 	right_container.hide()
 	main_menu_container.show()
@@ -135,12 +185,10 @@ func _on_main_menu_button_pressed() -> void:
 	next_button.set_disabled(true)
 	
 	# FIXME disable state
-	player_1_texture_button.set_pressed_no_signal(false)
-	player_1_texture_button.modulate.a = 0.5
-	player_2_texture_button.set_pressed_no_signal(false)
-	player_2_texture_button.modulate.a = 0.5
-	player_3_texture_button.set_pressed_no_signal(false)
-	player_3_texture_button.modulate.a = 0.5
+	for player_container in players_grid_container.get_children():
+		var player_texture_button = player_container.get_child(0)
+		player_texture_button.set_pressed_no_signal(false)
+		player_texture_button.modulate.a = 0.5
 	
 	toggle_visibility(true)
 	
@@ -182,18 +230,16 @@ func _on_next_button_pressed() -> void:
 	start()
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	assert(id >= 1 and id <= 3, 'Wrong id')
-	if id == 1:
-		player_1_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	elif id == 2:
-		player_2_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	elif id == 3:
-		player_3_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
+	assert(index >= 0, 'Wrong index')
+	var player_container = players_grid_container.get_child(index)
+	# hardcoded
+	var player_texture_button = player_container.get_child(0)
+	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	if toggled_on:
-		push_unique_to_array(Global.players_scenes, id)
+		push_unique_to_array(Global.selected_players_scenes, index + 1)
 	else:
-		Global.players_scenes.erase(id)
+		Global.selected_players_scenes.erase(index + 1)
 	
-	next_button.set_disabled(Global.players_scenes.size() != 3)
+	next_button.set_disabled(Global.selected_players_scenes.size() != 3)

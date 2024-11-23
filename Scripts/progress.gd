@@ -11,7 +11,7 @@ var selected_action_type: int
 func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
-	actions_label.text = 'Some sort of upgrade system\nCurrent loot: ' + str(Global.loot_count)
+	actions_label.text = 'Some sort of upgrade system\nCurrent loot: ' + str(Global.loot_size)
 
 
 func show_back() -> void:

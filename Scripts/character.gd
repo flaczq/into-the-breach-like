@@ -455,7 +455,7 @@ func collect_if_collectable(target_tile: MapTile) -> void:
 		collectable.queue_free()
 		
 		if is_in_group('PLAYERS'):
-			Global.loot_count += 1
+			Global.loot_size += 1
 		
 		collectable_picked_event.emit(self)
 

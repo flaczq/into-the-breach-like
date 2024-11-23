@@ -20,8 +20,8 @@ func generate_data(level_type: LevelType, level: int, enemy_scenes_size: int, ci
 	var level_data = parse_data(level_data_string)
 	
 	add_characters(level_data, enemy_scenes_size, civilian_scenes_size)
-	add_level_type_details(level_data)
 	add_events_details(level_data, enemy_scenes_size)
+	add_level_type_details(level_data)
 	
 	return level_data
 
@@ -76,7 +76,7 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 	else:
-		for player_scene in Global.players_scenes:
+		for player_scene in Global.selected_players_scenes:
 			level_data.player_scenes.push_back(player_scene)
 		
 		if level_data.level_type == LevelType.KILL_ENEMIES:
@@ -87,7 +87,7 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
 		else:
 			# FIXME
-			for player_scene in Global.players_scenes:
+			for player_scene in Global.selected_players_scenes:
 				level_data.player_scenes.push_back(player_scene)
 			
 			level_data.enemy_scenes.push_back(randi_range(1, enemy_scenes_size - 1))
@@ -98,12 +98,12 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 
 func add_level_type_details(level_data: Dictionary) -> void:
 	if level_data.level_type == LevelType.KILL_ENEMIES:
-		var enemies_from_below_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
-		var enemies_from_below_turns_count = (1 + level_data.enemies_from_below_last_turn - level_data.enemies_from_below_first_turn) if (enemies_from_below_count > 0) else (0)
-		var enemies_from_above_count = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
-		var enemies_from_above_turns_count = (1 + level_data.enemies_from_above_last_turn - level_data.enemies_from_above_first_turn) if (enemies_from_above_count > 0) else (0)
+		var enemies_from_below_size = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
+		var enemies_from_below_turns_size = (1 + level_data.enemies_from_below_last_turn - level_data.enemies_from_below_first_turn) if (enemies_from_below_size > 0) else (0)
+		var enemies_from_above_size = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
+		var enemies_from_above_turns_size = (1 + level_data.enemies_from_above_last_turn - level_data.enemies_from_above_first_turn) if (enemies_from_above_size > 0) else (0)
 		# FIXME hardcoded
-		level_data.max_enemies = 3 + enemies_from_below_count * enemies_from_below_turns_count + enemies_from_above_count * enemies_from_above_turns_count
+		level_data.max_enemies = 3 + enemies_from_below_size * enemies_from_below_turns_size + enemies_from_above_size * enemies_from_above_turns_size
 	elif level_data.level_type == LevelType.SURVIVE_TURNS:
 		# FIXME hardcoded
 		level_data.max_turns = 5
@@ -141,8 +141,8 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 	if not level_data.has('level_events'):
 		return
 	
-	var enemies_from_below_count = level_data.level_events.filter(func(level_event: LevelEvent): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
-	var enemies_from_above_count = level_data.level_events.filter(func(level_event: LevelEvent): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
+	var enemies_from_below_size = level_data.level_events.filter(func(level_event: LevelEvent): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
+	var enemies_from_above_size = level_data.level_events.filter(func(level_event: LevelEvent): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
 	for level_event in level_data.level_events:
 		# enemy spawned near spawn_enemy_coords from below
 		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
@@ -150,8 +150,8 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
 				# check if some indicators were left from the last turn
-				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
-				if existing_event_tiles_count >= enemies_from_below_count:
+				var existing_event_tiles_size = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).size()
+				if existing_event_tiles_size >= enemies_from_below_size:
 					return
 				
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
@@ -182,8 +182,8 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
 				# check if some indicators were left from the last turn
-				var existing_event_tiles_count = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
-				if existing_event_tiles_count >= enemies_from_above_count:
+				var existing_event_tiles_size = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS')).size()
+				if existing_event_tiles_size >= enemies_from_above_size:
 					return
 				
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()

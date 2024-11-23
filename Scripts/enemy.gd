@@ -8,7 +8,7 @@ signal enemy_killed_event(target_enemy: Enemy)
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
-# 1/3 chance of droping loot
+# 1/5 chance of droping loot
 var loot_chance: int = 5
 
 var arrow_model_material: StandardMaterial3D
@@ -84,7 +84,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 				position_tween.tween_property(self, 'position', next_tile.position, duration).set_delay(0.0)
 				await position_tween.finished
 			
-			collect_if_pickable(target_tile)
+			collect_if_collectable(target_tile)
 	
 	toggle_arrows(true)
 	#toggle_action_indicators(true)

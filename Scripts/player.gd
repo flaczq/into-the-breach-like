@@ -182,16 +182,12 @@ func reset_tiles() -> void:
 
 
 func no_more_moves_this_turn() -> bool:
-	if moves_made_current_turn > moves_per_turn:
-		printerr('wtf?! ' + str(moves_made_current_turn) + ' ' + str(moves_per_turn))
-	
+	assert(moves_made_current_turn <= moves_per_turn, 'Player made more moves this turn than 1')
 	return moves_made_current_turn == moves_per_turn
 
 
 func no_more_actions_this_turn() -> bool:
-	if actions_made_current_turn > actions_per_turn:
-		printerr('wtf?! ' + str(actions_made_current_turn) + ' ' + str(actions_per_turn))
-	
+	assert(actions_made_current_turn <= actions_per_turn, 'Player made more actions this turn than 1')
 	return actions_made_current_turn == actions_per_turn
 
 

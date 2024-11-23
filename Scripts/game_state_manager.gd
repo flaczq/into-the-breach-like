@@ -13,10 +13,12 @@ class_name GameStateManager
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
-@onready var players_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer'
-@onready var player_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerFirstTextureButton'
-@onready var player_second_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerSecondTextureButton'
-@onready var player_third_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerThirdTextureButton'
+@onready var player_first_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer'
+@onready var player_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/PlayerFirstTextureButton'
+@onready var player_second_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer'
+@onready var player_second_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/PlayerSecondTextureButton'
+@onready var player_third_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer'
+@onready var player_third_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/PlayerThirdTextureButton'
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightContainer/DebugInfoLabel'
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
@@ -211,13 +213,13 @@ func init_civilians() -> void:
 
 func init_ui() -> void:
 	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
-	player_first_texture_button.hide()
-	player_second_texture_button.hide()
-	player_third_texture_button.hide()
+	player_first_container.hide()
+	player_second_container.hide()
+	player_third_container.hide()
 	
 	var index = 0
 	for player in players:
-		assert(player.id >= 0 and player.id <= 3, 'Wrong player id')
+		assert(player.id >= 0, 'Wrong player id')
 		var player_texture
 		# tutorial and first scene
 		if player.id == 0 or player.id == 1:
@@ -227,13 +229,18 @@ func init_ui() -> void:
 		elif player.id == 3:
 			player_texture = player_3_texture
 		
-		var player_texture_button = get_player_texture_button_by_index(index)
+		var player_container = get_player_container_by_index(index)
+		# hardcoded
+		var player_texture_button = player_container.get_child(0)
+		player_texture_button.connect('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id - 1))
+		player_texture_button.connect('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id - 1))
+		player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(player.id - 1))
 		player_texture_button.texture_normal = player_texture
 		player_texture_button.set_disabled(false)
 		# hardcoded enabled but not clicked
 		player_texture_button.flip_v = false
 		player_texture_button.modulate.a = 0.5
-		player_texture_button.show()
+		player_container.show()
 		
 		index += 1
 
@@ -361,7 +368,9 @@ func next_turn() -> void:
 	
 	var index = 0
 	for player in players:
-		var player_texture_button = get_player_texture_button_by_index(index)
+		var player_container = get_player_container_by_index(index)
+		# hardcoded
+		var player_texture_button = player_container.get_child(0)
 		on_button_disabled(player_texture_button, not player.is_alive)
 		player_texture_button.flip_v = not player.is_alive
 		
@@ -552,7 +561,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 			var min_range = maxi(1, character.action_min_distance)
 			var max_range = mini(map.get_side_dimension(), character.action_max_distance)
 			for i in range(min_range, max_range + 1):
-				var counter = 0
+				var index = 0
 				for tile in map.tiles.filter(func(tile: MapTile): return not tiles_for_action.has(tile)) as Array[MapTile]:
 					if abs(tile.coords - origin_tile.coords) == Vector2i(i, i):
 						# include all tiles in path
@@ -565,9 +574,9 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 							
 							push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
 						
-						counter += 1
+						index += 1
 						# only four tiles can have valid coords for given 'i'
-						if counter == 4:
+						if index == 4:
 							break
 		
 		# exclude tiles behind occupied tiles
@@ -736,11 +745,11 @@ func recalculate_enemies_planned_actions() -> void:
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
-func get_player_texture_button_by_index(index: int) -> TextureButton:
+func get_player_container_by_index(index: int) -> VBoxContainer:
 	assert(index >= 0 and index <= 2, 'Wrong index')
-	if index == 0: return player_first_texture_button
-	elif index == 1: return player_second_texture_button
-	elif index == 2: return player_third_texture_button
+	if index == 0: return player_first_container
+	elif index == 1: return player_second_container
+	elif index == 2: return player_third_container
 	return null
 
 
@@ -1025,7 +1034,9 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			undo = {}
 			on_button_disabled(action_first_texture_button, true)
 			on_button_disabled(undo_texture_button, true)
-			var player_texture_button = get_player_texture_button_by_index(selected_player_index)
+			var player_container = get_player_container_by_index(selected_player_index)
+			# hardcoded
+			var player_texture_button = player_container.get_child(0)
 			on_button_disabled(player_texture_button, true)
 			player_texture_button.flip_v = true
 			
@@ -1085,7 +1096,9 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	
 	# UI
 	var player_index = players.find(player)
-	var player_texture_button = get_player_texture_button_by_index(player_index)
+	var player_container = get_player_container_by_index(player_index)
+	# hardcoded
+	var player_texture_button = player_container.get_child(0)
 	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
 	
 	if is_clicked:
@@ -1309,7 +1322,9 @@ func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
 	if not target_player.is_alive or not target_player.can_be_interacted_with():
 		return
 	
-	var player_texture_button = get_player_texture_button_by_index(index)
+	var player_container = get_player_container_by_index(index)
+	# hardcoded
+	var player_texture_button = player_container.get_child(0)
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	_on_tile_clicked(target_player.tile)

@@ -17,5 +17,6 @@ func _ready() -> void:
 	action_damage = 0
 	passive_type = PassiveType.NONE
 	can_fly = false
+	state_types = []
 	
 	init_health_bar()

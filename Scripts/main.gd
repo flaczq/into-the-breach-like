@@ -11,7 +11,7 @@ func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.GAME
 	Global.editor = false
 	
-	var default_maps = get_children().filter(func(child): return child.is_in_group('MAPS'))
+	var default_maps = get_children().filter(func(child): return child.is_in_group('HIDE'))
 	for default_map in default_maps:
 		default_map.queue_free()
 	

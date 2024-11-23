@@ -45,7 +45,7 @@ size = 8.604
 transform = Transform3D(0.766045, 0.492404, -0.413176, 0, 0.642788, 0.766045, 0.642788, -0.586824, 0.492404, 0, 5, 0)
 shadow_enabled = true
 
-[node name="Map8x8" parent="." instance=ExtResource("2_gdtvm")]
+[node name="HIDEMap8x8" parent="." groups=["HIDE"] instance=ExtResource("2_gdtvm")]
 
 [node name="GameStateManager" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
@@ -141,10 +141,65 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "TILE INFO"
 
+[node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 50
+columns = 3
+
+[node name="PlayerFirstContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="PlayerFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("22_r3qts")
+
+[node name="PlayerFirstLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 3
+ACTION: PUSH_BACK"
+
+[node name="PlayerSecondContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="PlayerSecondTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("23_gkeuf")
+
+[node name="PlayerSecondLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 3
+ACTION: PULL_FRONT"
+
+[node name="PlayerThirdContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+layout_mode = 2
+
+[node name="PlayerThirdTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("24_0ovau")
+
+[node name="PlayerThirdLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+layout_mode = 2
+text = "HEALTH: 3
+MOVE DISTANCE: 2
+ACTION: CROSS_PUSH_BACK"
+
 [node name="PlayersContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
+visible = false
 layout_mode = 2
 
 [node name="PlayerFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
+visible = false
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -152,6 +207,7 @@ toggle_mode = true
 texture_normal = ExtResource("22_r3qts")
 
 [node name="PlayerSecondTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
+visible = false
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -159,6 +215,7 @@ toggle_mode = true
 texture_normal = ExtResource("23_gkeuf")
 
 [node name="PlayerThirdTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
+visible = false
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0

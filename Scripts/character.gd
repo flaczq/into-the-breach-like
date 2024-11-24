@@ -413,7 +413,7 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 	
 	# reset applied planned actions for enemy target
 	if is_in_group('ENEMIES'):
-		var enemy: Enemy = self as Enemy
+		var enemy = self as Enemy
 		if enemy.planned_tile:
 			var target_character = enemy.planned_tile.get_character()
 			if target_character:

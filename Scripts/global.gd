@@ -21,7 +21,7 @@ var played_maps_indices: Array[int] = []
 
 
 func _ready() -> void:
-	add_to_group('NEVER_FREED')
+	add_to_group('NEVER_FREE')
 
 
 func init_available_players(player: Node3D) -> void:

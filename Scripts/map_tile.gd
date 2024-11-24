@@ -103,7 +103,7 @@ func reset_tile_models() -> void:
 	models.indicator_corners.hide()
 	
 	if is_player_clicked:
-		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.75)
+		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.5)
 		models.tile_highlighted.show()
 	elif is_player_hovered:
 		models.tile_highlighted.get_active_material(0).albedo_color = Color(TILE_HIGHLIGHTED_COLOR, 0.5)

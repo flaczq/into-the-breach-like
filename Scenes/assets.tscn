@@ -46,7 +46,7 @@ shadow_mesh = SubResource("ArrayMesh_ncwd5")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pvste"]
 transparency = 1
-albedo_color = Color(0.568627, 0.764706, 1, 0.74902)
+albedo_color = Color(0.568627, 0.764706, 1, 0.501961)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ih35y"]
 material = SubResource("StandardMaterial3D_pvste")
@@ -54,7 +54,7 @@ size = Vector2(1, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c1gyw"]
 transparency = 1
-albedo_color = Color(1, 0.345098, 0.466667, 0.74902)
+albedo_color = Color(1, 0.345098, 0.466667, 0.501961)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_cuku6"]
 material = SubResource("StandardMaterial3D_c1gyw")
@@ -62,7 +62,7 @@ size = Vector2(1, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jsvhb"]
 transparency = 1
-albedo_color = Color(0.772549, 0, 0.141176, 0.74902)
+albedo_color = Color(0.772549, 0, 0.141176, 0.501961)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_wwalp"]
 material = SubResource("StandardMaterial3D_jsvhb")
@@ -70,7 +70,7 @@ size = Vector2(1, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hfsk3"]
 transparency = 1
-albedo_color = Color(0, 0, 0, 0.74902)
+albedo_color = Color(0, 0, 0, 0.501961)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_6vd2u"]
 material = SubResource("StandardMaterial3D_hfsk3")
@@ -1096,14 +1096,12 @@ skeleton = NodePath("")
 
 [node name="TileHighlighted" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
-visible = false
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_ih35y")
 skeleton = NodePath("")
 
 [node name="TileTargeted" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.209, 0)
-visible = false
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_cuku6")
 
@@ -1197,7 +1195,6 @@ script = ExtResource("5_4g6f2")
 
 [node name="tree" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.15, 0, 0, 0, -6.55671e-09, -0.15, 0, 0.15, -6.55671e-09, 0, 0.2, 0)
-visible = false
 material_override = SubResource("StandardMaterial3D_vk68p")
 mesh = SubResource("ArrayMesh_skeun")
 script = ExtResource("5_4g6f2")

@@ -217,7 +217,7 @@ func init_ui() -> void:
 	player_second_container.hide()
 	player_third_container.hide()
 	
-	var index = 0
+	var player_index = 0
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
 		var player_texture
@@ -229,20 +229,24 @@ func init_ui() -> void:
 		elif player.id == 3:
 			player_texture = player_3_texture
 		
-		var player_container = get_player_container_by_index(index)
+		var player_container = get_player_container_by_index(player_index)
 		# hardcoded
 		var player_texture_button = player_container.get_child(0)
-		player_texture_button.connect('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id - 1))
-		player_texture_button.connect('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id - 1))
-		player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(player.id - 1))
+		if not player_texture_button.is_connected('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id)):
+			player_texture_button.connect('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id))
+		if not player_texture_button.is_connected('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id)):
+			player_texture_button.connect('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id))
+		if not player_texture_button.is_connected('toggled', _on_player_texture_button_toggled.bind(player.id)):
+			player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(player.id))
+		
 		player_texture_button.texture_normal = player_texture
 		player_texture_button.set_disabled(false)
 		# hardcoded enabled but not clicked
 		player_texture_button.flip_v = false
-		player_texture_button.modulate.a = 0.5
+		set_clicked_player_texture_button(player_texture_button, false)
 		player_container.show()
 		
-		index += 1
+		player_index += 1
 
 
 func start_turn() -> void:
@@ -361,20 +365,19 @@ func end_turn() -> void:
 func next_turn() -> void:
 	current_turn += 1
 	
-	# UI
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
 	game_info_label.text += 'SCORE: ' + str(Global.score)
 	
-	var index = 0
+	var player_index = 0
 	for player in players:
-		var player_container = get_player_container_by_index(index)
+		var player_container = get_player_container_by_index(player_index)
 		# hardcoded
 		var player_texture_button = player_container.get_child(0)
 		on_button_disabled(player_texture_button, not player.is_alive)
 		player_texture_button.flip_v = not player.is_alive
 		
-		index += 1
+		player_index += 1
 	
 	start_turn()
 
@@ -750,7 +753,11 @@ func get_player_container_by_index(index: int) -> VBoxContainer:
 	if index == 0: return player_first_container
 	elif index == 1: return player_second_container
 	elif index == 2: return player_third_container
-	return null
+	return player_first_container
+
+
+func set_clicked_player_texture_button(player_texture_button: TextureButton, is_clicked: bool) -> void:
+	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
 
 
 func on_shoot_action_button_toggled(toggled_on: bool) -> void:
@@ -1094,12 +1101,11 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	if selected_player and selected_player != player and selected_player.can_be_interacted_with():
 		selected_player.reset_tiles()
 	
-	# UI
 	var player_index = players.find(player)
 	var player_container = get_player_container_by_index(player_index)
 	# hardcoded
 	var player_texture_button = player_container.get_child(0)
-	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+	set_clicked_player_texture_button(player_texture_button, is_clicked)
 	
 	if is_clicked:
 		on_button_disabled(action_first_texture_button, false)
@@ -1148,8 +1154,8 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 				await target_character.get_killed()
 			else:
 				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-					push_unique_to_array(target_character.state_types, StateType.MISSED_ACTION)
-					push_unique_to_array(target_character.state_types, StateType.SLOWED_DOWN)
+					target_character.state_types.push_back(StateType.MISSED_ACTION)
+					target_character.state_types.push_back(StateType.SLOWED_DOWN)
 				
 				if target_character.tile == pushed_into_tile and target_character.is_in_group('ENEMIES'):
 					# enemy actually moved
@@ -1186,8 +1192,8 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 				await target_character.get_killed()
 			else:
 				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-					push_unique_to_array(target_character.state_types, StateType.MISSED_ACTION)
-					push_unique_to_array(target_character.state_types, StateType.SLOWED_DOWN)
+					target_character.state_types.push_back(StateType.MISSED_ACTION)
+					target_character.state_types.push_back(StateType.SLOWED_DOWN)
 				
 				if target_character.tile == pulled_into_tile and target_character.is_in_group('ENEMIES'):
 					# enemy actually moved
@@ -1205,15 +1211,15 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 
 
 func _on_character_action_hit_ally(target_character: Character) -> void:
-	push_unique_to_array(target_character.state_types, StateType.MADE_HIT_ALLY)
+	target_character.state_types.push_back(StateType.MADE_HIT_ALLY)
 
 
 func _on_character_action_give_shield(target_character: Character) -> void:
-	push_unique_to_array(target_character.state_types, StateType.GAVE_SHIELD)
+	target_character.state_types.push_back(StateType.GAVE_SHIELD)
 
 
 func _on_character_action_slow_down(target_character: Character) -> void:
-	push_unique_to_array(target_character.state_types, StateType.SLOWED_DOWN)
+	target_character.state_types.push_back(StateType.SLOWED_DOWN)
 
 
 func _on_character_action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1233,14 +1239,14 @@ func _on_collectable_picked_event(target_character: Character):
 
 func _on_enemy_planned_action_miss_move(target_character: Character, is_applied: bool) -> void:
 	if is_applied:
-		push_unique_to_array(target_character.state_types, StateType.MISSED_MOVE)
+		target_character.state_types.push_back(StateType.MISSED_MOVE)
 	else:
 		target_character.state_types.erase(StateType.MISSED_MOVE)
 
 
 func _on_enemy_planned_action_miss_action(target_character: Character, is_applied: bool) -> void:
 	if is_applied:
-		push_unique_to_array(target_character.state_types, StateType.MISSED_ACTION)
+		target_character.state_types.push_back(StateType.MISSED_ACTION)
 		
 		if target_character.is_in_group('ENEMIES'):
 			var enemy: Enemy = target_character
@@ -1289,43 +1295,42 @@ func _on_undo_texture_button_pressed() -> void:
 		recalculate_enemies_planned_actions()
 
 
-func _on_player_texture_button_mouse_entered(index: int) -> void:
+func _on_player_texture_button_mouse_entered(id: int) -> void:
 	if players.is_empty():
 		return
 	
-	assert(index >= 0 and index <= 2, 'Wrong index for players')
-	var target_player = players[index]
+	assert(id >= 0, 'Wrong id for players')
+	var target_player = players.filter(func(player): return player.id == id).front()
 	if not target_player.is_alive:
 		return
 	
 	on_tile_hovered(target_player.tile, true)
 
 
-func _on_player_texture_button_mouse_exited(index: int) -> void:
+func _on_player_texture_button_mouse_exited(id: int) -> void:
 	if players.is_empty():
 		return
 	
-	assert(index >= 0 and index <= 2, 'Wrong index for players')
-	var target_player = players[index]
+	var target_player = players.filter(func(player): return player.id == id).front()
 	if not target_player.is_alive:
 		return
 	
 	on_tile_hovered(target_player.tile, false)
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
+func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
 	if players.is_empty():
 		return
 	
-	assert(index >= 0 and index <= 2, 'Wrong index for players')
-	var target_player = players[index]
+	var target_player = players.filter(func(player): return player.id == id).front()
 	if not target_player.is_alive or not target_player.can_be_interacted_with():
 		return
 	
-	var player_container = get_player_container_by_index(index)
+	var player_index = players.find(target_player)
+	var player_container = get_player_container_by_index(player_index)
 	# hardcoded
 	var player_texture_button = player_container.get_child(0)
-	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	set_clicked_player_texture_button(player_texture_button, toggled_on)
 	
 	_on_tile_clicked(target_player.tile)
 
@@ -1339,17 +1344,17 @@ func _on_level_end_popup_gui_input(event: InputEvent) -> void:
 		
 		for alive_player in players.filter(func(player: Player): return player.is_alive):
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(alive_player, 'position:y', 6, 0.5)
+			flying_tile_tween.tween_property(alive_player, 'position:y', 9, 0.5)
 			await flying_tile_tween.finished
 	
 		for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive):
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(alive_enemy, 'position:y', 6, 0.5)
+			flying_tile_tween.tween_property(alive_enemy, 'position:y', 9, 0.5)
 			await flying_tile_tween.finished
 		
 		for alive_civilian in civilians.filter(func(civilian: Civilian): return civilian.is_alive):
 			var flying_tile_tween = create_tween()
-			flying_tile_tween.tween_property(alive_civilian, 'position:y', 6, 0.5)
+			flying_tile_tween.tween_property(alive_civilian, 'position:y', 9, 0.5)
 			await flying_tile_tween.finished
 		
 		var index: float = 0.0
@@ -1357,7 +1362,7 @@ func _on_level_end_popup_gui_input(event: InputEvent) -> void:
 			var flying_tile_tween = create_tween()
 			# speed up
 			var duration = maxf(0.05, 0.2 - index)
-			flying_tile_tween.tween_property(tile, 'position:y', 6, duration)
+			flying_tile_tween.tween_property(tile, 'position:y', 9, duration)
 			await flying_tile_tween.finished
 			index += 0.005
 		

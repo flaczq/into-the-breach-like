@@ -19,7 +19,7 @@ events = [SubResource("InputEventKey_bfwhq")]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8re6"]
 
-[node name="Menu" type="Node3D" groups=["NEVER_FREED"]]
+[node name="Menu" type="Node3D" groups=["NEVER_FREE"]]
 script = ExtResource("1_ybquj")
 main_scene = ExtResource("2_0ykcs")
 editor_scene = ExtResource("3_kwi8q")
@@ -123,7 +123,7 @@ layout_mode = 2
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="HIDEPlayer1Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["HIDE"]]
+[node name="HIDEPlayer1Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
 layout_mode = 2
 
 [node name="Player1TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer1Container"]
@@ -139,7 +139,7 @@ text = "HEALTH: 3
 MOVE DISTANCE: 3
 ACTION: PUSH_BACK"
 
-[node name="HIDEPlayer2Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["HIDE"]]
+[node name="HIDEPlayer2Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
 layout_mode = 2
 
 [node name="Player2TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer2Container"]
@@ -155,7 +155,7 @@ text = "HEALTH: 3
 MOVE DISTANCE: 3
 ACTION: PULL_FRONT"
 
-[node name="HIDEPlayer3Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["HIDE"]]
+[node name="HIDEPlayer3Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
 layout_mode = 2
 
 [node name="Player3TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer3Container"]

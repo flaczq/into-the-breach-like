@@ -11,9 +11,9 @@ func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.GAME
 	Global.editor = false
 	
-	var default_maps = get_children().filter(func(child): return child.is_in_group('HIDE'))
-	for default_map in default_maps:
-		default_map.queue_free()
+	var defaults_to_free = get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE'))
+	for default_to_free in defaults_to_free:
+		default_to_free.queue_free()
 	
 	game_state_manager.progress()
 

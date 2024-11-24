@@ -139,31 +139,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "TILE INFO"
 
-[node name="PlayersContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
-visible = false
-layout_mode = 2
-
-[node name="PlayerFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("23_2iyml")
-
-[node name="PlayerSecondTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("24_byv6p")
-
-[node name="PlayerThirdTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("25_mdbkd")
-
 [node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
 theme_override_constants/h_separation = 50
@@ -458,15 +433,6 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
-[connection signal="mouse_entered" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerFirstTextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_entered" binds= [0]]
-[connection signal="mouse_exited" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerFirstTextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_exited" binds= [0]]
-[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerFirstTextureButton" to="GameStateManager" method="_on_player_texture_button_toggled" binds= [0]]
-[connection signal="mouse_entered" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerSecondTextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_entered" binds= [1]]
-[connection signal="mouse_exited" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerSecondTextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_exited" binds= [1]]
-[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerSecondTextureButton" to="GameStateManager" method="_on_player_texture_button_toggled" binds= [1]]
-[connection signal="mouse_entered" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerThirdTextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_entered" binds= [2]]
-[connection signal="mouse_exited" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerThirdTextureButton" to="GameStateManager" method="_on_player_texture_button_mouse_exited" binds= [2]]
-[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersContainer/PlayerThirdTextureButton" to="GameStateManager" method="_on_player_texture_button_toggled" binds= [2]]
 [connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightContainer/PlayButton" to="." method="_on_play_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightContainer/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightContainer/DeleteButton" to="." method="_on_delete_button_toggled"]

@@ -89,7 +89,7 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 
 func init_ui() -> void:
 	assert(Global.available_players.size() >= 3, 'Wrong available players size')
-	var default_player_containers = players_grid_container.get_children().filter(func(child): return child.is_in_group('HIDE'))
+	var default_player_containers = players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE'))
 	for default_player_container in default_player_containers:
 		default_player_container.queue_free()
 	
@@ -192,7 +192,7 @@ func _on_main_menu_button_pressed() -> void:
 	
 	toggle_visibility(true)
 	
-	for child_to_queue in get_tree().root.get_children().filter(func(child): return is_instance_valid(child) and not child.is_queued_for_deletion() and not child.is_in_group('NEVER_FREED')):
+	for child_to_queue in get_tree().root.get_children().filter(func(child): return is_instance_valid(child) and not child.is_queued_for_deletion() and not child.is_in_group('NEVER_FREE')):
 		child_to_queue.queue_free()
 
 

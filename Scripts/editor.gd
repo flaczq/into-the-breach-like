@@ -172,8 +172,8 @@ func calculate_level_data() -> void:
 	level_data.level = 1
 	level_data.level_type = 1
 	level_data.level_events = [LevelEvent.ENEMIES_FROM_BELOW, LevelEvent.ENEMIES_FROM_BELOW]
-	level_manager_script.add_level_type_details(level_data)
 	level_manager_script.add_events_details(level_data, enemy_scenes.size())
+	level_manager_script.add_level_type_details(level_data)
 	level_data.tiles = ''
 	level_data.tiles_assets = ''
 	level_data.player_scenes = []

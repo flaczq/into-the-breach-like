@@ -67,7 +67,7 @@ func progress() -> void:
 	else:
 		get_parent().toggle_visibility(false)
 		
-		get_tree().root.add_child(progress_scene.instantiate())
+		add_sibling(progress_scene.instantiate())
 
 
 func init_by_level_type(level_type: LevelType) -> void:
@@ -120,7 +120,7 @@ func init_game_state() -> void:
 
 func init_map() -> void:
 	assert(level_data.has('scene'), 'Set scene for level_data')
-	map = map_scenes[level_data.scene].instantiate() as Map
+	map = map_scenes[level_data.scene].instantiate()
 	add_sibling(map)
 	map.spawn(level_data)
 	

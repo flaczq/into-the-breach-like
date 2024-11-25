@@ -1,12 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=11 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
-[ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_0ykcs"]
+[ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
 [ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
-[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="4_cfsc2"]
-[ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="4_xirb2"]
-[ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="5_gj3nh"]
-[ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="6_ejy54"]
+[ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="4_p1ccw"]
+[ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="5_slihu"]
+[ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="6_bwrej"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5okir"]
 
@@ -22,7 +21,7 @@ events = [SubResource("InputEventKey_bfwhq")]
 
 [node name="Menu" type="Node3D" groups=["NEVER_FREE"]]
 script = ExtResource("1_ybquj")
-main_scene = ExtResource("2_0ykcs")
+main_scene = ExtResource("2_50w2i")
 editor_scene = ExtResource("3_kwi8q")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -33,7 +32,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_cfsc2")
 expand_mode = 3
 flip_v = true
 
@@ -143,7 +141,7 @@ modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
-texture_normal = ExtResource("4_xirb2")
+texture_normal = ExtResource("4_p1ccw")
 
 [node name="Player1Label" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer1Container"]
 layout_mode = 2
@@ -159,7 +157,7 @@ modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
-texture_normal = ExtResource("5_gj3nh")
+texture_normal = ExtResource("5_slihu")
 
 [node name="Player2Label" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer2Container"]
 layout_mode = 2
@@ -175,7 +173,7 @@ modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
-texture_normal = ExtResource("6_ejy54")
+texture_normal = ExtResource("6_bwrej")
 
 [node name="Player3Label" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer3Container"]
 layout_mode = 2
@@ -235,8 +233,5 @@ text = "1.0"
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/OptionsContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="item_selected" from="CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageOptionButton" to="." method="_on_language_option_button_item_selected"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/OptionsContainer/AACheckBox" to="." method="_on_aa_check_box_toggled"]
-[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer1Container/Player1TextureButton" to="." method="_on_player_texture_button_toggled" binds= [1]]
-[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer2Container/Player2TextureButton" to="." method="_on_player_texture_button_toggled" binds= [2]]
-[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer3Container/Player3TextureButton" to="." method="_on_player_texture_button_toggled" binds= [3]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/PlayersContainer/NextButton" to="." method="_on_next_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

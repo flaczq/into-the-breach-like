@@ -4,8 +4,8 @@ class_name LevelManager
 
 signal init_enemy_event(enemy_scene: int, spawn_tile: MapTile)
 
-const SAVED_LEVELS_FILE_PATH: String = 'res://Data/saved_levels.txt'
-const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Data/tutorial_levels.txt'
+const SAVED_LEVELS_FILE_PATH: String = 'res://Other/saved_levels.txt'
+const TUTORIAL_LEVELS_FILE_PATH: String = 'res://Other/tutorial_levels.txt'
 
 var spawn_from_below: bool = false
 

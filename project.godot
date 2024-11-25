@@ -10,11 +10,11 @@ config_version=5
 
 [application]
 
-config/name="Saving the Tiles"
-config/version="0.1-alpha.20241007"
+config/name="Save the Tiles"
+config/version="0.1-itch"
 run/main_scene="res://Scenes/menu.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://Icons/tank.png"
 
 [autoload]
 
@@ -28,6 +28,7 @@ window/size/viewport_height=720
 [gui]
 
 theme/custom="res://Other/default_theme.tres"
+theme/custom_font="res://Assets/kmlgames.friendly-scribbles/friendlyscribbles.ttf"
 
 [internationalization]
 

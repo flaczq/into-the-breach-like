@@ -148,10 +148,7 @@ POINTS: 0"
 [node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
 text = "MAP OBJECTIVES:
-- kill all enemies
-BONUS:
-- all players survive
-- kill highlighted enemy in one turn"
+- kill all enemies"
 
 [node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2

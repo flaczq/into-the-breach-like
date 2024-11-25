@@ -32,7 +32,7 @@ func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
 	TranslationServer.set_locale('en')
-	version_label.text = ProjectSettings.get_setting('application/config/version')
+	version_label.text = ProjectSettings.get_setting('application/config/version') + '-' + Time.get_date_string_from_system().replace('-', '')
 	
 	tutorial_check_button.set_pressed(Global.tutorial)
 	_on_tutorial_check_button_toggled(Global.tutorial)
@@ -70,7 +70,7 @@ func _input(event: InputEvent) -> void:
 func start() -> void:
 	toggle_visibility(false)
 	
-	get_tree().root.add_child(main_scene.instantiate())
+	add_sibling(main_scene.instantiate())
 
 
 func show_in_game_menu(new_last_screen: Util) -> void:
@@ -130,7 +130,7 @@ func init_ui() -> void:
 func _on_editor_button_pressed() -> void:
 	toggle_visibility(false)
 	
-	get_tree().root.add_child(editor_scene.instantiate())
+	add_sibling(editor_scene.instantiate())
 
 
 func _on_start_button_pressed() -> void:

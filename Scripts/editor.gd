@@ -26,7 +26,7 @@ extends Util
 @onready var civilians_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/CiviliansMenuButton
 @onready var selected_tile_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/SelectedTileMenuButton
 
-const SAVED_LEVELS_FILE_PATH = 'res://Data/saved_levels.txt'
+const SAVED_LEVELS_FILE_PATH = 'res://Other/saved_levels.txt'
 
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
 

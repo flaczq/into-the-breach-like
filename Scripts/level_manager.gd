@@ -193,7 +193,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				
 				assert(level_data.has('spawn_enemy_coords'), 'Set spawn_enemy_coords for level_event: ENEMIES_FROM_ABOVE')
 				var vector2i_spawn_enemy_coords = convert_spawn_coords_to_vector_coords(level_data.spawn_enemy_coords)
-				var spawn_enemy_positions: Array[Vector3] = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile: MapTile): return tile.position)
+				var spawn_enemy_positions: Array = map.tiles.filter(func(tile: MapTile): return vector2i_spawn_enemy_coords.has(tile.coords)).map(func(tile: MapTile): return tile.position)
 				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return tile.can_be_occupied() and not spawn_enemy_positions.has(tile.position) and spawn_enemy_positions.any(func(spawn_enemy_position: Vector3): return spawn_enemy_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():
 					print('no more enemies from above indicator spawned')
@@ -237,7 +237,7 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				event_asset_material.albedo_color = Color('7A5134')#brown
 				event_asset.set_surface_override_material(0, event_asset_material)
 				
-				var mountain_positions: Array[Vector3] = map.tiles.filter(func(tile: MapTile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile: MapTile): return tile.position)
+				var mountain_positions: Array = map.tiles.filter(func(tile: MapTile): return tile.tile_type == TileType.MOUNTAIN).map(func(tile: MapTile): return tile.position)
 				assert(not mountain_positions.is_empty(), 'Set mountain_positions for level_event: FALLING_ROCK')
 				var event_tiles = map.get_untargetable_tiles().filter(func(tile: MapTile): return not mountain_positions.has(tile.position) and mountain_positions.any(func(mountain_position: Vector3): return mountain_position.distance_to(tile.position) <= 1.5))
 				if event_tiles.is_empty():

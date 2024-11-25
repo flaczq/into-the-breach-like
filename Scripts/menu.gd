@@ -70,7 +70,9 @@ func _input(event: InputEvent) -> void:
 func start() -> void:
 	toggle_visibility(false)
 	
+	print('aaaaaaaa')
 	add_sibling(main_scene.instantiate())
+	print('bbbbbbbb')
 
 
 func show_in_game_menu(new_last_screen: Util) -> void:

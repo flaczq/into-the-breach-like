@@ -24,16 +24,18 @@ const CIVILIAN_ARROW_COLOR: Color = Color('fff700')
 
 
 func toggle_visibility(is_toggled: bool) -> void:
-	if is_toggled:
-		show()
-	else:
-		hide()
+	if not is_in_group('WORLD_ENV'):
+		if is_toggled:
+			show()
+		else:
+			hide()
 	
 	for child in get_children():
-		if is_toggled:
-			child.show()
-		else:
-			child.hide()
+		if not child.is_in_group('WORLD_ENV'):
+			if is_toggled:
+				child.show()
+			else:
+				child.hide()
 
 
 func on_button_disabled(button: BaseButton, is_disabled: bool) -> void:

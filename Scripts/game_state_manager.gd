@@ -8,19 +8,16 @@ class_name GameStateManager
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
 
-@onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
-@onready var action_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton'
-@onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
-@onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
-@onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
-@onready var player_first_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer'
-@onready var player_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/PlayerFirstTextureButton'
-@onready var player_second_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer'
-@onready var player_second_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/PlayerSecondTextureButton'
-@onready var player_third_container = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer'
-@onready var player_third_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/PlayerThirdTextureButton'
-@onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
-@onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightContainer/DebugInfoLabel'
+@onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
+@onready var action_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton'
+@onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
+@onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
+@onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
+@onready var player_first_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer'
+@onready var player_second_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer'
+@onready var player_third_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer'
+@onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
+@onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/DebugInfoLabel'
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
@@ -154,6 +151,7 @@ func init_players() -> void:
 		
 		player_instance.connect('hovered_event', _on_player_hovered)
 		player_instance.connect('clicked_event', _on_player_clicked)
+		player_instance.connect('health_changed_event', _on_player_health_changed)
 		player_instance.connect('action_push_back', _on_character_action_push_back)
 		player_instance.connect('action_pull_front', _on_character_action_pull_front)
 		player_instance.connect('action_hit_ally', _on_character_action_hit_ally)
@@ -229,9 +227,8 @@ func init_ui() -> void:
 		elif player.id == 3:
 			player_texture = player_3_texture
 		
-		var player_container = get_player_container_by_index(player_index)
 		# hardcoded
-		var player_texture_button = player_container.get_child(0)
+		var player_texture_button = get_player_texture_button_by_index(player_index)
 		if not player_texture_button.is_connected('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id)):
 			player_texture_button.connect('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id))
 		if not player_texture_button.is_connected('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id)):
@@ -244,6 +241,14 @@ func init_ui() -> void:
 		# hardcoded enabled but not clicked
 		player_texture_button.flip_v = false
 		set_clicked_player_texture_button(player_texture_button, false)
+		
+		var player_health_label = get_player_health_label_by_index(player_index)
+		player_health_label.text = str(player.health) + '/' + str(player.max_health)
+		
+		var player_move_distance_label = get_player_move_distance_label_by_index(player_index)
+		player_move_distance_label.text = str(player.move_distance)
+		
+		var player_container = get_player_container_by_index(player_index)
 		player_container.show()
 		
 		player_index += 1
@@ -371,9 +376,8 @@ func next_turn() -> void:
 	
 	var player_index = 0
 	for player in players:
-		var player_container = get_player_container_by_index(player_index)
 		# hardcoded
-		var player_texture_button = player_container.get_child(0)
+		var player_texture_button = get_player_texture_button_by_index(player_index)
 		on_button_disabled(player_texture_button, not player.is_alive)
 		player_texture_button.flip_v = not player.is_alive
 		
@@ -750,10 +754,31 @@ func recalculate_enemies_planned_actions() -> void:
 
 func get_player_container_by_index(index: int) -> VBoxContainer:
 	assert(index >= 0 and index <= 2, 'Wrong index')
-	if index == 0: return player_first_container
-	elif index == 1: return player_second_container
-	elif index == 2: return player_third_container
-	return player_first_container
+	var player_container
+	if index == 0:
+		player_container = player_first_container
+	elif index == 1:
+		player_container = player_second_container
+	elif index == 2:
+		player_container = player_third_container
+	
+	return player_container
+
+
+func get_player_texture_button_by_index(index: int) -> TextureButton:
+	assert(index >= 0 and index <= 2, 'Wrong index')
+	var player_container = get_player_container_by_index(index)
+	return player_container.get_children().filter(func(child): return child.name == 'PlayerTextureButton').front()
+
+
+func get_player_health_label_by_index(index: int) -> Label:
+	var player_container = get_player_container_by_index(index)
+	return player_container.get_children().filter(func(child): return child.name == 'HealthLabel').front()
+
+
+func get_player_move_distance_label_by_index(index: int) -> Label:
+	var player_container = get_player_container_by_index(index)
+	return player_container.get_children().filter(func(child): return child.name == 'MoveDistanceLabel').front()
 
 
 func set_clicked_player_texture_button(player_texture_button: TextureButton, is_clicked: bool) -> void:
@@ -922,33 +947,6 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 				selected_player.clear_action_indicators()
 
 
-func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
-	var enemy_instance = enemy_scenes[enemy_scene].instantiate() as Enemy
-	if Global.tutorial:
-		tutorial_manager_script.init_enemy(enemy_instance, level)
-	
-	add_sibling(enemy_instance)
-	
-	# find max order
-	var enemies_orders = enemies.map(func(enemy): return enemy.order)
-	var max_order = (0) if (enemies_orders.is_empty()) else (enemies_orders.max())
-	enemy_instance.spawn(spawn_tile, max_order + 1)
-	
-	enemy_instance.connect('action_push_back', _on_character_action_push_back)
-	enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
-	enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
-	enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
-	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
-	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
-	enemy_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
-	enemy_instance.connect('enemy_planned_action_miss_move', _on_enemy_planned_action_miss_move)
-	enemy_instance.connect('enemy_planned_action_miss_action', _on_enemy_planned_action_miss_action)
-	enemy_instance.connect('enemy_killed_event', _on_enemy_killed_event)
-	enemy_instance.connect('collectable_picked_event', _on_collectable_picked_event)
-	
-	enemies.push_back(enemy_instance)
-
-
 func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 	on_tile_hovered(target_tile, is_hovered)
 	
@@ -1041,11 +1039,10 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			undo = {}
 			on_button_disabled(action_first_texture_button, true)
 			on_button_disabled(undo_texture_button, true)
-			var player_container = get_player_container_by_index(selected_player_index)
-			# hardcoded
-			var player_texture_button = player_container.get_child(0)
-			on_button_disabled(player_texture_button, true)
-			player_texture_button.flip_v = true
+			
+			var selected_player_texture_button = get_player_texture_button_by_index(selected_player_index)
+			on_button_disabled(selected_player_texture_button, true)
+			selected_player_texture_button.flip_v = true
 			
 			# maybe not needed, because it's also checked after enemy death
 			check_for_level_end(false)
@@ -1102,9 +1099,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 		selected_player.reset_tiles()
 	
 	var player_index = players.find(player)
-	var player_container = get_player_container_by_index(player_index)
-	# hardcoded
-	var player_texture_button = player_container.get_child(0)
+	var player_texture_button = get_player_texture_button_by_index(player_index)
 	set_clicked_player_texture_button(player_texture_button, is_clicked)
 	
 	if is_clicked:
@@ -1132,6 +1127,70 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 			tile.toggle_player_clicked(false)
 	
 	player.tile.on_mouse_entered()
+
+
+func _on_player_health_changed(target_player: Player):
+	var player_index = players.find(target_player)
+	var player_health_label = get_player_health_label_by_index(player_index)
+	player_health_label.text = str(target_player.health) + '/' + str(target_player.max_health)
+
+
+func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
+	var enemy_instance = enemy_scenes[enemy_scene].instantiate() as Enemy
+	if Global.tutorial:
+		tutorial_manager_script.init_enemy(enemy_instance, level)
+	
+	add_sibling(enemy_instance)
+	
+	# find max order
+	var enemies_orders = enemies.map(func(enemy): return enemy.order)
+	var max_order = (0) if (enemies_orders.is_empty()) else (enemies_orders.max())
+	enemy_instance.spawn(spawn_tile, max_order + 1)
+	
+	enemy_instance.connect('action_push_back', _on_character_action_push_back)
+	enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
+	enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
+	enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
+	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
+	enemy_instance.connect('action_cross_push_back', _on_character_action_cross_push_back)
+	enemy_instance.connect('action_indicators_cross_push_back', _on_action_indicators_cross_push_back)
+	enemy_instance.connect('planned_action_miss_move', _on_enemy_planned_action_miss_move)
+	enemy_instance.connect('planned_action_miss_action', _on_enemy_planned_action_miss_action)
+	enemy_instance.connect('killed_event', _on_enemy_killed_event)
+	enemy_instance.connect('collectable_picked_event', _on_collectable_picked_event)
+	
+	enemies.push_back(enemy_instance)
+
+
+func _on_enemy_planned_action_miss_move(target_character: Character, is_applied: bool) -> void:
+	if is_applied:
+		target_character.state_types.push_back(StateType.MISSED_MOVE)
+	else:
+		target_character.state_types.erase(StateType.MISSED_MOVE)
+
+
+func _on_enemy_planned_action_miss_action(target_character: Character, is_applied: bool) -> void:
+	if is_applied:
+		target_character.state_types.push_back(StateType.MISSED_ACTION)
+		
+		if target_character.is_in_group('ENEMIES'):
+			var enemy: Enemy = target_character
+			enemy.reset_planned_tile()
+	else:
+		target_character.state_types.erase(StateType.MISSED_ACTION)
+
+
+func _on_enemy_killed_event(target_enemy: Enemy) -> void:
+	enemies_killed += 1
+	
+	# recalculate enemies order
+	var order = 1
+	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
+	for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive) as Array[Enemy]:
+		alive_enemy.order = order
+		order += 1
+	
+	check_for_level_end(false)
 
 
 func _on_character_action_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1237,37 +1296,6 @@ func _on_collectable_picked_event(target_character: Character):
 	on_button_disabled(undo_texture_button, true)
 
 
-func _on_enemy_planned_action_miss_move(target_character: Character, is_applied: bool) -> void:
-	if is_applied:
-		target_character.state_types.push_back(StateType.MISSED_MOVE)
-	else:
-		target_character.state_types.erase(StateType.MISSED_MOVE)
-
-
-func _on_enemy_planned_action_miss_action(target_character: Character, is_applied: bool) -> void:
-	if is_applied:
-		target_character.state_types.push_back(StateType.MISSED_ACTION)
-		
-		if target_character.is_in_group('ENEMIES'):
-			var enemy: Enemy = target_character
-			enemy.reset_planned_tile()
-	else:
-		target_character.state_types.erase(StateType.MISSED_ACTION)
-
-
-func _on_enemy_killed_event(target_enemy: Enemy) -> void:
-	enemies_killed += 1
-	
-	# recalculate enemies order
-	var order = 1
-	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
-	for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive) as Array[Enemy]:
-		alive_enemy.order = order
-		order += 1
-	
-	check_for_level_end(false)
-
-
 func _on_end_turn_texture_button_pressed() -> void:
 	end_turn()
 
@@ -1327,9 +1355,7 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
 		return
 	
 	var player_index = players.find(target_player)
-	var player_container = get_player_container_by_index(player_index)
-	# hardcoded
-	var player_texture_button = player_container.get_child(0)
+	var player_texture_button = get_player_texture_button_by_index(player_index)
 	set_clicked_player_texture_button(player_texture_button, toggled_on)
 	
 	_on_tile_clicked(target_player.tile)

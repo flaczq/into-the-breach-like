@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=29 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
@@ -25,7 +25,9 @@
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="22_nxh73"]
 [ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="23_2iyml"]
 [ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="24_byv6p"]
+[ext_resource type="Texture2D" uid="uid://j7oxvny42iea" path="res://Assets/penzilla.vector-icon-pack/Icon_Heart.png" id="24_jryvj"]
 [ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="25_mdbkd"]
+[ext_resource type="Texture2D" uid="uid://boh2eitupunx6" path="res://Assets/penzilla.vector-icon-pack/Icon_Expand.png" id="25_s35pl"]
 
 [node name="Editor" type="Node3D"]
 script = ExtResource("4_nvvvx")
@@ -63,6 +65,7 @@ offset_left = -105.5
 offset_right = 105.5
 offset_bottom = 23.0
 grow_horizontal = 2
+theme_type_variation = &"LabelBig"
 text = "NOTHING"
 horizontal_alignment = 1
 
@@ -73,28 +76,35 @@ offset_right = 270.0
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="LeftContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer"]
+[node name="LeftMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelLeftContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="LeftContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="LeftTopContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer"]
+[node name="LeftTopContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2
 
-[node name="SettingsTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="SettingsTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture_normal = ExtResource("19_rhlap")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="EndTurnTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="EndTurnTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture_normal = ExtResource("20_qtn6l")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 disabled = true
@@ -103,7 +113,7 @@ texture_normal = ExtResource("21_cb0vv")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="UndoTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="UndoTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 disabled = true
@@ -111,17 +121,17 @@ texture_normal = ExtResource("22_nxh73")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="LeftCenterContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer"]
+[node name="LeftCenterContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="GameInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer"]
+[node name="GameInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
 text = "LEVEL: 0
 TURN: 0
 POINTS: 0"
 
-[node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer"]
+[node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
 text = "MAP OBJECTIVES:
 - kill all enemies
@@ -129,68 +139,116 @@ BONUS:
 - all players survive
 - kill highlighted enemy in one turn"
 
-[node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer"]
+[node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2
 size_flags_vertical = 10
 theme_override_constants/separation = 20
 
-[node name="TileInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
+[node name="TileInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "TILE INFO"
 
-[node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
+[node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="PlayerFirstContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+[node name="PlayerFirstContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
 
-[node name="PlayerFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("23_2iyml")
 
-[node name="PlayerFirstLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
-layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 3
-ACTION: PUSH_BACK"
+[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+position = Vector2(5, 67)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("24_jryvj")
+centered = false
 
-[node name="PlayerSecondContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+text = "2/3 "
+horizontal_alignment = 2
+
+[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+position = Vector2(6, 90)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("25_s35pl")
+centered = false
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+text = "2  "
+horizontal_alignment = 2
+
+[node name="PlayerSecondContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
 
-[node name="PlayerSecondTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("24_byv6p")
 
-[node name="PlayerSecondLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
-layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 3
-ACTION: PULL_FRONT"
+[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+position = Vector2(5, 67)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("24_jryvj")
+centered = false
 
-[node name="PlayerThirdContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+text = "2/3 "
+horizontal_alignment = 2
+
+[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+position = Vector2(6, 90)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("25_s35pl")
+centered = false
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+text = "2  "
+horizontal_alignment = 2
+
+[node name="PlayerThirdContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
 
-[node name="PlayerThirdTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("25_mdbkd")
 
-[node name="PlayerThirdLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+position = Vector2(5, 67)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("24_jryvj")
+centered = false
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
 layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 2
-ACTION: CROSS_PUSH_BACK"
+text = "2/3 "
+horizontal_alignment = 2
+
+[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+position = Vector2(6, 90)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("25_s35pl")
+centered = false
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+layout_mode = 2
+text = "2  "
+horizontal_alignment = 2
 
 [node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 11
@@ -202,46 +260,53 @@ grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer"]
+[node name="RightMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelRightContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
 layout_mode = 2
 alignment = 2
 
-[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 text = "DEBUG INFO"
 text_overrun_behavior = 3
 
-[node name="PlayButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="PlayButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 toggle_mode = true
 text = "PLAY"
 
-[node name="ResetButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="ResetButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 text = "RESET"
 
-[node name="DeleteButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="DeleteButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 toggle_mode = true
 text = "DELETE"
 
-[node name="SaveButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="SaveButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 text = "SAVE"
 
-[node name="LoadMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="LoadMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 text = "LOAD"
 flat = false
 
-[node name="HSeparator" type="HSeparator" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 
-[node name="MapsMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="MapsMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 text = "MAPS"
 flat = false
@@ -254,15 +319,16 @@ popup/item_1/id = 1
 popup/item_2/text = "8x8"
 popup/item_2/id = 2
 
-[node name="TilesContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="TilesContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 
-[node name="ColorPickerButton" type="ColorPickerButton" parent="CanvasLayer/PanelRightContainer/RightContainer/TilesContainer"]
+[node name="ColorPickerButton" type="ColorPickerButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/TilesContainer"]
 layout_mode = 2
 text = "CUSTOM TILE"
 
-[node name="TilesMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer/TilesContainer"]
+[node name="TilesMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/TilesContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 disabled = true
 text = "TILES"
 flat = false
@@ -289,7 +355,7 @@ popup/item_7/id = 7
 popup/item_8/text = "HOLE"
 popup/item_8/id = 8
 
-[node name="AssetsMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="AssetsMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 text = "ASSETS"
@@ -309,7 +375,7 @@ popup/item_4/id = 4
 popup/item_5/text = "HOUSE"
 popup/item_5/id = 5
 
-[node name="PlayersMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="PlayersMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 text = "PLAYERS"
@@ -325,7 +391,7 @@ popup/item_2/id = 2
 popup/item_3/text = "PLAYER 3"
 popup/item_3/id = 3
 
-[node name="EnemiesMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="EnemiesMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 text = "ENEMIES"
@@ -343,7 +409,7 @@ popup/item_3/id = 3
 popup/item_4/text = "ENEMY 4"
 popup/item_4/id = 4
 
-[node name="CiviliansMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="CiviliansMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 text = "CIVILIANS"
@@ -359,10 +425,10 @@ popup/item_2/id = 2
 popup/item_3/text = "CIVILIAN 3"
 popup/item_3/id = 3
 
-[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 
-[node name="SelectedTileMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="SelectedTileMenuButton" type="MenuButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 disabled = true
 text = "NO TILE SELECTED"
@@ -409,7 +475,7 @@ offset_right = 52.0
 offset_bottom = 12.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_type_variation = &"LabelBig"
 text = "ENEMY TURN"
 horizontal_alignment = 1
 
@@ -425,17 +491,18 @@ offset_right = 1280.0
 offset_bottom = 371.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"LabelBig"
 text = "LEVEL WON/LOST"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/SettingsTextureButton" to="." method="_on_settings_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
-[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightContainer/PlayButton" to="." method="_on_play_button_toggled"]
-[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightContainer/ResetButton" to="." method="_on_reset_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightContainer/DeleteButton" to="." method="_on_delete_button_toggled"]
-[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="about_to_popup" from="CanvasLayer/PanelRightContainer/RightContainer/LoadMenuButton" to="." method="_on_load_menu_button_about_to_popup"]
-[connection signal="color_changed" from="CanvasLayer/PanelRightContainer/RightContainer/TilesContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/SettingsTextureButton" to="." method="_on_settings_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/PlayButton" to="." method="_on_play_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/ResetButton" to="." method="_on_reset_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/DeleteButton" to="." method="_on_delete_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="about_to_popup" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/LoadMenuButton" to="." method="_on_load_menu_button_about_to_popup"]
+[connection signal="color_changed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/TilesContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]

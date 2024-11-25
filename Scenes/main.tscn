@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=33 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -26,6 +26,8 @@
 [ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="22_r3qts"]
 [ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="23_gkeuf"]
 [ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="24_0ovau"]
+[ext_resource type="Texture2D" uid="uid://j7oxvny42iea" path="res://Assets/penzilla.vector-icon-pack/Icon_Heart.png" id="24_56xt4"]
+[ext_resource type="Texture2D" uid="uid://boh2eitupunx6" path="res://Assets/penzilla.vector-icon-pack/Icon_Expand.png" id="25_86w27"]
 
 [sub_resource type="Environment" id="Environment_54ekw"]
 background_mode = 3
@@ -43,7 +45,7 @@ glow_intensity = 3.56
 [node name="Main" type="Node3D"]
 script = ExtResource("1_h8ron")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." groups=["WORLD_ENV"]]
 environment = SubResource("Environment_54ekw")
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="WorldEnvironment"]
@@ -54,6 +56,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("18_rptsd")
 expand_mode = 3
+flip_v = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.45452, 0.541675, 0, 0.766045, 0.642788, -0.707107, -0.45452, 0.541675, 12, 13.2, 12)
@@ -64,7 +67,7 @@ size = 8.604
 transform = Transform3D(0.766045, 0.492404, -0.413176, 0, 0.642788, 0.766045, 0.642788, -0.586824, 0.492404, 0, 5, 0)
 shadow_enabled = true
 shadow_opacity = 0.75
-directional_shadow_split_3 = 0.25
+directional_shadow_split_3 = 0.3
 sky_mode = 1
 
 [node name="HIDEMap8x8" parent="." groups=["ALWAYS_FREE"] instance=ExtResource("2_gdtvm")]
@@ -88,28 +91,35 @@ grow_vertical = 2
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kjqoi")
 
-[node name="LeftContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer"]
+[node name="LeftMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelLeftContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="LeftContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="LeftTopContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer"]
+[node name="LeftTopContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2
 
-[node name="SettingsTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="SettingsTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture_normal = ExtResource("17_1dry2")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="EndTurnTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="EndTurnTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture_normal = ExtResource("19_mojst")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 toggle_mode = true
@@ -117,7 +127,7 @@ texture_normal = ExtResource("20_6obs3")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="UndoTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer"]
+[node name="UndoTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 disabled = true
@@ -125,17 +135,17 @@ texture_normal = ExtResource("21_mwtkn")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="LeftCenterContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer"]
+[node name="LeftCenterContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="GameInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer"]
+[node name="GameInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
 text = "LEVEL: 0
 TURN: 0
 POINTS: 0"
 
-[node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftCenterContainer"]
+[node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
 text = "MAP OBJECTIVES:
 - kill all enemies
@@ -143,68 +153,116 @@ BONUS:
 - all players survive
 - kill highlighted enemy in one turn"
 
-[node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer"]
+[node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2
 size_flags_vertical = 10
 theme_override_constants/separation = 20
 
-[node name="TileInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
+[node name="TileInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "TILE INFO"
 
-[node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer"]
+[node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="PlayerFirstContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+[node name="PlayerFirstContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
 
-[node name="PlayerFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("22_r3qts")
 
-[node name="PlayerFirstLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
-layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 3
-ACTION: PUSH_BACK"
+[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+position = Vector2(5, 67)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("24_56xt4")
+centered = false
 
-[node name="PlayerSecondContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+text = "2/3 "
+horizontal_alignment = 2
+
+[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+position = Vector2(6, 90)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("25_86w27")
+centered = false
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+text = "2  "
+horizontal_alignment = 2
+
+[node name="PlayerSecondContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
 
-[node name="PlayerSecondTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("23_gkeuf")
 
-[node name="PlayerSecondLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
-layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 3
-ACTION: PULL_FRONT"
+[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+position = Vector2(5, 67)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("24_56xt4")
+centered = false
 
-[node name="PlayerThirdContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+text = "2/3 "
+horizontal_alignment = 2
+
+[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+position = Vector2(6, 90)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("25_86w27")
+centered = false
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+text = "2  "
+horizontal_alignment = 2
+
+[node name="PlayerThirdContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
 
-[node name="PlayerThirdTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("24_0ovau")
 
-[node name="PlayerThirdLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+position = Vector2(5, 67)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("24_56xt4")
+centered = false
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
 layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 2
-ACTION: CROSS_PUSH_BACK"
+text = "2/3 "
+horizontal_alignment = 2
+
+[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+position = Vector2(6, 90)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("25_86w27")
+centered = false
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+layout_mode = 2
+text = "2  "
+horizontal_alignment = 2
 
 [node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 11
@@ -217,16 +275,22 @@ grow_vertical = 2
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_8cild")
 
-[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer"]
+[node name="RightMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelRightContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
 layout_mode = 2
 alignment = 2
 
-[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 text = "DEBUG INFO"
 
 [node name="PanelFullScreenContainer" type="PanelContainer" parent="CanvasLayer"]
-visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -236,6 +300,7 @@ mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_0msnr")
 
 [node name="TurnEndTextureRect" type="TextureRect" parent="CanvasLayer/PanelFullScreenContainer"]
+visible = false
 custom_minimum_size = Vector2(500, 200)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -257,7 +322,7 @@ offset_right = 52.0
 offset_bottom = 12.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_type_variation = &"LabelBig"
 text = "ENEMY TURN"
 horizontal_alignment = 1
 
@@ -273,12 +338,13 @@ offset_right = 1280.0
 offset_bottom = 371.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"LabelBig"
 text = "LEVEL WON/LOST"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/SettingsTextureButton" to="." method="_on_settings_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
-[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/SettingsTextureButton" to="." method="_on_settings_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
 [connection signal="gui_input" from="CanvasLayer/PanelFullScreenContainer/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

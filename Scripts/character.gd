@@ -12,6 +12,7 @@ signal action_slow_down(target_character: Character)
 signal action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3)
 signal collectable_picked_event(target_character: Character)
+signal health_changed_event(target_character: Character)
 
 var assets_scene: Node = preload('res://Scenes/assets.tscn').instantiate()
 var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate()
@@ -424,6 +425,10 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 	if damage > 0:
 		health -= damage
 		set_health_bar()
+		
+		if is_in_group('PLAYERS'):
+			var player = self as Player
+			health_changed_event.emit(player)
 		
 		var color_tween = create_tween()
 		color_tween.tween_property(model.get_active_material(0), 'albedo_color', model.get_active_material(0).albedo_color, 1.0).from(Color.RED)

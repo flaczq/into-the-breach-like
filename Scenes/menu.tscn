@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=12 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_0ykcs"]
 [ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
+[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="4_cfsc2"]
 [ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="4_xirb2"]
 [ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="5_gj3nh"]
 [ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="6_ejy54"]
@@ -25,6 +26,16 @@ main_scene = ExtResource("2_0ykcs")
 editor_scene = ExtResource("3_kwi8q")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_cfsc2")
+expand_mode = 3
+flip_v = true
 
 [node name="PanelCenterContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 8
@@ -115,6 +126,7 @@ theme_override_constants/separation = 50
 
 [node name="PlayersLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer"]
 layout_mode = 2
+theme_type_variation = &"LabelBig"
 text = "Select group of three players to start with:"
 horizontal_alignment = 1
 
@@ -186,21 +198,28 @@ offset_left = -106.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer"]
+[node name="RightMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelRightContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="MainMenuButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightContainer"]
+[node name="MainMenuButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_e8re6")
 text = "MAIN_MENU"
 
-[node name="RightBottomContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer"]
+[node name="RightBottomContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
 alignment = 2
 
-[node name="VersionLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightBottomContainer"]
+[node name="VersionLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer"]
 layout_mode = 2
 text = "1.0"
 
@@ -220,4 +239,4 @@ text = "1.0"
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer2Container/Player2TextureButton" to="." method="_on_player_texture_button_toggled" binds= [2]]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer3Container/Player3TextureButton" to="." method="_on_player_texture_button_toggled" binds= [3]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/PlayersContainer/NextButton" to="." method="_on_next_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

@@ -15,8 +15,8 @@ class_name Menu
 @onready var players_container = $CanvasLayer/PanelCenterContainer/PlayersContainer
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
 @onready var next_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextButton
-@onready var right_container = $CanvasLayer/PanelRightContainer/RightContainer
-@onready var version_label = $CanvasLayer/PanelRightContainer/RightBottomContainer/VersionLabel
+@onready var right_container = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer
+@onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
 var player_1_script: Player = preload('res://Scripts/player1.gd').new()
 var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')

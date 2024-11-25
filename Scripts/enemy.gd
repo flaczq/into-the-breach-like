@@ -2,9 +2,9 @@ extends Character
 
 class_name Enemy
 
-signal enemy_planned_action_miss_move(target_character: Character, is_applied: bool)
-signal enemy_planned_action_miss_action(target_character: Character, is_applied: bool)
-signal enemy_killed_event(target_enemy: Enemy)
+signal planned_action_miss_move(target_character: Character, is_applied: bool)
+signal planned_action_miss_action(target_character: Character, is_applied: bool)
+signal killed_event(target_enemy: Enemy)
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
@@ -139,8 +139,8 @@ func execute_planned_action() -> void:
 
 func apply_planned_action(target_character: Character, is_applied = true) -> void:
 	match action_type:
-		ActionType.MISS_MOVE: enemy_planned_action_miss_move.emit(target_character, is_applied)
-		ActionType.MISS_ACTION: enemy_planned_action_miss_action.emit(target_character, is_applied)
+		ActionType.MISS_MOVE: planned_action_miss_move.emit(target_character, is_applied)
+		ActionType.MISS_ACTION: planned_action_miss_action.emit(target_character, is_applied)
 		_: pass#print('no implementation of applied planned action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
 
 
@@ -155,7 +155,7 @@ func get_killed() -> void:
 	tile.set_enemy(null)
 	tile = null
 	
-	enemy_killed_event.emit(self)
+	killed_event.emit(self)
 
 
 func spawn_loot() -> void:

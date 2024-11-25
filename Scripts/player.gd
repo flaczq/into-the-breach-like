@@ -2,8 +2,8 @@ extends Character
 
 class_name Player
 
-signal hovered_event(player: Player, is_hovered: bool)
-signal clicked_event(player: Player, is_clicked: bool)
+signal hovered_event(target_player: Player, is_hovered: bool)
+signal clicked_event(target_player: Player, is_clicked: bool)
 
 var moves_per_turn: int = 1
 var moves_made_current_turn: int = 0

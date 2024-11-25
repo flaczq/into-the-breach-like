@@ -1164,9 +1164,11 @@ mesh = SubResource("ArrayMesh_bgdcb")
 
 [node name="ArrowSignContainer" type="Node3D" parent="." groups=["ARROW"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.006)
+visible = false
 
 [node name="ArrowSign" type="MeshInstance3D" parent="ArrowSignContainer"]
 transform = Transform3D(50, 0, 0, 0, -2.18557e-06, -50, 0, 50, -2.18557e-06, 0, 0, 0)
+visible = false
 sorting_offset = 1.0
 mesh = SubResource("ArrayMesh_b1x4s")
 skeleton = NodePath("")
@@ -1195,6 +1197,7 @@ script = ExtResource("5_4g6f2")
 
 [node name="tree" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.15, 0, 0, 0, -6.55671e-09, -0.15, 0, 0.15, -6.55671e-09, 0, 0.2, 0)
+visible = false
 material_override = SubResource("StandardMaterial3D_vk68p")
 mesh = SubResource("ArrayMesh_skeun")
 script = ExtResource("5_4g6f2")

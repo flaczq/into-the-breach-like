@@ -191,7 +191,7 @@ func get_color_by_tile_type(tile_type: TileType) -> Color:
 		TileType.FLOOR:
 			return Color('b58450')#light brown
 		TileType.HOLE:
-			return Color('000000')#black
+			return Color('010101')#black
 		_:
 			print('[get_color_by_tile_type] -> unknown tile type: ' + str(tile_type))
 			return Color('e3cdaa')

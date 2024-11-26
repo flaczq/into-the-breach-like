@@ -11,8 +11,9 @@ func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.GAME
 	Global.editor = false
 	
-	var defaults_to_free = get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE'))
-	for default_to_free in defaults_to_free:
+	adjust_camera_position()
+	
+	for default_to_free in get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
 		default_to_free.queue_free()
 	
 	game_state_manager.progress()
@@ -33,19 +34,19 @@ func _input(event: InputEvent) -> void:
 	if game_state_manager.map:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
 			if is_close(camera_3d.rotation_degrees.x, -50):
-				camera_3d.rotation_degrees.x = -40
-				camera_3d.position.y = 13.2
+				Global.camera_position = Global.CameraPosition.MIDDLE
+				adjust_camera_position()
 			elif is_close(camera_3d.rotation_degrees.x, -40):
-				camera_3d.rotation_degrees.x = -30
-				camera_3d.position.y = 9
+				Global.camera_position = Global.CameraPosition.LOW
+				adjust_camera_position()
 		
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN):
 			if is_close(camera_3d.rotation_degrees.x, -40):
-				camera_3d.rotation_degrees.x = -50
-				camera_3d.position.y = 19.2
+				Global.camera_position = Global.CameraPosition.HIGH
+				adjust_camera_position()
 			elif is_close(camera_3d.rotation_degrees.x, -30):
-				camera_3d.rotation_degrees.x = -40
-				camera_3d.position.y = 13.2
+				Global.camera_position = Global.CameraPosition.MIDDLE
+				adjust_camera_position()
 	
 		# UNCLICK PLAYER
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
@@ -82,7 +83,20 @@ func _input(event: InputEvent) -> void:
 func show_back() -> void:
 	Global.engine_mode = Global.EngineMode.GAME
 	
+	adjust_camera_position()
 	toggle_visibility(true)
+
+
+func adjust_camera_position():
+	if Global.camera_position == Global.CameraPosition.HIGH:
+		camera_3d.rotation_degrees.x = -50
+		camera_3d.position.y = 19.2
+	elif Global.camera_position == Global.CameraPosition.MIDDLE:
+		camera_3d.rotation_degrees.x = -40
+		camera_3d.position.y = 13.2
+	elif Global.camera_position == Global.CameraPosition.LOW:
+		camera_3d.rotation_degrees.x = -30
+		camera_3d.position.y = 9
 
 
 func _on_settings_texture_button_pressed() -> void:

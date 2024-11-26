@@ -175,27 +175,44 @@ size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("22_r3qts")
 
-[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
-position = Vector2(5, 67)
-scale = Vector2(0.11, 0.11)
+[node name="HealthHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+
+[node name="HealthTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/HealthHBoxContainer"]
+layout_mode = 2
 texture = ExtResource("24_56xt4")
-centered = false
+expand_mode = 3
 
-[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/HealthHBoxContainer"]
 layout_mode = 2
-text = "2/3 "
-horizontal_alignment = 2
+size_flags_horizontal = 6
+text = "2/3"
 
-[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
-position = Vector2(6, 90)
-scale = Vector2(0.11, 0.11)
+[node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+
+[node name="MoveDistanceTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/MoveDistanceHBoxContainer"]
+layout_mode = 2
 texture = ExtResource("25_86w27")
-centered = false
+expand_mode = 3
 
-[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/MoveDistanceHBoxContainer"]
 layout_mode = 2
-text = "2  "
-horizontal_alignment = 2
+size_flags_horizontal = 6
+text = "2"
+
+[node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+
+[node name="DamageTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/DamageHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("20_6obs3")
+expand_mode = 3
+
+[node name="DamageLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/DamageHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "1"
 
 [node name="PlayerSecondContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
@@ -207,27 +224,44 @@ size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("23_gkeuf")
 
-[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
-position = Vector2(5, 67)
-scale = Vector2(0.11, 0.11)
+[node name="HealthHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+
+[node name="HealthTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/HealthHBoxContainer"]
+layout_mode = 2
 texture = ExtResource("24_56xt4")
-centered = false
+expand_mode = 3
 
-[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/HealthHBoxContainer"]
 layout_mode = 2
-text = "2/3 "
-horizontal_alignment = 2
+size_flags_horizontal = 6
+text = "2/3"
 
-[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
-position = Vector2(6, 90)
-scale = Vector2(0.11, 0.11)
+[node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+
+[node name="MoveDistanceTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/MoveDistanceHBoxContainer"]
+layout_mode = 2
 texture = ExtResource("25_86w27")
-centered = false
+expand_mode = 3
 
-[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/MoveDistanceHBoxContainer"]
 layout_mode = 2
-text = "2  "
-horizontal_alignment = 2
+size_flags_horizontal = 6
+text = "2"
+
+[node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+
+[node name="DamageTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/DamageHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("20_6obs3")
+expand_mode = 3
+
+[node name="DamageLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/DamageHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "1"
 
 [node name="PlayerThirdContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
@@ -239,27 +273,44 @@ size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("24_0ovau")
 
-[node name="HealthSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
-position = Vector2(5, 67)
-scale = Vector2(0.11, 0.11)
+[node name="HealthHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+layout_mode = 2
+
+[node name="HealthTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/HealthHBoxContainer"]
+layout_mode = 2
 texture = ExtResource("24_56xt4")
-centered = false
+expand_mode = 3
 
-[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/HealthHBoxContainer"]
 layout_mode = 2
-text = "2/3 "
-horizontal_alignment = 2
+size_flags_horizontal = 6
+text = "2/3"
 
-[node name="MoveDistanceSprite2D" type="Sprite2D" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
-position = Vector2(6, 90)
-scale = Vector2(0.11, 0.11)
+[node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+layout_mode = 2
+
+[node name="MoveDistanceTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/MoveDistanceHBoxContainer"]
+layout_mode = 2
 texture = ExtResource("25_86w27")
-centered = false
+expand_mode = 3
 
-[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/MoveDistanceHBoxContainer"]
 layout_mode = 2
-text = "2  "
-horizontal_alignment = 2
+size_flags_horizontal = 6
+text = "2"
+
+[node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+layout_mode = 2
+
+[node name="DamageTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/DamageHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("20_6obs3")
+expand_mode = 3
+
+[node name="DamageLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/DamageHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "1"
 
 [node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 11
@@ -291,6 +342,8 @@ text = "DEBUG INFO"
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 1.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1

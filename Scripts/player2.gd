@@ -20,6 +20,7 @@ func _ready() -> void:
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
 	
+	include_upgrades()
 	init_health_bar()
 
 
@@ -30,6 +31,7 @@ func get_data() -> Dictionary:
 		'max_health': 3,
 		'health': 3,
 		'damage': 1,
+		'damage_upgraded': 2,
 		'move_distance': 3,
 		'action_min_distance': 2,
 		'action_max_distance': 7,

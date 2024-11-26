@@ -37,6 +37,14 @@ func _ready() -> void:
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
+func include_upgrades():
+	var selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id == id)
+	if not selected_players.is_empty():
+		var selected_player = selected_players.front()
+		if selected_player.is_damage_upgraded:
+			damage = selected_player.damage_upgraded
+
+
 func spawn(spawn_tile: MapTile) -> void:
 	tile = spawn_tile
 	tile.set_player(self)
@@ -148,11 +156,11 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void
 			health_bar.position.x -= 30
 			
 			# hardcoded
-			if is_close(get_viewport().get_camera_3d().rotation_degrees.x, -50):
+			if Global.camera_position == Global.CameraPosition.HIGH:
 				health_bar.position.y -= 50
-			elif is_close(get_viewport().get_camera_3d().rotation_degrees.x, -40):
+			elif Global.camera_position == Global.CameraPosition.MIDDLE:
 				health_bar.position.y -= 58
-			else:
+			elif Global.camera_position == Global.CameraPosition.LOW:
 				health_bar.position.y -= 64
 
 

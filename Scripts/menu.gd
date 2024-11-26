@@ -10,8 +10,9 @@ class_name Menu
 @onready var tutorial_check_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
 @onready var in_game_menu_container = $CanvasLayer/PanelCenterContainer/InGameMenuContainer
 @onready var options_container = $CanvasLayer/PanelCenterContainer/OptionsContainer
-@onready var language_option_button = $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageOptionButton
-@onready var aa_check_box = $CanvasLayer/PanelCenterContainer/OptionsContainer/AACheckBox
+@onready var language_option_button = $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer/LanguageOptionButton
+@onready var camera_position_option_button = $CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer/CameraPositionOptionButton
+@onready var aa_check_box = $CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox
 @onready var players_container = $CanvasLayer/PanelCenterContainer/PlayersContainer
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
 @onready var next_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextButton
@@ -40,6 +41,9 @@ func _ready() -> void:
 	language_option_button.select(Global.language)
 	_on_language_option_button_item_selected(Global.language)
 	
+	camera_position_option_button.select(Global.camera_position)
+	_on_camera_position_option_button_item_selected(Global.camera_position)
+	
 	aa_check_box.set_pressed(Global.antialiasing)
 	_on_aa_check_box_toggled(Global.antialiasing)
 	
@@ -55,9 +59,9 @@ func _ready() -> void:
 	options_container.hide()
 	players_container.hide()
 	
-	Global.init_available_players(player_1_script)
-	Global.init_available_players(player_2_script)
-	Global.init_available_players(player_3_script)
+	init_available_players(player_1_script)
+	init_available_players(player_2_script)
+	init_available_players(player_3_script)
 	
 	init_ui()
 
@@ -84,15 +88,17 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	options_container.hide()
 	players_container.hide()
 	
+	camera_position_option_button.select(Global.camera_position)
+	_on_camera_position_option_button_item_selected(Global.camera_position)
+	
 	toggle_visibility(true)
 
 
 func init_ui() -> void:
-	assert(Global.available_players.size() >= 3, 'Wrong available players size')
-	var default_player_containers = players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE'))
-	for default_player_container in default_player_containers:
+	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
 		default_player_container.queue_free()
 	
+	assert(Global.available_players.size() >= 3, 'Too few available players')
 	for available_player in Global.available_players as Array[PlayerObject]:
 		assert(available_player.id >= 1, 'Wrong available player id')
 		var player_texture
@@ -118,13 +124,22 @@ func init_ui() -> void:
 		player_label.name = 'Player' + str(available_player.id) + 'Label'
 		player_label.text = 'HEALTH: ' + str(available_player.max_health) + \
 			'\n' + 'MOVE DISTANCE: ' + str(available_player.move_distance) + \
-			'\n' + 'ACTION: ' + str(ActionType.keys()[available_player.action_type])
+			'\n' + 'DAMAGE: ' + str(available_player.damage) + \
+			'\n' + 'ACTION: ' + str(ActionType.keys()[available_player.action_type]) + \
+			'\n' + 'ACTION DAMAGE: ' + str(available_player.action_damage)
 		
 		player_container.add_child(player_texture_button)
 		player_container.add_child(player_label)
 		players_grid_container.add_child(player_container)
 		
 		player_container.show()
+
+
+func init_available_players(player: Player) -> void:
+	var player_object: PlayerObject = PlayerObject.new()
+	var player_data = player.get_data()
+	player_object.init_from_player_data(player_data)
+	Global.available_players.push_back(player_object)
 
 
 func _on_editor_button_pressed() -> void:
@@ -175,7 +190,7 @@ func _on_save_button_pressed() -> void:
 
 func _on_main_menu_button_pressed() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
-	Global.selected_players_scenes = []
+	Global.selected_players = []
 	
 	right_container.hide()
 	main_menu_container.show()
@@ -217,6 +232,10 @@ func _on_language_option_button_item_selected(index: int) -> void:
 	TranslationServer.set_locale(Global.Language.keys()[Global.language].to_lower())
 
 
+func _on_camera_position_option_button_item_selected(index):
+	Global.camera_position = index
+
+
 func _on_aa_check_box_toggled(toggled_on: bool) -> void:
 	Global.antialiasing = toggled_on
 	
@@ -236,10 +255,12 @@ func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
 	# hardcoded
 	var player_texture_button = player_container.get_child(0)
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+	var selected_player = Global.available_players.filter(func(available_player): return available_player.id == index + 1).front()
 	
 	if toggled_on:
-		push_unique_to_array(Global.selected_players_scenes, index + 1)
+		Global.selected_players.push_back(selected_player)
 	else:
-		Global.selected_players_scenes.erase(index + 1)
+		Global.selected_players.erase(selected_player)
 	
-	next_button.set_disabled(Global.selected_players_scenes.size() != 3)
+	next_button.set_disabled(Global.selected_players.size() != 3)
+	assert(Global.selected_players.size() <= 3, 'Too many selected players')

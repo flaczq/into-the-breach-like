@@ -242,11 +242,14 @@ func init_ui() -> void:
 		player_texture_button.flip_v = false
 		set_clicked_player_texture_button(player_texture_button, false)
 		
-		var player_health_label = get_player_health_label_by_index(player_index)
+		var player_health_label = get_player_label_by_index_and_names(player_index, 'HealthHBoxContainer', 'HealthLabel')
 		player_health_label.text = str(player.health) + '/' + str(player.max_health)
 		
-		var player_move_distance_label = get_player_move_distance_label_by_index(player_index)
+		var player_move_distance_label = get_player_label_by_index_and_names(player_index, 'MoveDistanceHBoxContainer', 'MoveDistanceLabel')
 		player_move_distance_label.text = str(player.move_distance)
+		
+		var player_damage_label = get_player_label_by_index_and_names(player_index, 'DamageHBoxContainer', 'DamageLabel')
+		player_damage_label.text = str(player.damage)
 		
 		var player_container = get_player_container_by_index(player_index)
 		player_container.show()
@@ -702,42 +705,6 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character: C
 	return null
 
 
-# DELETE maybe: not worth it?
-#func calculate_max_tiles_in_line_for_action_direction_line(action_direction, hit_direction, character_tile_coords):
-	#if action_direction == ActionDirection.HORIZONTAL_LINE:
-		## direction from origin to target
-		#if hit_direction == Vector2i(1, 0):
-			##print('DOWN (LEFT)')
-			#return map.get_side_dimension() - character_tile_coords.x
-		#if hit_direction == Vector2i(-1, 0):
-			##print('UP (RIGHT)')
-			#return character_tile_coords.x - 1
-		#if hit_direction == Vector2i(0, 1):
-			##print('RIGHT (DOWN)')
-			#return map.get_side_dimension() - character_tile_coords.y
-		#if hit_direction == Vector2i(0, -1):
-			##print('LEFT (UP)')
-			#return character_tile_coords.y - 1
-	#
-	#if action_direction == ActionDirection.VERTICAL_LINE:
-		#if hit_direction == Vector2i(1, 1):
-			##print('DOWN')
-			#return map.get_side_dimension() - maxi(character_tile_coords.x, character_tile_coords.y)
-		#if hit_direction == Vector2i(-1, -1):
-			##print('UP')
-			#return mini(character_tile_coords.x, character_tile_coords.y) - 1
-		#if hit_direction == Vector2i(-1, 1):
-			##print('RIGHT')
-			#if character_tile_coords.x + character_tile_coords.y < 10:
-				#return character_tile_coords.x - 1
-			#return character_tile_coords.x - 1 - (map.get_side_dimension() - map.get_horizontal_diagonal_dimension(character_tile_coords))
-		#if hit_direction == Vector2i(1, -1):
-			##print('LEFT')
-			#if character_tile_coords.x + character_tile_coords.y < 10:
-				#return character_tile_coords.y - 1
-			#return character_tile_coords.y - 1 - (map.get_side_dimension() - map.get_horizontal_diagonal_dimension(character_tile_coords))
-
-
 func recalculate_enemies_planned_actions() -> void:
 	for enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive and enemy.planned_tile) as Array[Enemy]:
 		var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(enemy, enemy.tile.coords, enemy.planned_tile.coords)
@@ -766,19 +733,14 @@ func get_player_container_by_index(index: int) -> VBoxContainer:
 
 
 func get_player_texture_button_by_index(index: int) -> TextureButton:
-	assert(index >= 0 and index <= 2, 'Wrong index')
 	var player_container = get_player_container_by_index(index)
 	return player_container.get_children().filter(func(child): return child.name == 'PlayerTextureButton').front()
 
 
-func get_player_health_label_by_index(index: int) -> Label:
+func get_player_label_by_index_and_names(index: int, container_name: String, name: String) -> Label:
 	var player_container = get_player_container_by_index(index)
-	return player_container.get_children().filter(func(child): return child.name == 'HealthLabel').front()
-
-
-func get_player_move_distance_label_by_index(index: int) -> Label:
-	var player_container = get_player_container_by_index(index)
-	return player_container.get_children().filter(func(child): return child.name == 'MoveDistanceLabel').front()
+	var child = player_container.get_children().filter(func(child): return child.name == container_name).front()
+	return child.get_children().filter(func(grandchild): return grandchild.name == name).front()
 
 
 func set_clicked_player_texture_button(player_texture_button: TextureButton, is_clicked: bool) -> void:
@@ -989,7 +951,8 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[target_tile.tile_type])) + '\n'
 		if character:
 			tile_info_label.text += '[ACTION ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_type])) + '\n'
-			tile_info_label.text += '[MOVE ICON] ' + tr('MOVE_' + str(character.move_distance)) + '\n'
+			if not character.is_in_group('PLAYERS'):
+				tile_info_label.text += '[MOVE ICON] ' + str(character.move_distance) + '\n'
 			if not character.state_types.is_empty():
 				tile_info_label.text += '[STATE ICON] ' + str(character.state_types) + '\n'
 			if character.is_in_group('ENEMIES'):
@@ -1131,7 +1094,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 
 func _on_player_health_changed(target_player: Player):
 	var player_index = players.find(target_player)
-	var player_health_label = get_player_health_label_by_index(player_index)
+	var player_health_label = get_player_label_by_index_and_names(player_index, 'HealthHBoxContainer', 'HealthLabel')
 	player_health_label.text = str(target_player.health) + '/' + str(target_player.max_health)
 
 

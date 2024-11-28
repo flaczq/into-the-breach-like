@@ -4,6 +4,7 @@ class_name Menu
 
 @export var main_scene: PackedScene
 @export var editor_scene: PackedScene
+@export var player_container_scene: PackedScene
 
 @onready var main_menu_container = $CanvasLayer/PanelCenterContainer/MainMenuContainer
 @onready var editor_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorButton
@@ -20,11 +21,8 @@ class_name Menu
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
 var player_1_script: Player = preload('res://Scripts/player1.gd').new()
-var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
 var player_2_script: Player = preload('res://Scripts/player2.gd').new()
-var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
 var player_3_script: Player = preload('res://Scripts/player3.gd').new()
-var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
 
 var last_screen: Util
 
@@ -33,7 +31,7 @@ func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
 	TranslationServer.set_locale('en')
-	version_label.text = ProjectSettings.get_setting('application/config/version') + '-' + Time.get_date_string_from_system().replace('-', '')
+	version_label.text = 'version: ' + ProjectSettings.get_setting('application/config/version') + '-' + Time.get_date_string_from_system().replace('-', '')
 	
 	tutorial_check_button.set_pressed(Global.tutorial)
 	_on_tutorial_check_button_toggled(Global.tutorial)
@@ -100,39 +98,10 @@ func init_ui() -> void:
 	
 	assert(Global.available_players.size() >= 3, 'Too few available players')
 	for available_player in Global.available_players as Array[PlayerObject]:
-		assert(available_player.id >= 1, 'Wrong available player id')
-		var player_texture
-		# tutorial and first scene
-		if available_player.id == 0 or available_player.id == 1:
-			player_texture = player_1_texture
-		elif available_player.id == 2:
-			player_texture = player_2_texture
-		elif available_player.id == 3:
-			player_texture = player_3_texture
+		var player_container = player_container_scene.instantiate() as PlayerContainer
+		player_container.init(available_player, _on_player_texture_button_toggled)
 		
-		var player_container = VBoxContainer.new()
-		player_container.name = 'Player' + str(available_player.id) + 'Container'
-		
-		var player_texture_button = TextureButton.new()
-		player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(available_player.id - 1))
-		player_texture_button.name = 'Player' + str(available_player.id) + 'TextureButton'
-		player_texture_button.toggle_mode = true
-		player_texture_button.texture_normal = player_texture
-		player_texture_button.modulate.a = 0.5
-		
-		var player_label = Label.new()
-		player_label.name = 'Player' + str(available_player.id) + 'Label'
-		player_label.text = 'HEALTH: ' + str(available_player.max_health) + \
-			'\n' + 'MOVE DISTANCE: ' + str(available_player.move_distance) + \
-			'\n' + 'DAMAGE: ' + str(available_player.damage) + \
-			'\n' + 'ACTION: ' + str(ActionType.keys()[available_player.action_type]) + \
-			'\n' + 'ACTION DAMAGE: ' + str(available_player.action_damage)
-		
-		player_container.add_child(player_texture_button)
-		player_container.add_child(player_label)
 		players_grid_container.add_child(player_container)
-		
-		player_container.show()
 
 
 func init_available_players(player: Player) -> void:
@@ -199,9 +168,9 @@ func _on_main_menu_button_pressed() -> void:
 	players_container.hide()
 	next_button.set_disabled(true)
 	
-	# FIXME disable state
 	for player_container in players_grid_container.get_children():
-		var player_texture_button = player_container.get_child(0)
+		# FIXME disable state
+		var player_texture_button = player_container.find_child('PlayerTextureButton')
 		player_texture_button.set_pressed_no_signal(false)
 		player_texture_button.modulate.a = 0.5
 	
@@ -252,8 +221,7 @@ func _on_next_button_pressed() -> void:
 func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
 	assert(index >= 0, 'Wrong index')
 	var player_container = players_grid_container.get_child(index)
-	# hardcoded
-	var player_texture_button = player_container.get_child(0)
+	var player_texture_button = player_container.find_child('PlayerTextureButton')
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	var selected_player = Global.available_players.filter(func(available_player): return available_player.id == index + 1).front()
 	

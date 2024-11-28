@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=10 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
 [ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
-[ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="4_p1ccw"]
-[ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="5_slihu"]
-[ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="6_bwrej"]
+[ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="4_1fybh"]
+[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="4_hyrgu"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5okir"]
 
@@ -23,6 +22,7 @@ events = [SubResource("InputEventKey_bfwhq")]
 script = ExtResource("1_ybquj")
 main_scene = ExtResource("2_50w2i")
 editor_scene = ExtResource("3_kwi8q")
+player_container_scene = ExtResource("4_1fybh")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -32,6 +32,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("4_hyrgu")
 expand_mode = 3
 flip_v = true
 
@@ -96,6 +97,7 @@ shortcut = SubResource("Shortcut_fmudf")
 text = "MAIN_MENU"
 
 [node name="OptionsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="BackButton" type="Button" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
@@ -152,7 +154,6 @@ layout_mode = 2
 button_pressed = true
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -167,53 +168,14 @@ layout_mode = 2
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="HIDEPlayer1Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
+[node name="HIDEPlayer1Container" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("4_1fybh")]
 layout_mode = 2
 
-[node name="Player1TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer1Container"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("4_p1ccw")
-
-[node name="Player1Label" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer1Container"]
-layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 3
-ACTION: PUSH_BACK"
-
-[node name="HIDEPlayer2Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
+[node name="HIDEPlayer2Container" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("4_1fybh")]
 layout_mode = 2
 
-[node name="Player2TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer2Container"]
-modulate = Color(1, 1, 1, 0.501961)
+[node name="HIDEPlayer3Container" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("4_1fybh")]
 layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("5_slihu")
-
-[node name="Player2Label" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer2Container"]
-layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 3
-ACTION: PULL_FRONT"
-
-[node name="HIDEPlayer3Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
-layout_mode = 2
-
-[node name="Player3TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer3Container"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("6_bwrej")
-
-[node name="Player3Label" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer/HIDEPlayer3Container"]
-layout_mode = 2
-text = "HEALTH: 3
-MOVE DISTANCE: 2
-ACTION: CROSS_PUSH_BACK"
 
 [node name="NextButton" type="Button" parent="CanvasLayer/PanelCenterContainer/PlayersContainer"]
 layout_mode = 2
@@ -252,7 +214,7 @@ alignment = 2
 
 [node name="VersionLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer"]
 layout_mode = 2
-text = "1.0"
+text = "version: 1.0"
 
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorButton" to="." method="_on_editor_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/StartButton" to="." method="_on_start_button_pressed"]

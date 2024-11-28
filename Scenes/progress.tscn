@@ -37,6 +37,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="UpgradesContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 50
@@ -110,7 +111,6 @@ size_flags_horizontal = 3
 text = "SKIP"
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -127,21 +127,22 @@ alignment = 1
 
 [node name="LevelType1Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
 layout_mode = 2
-text = "KILL_ENEMIES"
+text = "LEVEL_KILL_ENEMIES"
 
 [node name="LevelType2Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
 layout_mode = 2
-text = "SURVIVE_TURNS"
+disabled = true
+text = "LEVEL_SURVIVE_TURNS"
 
 [node name="LevelType3Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
 layout_mode = 2
 disabled = true
-text = "SAVE_CIVILIANS"
+text = "LEVEL_SAVE_CIVILIANS"
 
 [node name="LevelType4Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
 layout_mode = 2
 disabled = true
-text = "SAVE_TILES"
+text = "LEVEL_SAVE_TILES"
 
 [node name="LevelsNextButton" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer"]
 layout_mode = 2

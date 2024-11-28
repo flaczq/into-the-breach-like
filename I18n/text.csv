@@ -14,6 +14,10 @@ ACTION_MISS_MOVE,Target cannot move for 1 turn,Cel nie może się poruszać prze
 ACTION_MISS_ACTION,Target cannot attack for 1 turn,Cel nie może atakować przez 1 turę
 ACTION_SLOW_DOWN,Slows down target to 1 tile for 1 turn,Spowalnia cel do 1 pola na 1 turę
 ACTION_CROSS_PUSH_BACK,Pushes adjacent targets by 1 tile,Popycha sąsiadujące cele o 1 pole
+LEVEL_KILL_ENEMIES,Kill enemies,Zabij przeciwników
+LEVEL_SURVIVE_TURNS,Survive X turns,Przeżyj X tur
+LEVEL_SAVE_CIVILIANS,Save civilians,Uratuj cywili
+LEVEL_SAVE_TILES,Save tiles,Uratuj pola
 SIGN_TUTORIAL_1,TUTORIAL HINT #1:\nTake advantage of seeing enemy attack,TODO
 SIGN_TUTORIAL_2,TUTORIAL HINT #2:\nSome obstacles may be destructible,TODO
 SIGN_TUTORIAL_3,TUTORIAL HINT #3:\nSometimes using an action instead of shooting is necessary to save a civilian,TODO

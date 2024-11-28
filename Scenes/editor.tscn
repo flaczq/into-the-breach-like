@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=31 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://djb7hjxihkin0" path="res://Scenes/tutorial_player.tscn" id="16_b1rcx"]
 [ext_resource type="PackedScene" uid="uid://bj8bk338r75sx" path="res://Scenes/enemy4.tscn" id="17_60fhf"]
 [ext_resource type="PackedScene" uid="uid://cyk5jmmvp3sag" path="res://Scenes/tutorial_enemy.tscn" id="17_hdgpr"]
+[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="17_p3af1"]
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="18_v5xqc"]
 [ext_resource type="Texture2D" uid="uid://danokvk15cayv" path="res://Assets/penzilla.vector-icon-pack/Icon_Settings.png" id="19_rhlap"]
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="19_yyv2y"]
@@ -29,6 +30,13 @@
 [ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="25_mdbkd"]
 [ext_resource type="Texture2D" uid="uid://boh2eitupunx6" path="res://Assets/penzilla.vector-icon-pack/Icon_Expand.png" id="25_s35pl"]
 
+[sub_resource type="Environment" id="Environment_5lqdt"]
+background_mode = 3
+ambient_light_source = 2
+ambient_light_color = Color(0.259294, 0.259294, 0.259294, 1)
+ssil_radius = 2.83
+glow_intensity = 3.56
+
 [node name="Editor" type="Node3D"]
 script = ExtResource("4_nvvvx")
 assets_scene = ExtResource("8_gfadf")
@@ -36,6 +44,19 @@ map_scenes = Array[PackedScene]([ExtResource("6_f5ijx"), ExtResource("7_6jo0a"),
 player_scenes = Array[PackedScene]([ExtResource("16_b1rcx"), ExtResource("8_wa28c"), ExtResource("7_j7ymc"), ExtResource("8_hcwj8")])
 enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j"), ExtResource("17_60fhf")])
 civilian_scenes = Array[PackedScene]([ExtResource("18_v5xqc"), ExtResource("10_wdovn")])
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." groups=["WORLD_ENV"]]
+environment = SubResource("Environment_5lqdt")
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="WorldEnvironment"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("17_p3af1")
+expand_mode = 3
+flip_v = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.45452, 0.541675, 0, 0.766045, 0.642788, -0.707107, -0.45452, 0.541675, 12, 13.2, 12)
@@ -134,10 +155,7 @@ POINTS: 0"
 [node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
 text = "MAP OBJECTIVES:
-- kill all enemies
-BONUS:
-- all players survive
-- kill highlighted enemy in one turn"
+- kill all enemies"
 
 [node name="LeftBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2

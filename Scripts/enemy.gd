@@ -6,6 +6,8 @@ signal planned_action_miss_move(target_character: Character, is_applied: bool)
 signal planned_action_miss_action(target_character: Character, is_applied: bool)
 signal killed_event(target_enemy: Enemy)
 
+@onready var animation_player = $Area3D/AnimationPlayer
+
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
 # 1/5 chance of droping loot
@@ -38,6 +40,8 @@ func _ready() -> void:
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
 	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
+	
+	#animation_player.play('idle')
 
 
 func spawn(spawn_tile: MapTile, new_order: int) -> void:
@@ -60,6 +64,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 		print('evemy ' + str(tile.coords) + ' -> slowed down')
 		state_types.erase(StateType.SLOWED_DOWN)
 	
+	animation_player.stop()
 	toggle_arrows(false)
 	#toggle_action_indicators(false)
 	
@@ -87,6 +92,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			collect_if_collectable(target_tile)
 	
 	toggle_arrows(true)
+	animation_player.play('idle')
 	#toggle_action_indicators(true)
 
 
@@ -112,6 +118,7 @@ func plan_action(target_tile: MapTile) -> void:
 
 
 func execute_planned_action() -> void:
+	animation_player.stop()
 	clear_arrows()
 	clear_action_indicators()
 	
@@ -129,12 +136,15 @@ func execute_planned_action() -> void:
 	if is_alive:
 		if state_types.has(StateType.MISSED_ACTION):
 			print('enemy ' + str(tile.coords) + ' -> missed action')
+			animation_player.play('idle')
 			state_types.erase(StateType.MISSED_ACTION)
 			return
 		
 		if temp_planned_tile:
 			await spawn_bullet(temp_planned_tile)
 			await temp_planned_tile.get_shot(damage, action_type, action_damage, tile.coords)
+			
+			animation_player.play('idle')
 
 
 func apply_planned_action(target_character: Character, is_applied = true) -> void:

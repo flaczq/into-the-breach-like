@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dliou6uj8vx8g"]
+[gd_scene load_steps=12 format=3 uid="uid://dliou6uj8vx8g"]
 
 [ext_resource type="Script" path="res://Scripts/enemy3.gd" id="1_41qjp"]
 
@@ -96,10 +96,48 @@ _surfaces = [{
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_dnh2y"]
 
+[sub_resource type="Animation" id="Animation_dcwxu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Skeleton_Head:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0.5, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_q58au"]
+resource_name = "idle"
+length = 3.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Skeleton_Head:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 1.5, 2.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0.5, 0), Vector3(0, 0.6, 0), Vector3(0, 0.6, 0), Vector3(0, 0.5, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sidf1"]
+_data = {
+"RESET": SubResource("Animation_dcwxu"),
+"idle": SubResource("Animation_q58au")
+}
+
 [node name="Enemy3" type="Node3D" groups=["ENEMIES"]]
 script = ExtResource("1_41qjp")
 
-[node name="Skeleton_Head" type="MeshInstance3D" parent="."]
+[node name="Skeleton_Head" type="MeshInstance3D" parent="." groups=["MODELS", "MODEL_CONTAINERS"]]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_8eurk")
 
@@ -114,3 +152,9 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("BoxShape3D_dnh2y")
 disabled = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Area3D"]
+libraries = {
+"": SubResource("AnimationLibrary_sidf1")
+}
+autoplay = "idle"

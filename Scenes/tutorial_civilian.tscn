@@ -192,7 +192,7 @@ _surfaces = [{
 [node name="Civilian0Tutorial" type="Node3D" groups=["CIVILIANS"]]
 script = ExtResource("1_ytlxs")
 
-[node name="Princess_Head" type="MeshInstance3D" parent="."]
+[node name="Princess_Head" type="MeshInstance3D" parent="." groups=["MODELS", "MODEL_CONTAINERS"]]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.5, 0)
 mesh = SubResource("ArrayMesh_pmast")
 

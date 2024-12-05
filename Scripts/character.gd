@@ -23,6 +23,7 @@ var model_outlines: Array[MeshInstance3D] = []
 
 var id: int
 var model_name: String
+var model_container: Node3D
 var model: MeshInstance3D
 var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
@@ -51,10 +52,10 @@ func _ready() -> void:
 	# to move properly among available positions
 	position = Vector3.ZERO
 	
-	model = get_children().filter(func(child): return child.is_visible() and child is MeshInstance3D).front()
+	init_models()
 	# make materials unique
 	model.mesh.surface_set_material(0, model.get_active_material(0).duplicate())
-	model.show()
+	model_container.show()
 	
 	init_model_outlines()
 	for model_outline in model_outlines:
@@ -73,6 +74,15 @@ func _ready() -> void:
 		elif asset.name == 'crate-color':
 			default_loot_model = asset
 
+
+func init_models() -> void:
+	model_container = get_children().filter(func(child): return child.is_in_group('MODEL_CONTAINERS')).front()
+	
+	if model_container is MeshInstance3D:
+		model = model_container
+	else:
+		model = model_container.get_children().filter(func(child): return child.is_in_group('MODELS')).front()
+	
 
 func init_model_outlines(parent: MeshInstance3D = model) -> void:
 	for child in parent.get_children():
@@ -444,14 +454,14 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 func get_killed() -> void:
 	is_alive = false
 	
-	#model.scale.y /= 2
-	#model.position.y /= 2
+	#model_container.scale.y /= 2
+	#model_container.position.y /= 2
 	
 	var death_tween = create_tween().set_parallel()
-	death_tween.tween_property(model, 'scale:y', 0, 0.5).from(model.scale.y)
+	death_tween.tween_property(model_container, 'scale:y', 0, 0.5).from(model_container.scale.y)
 	await death_tween.finished
 	
-	model.scale = Vector3.ZERO
+	model_container.scale = Vector3.ZERO
 
 
 func collect_if_collectable(target_tile: MapTile) -> void:
@@ -581,18 +591,18 @@ func reset_health_bar() -> void:
 
 
 func look_at_y(target: MapTile) -> void:
-	model.look_at(target.position, Vector3.UP, true)
-	model.rotation_degrees.x = 0
-	model.rotation_degrees.z = 0
+	model_container.look_at(target.position, Vector3.UP)
+	model_container.rotation_degrees.x = 0
+	model_container.rotation_degrees.z = 0
 	# smooth rotation has bug: which side to turn by
 	#var dummy = Node3D.new()
 	#dummy.hide()
 	#add_child(dummy)
 #
-	#dummy.global_transform.origin = model.global_transform.origin
+	#dummy.global_transform.origin = model_container.global_transform.origin
 	#dummy.look_at(target.position, Vector3.UP, true)
 #
 	#var rotation_tween = create_tween()
-	#rotation_tween.tween_property(model, 'rotation_degrees:y', rotation, 0.1)
+	#rotation_tween.tween_property(model_container, 'rotation_degrees:y', rotation, 0.1)
 	#
 	#dummy.queue_free()

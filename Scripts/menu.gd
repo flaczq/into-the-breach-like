@@ -99,7 +99,7 @@ func init_ui() -> void:
 	assert(Global.available_players.size() >= 3, 'Too few available players')
 	for available_player in Global.available_players as Array[PlayerObject]:
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(available_player, _on_player_texture_button_toggled)
+		player_container.init(available_player.id, available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type, _on_player_texture_button_toggled)
 		
 		players_grid_container.add_child(player_container)
 

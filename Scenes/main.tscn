@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=34 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -21,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="18_m6tce"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="18_rptsd"]
 [ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="19_mojst"]
+[ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="19_s0a28"]
 [ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="20_6obs3"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="21_mwtkn"]
 [ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="22_r3qts"]
@@ -80,6 +81,7 @@ player_scenes = Array[PackedScene]([ExtResource("8_846lr"), ExtResource("6_vfyg3
 enemy_scenes = Array[PackedScene]([ExtResource("12_73d8x"), ExtResource("7_ptp77"), ExtResource("10_b2cwl"), ExtResource("13_eku0p"), ExtResource("14_i8qar")])
 civilian_scenes = Array[PackedScene]([ExtResource("16_grlly"), ExtResource("8_g8h8s")])
 progress_scene = ExtResource("9_ey5p0")
+player_container_scene = ExtResource("19_s0a28")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -185,7 +187,6 @@ expand_mode = 3
 
 [node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/HealthHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "2/3"
 
 [node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
@@ -198,7 +199,6 @@ expand_mode = 3
 
 [node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/MoveDistanceHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "2"
 
 [node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
@@ -211,8 +211,19 @@ expand_mode = 3
 
 [node name="DamageLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/DamageHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "1"
+
+[node name="ActionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer"]
+layout_mode = 2
+
+[node name="ActionTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/ActionHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("20_6obs3")
+expand_mode = 3
+
+[node name="ActionLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer/ActionHBoxContainer"]
+layout_mode = 2
+text = "ACTION_PUSH_BACK"
 
 [node name="PlayerSecondContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
@@ -234,7 +245,6 @@ expand_mode = 3
 
 [node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/HealthHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "2/3"
 
 [node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
@@ -247,7 +257,6 @@ expand_mode = 3
 
 [node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/MoveDistanceHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "2"
 
 [node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
@@ -260,8 +269,19 @@ expand_mode = 3
 
 [node name="DamageLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/DamageHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "1"
+
+[node name="ActionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer"]
+layout_mode = 2
+
+[node name="ActionTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/ActionHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("20_6obs3")
+expand_mode = 3
+
+[node name="ActionLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer/ActionHBoxContainer"]
+layout_mode = 2
+text = "ACTION_PUSH_BACK"
 
 [node name="PlayerThirdContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer"]
 layout_mode = 2
@@ -283,7 +303,6 @@ expand_mode = 3
 
 [node name="HealthLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/HealthHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "2/3"
 
 [node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
@@ -296,7 +315,6 @@ expand_mode = 3
 
 [node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/MoveDistanceHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "2"
 
 [node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
@@ -309,8 +327,19 @@ expand_mode = 3
 
 [node name="DamageLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/DamageHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
 text = "1"
+
+[node name="ActionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer"]
+layout_mode = 2
+
+[node name="ActionTextureRect" type="TextureRect" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/ActionHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("20_6obs3")
+expand_mode = 3
+
+[node name="ActionLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer/ActionHBoxContainer"]
+layout_mode = 2
+text = "ACTION_PUSH_BACK"
 
 [node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 11

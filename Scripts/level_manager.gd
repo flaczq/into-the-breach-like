@@ -263,6 +263,7 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 	
 	var enemies_from_below_index = 0
 	var enemies_from_above_index = 0
+	var already_checked_enemies_tiles = []
 	for level_event in level_data.level_events:
 		# enemy spawns from below at spawned indicators - if occupied then do damage to character and try to spawn next turn
 		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
@@ -270,13 +271,14 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			assert(level_data.get('enemies_from_below'), 'Set enemies_from_below for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
-				var event_tile: MapTile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				var event_tile: MapTile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS') and not already_checked_enemies_tiles.has(tile)).front()
 				if not event_tile:
 					print('no event tiles for ENEMIES_FROM_BELOW');
 					continue
 				
 				var target_character = event_tile.get_character()
 				if target_character:
+					already_checked_enemies_tiles.push_back(event_tile)
 					await event_tile.get_shot(1)
 					continue
 				
@@ -295,9 +297,10 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			assert(level_data.get('enemies_from_above'), 'Set enemies_from_above for level_event: ENEMIES_FROM_ABOVE')
 			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
-				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS')).front()
+				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS') and not already_checked_enemies_tiles.has(tile)).front()
 				if not event_tile or event_tile.get_character():
 					print('no event tiles or character on tile for ENEMIES_FROM_ABOVE');
+					already_checked_enemies_tiles.push_back(event_tile)
 					continue
 				
 				# TODO animation

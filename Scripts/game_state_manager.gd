@@ -7,12 +7,14 @@ class_name GameStateManager
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
+@export var player_container_scene: PackedScene
 
 @onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
 @onready var action_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton'
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
+@onready var players_grid_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer'
 @onready var player_first_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer'
 @onready var player_second_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer'
 @onready var player_third_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer'
@@ -218,43 +220,51 @@ func init_ui() -> void:
 	var player_index = 0
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
-		var player_texture
-		# tutorial and first scene
-		if player.id == 0 or player.id == 1:
-			player_texture = player_1_texture
-		elif player.id == 2:
-			player_texture = player_2_texture
-		elif player.id == 3:
-			player_texture = player_3_texture
+		var player_container = player_container_scene.instantiate() as PlayerContainer
+		player_container.init(player.id, player.max_health, player.move_distance, player.damage, player.action_type, _on_player_texture_button_toggled)
 		
-		# hardcoded
-		var player_texture_button = get_player_texture_button_by_index(player_index)
-		if not player_texture_button.is_connected('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id)):
-			player_texture_button.connect('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id))
-		if not player_texture_button.is_connected('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id)):
-			player_texture_button.connect('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id))
-		if not player_texture_button.is_connected('toggled', _on_player_texture_button_toggled.bind(player.id)):
-			player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(player.id))
+		players_grid_container.add_child(player_container)
 		
-		player_texture_button.texture_normal = player_texture
-		player_texture_button.set_disabled(false)
-		# hardcoded enabled but not clicked
-		player_texture_button.flip_v = false
-		set_clicked_player_texture_button(player_texture_button, false)
-		
-		var player_health_label = get_player_label_by_index_and_names(player_index, 'HealthHBoxContainer', 'HealthLabel')
-		player_health_label.text = str(player.health) + '/' + str(player.max_health)
-		
-		var player_move_distance_label = get_player_label_by_index_and_names(player_index, 'MoveDistanceHBoxContainer', 'MoveDistanceLabel')
-		player_move_distance_label.text = str(player.move_distance)
-		
-		var player_damage_label = get_player_label_by_index_and_names(player_index, 'DamageHBoxContainer', 'DamageLabel')
-		player_damage_label.text = str(player.damage)
-		
-		var player_container = get_player_container_by_index(player_index)
-		player_container.show()
-		
-		player_index += 1
+		#var player_texture
+		## tutorial and first scene
+		#if player.id == 0 or player.id == 1:
+			#player_texture = player_1_texture
+		#elif player.id == 2:
+			#player_texture = player_2_texture
+		#elif player.id == 3:
+			#player_texture = player_3_texture
+		#
+		## hardcoded
+		#var player_texture_button = get_player_texture_button_by_index(player_index)
+		#if not player_texture_button.is_connected('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id)):
+			#player_texture_button.connect('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id))
+		#if not player_texture_button.is_connected('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id)):
+			#player_texture_button.connect('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id))
+		#if not player_texture_button.is_connected('toggled', _on_player_texture_button_toggled.bind(player.id)):
+			#player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(player.id))
+		#
+		#player_texture_button.texture_normal = player_texture
+		#player_texture_button.set_disabled(false)
+		## hardcoded enabled but not clicked
+		#player_texture_button.flip_v = false
+		#set_clicked_player_texture_button(player_texture_button, false)
+		#
+		#var player_health_label = get_player_label_by_index_and_names(player_index, 'HealthHBoxContainer', 'HealthLabel')
+		#player_health_label.text = str(player.health) + '/' + str(player.max_health)
+		#
+		#var player_move_distance_label = get_player_label_by_index_and_names(player_index, 'MoveDistanceHBoxContainer', 'MoveDistanceLabel')
+		#player_move_distance_label.text = str(player.move_distance)
+		#
+		#var player_damage_label = get_player_label_by_index_and_names(player_index, 'DamageHBoxContainer', 'DamageLabel')
+		#player_damage_label.text = str(player.damage)
+		#
+		#var player_action_label = get_player_label_by_index_and_names(player_index, 'ActionHBoxContainer', 'ActionLabel')
+		#player_action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[player.action_type]))
+		#
+		#var player_container = get_player_container_by_index(player_index)
+		#player_container.show()
+		#
+		#player_index += 1
 
 
 func start_turn() -> void:

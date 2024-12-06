@@ -13,32 +13,32 @@ var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
 var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
 
 
-func init(player_object: PlayerObject, on_player_texture_button_toggled: Callable):
-	assert(player_object.id >= 1, 'Wrong player object id')
+func init(id: int, max_health: int, move_distance: int, damage: int, action_type: Util.ActionType, on_player_texture_button_toggled: Callable):
+	assert(id >= 0, 'Wrong player object id')
 	var player_texture
 	# tutorial and first scene
-	if player_object.id == 0 or player_object.id == 1:
+	if id == 0 or id == 1:
 		player_texture = player_1_texture
-	elif player_object.id == 2:
+	elif id == 2:
 		player_texture = player_2_texture
-	elif player_object.id == 3:
+	elif id == 3:
 		player_texture = player_3_texture
 	
-	name = name.replace('X', str(player_object.id))
+	name = name.replace('X', str(id))
 	
 	# find_child is required instead of @onready var because of weird 'scene inheritance'
 	var player_texture_button = find_child('PlayerTextureButton')
-	player_texture_button.connect('toggled', on_player_texture_button_toggled.bind(player_object.id - 1))
+	player_texture_button.connect('toggled', on_player_texture_button_toggled.bind(id - 1))
 	player_texture_button.texture_normal = player_texture
 	
 	var health_label = find_child('HealthLabel')
-	health_label.text = str(player_object.max_health)
+	health_label.text = str(max_health)
 	
 	var move_distance_label = find_child('MoveDistanceLabel')
-	move_distance_label.text = str(player_object.move_distance)
+	move_distance_label.text = str(move_distance)
 	
 	var damage_label = find_child('DamageLabel')
-	damage_label.text = str(player_object.damage)
+	damage_label.text = str(damage)
 	
 	var action_label = find_child('ActionLabel')
-	action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[player_object.action_type]))
+	action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))

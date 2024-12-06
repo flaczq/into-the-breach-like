@@ -3,7 +3,7 @@ extends Util
 @onready var menu: Menu = $/root/Menu
 @onready var game_state_manager: GameStateManager = $/root/Main/GameStateManager
 @onready var upgrades_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer
-@onready var upgrades_label: Label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesLabel
+@onready var upgrades_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesLabel
 @onready var upgrades_grid_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer
 @onready var upgrades_next_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer/UpgradesNextButton
 @onready var upgrades_skip_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer/UpgradesSkipButton
@@ -21,8 +21,13 @@ var selected_level_type: LevelType
 func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
-	upgrades_container.show()
-	levels_container.hide()
+	if Global.loot_size > 0:
+		upgrades_container.show()
+		levels_container.hide()
+	else:
+		upgrades_container.hide()
+		levels_container.show()
+	
 	upgrades_label.text = 'If you have 3+ loot, you can upgrade damage of a single player\nCurrent loot: ' + str(Global.loot_size)
 	upgrades_next_button.set_disabled(true)
 	upgrades_skip_button.set_disabled(false)

@@ -19,6 +19,7 @@ var planned_tile: MapTile
 var order: int
 var highlight_tween: Tween
 var arrow_color: Color
+var arrow_highlighted_color: Color
 
 
 func _ready() -> void:
@@ -221,7 +222,7 @@ func toggle_arrow_highlight(is_toggled: bool) -> void:
 	
 	if is_toggled:
 		highlight_tween = create_tween().set_loops()
-		highlight_tween.tween_property(arrow_model_material, 'albedo_color', ENEMY_ARROW_HIGHLIGHTED_COLOR, 0.3)
+		highlight_tween.tween_property(arrow_model_material, 'albedo_color', arrow_highlighted_color, 0.3)
 		highlight_tween.tween_property(arrow_model_material, 'albedo_color', arrow_color, 0.3).set_delay(0.5)
 		#arrow_model_material.albedo_color = Color.YELLOW
 		#arrow_model_material.set_next_pass(arrow_shader_material)

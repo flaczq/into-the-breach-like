@@ -3,6 +3,7 @@ extends Enemy
 
 func _ready() -> void:
 	arrow_color = ENEMY_1_ARROW_COLOR
+	arrow_highlighted_color = ENEMY_ARROW_HIGHLIGHTED_COLOR
 	
 	super()
 	

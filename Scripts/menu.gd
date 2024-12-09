@@ -4,6 +4,7 @@ class_name Menu
 
 @export var main_scene: PackedScene
 @export var editor_scene: PackedScene
+@export var cutscenes_scene: PackedScene
 @export var player_container_scene: PackedScene
 
 @onready var main_menu_container = $CanvasLayer/PanelCenterContainer/MainMenuContainer
@@ -69,12 +70,6 @@ func _input(event: InputEvent) -> void:
 		return
 
 
-func start() -> void:
-	toggle_visibility(false)
-	
-	add_sibling(main_scene.instantiate())
-
-
 func show_in_game_menu(new_last_screen: Util) -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
@@ -90,6 +85,28 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	_on_camera_position_option_button_item_selected(Global.camera_position)
 	
 	toggle_visibility(true)
+
+
+func show_main() -> void:
+	toggle_visibility(false)
+	
+	add_sibling(main_scene.instantiate())
+
+
+func show_cutscenes() -> void:
+	toggle_visibility(false)
+	
+	var cutscenes = cutscenes_scene.instantiate() as Cutscenes
+	add_sibling(cutscenes)
+	cutscenes.init(1)
+
+
+func show_players_selection() -> void:
+	right_container.show()
+	main_menu_container.hide()
+	in_game_menu_container.hide()
+	options_container.hide()
+	players_container.show()
 
 
 func init_ui() -> void:
@@ -119,13 +136,10 @@ func _on_editor_button_pressed() -> void:
 
 func _on_start_button_pressed() -> void:
 	if Global.tutorial:
-		start()
+		# FIXME
+		show_cutscenes()
 	else:
-		right_container.show()
-		main_menu_container.hide()
-		in_game_menu_container.hide()
-		options_container.hide()
-		players_container.show()
+		show_players_selection()
 
 
 func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
@@ -215,7 +229,7 @@ func _on_aa_check_box_toggled(toggled_on: bool) -> void:
 
 
 func _on_next_button_pressed() -> void:
-	start()
+	show_main()
 
 
 func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:

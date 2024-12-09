@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=11 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
 [ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
 [ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="4_1fybh"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="4_hyrgu"]
+[ext_resource type="PackedScene" uid="uid://1noimyb1f3xg" path="res://Scenes/cutscenes.tscn" id="4_om7ip"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5okir"]
 
@@ -22,6 +23,7 @@ events = [SubResource("InputEventKey_bfwhq")]
 script = ExtResource("1_ybquj")
 main_scene = ExtResource("2_50w2i")
 editor_scene = ExtResource("3_kwi8q")
+cutscenes_scene = ExtResource("4_om7ip")
 player_container_scene = ExtResource("4_1fybh")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

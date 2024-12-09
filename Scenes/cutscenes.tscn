@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=3 uid="uid://1noimyb1f3xg"]
+
+[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="1_pmmlt"]
+[ext_resource type="Script" path="res://Scripts/cutscenes.gd" id="1_rffcp"]
+[ext_resource type="Texture2D" uid="uid://boox7w2y51txy" path="res://Assets/penzilla.vector-icon-pack/Item2.png" id="3_tm4wa"]
+
+[node name="Cutscenes" type="CanvasLayer"]
+script = ExtResource("1_rffcp")
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_pmmlt")
+expand_mode = 3
+flip_v = true
+
+[node name="PanelBottomContainer" type="PanelContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -500.0
+offset_top = -226.44
+offset_right = 500.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BottomMarginContainer" type="MarginContainer" parent="PanelBottomContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="CutsceneTextureRect" type="TextureRect" parent="PanelBottomContainer/BottomMarginContainer"]
+custom_minimum_size = Vector2(1000, 0)
+layout_mode = 2
+texture = ExtResource("3_tm4wa")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="CutsceneMarginContainer" type="MarginContainer" parent="PanelBottomContainer/BottomMarginContainer/CutsceneTextureRect"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="CutsceneLabel" type="Label" parent="PanelBottomContainer/BottomMarginContainer/CutsceneTextureRect/CutsceneMarginContainer"]
+layout_mode = 2
+theme_type_variation = &"LabelBig"
+text = "Long long time ago..."

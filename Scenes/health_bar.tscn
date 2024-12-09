@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bgy5pr0eq8ctx" path="res://Assets/healthbar_over_4.png" id="6_rbopy"]
 [ext_resource type="Texture2D" uid="uid://c45p8qfb3haix" path="res://Assets/healthbar_over_5.png" id="7_2sbhm"]
 
-[node name="CanvasLayer" type="CanvasLayer"]
+[node name="HealthBar" type="CanvasLayer"]
 
 [node name="HealthProgressBar1" type="TextureProgressBar" parent="." groups=["HEALTH_BAR_1"]]
 visible = false

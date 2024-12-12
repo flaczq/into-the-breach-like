@@ -221,7 +221,7 @@ func init_ui() -> void:
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(player.id, player.max_health, player.move_distance, player.damage, player.action_type, _on_player_texture_button_toggled)
+		player_container.init(player.id, player.max_health, player.move_distance, player.damage, player.action_type, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
 		
 		players_grid_container.add_child(player_container)
 		
@@ -1300,12 +1300,13 @@ func _on_player_texture_button_mouse_entered(id: int) -> void:
 	if players.is_empty():
 		return
 	
-	assert(id >= 0, 'Wrong id for players')
+	assert(id >= 0, 'Wrong id for player texture button')
 	var target_player = players.filter(func(player): return player.id == id).front()
 	if not target_player.is_alive:
 		return
 	
 	on_tile_hovered(target_player.tile, true)
+	_on_player_hovered(target_player, true)
 
 
 func _on_player_texture_button_mouse_exited(id: int) -> void:
@@ -1317,6 +1318,7 @@ func _on_player_texture_button_mouse_exited(id: int) -> void:
 		return
 	
 	on_tile_hovered(target_player.tile, false)
+	_on_player_hovered(target_player, false)
 
 
 func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
@@ -1332,6 +1334,7 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
 	set_clicked_player_texture_button(player_texture_button, toggled_on)
 	
 	_on_tile_clicked(target_player.tile)
+	#_on_player_clicked(target_player, toggled_on)
 
 
 func _on_level_end_popup_gui_input(event: InputEvent) -> void:

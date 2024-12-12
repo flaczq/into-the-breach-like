@@ -116,7 +116,7 @@ func init_ui() -> void:
 	assert(Global.available_players.size() >= 3, 'Too few available players')
 	for available_player in Global.available_players as Array[PlayerObject]:
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(available_player.id, available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type, _on_player_texture_button_toggled)
+		player_container.init(available_player.id, available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
 		
 		players_grid_container.add_child(player_container)
 
@@ -136,10 +136,9 @@ func _on_editor_button_pressed() -> void:
 
 func _on_start_button_pressed() -> void:
 	if Global.tutorial:
-		# FIXME
-		show_cutscenes()
+		show_main()
 	else:
-		show_players_selection()
+		show_cutscenes()
 
 
 func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
@@ -232,12 +231,22 @@ func _on_next_button_pressed() -> void:
 	show_main()
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, index: int) -> void:
-	assert(index >= 0, 'Wrong index')
-	var player_container = players_grid_container.get_child(index)
+# not used
+func _on_player_texture_button_mouse_entered(id: int) -> void:
+	pass
+
+
+# not used
+func _on_player_texture_button_mouse_exited(id: int) -> void:
+	pass
+
+
+func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
+	#var player_container = players_grid_container.get_child(index)
+	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
 	var player_texture_button = player_container.find_child('PlayerTextureButton')
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	var selected_player = Global.available_players.filter(func(available_player): return available_player.id == index + 1).front()
+	var selected_player = Global.available_players.filter(func(available_player): return available_player.id == id).front()
 	
 	if toggled_on:
 		Global.selected_players.push_back(selected_player)

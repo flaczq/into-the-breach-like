@@ -192,7 +192,12 @@ func is_free() -> bool:
 	return not is_occupied() and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
 
 
-func is_movable() -> bool:
+func is_for_calculating_money() -> bool:
+	# FIXME: add tiles that had assets and now they're destroyed
+	return health_type == TileHealthType.HEALTHY or health_type == TileHealthType.DAMAGED or health_type == TileHealthType.DESTROYED or health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or health_type == TileHealthType.DESTRUCTIBLE_DAMAGED
+
+
+func is_able_to_move_on() -> bool:
 	return get_character() != null
 
 

@@ -21,14 +21,14 @@ var selected_level_type: LevelType
 func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
 	
-	if Global.loot_size > 0:
+	if Global.loot > 0:
 		upgrades_container.show()
 		levels_container.hide()
 	else:
 		upgrades_container.hide()
 		levels_container.show()
 	
-	upgrades_label.text = 'If you have 3+ loot, you can upgrade damage of a single player\nCurrent loot: ' + str(Global.loot_size)
+	upgrades_label.text = 'If you have 3+ loot, you can upgrade damage of a single player\nCurrent loot: ' + str(Global.loot)
 	upgrades_next_button.set_disabled(true)
 	upgrades_skip_button.set_disabled(false)
 	levels_next_button.set_disabled(true)
@@ -61,7 +61,7 @@ func init_ui():
 		upgrade_texture_button.toggle_mode = true
 		upgrade_texture_button.texture_normal = player_texture
 		upgrade_texture_button.modulate.a = 0.5
-		upgrade_texture_button.set_disabled(Global.loot_size < 3)
+		upgrade_texture_button.set_disabled(Global.loot < 3)
 		
 		var upgrade_label = Label.new()
 		upgrade_label.name = 'Upgrade' + str(selected_player.id) + 'Label'
@@ -115,7 +115,7 @@ func _on_upgrades_next_button_pressed():
 	#selected_upgrade_player.damage = selected_upgrade_player.damage_upgraded
 	selected_upgrade_player.is_damage_upgraded = true
 	
-	Global.loot_size -= 3
+	Global.loot -= 3
 	
 	upgrades_container.hide()
 	levels_container.show()

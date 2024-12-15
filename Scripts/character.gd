@@ -201,7 +201,7 @@ func spawn_arrow(target_tile: MapTile) -> void:
 			add_child(arrow_sphere_model.duplicate())
 		
 		# hardcoded top down
-		arrow_model.rotation_degrees.z = -75
+		arrow_model.rotation_degrees.z = -60
 		arrow_model.position = origin_position.bezier_interpolate(control_1, control_2, target_position, amount / float(amount + 0.5))
 	
 	arrow_model.show()
@@ -233,7 +233,7 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 	match target_action_type:
 		ActionType.NONE: pass
 		ActionType.PUSH_BACK:
-			#if not target_tile.is_movable():
+			#if not target_tile.is_able_to_move_on():
 				#return
 			
 			var forced_action_model = default_forced_action_model.duplicate()
@@ -277,7 +277,7 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.PULL_FRONT:
-			#if not target_tile.is_movable():
+			#if not target_tile.is_able_to_move_on():
 				#return
 			
 			var forced_action_model = default_forced_action_model.duplicate()
@@ -470,7 +470,7 @@ func collect_if_collectable(target_tile: MapTile) -> void:
 		collectable.queue_free()
 		
 		if is_in_group('PLAYERS'):
-			Global.loot_size += 1
+			Global.loot += 1
 		
 		collectable_picked_event.emit(self)
 

@@ -15,8 +15,8 @@ var antialiasing: bool = true
 var default_speed: float = 0.3
 var speed: float = 1.0
 
-var score: int = 0
-var loot_size: int = 0
+var money: int = 0
+var loot: int = 0
 var available_players: Array[PlayerObject] = []
 var selected_players: Array[PlayerObject] = []
 var played_maps_indices: Array[int] = []

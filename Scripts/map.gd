@@ -252,6 +252,10 @@ func get_spawnable_tiles(tiles_coords: Array) -> Array[MapTile]:
 	return spawnable_tiles
 
 
+func get_tiles_for_calculating_money() -> Array[MapTile]:
+	return tiles.filter(func(tile: MapTile): return tile.is_for_calculating_money())
+
+
 func get_targetable_tiles() -> Array[MapTile]:
 	# add asset to group 'TARGETABLES' to make the enemy try to target it
 	return tiles.filter(func(tile: MapTile): return (is_instance_valid(tile.models.get('asset')) and not tile.models.asset.is_queued_for_deletion() and tile.models.asset.is_in_group('TARGETABLES')) \

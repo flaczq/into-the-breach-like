@@ -385,7 +385,7 @@ func next_turn() -> void:
 	
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info_label.text += 'SCORE: ' + str(Global.score)
+	game_info_label.text += 'MONEY: ' + str(Global.money)
 	
 	var player_index = 0
 	for player in players:
@@ -436,7 +436,20 @@ func check_for_level_end(turn_ended: bool = true) -> void:
 
 
 func level_won() -> void:
-	Global.score += civilians.filter(func(civilian: Civilian): return civilian.is_alive).size()
+	var money_for_level: int = 0
+	for tile in map.get_tiles_for_calculating_money():
+		if tile.health_type == TileHealthType.HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY:
+			money_for_level += 1
+		elif tile.health_type == TileHealthType.DAMAGED or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
+			# i know...
+			money_for_level += 0
+		elif tile.health_type == TileHealthType.DESTROYED:
+			money_for_level -= 3
+	
+	print('added money for level: ' + str(money_for_level))
+	if money_for_level > 0:
+		Global.money += money_for_level
+		print('now you have money: ' + str(Global.money))
 	
 	# TODO
 	if level < max_levels and not Global.editor:
@@ -485,7 +498,7 @@ func show_turn_end_texture_rect(whose_turn: String) -> void:
 func reset_ui():
 	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info_label.text += 'SCORE: ' + str(Global.score)
+	game_info_label.text += 'MONEY: ' + str(Global.money)
 	tile_info_label.text = ''
 	debug_info_label.text = ''
 
@@ -942,7 +955,8 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			debug_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[character.action_direction]) + '\n'
 			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
 			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
-			debug_info_label.text += 'STATE TYPE: ' + str(character.state_types)
+			if not character.state_types.is_empty():
+				debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_types[0]])
 		if target_tile.models.get('event_asset'):
 			if target_tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'):
 				debug_info_label.text += '\n\n' + 'TILE LEVEL EVENT: ' + str(LevelEvent.keys()[LevelEvent.ENEMIES_FROM_BELOW]) + '\n'
@@ -964,7 +978,7 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			if not character.is_in_group('PLAYERS'):
 				tile_info_label.text += '[MOVE ICON] ' + str(character.move_distance) + '\n'
 			if not character.state_types.is_empty():
-				tile_info_label.text += '[STATE ICON] ' + str(character.state_types) + '\n'
+				tile_info_label.text += '[STATE ICON] ' + str(StateType.keys()[character.state_types[0]]) + '\n'
 			if character.is_in_group('ENEMIES'):
 				tile_info_label.text += '[ORDER ICON] ' + str(character.order) + '\n'
 		if target_tile.get_collectable():
@@ -1017,7 +1031,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			on_button_disabled(selected_player_texture_button, true)
 			selected_player_texture_button.flip_v = true
 			
-			# maybe not needed, because it's also checked after enemy death
+			# maybe not needed, because it's also checked after enemy's death
 			check_for_level_end(false)
 	# other player or selected player is clicked
 	elif target_tile.player and (not selected_player or selected_player.tile == target_tile or selected_player.can_be_interacted_with()):

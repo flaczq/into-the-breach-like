@@ -12,7 +12,7 @@ signal action_slow_down(target_character: Character)
 signal action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3)
 signal collectable_picked_event(target_character: Character)
-signal health_changed_event(target_character: Character)
+signal health_changed_event(target_player: Player)
 
 var assets_scene: Node = preload('res://Scenes/assets.tscn').instantiate()
 var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate()

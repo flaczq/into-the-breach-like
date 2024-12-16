@@ -48,3 +48,17 @@ func init(new_id: int, max_health: int, move_distance: int, damage: int, action_
 	
 	var action_label = find_child('ActionLabel')
 	action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))
+
+
+func hide_stats_containers() -> void:
+	var health_container = find_child('HealthHBoxContainer')
+	health_container.hide()
+	
+	var move_distance_container = find_child('MoveDistanceHBoxContainer')
+	move_distance_container.hide()
+	
+	var damage_container = find_child('DamageHBoxContainer')
+	damage_container.hide()
+	
+	var action_container = find_child('ActionHBoxContainer')
+	action_container.hide()

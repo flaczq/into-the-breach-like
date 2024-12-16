@@ -55,4 +55,8 @@ theme_override_constants/margin_bottom = 40
 [node name="CutsceneLabel" type="Label" parent="PanelBottomContainer/BottomMarginContainer/CutsceneTextureRect/CutsceneMarginContainer"]
 layout_mode = 2
 theme_type_variation = &"LabelBig"
-text = "Long long time ago..."
+text = "Long long time ago...
+
+NAH! This is a turn-based strategy puzzle game!
+
+WTF do you want?! Get this lore out of here!!!"

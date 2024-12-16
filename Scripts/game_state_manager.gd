@@ -15,9 +15,6 @@ class_name GameStateManager
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
 @onready var players_grid_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer'
-@onready var player_first_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerFirstContainer'
-@onready var player_second_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerSecondContainer'
-@onready var player_third_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer/PlayerThirdContainer'
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/DebugInfoLabel'
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
@@ -31,9 +28,6 @@ class_name GameStateManager
 
 var tutorial_manager_script: TutorialManager = preload('res://Scripts/tutorial_manager.gd').new()
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
-var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
-var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
-var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
 
 var map: Map = null
 var players: Array[Player] = []
@@ -212,59 +206,15 @@ func init_civilians() -> void:
 
 
 func init_ui() -> void:
-	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
-	player_first_container.hide()
-	player_second_container.hide()
-	player_third_container.hide()
+	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
+		default_player_container.queue_free()
 	
-	var player_index = 0
+	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
 		player_container.init(player.id, player.max_health, player.move_distance, player.damage, player.action_type, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
-		
 		players_grid_container.add_child(player_container)
-		
-		#var player_texture
-		## tutorial and first scene
-		#if player.id == 0 or player.id == 1:
-			#player_texture = player_1_texture
-		#elif player.id == 2:
-			#player_texture = player_2_texture
-		#elif player.id == 3:
-			#player_texture = player_3_texture
-		#
-		## hardcoded
-		#var player_texture_button = get_player_texture_button_by_index(player_index)
-		#if not player_texture_button.is_connected('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id)):
-			#player_texture_button.connect('mouse_entered', _on_player_texture_button_mouse_entered.bind(player.id))
-		#if not player_texture_button.is_connected('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id)):
-			#player_texture_button.connect('mouse_exited', _on_player_texture_button_mouse_exited.bind(player.id))
-		#if not player_texture_button.is_connected('toggled', _on_player_texture_button_toggled.bind(player.id)):
-			#player_texture_button.connect('toggled', _on_player_texture_button_toggled.bind(player.id))
-		#
-		#player_texture_button.texture_normal = player_texture
-		#player_texture_button.set_disabled(false)
-		## hardcoded enabled but not clicked
-		#player_texture_button.flip_v = false
-		#set_clicked_player_texture_button(player_texture_button, false)
-		#
-		#var player_health_label = get_player_label_by_index_and_names(player_index, 'HealthHBoxContainer', 'HealthLabel')
-		#player_health_label.text = str(player.health) + '/' + str(player.max_health)
-		#
-		#var player_move_distance_label = get_player_label_by_index_and_names(player_index, 'MoveDistanceHBoxContainer', 'MoveDistanceLabel')
-		#player_move_distance_label.text = str(player.move_distance)
-		#
-		#var player_damage_label = get_player_label_by_index_and_names(player_index, 'DamageHBoxContainer', 'DamageLabel')
-		#player_damage_label.text = str(player.damage)
-		#
-		#var player_action_label = get_player_label_by_index_and_names(player_index, 'ActionHBoxContainer', 'ActionLabel')
-		#player_action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[player.action_type]))
-		#
-		#var player_container = get_player_container_by_index(player_index)
-		#player_container.show()
-		#
-		#player_index += 1
 
 
 func start_turn() -> void:
@@ -387,14 +337,11 @@ func next_turn() -> void:
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
 	game_info_label.text += 'MONEY: ' + str(Global.money)
 	
-	var player_index = 0
 	for player in players:
 		# hardcoded
-		var player_texture_button = get_player_texture_button_by_index(player_index)
+		var player_texture_button = get_player_texture_button_by_id(player.id)
 		on_button_disabled(player_texture_button, not player.is_alive)
 		player_texture_button.flip_v = not player.is_alive
-		
-		player_index += 1
 	
 	start_turn()
 
@@ -742,28 +689,17 @@ func recalculate_enemies_planned_actions() -> void:
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
-func get_player_container_by_index(index: int) -> VBoxContainer:
-	assert(index >= 0 and index <= 2, 'Wrong index')
-	var player_container
-	if index == 0:
-		player_container = player_first_container
-	elif index == 1:
-		player_container = player_second_container
-	elif index == 2:
-		player_container = player_third_container
-	
-	return player_container
+func get_player_texture_button_by_id(id: int) -> TextureButton:
+	#var player_container = get_player_container_by_index(index)
+	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
+	return player_container.find_child('PlayerTextureButton')
 
 
-func get_player_texture_button_by_index(index: int) -> TextureButton:
-	var player_container = get_player_container_by_index(index)
-	return player_container.get_children().filter(func(child): return child.name == 'PlayerTextureButton').front()
-
-
-func get_player_label_by_index_and_names(index: int, container_name: String, name: String) -> Label:
-	var player_container = get_player_container_by_index(index)
-	var child = player_container.get_children().filter(func(child): return child.name == container_name).front()
-	return child.get_children().filter(func(grandchild): return grandchild.name == name).front()
+func get_player_label_by_id_and_names(id: int, container_name: String, name: String) -> Label:
+	#var player_container = get_player_container_by_index(index)
+	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
+	var child = player_container.find_child(container_name)
+	return child.find_child(name)
 
 
 func set_clicked_player_texture_button(player_texture_button: TextureButton, is_clicked: bool) -> void:
@@ -1012,11 +948,12 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			selected_player.clear_arrows()
 			selected_player.clear_action_indicators()
 		
-			var selected_player_index = players.find(selected_player)
 			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
 			if not first_occupied_tile_in_line:
 				first_occupied_tile_in_line = target_tile
 			
+			# remember selected player to be able to get its id later
+			var temp_selected_player = selected_player
 			if action_first_texture_button.is_pressed():
 				await selected_player.execute_action(first_occupied_tile_in_line)
 			else:
@@ -1027,7 +964,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			on_button_disabled(action_first_texture_button, true)
 			on_button_disabled(undo_texture_button, true)
 			
-			var selected_player_texture_button = get_player_texture_button_by_index(selected_player_index)
+			var selected_player_texture_button = get_player_texture_button_by_id(temp_selected_player.id)
 			on_button_disabled(selected_player_texture_button, true)
 			selected_player_texture_button.flip_v = true
 			
@@ -1085,8 +1022,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	if selected_player and selected_player != player and selected_player.can_be_interacted_with():
 		selected_player.reset_tiles()
 	
-	var player_index = players.find(player)
-	var player_texture_button = get_player_texture_button_by_index(player_index)
+	var player_texture_button = get_player_texture_button_by_id(player.id)
 	set_clicked_player_texture_button(player_texture_button, is_clicked)
 	
 	if is_clicked:
@@ -1117,8 +1053,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 
 
 func _on_player_health_changed(target_player: Player):
-	var player_index = players.find(target_player)
-	var player_health_label = get_player_label_by_index_and_names(player_index, 'HealthHBoxContainer', 'HealthLabel')
+	var player_health_label = get_player_label_by_id_and_names(target_player.id, 'HealthHBoxContainer', 'HealthLabel')
 	player_health_label.text = str(target_player.health) + '/' + str(target_player.max_health)
 
 
@@ -1343,8 +1278,7 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
 	if not target_player.is_alive or not target_player.can_be_interacted_with():
 		return
 	
-	var player_index = players.find(target_player)
-	var player_texture_button = get_player_texture_button_by_index(player_index)
+	var player_texture_button = get_player_texture_button_by_id(target_player.id)
 	set_clicked_player_texture_button(player_texture_button, toggled_on)
 	
 	_on_tile_clicked(target_player.tile)

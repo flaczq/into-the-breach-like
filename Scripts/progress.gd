@@ -1,18 +1,16 @@
 extends Util
 
+@export var player_container_scene: PackedScene
+
 @onready var menu: Menu = $/root/Menu
 @onready var game_state_manager: GameStateManager = $/root/Main/GameStateManager
 @onready var upgrades_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer
-@onready var upgrades_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesLabel
-@onready var upgrades_grid_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer
-@onready var upgrades_next_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer/UpgradesNextButton
-@onready var upgrades_skip_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer/UpgradesSkipButton
+@onready var shop_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopLabel
+@onready var shop_buy_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyButton
+@onready var shop_skip_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton
+@onready var players_grid_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton
-
-var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
-var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
-var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
 
 var selected_upgrade_id: int
 var selected_level_type: LevelType
@@ -20,6 +18,7 @@ var selected_level_type: LevelType
 
 func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
+	Global.loot = 5
 	
 	if Global.loot > 0:
 		upgrades_container.show()
@@ -28,51 +27,25 @@ func _ready() -> void:
 		upgrades_container.hide()
 		levels_container.show()
 	
-	upgrades_label.text = 'If you have 3+ loot, you can upgrade damage of a single player\nCurrent loot: ' + str(Global.loot)
-	upgrades_next_button.set_disabled(true)
-	upgrades_skip_button.set_disabled(false)
+	shop_label.text = 'Welcome to the SHOP\nBuy upgrades and recruit new players\nMoney: ' + str(Global.money) + ' / Loot: ' + str(Global.loot)
+	shop_buy_button.set_disabled(true)
+	shop_skip_button.set_disabled(false)
 	levels_next_button.set_disabled(true)
 	
 	init_ui()
 
 
 func init_ui():
-	for default_upgrade_container in upgrades_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
-		default_upgrade_container.queue_free()
+	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
+		default_player_container.queue_free()
 	
-	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Too few or too many selected players')
-	# show available upgrades only for not already upgraded players
-	for selected_player in Global.selected_players.filter(func(selected_player): return not selected_player.is_damage_upgraded):
-		var player_texture
-		# tutorial and first scene
-		if selected_player.id == 0 or selected_player.id == 1:
-			player_texture = player_1_texture
-		elif selected_player.id == 2:
-			player_texture = player_2_texture
-		elif selected_player.id == 3:
-			player_texture = player_3_texture
-		
-		var upgrade_container = VBoxContainer.new()
-		upgrade_container.name = 'Upgrade' + str(selected_player.id) + 'Container'
-		
-		var upgrade_texture_button = TextureButton.new()
-		upgrade_texture_button.connect('toggled', _on_upgrade_texture_button_toggled.bind(selected_player.id - 1))
-		upgrade_texture_button.name = 'Upgrade' + str(selected_player.id) + 'TextureButton'
-		upgrade_texture_button.toggle_mode = true
-		upgrade_texture_button.texture_normal = player_texture
-		upgrade_texture_button.modulate.a = 0.5
-		upgrade_texture_button.set_disabled(Global.loot < 3)
-		
-		var upgrade_label = Label.new()
-		upgrade_label.name = 'Upgrade' + str(selected_player.id) + 'Label'
-		# hardcoded
-		upgrade_label.text = 'DAMAGE: ' + str(selected_player.damage) + ' -> ' + str(selected_player.damage_upgraded)
-		
-		upgrade_container.add_child(upgrade_texture_button)
-		upgrade_container.add_child(upgrade_label)
-		upgrades_grid_container.add_child(upgrade_container)
-		
-		upgrade_container.show()
+	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
+	for selected_player in Global.selected_players as Array[PlayerObject]:
+		assert(selected_player.id >= 0, 'Wrong selected player id')
+		var player_container = player_container_scene.instantiate() as PlayerContainer
+		player_container.init(selected_player.id, selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+		player_container.hide_stats_containers()
+		players_grid_container.add_child(player_container)
 
 
 func show_back() -> void:
@@ -87,30 +60,24 @@ func _on_menu_button_pressed() -> void:
 	menu.show_in_game_menu(self)
 
 
-func _on_upgrade_texture_button_toggled(toggled_on: bool, index: int) -> void:
-	# first disable all upgrades
-	for upgrade_container in upgrades_grid_container.get_children():
-		# hardcoded
-		var upgrade_texture_button = upgrade_container.get_child(0)
-		upgrade_texture_button.modulate.a = 0.5
-		upgrade_texture_button.set_pressed_no_signal(false)
-	
-	# then enable selected upgrade
-	if toggled_on:
-		var upgrade_container = upgrades_grid_container.get_child(index)
-		# hardcoded
-		var upgrade_texture_button = upgrade_container.get_child(0)
-		upgrade_texture_button.modulate.a = 1.0
-		upgrade_texture_button.set_pressed_no_signal(true)
-		
-		selected_upgrade_id = index + 1
-	else:
-		selected_upgrade_id = -1
-	
-	upgrades_next_button.set_disabled(selected_upgrade_id <= 0)
+# not used
+func _on_player_texture_button_mouse_entered(id: int) -> void:
+	pass
 
 
-func _on_upgrades_next_button_pressed():
+# not used
+func _on_player_texture_button_mouse_exited(id: int) -> void:
+	pass
+
+
+func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
+	# TODO FIXME
+	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
+	var player_texture_button = player_container.find_child('PlayerTextureButton')
+	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+
+
+func _on_shop_buy_button_pressed():
 	var selected_upgrade_player = Global.selected_players.filter(func(selected_player): return selected_player.id == selected_upgrade_id).front()
 	#selected_upgrade_player.damage = selected_upgrade_player.damage_upgraded
 	selected_upgrade_player.is_damage_upgraded = true
@@ -121,7 +88,7 @@ func _on_upgrades_next_button_pressed():
 	levels_container.show()
 
 
-func _on_upgrades_skip_button_pressed():
+func _on_shop_skip_button_pressed():
 	upgrades_container.hide()
 	levels_container.show()
 

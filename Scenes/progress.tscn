@@ -1,15 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://8bvhgfxla8ng"]
+[gd_scene load_steps=5 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="2_o0rbe"]
-[ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="3_p4gqa"]
-[ext_resource type="Texture2D" uid="uid://cppuicr1p5qno" path="res://Icons/player2.png" id="4_s15jc"]
-[ext_resource type="Texture2D" uid="uid://cjaxrvykaix2g" path="res://Icons/player3.png" id="5_v2gri"]
+[ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="3_nypkk"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v81p6"]
 
 [node name="Progress" type="Node3D"]
 script = ExtResource("1_2mc5y")
+player_container_scene = ExtResource("3_nypkk")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -36,79 +35,56 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="UpgradesContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
+[node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 50
 
-[node name="UpgradesLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
+[node name="ShopLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer"]
 layout_mode = 2
 theme_type_variation = &"LabelBig"
-text = "If you have 3+ loot, you can upgrade damage of a single player
-Current loot: 0"
+text = "Welcome to the SHOP
+Buy upgrades and recruit new players
+
+Money: 0 / Loot: 0"
 horizontal_alignment = 1
 
-[node name="UpgradesGridContainer" type="GridContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
+[node name="ShopGridContainer" type="GridContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer"]
 layout_mode = 2
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="HIDEUpgrade1Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer" groups=["ALWAYS_FREE"]]
+[node name="ShopButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer"]
 layout_mode = 2
 
-[node name="Upgrade1TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer/HIDEUpgrade1Container"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("3_p4gqa")
-
-[node name="Upgrade1Label" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer/HIDEUpgrade1Container"]
-layout_mode = 2
-text = "DAMAGE:  1 -> 2"
-
-[node name="HIDEUpgrade2Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer" groups=["ALWAYS_FREE"]]
-layout_mode = 2
-
-[node name="Upgrade2TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer/HIDEUpgrade2Container"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("4_s15jc")
-
-[node name="Upgrade2Label" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer/HIDEUpgrade2Container"]
-layout_mode = 2
-text = "DAMAGE:  1 -> 2"
-
-[node name="HIDEUpgrade3Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer" groups=["ALWAYS_FREE"]]
-layout_mode = 2
-
-[node name="Upgrade3TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer/HIDEUpgrade3Container"]
-modulate = Color(1, 1, 1, 0.501961)
-layout_mode = 2
-size_flags_horizontal = 0
-toggle_mode = true
-texture_normal = ExtResource("5_v2gri")
-
-[node name="Upgrade3Label" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesGridContainer/HIDEUpgrade3Container"]
-layout_mode = 2
-text = "DAMAGE:  1 -> 2"
-
-[node name="UpgradesButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
-layout_mode = 2
-
-[node name="UpgradesNextButton" type="Button" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer"]
+[node name="ShopBuyButton" type="Button" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
-text = "NEXT"
+text = "BUY"
 
-[node name="UpgradesSkipButton" type="Button" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer"]
+[node name="ShopSkipButton" type="Button" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "SKIP"
+
+[node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 50
+columns = 3
+
+[node name="HIDEPlayer1Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+layout_mode = 2
+
+[node name="HIDEPlayer2Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+layout_mode = 2
+
+[node name="HIDEPlayer3Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+layout_mode = 2
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
 visible = false
@@ -175,8 +151,8 @@ layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_v81p6")
 text = "MAIN_MENU"
 
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer/UpgradesNextButton" to="." method="_on_upgrades_next_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/UpgradesButtonsHBoxContainer/UpgradesSkipButton" to="." method="_on_upgrades_skip_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyButton" to="." method="_on_shop_buy_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton" to="." method="_on_shop_skip_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [2]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]

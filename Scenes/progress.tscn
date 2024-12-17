@@ -1,8 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://8bvhgfxla8ng"]
+[gd_scene load_steps=11 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="2_o0rbe"]
 [ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="3_nypkk"]
+[ext_resource type="Texture2D" uid="uid://cvo10bsngc4f3" path="res://Assets/penzilla.vector-icon-pack/Icon_Award.png" id="4_yqdew"]
+[ext_resource type="Script" path="res://Scripts/player_container.gd" id="5_2dtdq"]
+[ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="6_t11on"]
+[ext_resource type="Texture2D" uid="uid://j7oxvny42iea" path="res://Assets/penzilla.vector-icon-pack/Icon_Heart.png" id="7_iqn1q"]
+[ext_resource type="Texture2D" uid="uid://boh2eitupunx6" path="res://Assets/penzilla.vector-icon-pack/Icon_Expand.png" id="8_m2oen"]
+[ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="9_kua2u"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v81p6"]
 
@@ -55,8 +61,51 @@ horizontal_alignment = 1
 
 [node name="ShopGridContainer" type="GridContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/h_separation = 50
-columns = 3
+columns = 4
+
+[node name="ShopTextureButton1" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture_normal = ExtResource("4_yqdew")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopTextureButton2" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture_normal = ExtResource("4_yqdew")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopTextureButton3" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture_normal = ExtResource("4_yqdew")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopTextureButton4" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture_normal = ExtResource("4_yqdew")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopTextureButton5" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture_normal = ExtResource("4_yqdew")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopTextureButton6" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture_normal = ExtResource("4_yqdew")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="ShopButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer"]
 layout_mode = 2
@@ -77,14 +126,195 @@ layout_mode = 2
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="HIDEPlayer1Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+[node name="HIDEPlayer1Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
+visible = false
+layout_mode = 2
+script = ExtResource("5_2dtdq")
+
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("6_t11on")
+
+[node name="HealthHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container"]
+visible = false
 layout_mode = 2
 
-[node name="HIDEPlayer2Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+[node name="HealthTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/HealthHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("7_iqn1q")
+expand_mode = 3
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/HealthHBoxContainer"]
+layout_mode = 2
+text = "3"
+
+[node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container"]
+visible = false
 layout_mode = 2
 
-[node name="HIDEPlayer3Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+[node name="MoveDistanceTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/MoveDistanceHBoxContainer"]
 layout_mode = 2
+texture = ExtResource("8_m2oen")
+expand_mode = 3
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/MoveDistanceHBoxContainer"]
+layout_mode = 2
+text = "2"
+
+[node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container"]
+visible = false
+layout_mode = 2
+
+[node name="DamageTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/DamageHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("9_kua2u")
+expand_mode = 3
+
+[node name="DamageLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/DamageHBoxContainer"]
+layout_mode = 2
+text = "1"
+
+[node name="ActionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container"]
+visible = false
+layout_mode = 2
+
+[node name="ActionTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/ActionHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("9_kua2u")
+expand_mode = 3
+
+[node name="ActionLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer1Container/ActionHBoxContainer"]
+layout_mode = 2
+text = "ACTION_PUSH_BACK"
+
+[node name="HIDEPlayer2Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
+layout_mode = 2
+script = ExtResource("5_2dtdq")
+
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("6_t11on")
+
+[node name="HealthHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container"]
+visible = false
+layout_mode = 2
+
+[node name="HealthTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/HealthHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("7_iqn1q")
+expand_mode = 3
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/HealthHBoxContainer"]
+layout_mode = 2
+text = "3"
+
+[node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container"]
+visible = false
+layout_mode = 2
+
+[node name="MoveDistanceTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/MoveDistanceHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("8_m2oen")
+expand_mode = 3
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/MoveDistanceHBoxContainer"]
+layout_mode = 2
+text = "2"
+
+[node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container"]
+visible = false
+layout_mode = 2
+
+[node name="DamageTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/DamageHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("9_kua2u")
+expand_mode = 3
+
+[node name="DamageLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/DamageHBoxContainer"]
+layout_mode = 2
+text = "1"
+
+[node name="ActionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container"]
+visible = false
+layout_mode = 2
+
+[node name="ActionTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/ActionHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("9_kua2u")
+expand_mode = 3
+
+[node name="ActionLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer2Container/ActionHBoxContainer"]
+layout_mode = 2
+text = "ACTION_PUSH_BACK"
+
+[node name="HIDEPlayer3Container" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer" groups=["ALWAYS_FREE"]]
+layout_mode = 2
+script = ExtResource("5_2dtdq")
+
+[node name="PlayerTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 0
+toggle_mode = true
+texture_normal = ExtResource("6_t11on")
+
+[node name="HealthHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container"]
+visible = false
+layout_mode = 2
+
+[node name="HealthTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/HealthHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("7_iqn1q")
+expand_mode = 3
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/HealthHBoxContainer"]
+layout_mode = 2
+text = "3"
+
+[node name="MoveDistanceHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container"]
+visible = false
+layout_mode = 2
+
+[node name="MoveDistanceTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/MoveDistanceHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("8_m2oen")
+expand_mode = 3
+
+[node name="MoveDistanceLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/MoveDistanceHBoxContainer"]
+layout_mode = 2
+text = "2"
+
+[node name="DamageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container"]
+visible = false
+layout_mode = 2
+
+[node name="DamageTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/DamageHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("9_kua2u")
+expand_mode = 3
+
+[node name="DamageLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/DamageHBoxContainer"]
+layout_mode = 2
+text = "1"
+
+[node name="ActionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container"]
+visible = false
+layout_mode = 2
+
+[node name="ActionTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/ActionHBoxContainer"]
+layout_mode = 2
+texture = ExtResource("9_kua2u")
+expand_mode = 3
+
+[node name="ActionLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/PlayersGridContainer/HIDEPlayer3Container/ActionHBoxContainer"]
+layout_mode = 2
+text = "ACTION_PUSH_BACK"
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
 visible = false
@@ -151,6 +381,12 @@ layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_v81p6")
 text = "MAIN_MENU"
 
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer/ShopTextureButton1" to="." method="_on_shop_texture_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer/ShopTextureButton2" to="." method="_on_shop_texture_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer/ShopTextureButton3" to="." method="_on_shop_texture_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer/ShopTextureButton4" to="." method="_on_shop_texture_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer/ShopTextureButton5" to="." method="_on_shop_texture_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer/ShopTextureButton6" to="." method="_on_shop_texture_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyButton" to="." method="_on_shop_buy_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton" to="." method="_on_shop_skip_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]

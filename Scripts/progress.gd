@@ -60,21 +60,8 @@ func _on_menu_button_pressed() -> void:
 	menu.show_in_game_menu(self)
 
 
-# not used
-func _on_player_texture_button_mouse_entered(id: int) -> void:
-	pass
-
-
-# not used
-func _on_player_texture_button_mouse_exited(id: int) -> void:
-	pass
-
-
-func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	# TODO FIXME
-	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
-	var player_texture_button = player_container.find_child('PlayerTextureButton')
-	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+func _on_shop_texture_button_pressed(id: int) -> void:
+	pass # Replace with function body.
 
 
 func _on_shop_buy_button_pressed():
@@ -91,6 +78,23 @@ func _on_shop_buy_button_pressed():
 func _on_shop_skip_button_pressed():
 	upgrades_container.hide()
 	levels_container.show()
+
+
+# not used
+func _on_player_texture_button_mouse_entered(id: int) -> void:
+	pass
+
+
+# not used
+func _on_player_texture_button_mouse_exited(id: int) -> void:
+	pass
+
+
+func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
+	# TODO FIXME
+	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
+	var player_texture_button = player_container.find_child('PlayerTextureButton')
+	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 
 
 func _on_level_type_button_pressed(level_type: LevelType) -> void:

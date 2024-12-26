@@ -15,7 +15,7 @@ var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
 var id: int
 
 
-func init(new_id: int, max_health: int, move_distance: int, damage: int, action_type: Util.ActionType, on_player_texture_button_mouse_entered: Callable, on_player_texture_button_mouse_exited: Callable, on_player_texture_button_toggled: Callable) -> void:
+func init(new_id: int, max_health: int, move_distance: int, damage: int, action_type: Util.ActionType, on_mouse_entered: Callable, on_mouse_exited: Callable, on_toggled: Callable) -> void:
 	assert(new_id >= 0, 'Wrong player object id')
 	id = new_id
 	
@@ -32,9 +32,12 @@ func init(new_id: int, max_health: int, move_distance: int, damage: int, action_
 	
 	# find_child is required instead of @onready var because of weird 'scene inheritance'
 	var player_texture_button = find_child('PlayerTextureButton')
-	player_texture_button.connect('mouse_entered', on_player_texture_button_mouse_entered.bind(id))
-	player_texture_button.connect('mouse_exited', on_player_texture_button_mouse_exited.bind(id))
-	player_texture_button.connect('toggled', on_player_texture_button_toggled.bind(id))
+	if on_mouse_entered.is_valid():
+		player_texture_button.connect('mouse_entered', on_mouse_entered.bind(id))
+	if on_mouse_exited.is_valid():
+		player_texture_button.connect('mouse_exited', on_mouse_exited.bind(id))
+	if on_toggled.is_valid():
+		player_texture_button.connect('toggled', on_toggled.bind(id))
 	player_texture_button.texture_normal = player_texture
 	
 	var health_label = find_child('HealthLabel')

@@ -21,6 +21,7 @@ class_name Menu
 @onready var right_container = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
+var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 var player_1_script: Player = preload('res://Scripts/player1.gd').new()
 var player_2_script: Player = preload('res://Scripts/player2.gd').new()
 var player_3_script: Player = preload('res://Scripts/player3.gd').new()
@@ -57,6 +58,8 @@ func _ready() -> void:
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
+	
+	init_available_items()
 	
 	init_available_players(player_1_script)
 	init_available_players(player_2_script)
@@ -109,6 +112,20 @@ func show_players_selection() -> void:
 	players_container.show()
 
 
+func init_available_items() -> void:
+	# FIXME include in save
+	var available_items = init_manager_script.init_available_items()
+	Global.available_items.append_array(available_items)
+
+
+func init_available_players(player: Player) -> void:
+	# FIXME include in save
+	var player_object: PlayerObject = PlayerObject.new()
+	var player_data = player.get_data()
+	player_object.init_from_player_data(player_data)
+	Global.available_players.push_back(player_object)
+
+
 func init_ui() -> void:
 	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
 		default_player_container.queue_free()
@@ -117,15 +134,8 @@ func init_ui() -> void:
 	for available_player in Global.available_players as Array[PlayerObject]:
 		assert(available_player.id >= 0, 'Wrong available player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(available_player.id, available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+		player_container.init(available_player.id, available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type, Callable(), Callable(), _on_player_texture_button_toggled)
 		players_grid_container.add_child(player_container)
-
-
-func init_available_players(player: Player) -> void:
-	var player_object: PlayerObject = PlayerObject.new()
-	var player_data = player.get_data()
-	player_object.init_from_player_data(player_data)
-	Global.available_players.push_back(player_object)
 
 
 func _on_editor_button_pressed() -> void:
@@ -229,16 +239,6 @@ func _on_aa_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_next_button_pressed() -> void:
 	show_main()
-
-
-# not used
-func _on_player_texture_button_mouse_entered(id: int) -> void:
-	pass
-
-
-# not used
-func _on_player_texture_button_mouse_exited(id: int) -> void:
-	pass
 
 
 func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:

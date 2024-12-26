@@ -1,4 +1,4 @@
-extends Util
+extends Node
 
 class_name PlayerObject
 
@@ -12,12 +12,12 @@ var is_damage_upgraded: bool
 var move_distance: int
 var action_min_distance: int
 var action_max_distance: int
-var action_direction: ActionDirection
-var action_type: ActionType
+var action_direction: Util.ActionDirection
+var action_type: Util.ActionType
 var action_damage: int
-var passive_type: PassiveType
+var passive_type: Util.PassiveType
 var can_fly: bool
-var state_types: Array[StateType]
+var state_types: Array[Util.StateType]
 
 
 func init_from_player_data(player_data: Dictionary) -> void:

@@ -213,7 +213,8 @@ func init_ui() -> void:
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(player.id, player.max_health, player.move_distance, player.damage, player.action_type, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+		player_container.init(player.id, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
 		players_grid_container.add_child(player_container)
 
 

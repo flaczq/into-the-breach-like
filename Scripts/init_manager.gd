@@ -2,11 +2,13 @@ extends Node
 
 class_name InitManager
 
+# TODO
+const item_1_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_Award.png')
 const items_data: Array[Dictionary] = [
-	{ 'id': 1, 'cost': 1, 'available': true },
-	{ 'id': 2, 'cost': 2, 'available': true },
-	{ 'id': 3, 'cost': 3, 'available': true },
-	{ 'id': 4, 'cost': 4, 'available': true }
+	{ 'id': 1, 'cost': 1, 'available': true, 'texture': item_1_texture },
+	{ 'id': 2, 'cost': 2, 'available': true, 'texture': item_1_texture },
+	{ 'id': 3, 'cost': 3, 'available': true, 'texture': item_1_texture },
+	{ 'id': 4, 'cost': 4, 'available': true, 'texture': item_1_texture }
 ]
 
 

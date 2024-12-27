@@ -21,21 +21,21 @@ var selected_level_type: LevelType
 
 func _ready() -> void:
 	Global.engine_mode = Global.EngineMode.MENU
-	Global.loot = 5
+	Global.money = 5
 	
-	if Global.loot > 0:
+	if Global.money > 0:
 		upgrades_container.show()
 		levels_container.hide()
 	else:
 		upgrades_container.hide()
 		levels_container.show()
 	
-	shop_label.text = 'Welcome to the SHOP\nBuy upgrades and recruit new players\nMoney: ' + str(Global.money) + ' / Loot: ' + str(Global.loot)
 	shop_buy_button.set_disabled(true)
 	shop_skip_button.set_disabled(false)
 	inventory_label.text = 'INVENTORY'
 	levels_next_button.set_disabled(true)
 	
+	update_labels()
 	init_ui()
 
 
@@ -50,7 +50,8 @@ func init_ui() -> void:
 		var item_container = item_container_scene.instantiate() as ItemContainer
 		item_container.init(available_item, Callable(), Callable(), _on_item_texture_button_toggled)
 		var item_texture_button = item_container.find_child('ItemTextureButton')
-		on_button_disabled(item_texture_button, Global.money < available_item.cost)
+		item_texture_button.set_disabled(Global.money < available_item.cost)
+		item_texture_button.modulate.a = 0.5
 		shop_grid_container.add_child(item_container)
 	
 	# Init UI for selected players
@@ -61,9 +62,19 @@ func init_ui() -> void:
 	for selected_player in Global.selected_players as Array[PlayerObject]:
 		assert(selected_player.id >= 0, 'Wrong selected player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(selected_player.id, selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type, Callable(), Callable(), _on_player_texture_button_toggled)
-		player_container.hide_stats_containers()
+		player_container.init(selected_player.id, Callable(), Callable(), _on_player_texture_button_toggled)
+		
+		var item_objects = [] as Array[ItemObject]
+		for item_id in selected_player.item_ids:
+			var item_object = Global.available_items.filter(func(available_item): return available_item.id == item_id).front()
+			item_objects.push_back(item_object)
+		
+		player_container.init_items(item_objects)
 		players_grid_container.add_child(player_container)
+
+
+func update_labels() -> void:
+	shop_label.text = 'Welcome to the SHOP\nBuy upgrades and recruit new players\nMoney: ' + str(Global.money)
 
 
 func show_back() -> void:
@@ -97,7 +108,8 @@ func _on_shop_buy_button_pressed():
 	var selected_item = Global.available_items.filter(func(available_item): return available_item.id == selected_item_id).front()
 	Global.selected_items.push_back(selected_item)
 	
-	Global.loot -= selected_item.cost
+	Global.money -= selected_item.cost
+	update_labels()
 	
 	for child in shop_grid_container.get_children():
 		var item_texture_button = child.find_child('ItemTextureButton')
@@ -107,7 +119,8 @@ func _on_shop_buy_button_pressed():
 			item_texture_button.flip_v = true
 		else:
 			var available_item = Global.available_items.filter(func(available_item): return available_item.id == child.id).front()
-			on_button_disabled(item_texture_button, Global.money < available_item.cost)
+			item_texture_button.set_disabled(Global.money < available_item.cost)
+			item_texture_button.modulate.a = 0.5
 
 
 func _on_shop_skip_button_pressed():

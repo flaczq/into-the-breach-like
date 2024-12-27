@@ -134,7 +134,8 @@ func init_ui() -> void:
 	for available_player in Global.available_players as Array[PlayerObject]:
 		assert(available_player.id >= 0, 'Wrong available player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(available_player.id, available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type, Callable(), Callable(), _on_player_texture_button_toggled)
+		player_container.init(available_player.id, Callable(), Callable(), _on_player_texture_button_toggled)
+		player_container.init_stats(available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type)
 		players_grid_container.add_child(player_container)
 
 

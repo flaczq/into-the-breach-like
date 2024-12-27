@@ -21,5 +21,6 @@ func _ready() -> void:
 	passive_type = PassiveType.NONE
 	can_fly = false
 	state_types = []
+	item_ids = []
 	
 	init_health_bar()

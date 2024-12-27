@@ -16,7 +16,6 @@ var default_speed: float = 0.3
 var speed: float = 1.0
 
 var money: int = 0
-var loot: int = 0
 var available_items: Array[ItemObject] = []
 var selected_items: Array[ItemObject] = []
 var available_players: Array[PlayerObject] = []

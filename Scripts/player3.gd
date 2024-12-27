@@ -19,6 +19,7 @@ func _ready() -> void:
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
+	item_ids = player_data.item_ids
 	
 	include_upgrades()
 	init_health_bar()
@@ -40,5 +41,6 @@ func get_data() -> Dictionary:
 		'action_damage': 0,
 		'passive_type': PassiveType.NONE,
 		'can_fly': false,
-		'state_types': [] as Array[StateType]
+		'state_types': [] as Array[StateType],
+		'item_ids': [] as Array[int]
 	}

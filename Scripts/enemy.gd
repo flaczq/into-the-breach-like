@@ -10,8 +10,8 @@ signal killed_event(target_enemy: Enemy)
 
 const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
 
-# 1/5 chance of droping loot
-var loot_chance: int = 5
+# 1/5 chance of droping money
+var money_chance: int = 5
 
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
@@ -159,7 +159,7 @@ func get_killed() -> void:
 	super()
 	print('enemy ' + str(tile.coords) + ' -> dead!')
 	
-	spawn_loot()
+	spawn_money()
 	
 	reset_planned_tile()
 	
@@ -169,12 +169,12 @@ func get_killed() -> void:
 	killed_event.emit(self)
 
 
-func spawn_loot() -> void:
-	if tile.can_be_occupied() and (randi() % loot_chance) == (loot_chance - 1):
-		var loot_model = default_loot_model.duplicate()
-		loot_model.position = Vector3(0, 0.2, 0)
-		loot_model.show()
-		tile.add_child(loot_model)
+func spawn_money() -> void:
+	if tile.can_be_occupied() and (randi() % money_chance) == (money_chance - 1):
+		var money_model = default_money_model.duplicate()
+		money_model.position = Vector3(0, 0.2, 0)
+		money_model.show()
+		tile.add_child(money_model)
 
 
 func reset_planned_tile(reset_planned_action: bool = true) -> void:

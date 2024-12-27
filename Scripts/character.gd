@@ -19,6 +19,7 @@ var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate
 
 var is_alive: bool = true
 var state_types: Array[StateType] = []
+var item_ids: Array[int] = []
 var model_outlines: Array[MeshInstance3D] = []
 
 var id: int
@@ -29,7 +30,7 @@ var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
 var default_bullet_model: MeshInstance3D
 var default_forced_action_model: MeshInstance3D
-var default_loot_model: MeshInstance3D
+var default_money_model: MeshInstance3D
 var health_bar: TextureProgressBar
 var health_bar_tween: Tween
 var tile: MapTile
@@ -72,7 +73,7 @@ func _ready() -> void:
 		elif asset.name == 'floor-small-diagonal':
 			default_forced_action_model = asset
 		elif asset.name == 'crate-color':
-			default_loot_model = asset
+			default_money_model = asset
 
 
 func init_models() -> void:
@@ -470,7 +471,7 @@ func collect_if_collectable(target_tile: MapTile) -> void:
 		collectable.queue_free()
 		
 		if is_in_group('PLAYERS'):
-			Global.loot += 1
+			Global.money += 1
 		
 		collectable_picked_event.emit(self)
 

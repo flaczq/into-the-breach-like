@@ -1,20 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://1lyf22v5j5cf"]
+[gd_scene load_steps=7 format=3 uid="uid://1lyf22v5j5cf"]
 
 [ext_resource type="Texture2D" uid="uid://c5ixs2g50r7tm" path="res://Icons/player1.png" id="1_0f8gp"]
 [ext_resource type="Script" path="res://Scripts/player_container.gd" id="1_lmup3"]
 [ext_resource type="Texture2D" uid="uid://j7oxvny42iea" path="res://Assets/penzilla.vector-icon-pack/Icon_Heart.png" id="2_0lvgv"]
 [ext_resource type="Texture2D" uid="uid://boh2eitupunx6" path="res://Assets/penzilla.vector-icon-pack/Icon_Expand.png" id="3_mhyfl"]
 [ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="4_cf7hh"]
+[ext_resource type="Texture2D" uid="uid://bnjsn5j6wkub8" path="res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png" id="6_ixwqn"]
 
 [node name="PlayerXContainer" type="VBoxContainer"]
 script = ExtResource("1_lmup3")
 
 [node name="PlayerTextureButton" type="TextureButton" parent="."]
 modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(102, 102)
 layout_mode = 2
 size_flags_horizontal = 0
 toggle_mode = true
 texture_normal = ExtResource("1_0f8gp")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="HealthHBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -62,4 +66,26 @@ expand_mode = 3
 
 [node name="ActionLabel" type="Label" parent="ActionHBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "ACTION_PUSH_BACK"
+text_overrun_behavior = 3
+
+[node name="ItemsHBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 1
+
+[node name="Item1TextureRect" type="TextureRect" parent="ItemsHBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("6_ixwqn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item2TextureRect" type="TextureRect" parent="ItemsHBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("6_ixwqn")
+expand_mode = 1
+stretch_mode = 5

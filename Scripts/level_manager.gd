@@ -48,16 +48,16 @@ func select_random_level_data(file_content: String, level: int, level_type: Leve
 	
 	var index = file_content.count(prefix + 'START')
 	var indices_range = range(1, index)
-	if Global.played_maps_indices.size() < indices_range.size():
+	if Global.played_maps_ids.size() < indices_range.size():
 		# prevent selecting already played maps
-		indices_range = indices_range.filter(func(index): return not Global.played_maps_indices.has(index))
+		indices_range = indices_range.filter(func(index): return not Global.played_maps_ids.has(index))
 		assert(not indices_range.is_empty(), 'Empty indices for selected maps')
 	else:
 		# clear if all maps were already played (sic!)
-		Global.played_maps_indices.clear()
+		Global.played_maps_ids.clear()
 	
 	var random_index = indices_range.pick_random()
-	Global.played_maps_indices.push_back(random_index)
+	Global.played_maps_ids.push_back(random_index)
 	print('selected level: ' + str(random_index) + prefix)
 	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()
 
@@ -76,8 +76,8 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 	else:
-		for selected_player in Global.selected_players:
-			level_data.player_scenes.push_back(selected_player.id)
+		for selected_player_id in Global.selected_players_ids:
+			level_data.player_scenes.push_back(selected_player_id)
 		
 		if level_data.level_type == LevelType.KILL_ENEMIES:
 			# scene 0 is always tutorial

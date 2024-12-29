@@ -8,7 +8,7 @@ var key_pressed: bool = false
 
 
 func _ready() -> void:
-	Global.engine_mode = Global.EngineMode.GAME
+	Global.engine_mode = EngineMode.GAME
 	Global.editor = false
 	
 	adjust_camera_position()
@@ -25,7 +25,7 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if Global.engine_mode != Global.EngineMode.GAME:
+	if Global.engine_mode != EngineMode.GAME:
 		return
 	
 	if key_pressed:
@@ -34,18 +34,18 @@ func _input(event: InputEvent) -> void:
 	if game_state_manager.map:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
 			if is_close(camera_3d.rotation_degrees.x, -50):
-				Global.camera_position = Global.CameraPosition.MIDDLE
+				Global.camera_position = CameraPosition.MIDDLE
 				adjust_camera_position()
 			elif is_close(camera_3d.rotation_degrees.x, -40):
-				Global.camera_position = Global.CameraPosition.LOW
+				Global.camera_position = CameraPosition.LOW
 				adjust_camera_position()
 		
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN):
 			if is_close(camera_3d.rotation_degrees.x, -40):
-				Global.camera_position = Global.CameraPosition.HIGH
+				Global.camera_position = CameraPosition.HIGH
 				adjust_camera_position()
 			elif is_close(camera_3d.rotation_degrees.x, -30):
-				Global.camera_position = Global.CameraPosition.MIDDLE
+				Global.camera_position = CameraPosition.MIDDLE
 				adjust_camera_position()
 	
 		# UNCLICK PLAYER
@@ -81,20 +81,20 @@ func _input(event: InputEvent) -> void:
 
 
 func show_back() -> void:
-	Global.engine_mode = Global.EngineMode.GAME
+	Global.engine_mode = EngineMode.GAME
 	
 	adjust_camera_position()
 	toggle_visibility(true)
 
 
 func adjust_camera_position():
-	if Global.camera_position == Global.CameraPosition.HIGH:
+	if Global.camera_position == CameraPosition.HIGH:
 		camera_3d.rotation_degrees.x = -50
 		camera_3d.position.y = 19.2
-	elif Global.camera_position == Global.CameraPosition.MIDDLE:
+	elif Global.camera_position == CameraPosition.MIDDLE:
 		camera_3d.rotation_degrees.x = -40
 		camera_3d.position.y = 13.2
-	elif Global.camera_position == Global.CameraPosition.LOW:
+	elif Global.camera_position == CameraPosition.LOW:
 		camera_3d.rotation_degrees.x = -30
 		camera_3d.position.y = 9
 

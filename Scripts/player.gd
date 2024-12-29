@@ -13,6 +13,10 @@ var current_phase: PhaseType = PhaseType.WAIT
 #var is_hovered: bool = false
 var is_clicked: bool = false
 var is_ghost: bool = false
+var item_ids: Array[ItemType] = []
+
+var id: PlayerType
+var texture: CompressedTexture2D
 
 
 func _ready() -> void:
@@ -38,11 +42,9 @@ func _ready() -> void:
 
 
 func include_upgrades():
-	var selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id == id)
-	if not selected_players.is_empty():
-		var selected_player = selected_players.front()
-		if selected_player.is_damage_upgraded:
-			damage = selected_player.damage_upgraded
+	if not item_ids.is_empty():
+		for item_id in item_ids:
+			Global.all_items
 
 
 func spawn(spawn_tile: MapTile) -> void:
@@ -156,11 +158,11 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void
 			health_bar.position.x -= 30
 			
 			# hardcoded
-			if Global.camera_position == Global.CameraPosition.HIGH:
+			if Global.camera_position == CameraPosition.HIGH:
 				health_bar.position.y -= 50
-			elif Global.camera_position == Global.CameraPosition.MIDDLE:
+			elif Global.camera_position == CameraPosition.MIDDLE:
 				health_bar.position.y -= 58
-			elif Global.camera_position == Global.CameraPosition.LOW:
+			elif Global.camera_position == CameraPosition.LOW:
 				health_bar.position.y -= 64
 
 

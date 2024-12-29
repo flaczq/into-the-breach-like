@@ -13,6 +13,7 @@ const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader'
 # 1/5 chance of droping money
 var money_chance: int = 5
 
+var id: EnemyType
 var arrow_model_material: StandardMaterial3D
 var arrow_shader_material: ShaderMaterial
 var planned_tile: MapTile
@@ -201,11 +202,11 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void
 			health_bar.position.x -= 30
 			
 			# hardcoded
-			if Global.camera_position == Global.CameraPosition.HIGH:
+			if Global.camera_position == CameraPosition.HIGH:
 				health_bar.position.y -= 41
-			elif Global.camera_position == Global.CameraPosition.MIDDLE:
+			elif Global.camera_position == CameraPosition.MIDDLE:
 				health_bar.position.y -= 45
-			elif Global.camera_position == Global.CameraPosition.LOW:
+			elif Global.camera_position == CameraPosition.LOW:
 				health_bar.position.y -= 49
 
 

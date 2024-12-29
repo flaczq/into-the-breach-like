@@ -4,7 +4,7 @@ extends Civilian
 func _ready() -> void:
 	super()
 	
-	id = 1
+	id = CivilianType.CIVILIAN_1
 	model_name = 'One civilian'
 	max_health = 2
 	health = 2
@@ -18,6 +18,5 @@ func _ready() -> void:
 	passive_type = PassiveType.NONE
 	can_fly = false
 	state_types = []
-	item_ids = []
 	
 	init_health_bar()

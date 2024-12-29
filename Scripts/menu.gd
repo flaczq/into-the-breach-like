@@ -22,15 +22,12 @@ class_name Menu
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
-var player_1_script: Player = preload('res://Scripts/player1.gd').new()
-var player_2_script: Player = preload('res://Scripts/player2.gd').new()
-var player_3_script: Player = preload('res://Scripts/player3.gd').new()
 
 var last_screen: Util
 
 
 func _ready() -> void:
-	Global.engine_mode = Global.EngineMode.MENU
+	Global.engine_mode = EngineMode.MENU
 	
 	TranslationServer.set_locale('en')
 	version_label.text = 'version: ' + ProjectSettings.get_setting('application/config/version') + '-' + Time.get_date_string_from_system().replace('-', '')
@@ -51,7 +48,7 @@ func _ready() -> void:
 	
 	right_container.hide()
 	main_menu_container.show()
-	if Global.build_mode == Global.BuildMode.DEBUG:
+	if Global.build_mode == BuildMode.DEBUG:
 		editor_button.show()
 	else:
 		editor_button.hide()
@@ -59,22 +56,19 @@ func _ready() -> void:
 	options_container.hide()
 	players_container.hide()
 	
-	init_available_items()
-	
-	init_available_players(player_1_script)
-	init_available_players(player_2_script)
-	init_available_players(player_3_script)
+	init_all_players()
+	init_all_items()
 	
 	init_ui()
 
 
 func _input(event: InputEvent) -> void:
-	if Global.engine_mode != Global.EngineMode.MENU:
+	if Global.engine_mode != EngineMode.MENU:
 		return
 
 
 func show_in_game_menu(new_last_screen: Util) -> void:
-	Global.engine_mode = Global.EngineMode.MENU
+	Global.engine_mode = EngineMode.MENU
 	
 	last_screen = new_last_screen
 	
@@ -105,6 +99,17 @@ func show_cutscenes() -> void:
 
 
 func show_players_selection() -> void:
+	Global.inventory = []
+	Global.selected_items_ids = []
+	Global.selected_players_ids = []
+	Global.played_maps_ids = []
+	
+	for player_container in players_grid_container.get_children():
+		# FIXME disable state
+		var player_texture_button = player_container.find_child('PlayerTextureButton')
+		player_texture_button.set_pressed_no_signal(false)
+		player_texture_button.modulate.a = 0.5
+	
 	right_container.show()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
@@ -112,30 +117,28 @@ func show_players_selection() -> void:
 	players_container.show()
 
 
-func init_available_items() -> void:
+func init_all_players() -> void:
 	# FIXME include in save
-	var available_items = init_manager_script.init_available_items()
-	Global.available_items.append_array(available_items)
+	var all_players = init_manager_script.init_all_players()
+	Global.all_players.append_array(all_players)
 
 
-func init_available_players(player: Player) -> void:
+func init_all_items() -> void:
 	# FIXME include in save
-	var player_object: PlayerObject = PlayerObject.new()
-	var player_data = player.get_data()
-	player_object.init_from_player_data(player_data)
-	Global.available_players.push_back(player_object)
+	var all_items = init_manager_script.init_all_items()
+	Global.all_items.append_array(all_items)
 
 
 func init_ui() -> void:
 	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
 		default_player_container.queue_free()
 	
-	assert(Global.available_players.size() >= 3, 'Too few available players')
-	for available_player in Global.available_players as Array[PlayerObject]:
-		assert(available_player.id >= 0, 'Wrong available player id')
+	assert(Global.all_players.size() >= 3, 'Wrong all players size')
+	for player in Global.all_players as Array[PlayerObject]:
+		assert(player.id >= 0, 'Wrong player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(available_player.id, Callable(), Callable(), _on_player_texture_button_toggled)
-		player_container.init_stats(available_player.max_health, available_player.move_distance, available_player.damage, available_player.action_type)
+		player_container.init(player.id, player.texture, Callable(), Callable(), _on_player_texture_button_toggled)
+		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
 		players_grid_container.add_child(player_container)
 
 
@@ -182,8 +185,7 @@ func _on_save_button_pressed() -> void:
 
 
 func _on_main_menu_button_pressed() -> void:
-	Global.engine_mode = Global.EngineMode.MENU
-	Global.selected_players = []
+	Global.engine_mode = EngineMode.MENU
 	
 	right_container.hide()
 	main_menu_container.show()
@@ -191,12 +193,6 @@ func _on_main_menu_button_pressed() -> void:
 	options_container.hide()
 	players_container.hide()
 	next_button.set_disabled(true)
-	
-	for player_container in players_grid_container.get_children():
-		# FIXME disable state
-		var player_texture_button = player_container.find_child('PlayerTextureButton')
-		player_texture_button.set_pressed_no_signal(false)
-		player_texture_button.modulate.a = 0.5
 	
 	toggle_visibility(true)
 	
@@ -222,7 +218,7 @@ func _on_back_button_pressed() -> void:
 func _on_language_option_button_item_selected(index: int) -> void:
 	Global.language = index
 	
-	TranslationServer.set_locale(Global.Language.keys()[Global.language].to_lower())
+	TranslationServer.set_locale(Language.keys()[Global.language].to_lower())
 
 
 func _on_camera_position_option_button_item_selected(index):
@@ -243,16 +239,14 @@ func _on_next_button_pressed() -> void:
 
 
 func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	#var player_container = players_grid_container.get_child(index)
 	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
 	var player_texture_button = player_container.find_child('PlayerTextureButton')
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-	var selected_player = Global.available_players.filter(func(available_player): return available_player.id == id).front()
 	
 	if toggled_on:
-		Global.selected_players.push_back(selected_player)
+		Global.selected_players_ids.push_back(id)
 	else:
-		Global.selected_players.erase(selected_player)
+		Global.selected_players_ids.erase(id)
 	
-	next_button.set_disabled(Global.selected_players.size() != 3)
-	assert(Global.selected_players.size() <= 3, 'Too many selected players')
+	next_button.set_disabled(Global.selected_players_ids.size() != 3)
+	assert(Global.selected_players_ids.size() <= 3, 'Too many selected players ids')

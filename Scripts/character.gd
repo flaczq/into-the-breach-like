@@ -19,10 +19,8 @@ var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate
 
 var is_alive: bool = true
 var state_types: Array[StateType] = []
-var item_ids: Array[int] = []
 var model_outlines: Array[MeshInstance3D] = []
 
-var id: int
 var model_name: String
 var model_container: Node3D
 var model: MeshInstance3D

@@ -1,14 +1,9 @@
 extends Node
 
-enum Language {EN, PL}
-enum CameraPosition {HIGH, MIDDLE, LOW}
-enum BuildMode {RELEASE, DEBUG}
-enum EngineMode {MENU, GAME, EDITOR}
-
-var language: Language = Language.EN
-var camera_position: CameraPosition = CameraPosition.MIDDLE
-var build_mode: BuildMode = BuildMode.DEBUG
-var engine_mode: EngineMode = EngineMode.MENU
+var language: Util.Language = Util.Language.EN
+var camera_position: Util.CameraPosition = Util.CameraPosition.MIDDLE
+var build_mode: Util.BuildMode = Util.BuildMode.DEBUG
+var engine_mode: Util.EngineMode = Util.EngineMode.MENU
 var editor: bool = false
 var tutorial: bool = true
 var antialiasing: bool = true
@@ -16,11 +11,12 @@ var default_speed: float = 0.3
 var speed: float = 1.0
 
 var money: int = 0
-var available_items: Array[ItemObject] = []
-var selected_items: Array[ItemObject] = []
-var available_players: Array[PlayerObject] = []
-var selected_players: Array[PlayerObject] = []
-var played_maps_indices: Array[int] = []
+var all_items: Array[ItemObject] = []
+var inventory: Array[Util.ItemType] = []
+var selected_items_ids: Array[Util.ItemType] = []
+var all_players: Array[PlayerObject] = []
+var selected_players_ids: Array[Util.PlayerType] = []
+var played_maps_ids: Array[int] = []
 
 
 func _ready() -> void:

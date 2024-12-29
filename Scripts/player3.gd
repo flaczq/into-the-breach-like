@@ -1,5 +1,7 @@
 extends Player
 
+var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
+
 
 func _ready() -> void:
 	super()
@@ -20,6 +22,7 @@ func _ready() -> void:
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
 	item_ids = player_data.item_ids
+	texture = player_data.texture
 	
 	include_upgrades()
 	init_health_bar()
@@ -27,12 +30,11 @@ func _ready() -> void:
 
 func get_data() -> Dictionary:
 	return {
-		'id': 3,
+		'id': PlayerType.PLAYER_3,
 		'model_name': 'Player 3',
 		'max_health': 3,
 		'health': 3,
 		'damage': 1,
-		'damage_upgraded': 2,
 		'move_distance': 2,
 		'action_min_distance': 2,
 		'action_max_distance': 7,
@@ -42,5 +44,6 @@ func get_data() -> Dictionary:
 		'passive_type': PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[StateType],
-		'item_ids': [] as Array[int]
+		'item_ids': [] as Array[ItemType],
+		'texture': player_3_texture
 	}

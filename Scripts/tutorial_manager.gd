@@ -2,6 +2,8 @@ extends Util
 
 class_name TutorialManager
 
+var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
+
 
 func init_player(player: Player, level: int) -> void:
 	if level == 1 or level == 2:
@@ -18,7 +20,10 @@ func init_player(player: Player, level: int) -> void:
 		player.action_damage = 0
 		player.passive_type = PassiveType.NONE
 		player.can_fly = false
+		player.item_ids = []
+		player.texture = player_1_texture
 	
+	player.include_upgrades()
 	player.init_health_bar()
 
 

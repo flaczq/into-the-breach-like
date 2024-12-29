@@ -2,26 +2,13 @@ extends Node
 
 class_name PlayerContainer
 
-var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
-var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
-var player_3_texture: CompressedTexture2D = preload('res://Icons/player3.png')
-
 var id: int
 var item_ids: Array[int]
 
 
-func init(new_id: int, on_mouse_entered: Callable, on_mouse_exited: Callable, on_toggled: Callable) -> void:
-	assert(new_id >= 0, 'Wrong player object id')
+func init(new_id: int, new_texture: CompressedTexture2D, on_mouse_entered: Callable, on_mouse_exited: Callable, on_toggled: Callable) -> void:
 	id = new_id
-	
-	var player_texture
-	# tutorial and first scene
-	if id == 0 or id == 1:
-		player_texture = player_1_texture
-	elif id == 2:
-		player_texture = player_2_texture
-	elif id == 3:
-		player_texture = player_3_texture
+	assert(id >= 0, 'Wrong player object id')
 	
 	name = name.replace('X', str(id))
 	
@@ -37,7 +24,7 @@ func init(new_id: int, on_mouse_entered: Callable, on_mouse_exited: Callable, on
 		player_texture_button.connect('mouse_exited', on_mouse_exited.bind(id))
 	if on_toggled.is_valid():
 		player_texture_button.connect('toggled', on_toggled.bind(id))
-	player_texture_button.texture_normal = player_texture
+	player_texture_button.texture_normal = new_texture
 	player_texture_button.show()
 
 

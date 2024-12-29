@@ -2,6 +2,8 @@ extends Character
 
 class_name Civilian
 
+var id: CivilianType
+
 
 func _ready() -> void:
 	super()
@@ -65,12 +67,12 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void
 			health_bar.position = get_viewport().get_camera_3d().unproject_position(top_model_position)
 			
 			# hardcoded
-			if Global.camera_position == Global.CameraPosition.HIGH:
+			if Global.camera_position == CameraPosition.HIGH:
 				health_bar.position.x -= 38
 				health_bar.position.y -= 45
-			elif Global.camera_position == Global.CameraPosition.MIDDLE:
+			elif Global.camera_position == CameraPosition.MIDDLE:
 				health_bar.position.x -= 38
 				health_bar.position.y -= 50
-			elif Global.camera_position == Global.CameraPosition.LOW:
+			elif Global.camera_position == CameraPosition.LOW:
 				health_bar.position.x -= 40
 				health_bar.position.y -= 55

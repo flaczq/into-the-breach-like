@@ -51,7 +51,7 @@ func _ready() -> void:
 	
 	level_manager_script.connect('init_enemy_event', _on_init_enemy)
 	
-	if Global.build_mode == Global.BuildMode.DEBUG:
+	if Global.build_mode == BuildMode.DEBUG:
 		debug_info_label.show()
 	else:
 		debug_info_label.hide()
@@ -76,7 +76,7 @@ func init_by_level_type(level_type: LevelType) -> void:
 
 func init(init_level_data: Dictionary = level_data) -> void:
 	# already increased level
-	Global.engine_mode = Global.EngineMode.GAME
+	Global.engine_mode = EngineMode.GAME
 	
 	if init_level_data != level_data:
 		level_data = init_level_data
@@ -213,7 +213,7 @@ func init_ui() -> void:
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(player.id, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+		player_container.init(player.id, player.texture, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
 		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
 		players_grid_container.add_child(player_container)
 

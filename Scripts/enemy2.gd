@@ -7,7 +7,7 @@ func _ready() -> void:
 	
 	super()
 	
-	id = 2
+	id = EnemyType.ENEMY_2
 	model_name = 'Enemy 2'
 	max_health = 3
 	health = 3
@@ -21,6 +21,5 @@ func _ready() -> void:
 	passive_type = PassiveType.NONE
 	can_fly = false
 	state_types = []
-	item_ids = []
 	
 	init_health_bar()

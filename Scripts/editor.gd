@@ -44,7 +44,7 @@ var selected: Node3D
 
 
 func _ready() -> void:
-	Global.engine_mode = Global.EngineMode.EDITOR
+	Global.engine_mode = EngineMode.EDITOR
 	Global.editor = true
 	
 	assets.append_array(assets_scene.instantiate().get_children())
@@ -119,7 +119,7 @@ func _input(event: InputEvent) -> void:
 			key_pressed = true
 			print('assets tiles: ' + str(map.tiles.filter(func(tile: MapTile): return tile.models.asset).map(func(tile: MapTile): return str(tile.coords) + ' -> ' + tile.models.asset.name)))
 	
-	if Global.engine_mode != Global.EngineMode.EDITOR:
+	if Global.engine_mode != EngineMode.EDITOR:
 		return
 	
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
@@ -241,7 +241,7 @@ func _on_play_button_toggled(toggled_on: bool) -> void:
 		
 		game_state_manager.init(level_data)
 	else:
-		Global.engine_mode = Global.EngineMode.EDITOR
+		Global.engine_mode = EngineMode.EDITOR
 		
 		# reset map for playing
 		game_state_manager.next_level()

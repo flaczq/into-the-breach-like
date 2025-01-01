@@ -1,0 +1,78 @@
+[gd_scene load_steps=3 format=3 uid="uid://cu5nov702pv6w"]
+
+[ext_resource type="Script" path="res://Scripts/inventory.gd" id="1_hyxii"]
+[ext_resource type="Texture2D" uid="uid://bnjsn5j6wkub8" path="res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png" id="2_5dy4y"]
+
+[node name="Inventory" type="VBoxContainer"]
+alignment = 1
+script = ExtResource("1_hyxii")
+
+[node name="ItemsGridContainer" type="GridContainer" parent="."]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 4
+
+[node name="Item1TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item2TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item3TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item4TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item5TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item6TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item7TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item8TextureRect" type="TextureRect" parent="ItemsGridContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("2_5dy4y")
+expand_mode = 1
+stretch_mode = 5

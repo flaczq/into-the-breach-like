@@ -15,7 +15,7 @@ var action_damage: int
 var passive_type: Util.PassiveType
 var can_fly: bool
 var state_types: Array[Util.StateType]
-var item_ids: Array[Util.ItemType]
+var items_ids: Array[Util.ItemType]
 var texture: CompressedTexture2D
 
 
@@ -35,5 +35,5 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
-	item_ids = player_data.item_ids
+	items_ids = player_data.items_ids
 	texture = player_data.texture

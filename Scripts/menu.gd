@@ -99,7 +99,6 @@ func show_cutscenes() -> void:
 
 
 func show_players_selection() -> void:
-	Global.inventory = []
 	Global.selected_items_ids = []
 	Global.selected_players_ids = []
 	Global.played_maps_ids = []
@@ -139,6 +138,8 @@ func init_ui() -> void:
 		var player_container = player_container_scene.instantiate() as PlayerContainer
 		player_container.init(player.id, player.texture, Callable(), Callable(), _on_player_texture_button_toggled)
 		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
+		var player_texture_button = player_container.find_child('PlayerTextureButton')
+		player_texture_button.modulate.a = 0.5
 		players_grid_container.add_child(player_container)
 
 

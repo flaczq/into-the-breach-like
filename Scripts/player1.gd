@@ -21,7 +21,7 @@ func _ready() -> void:
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
-	item_ids = player_data.item_ids
+	items_ids = player_data.items_ids
 	texture = player_data.texture
 	
 	include_upgrades()
@@ -44,6 +44,6 @@ func get_data() -> Dictionary:
 		'passive_type': PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[StateType],
-		'item_ids': [] as Array[ItemType],
+		'items_ids': [] as Array[ItemType],
 		'texture': player_1_texture
 	}

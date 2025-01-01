@@ -11,7 +11,6 @@
 script = ExtResource("1_lmup3")
 
 [node name="PlayerTextureButton" type="TextureButton" parent="."]
-modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(102, 102)
 layout_mode = 2
 size_flags_horizontal = 0

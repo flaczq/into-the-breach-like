@@ -13,7 +13,7 @@ var current_phase: PhaseType = PhaseType.WAIT
 #var is_hovered: bool = false
 var is_clicked: bool = false
 var is_ghost: bool = false
-var item_ids: Array[ItemType] = []
+var items_ids: Array[ItemType] = []
 
 var id: PlayerType
 var texture: CompressedTexture2D
@@ -42,8 +42,9 @@ func _ready() -> void:
 
 
 func include_upgrades():
-	if not item_ids.is_empty():
-		for item_id in item_ids:
+	# TODO
+	if not items_ids.is_empty():
+		for item_id in items_ids:
 			Global.all_items
 
 

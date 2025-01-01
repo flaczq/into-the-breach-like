@@ -14,7 +14,7 @@ func init(item_object: ItemObject, on_mouse_entered: Callable, on_mouse_exited: 
 	var cost_label = find_child('CostLabel') as Label
 	cost_label.text = str(item_object.cost) + '$'
 	
-	var item_texture_button = find_child('ItemTextureButton')
+	var item_texture_button = find_child('ItemTextureButton') as TextureButton
 	if on_mouse_entered.is_valid():
 		item_texture_button.connect('mouse_entered', on_mouse_entered.bind(id))
 	if on_mouse_exited.is_valid():

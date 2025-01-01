@@ -3,7 +3,7 @@ extends Node
 class_name PlayerContainer
 
 var id: int
-var item_ids: Array[int]
+var items_ids: Array[int]
 
 
 func init(new_id: int, new_texture: CompressedTexture2D, on_mouse_entered: Callable, on_mouse_exited: Callable, on_toggled: Callable) -> void:
@@ -57,11 +57,11 @@ func init_items(item_objects: Array[ItemObject]) -> void:
 		var item_1 = items_container.find_child('Item1TextureRect') as TextureRect
 		item_1.texture = item_objects[0].texture
 		
-		item_ids[0] = item_objects[0].id
+		items_ids[0] = item_objects[0].id
 	if item_objects.size() > 1:
 		var item_2 = items_container.find_child('Item2TextureRect') as TextureRect
 		item_2.texture = item_objects[1].texture
 		
-		item_ids[1] = item_objects[1].id
+		items_ids[1] = item_objects[1].id
 	
 	items_container.show()

@@ -7,10 +7,14 @@
 [resource]
 default_font = ExtResource("1_3kflh")
 default_font_size = 18
-Button/font_sizes/font_size = 18
+Button/font_sizes/font_size = 20
 Button/fonts/font = ExtResource("1_3kflh")
 Label/colors/font_outline_color = Color(0.254902, 0.133333, 0.12549, 1)
 Label/constants/outline_size = 12
+Label/font_sizes/font_size = 20
 LabelBig/base_type = &"Label"
-LabelBig/font_sizes/font_size = 22
+LabelBig/font_sizes/font_size = 25
+LabelMoney/base_type = &"Label"
+LabelMoney/colors/font_color = Color(0.862745, 0.666667, 0.309804, 1)
+LabelMoney/font_sizes/font_size = 20
 PanelContainer/styles/panel = SubResource("StyleBoxEmpty_vxr55")

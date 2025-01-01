@@ -8,6 +8,7 @@ script = ExtResource("1_4o4jj")
 
 [node name="CostLabel" type="Label" parent="."]
 layout_mode = 2
+theme_type_variation = &"LabelMoney"
 text = "1$"
 horizontal_alignment = 1
 

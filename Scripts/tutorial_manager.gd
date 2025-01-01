@@ -20,7 +20,7 @@ func init_player(player: Player, level: int) -> void:
 		player.action_damage = 0
 		player.passive_type = PassiveType.NONE
 		player.can_fly = false
-		player.item_ids = []
+		player.items_ids = []
 		player.texture = player_1_texture
 	
 	player.include_upgrades()

@@ -12,6 +12,7 @@ extends Util
 @onready var shop_skip_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton
 @onready var inventory_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/InventoryLabel
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer
+@onready var inventory: Inventory = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton
 
@@ -66,10 +67,11 @@ func init_ui() -> void:
 		player_container.init(selected_player.id, selected_player.texture, Callable(), Callable(), _on_player_texture_button_toggled)
 		
 		var items = [] as Array[ItemObject]
-		for item_id in selected_player.item_ids:
+		for item_id in selected_player.items_ids:
 			var item = Global.all_items.filter(func(item): return item.id == item_id).front()
 			items.push_back(item)
 		
+		player_container.init_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
 		player_container.init_items(items)
 		players_grid_container.add_child(player_container)
 
@@ -106,11 +108,12 @@ func _on_item_texture_button_toggled(toggled_on: bool, id: int) -> void:
 
 
 func _on_shop_buy_button_pressed() -> void:
-	Global.inventory.push_back(selected_item_id)
+	shop_buy_button.set_disabled(true)
 	
 	var selected_item = Global.all_items.filter(func(item): return item.id == selected_item_id).front()
-	Global.money -= selected_item.cost
+	inventory.add_item(selected_item)
 	
+	Global.money -= selected_item.cost
 	update_labels()
 	
 	for child in shop_grid_container.get_children():
@@ -131,14 +134,15 @@ func _on_shop_skip_button_pressed() -> void:
 
 
 func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	for child in players_grid_container.get_children():
-		var player_texture_button = child.find_child('PlayerTextureButton')
-		if child.id == id:
-			player_texture_button.set_pressed_no_signal(toggled_on)
-			player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-		else:
-			player_texture_button.set_pressed_no_signal(false)
-			player_texture_button.modulate.a = 0.5
+	pass
+	#for child in players_grid_container.get_children():
+		#var player_texture_button = child.find_child('PlayerTextureButton')
+		#if child.id == id:
+			#player_texture_button.set_pressed_no_signal(toggled_on)
+			#player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+		#else:
+			#player_texture_button.set_pressed_no_signal(false)
+			#player_texture_button.modulate.a = 0.5
 
 
 func _on_level_type_button_pressed(level_type: LevelType) -> void:

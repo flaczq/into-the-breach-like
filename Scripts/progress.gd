@@ -5,9 +5,10 @@ extends Util
 
 @onready var menu: Menu = $/root/Menu
 @onready var game_state_manager: GameStateManager = $/root/Main/GameStateManager
+@onready var canvas_layer = $CanvasLayer
 @onready var upgrades_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer
 @onready var shop_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopLabel
-@onready var shop_grid_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopGridContainer
+@onready var shop: Shop = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/Shop
 @onready var shop_buy_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyButton
 @onready var shop_skip_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton
 @onready var inventory_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/InventoryLabel
@@ -16,7 +17,7 @@ extends Util
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton
 
-var selected_item_id: int = -1
+var selected_item_id: int
 var selected_level_type: LevelType
 
 
@@ -41,21 +42,11 @@ func _ready() -> void:
 
 
 func init_ui() -> void:
-	# Init UI for all available items
-	for default_item_container in shop_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
-		default_item_container.queue_free()
+	# shop
+	shop.connect('item_hovered', _on_shop_item_hovered)
+	shop.connect('item_clicked', _on_shop_item_clicked)
 	
-	assert(Global.all_items.size() > 0, 'Wrong available items size')
-	for item in Global.all_items as Array[ItemObject]:
-		assert(item.id >= 0, 'Wrong available item id')
-		var item_container = item_container_scene.instantiate() as ItemContainer
-		item_container.init(item, Callable(), Callable(), _on_item_texture_button_toggled)
-		var item_texture_button = item_container.find_child('ItemTextureButton')
-		item_texture_button.set_disabled(Global.money < item.cost)
-		item_texture_button.modulate.a = 0.5
-		shop_grid_container.add_child(item_container)
-	
-	# Init UI for selected players
+	# selected players
 	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
 		default_player_container.queue_free()
 	
@@ -74,6 +65,10 @@ func init_ui() -> void:
 		player_container.init_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
 		player_container.init_items(items)
 		players_grid_container.add_child(player_container)
+	
+	# inventory
+	inventory.connect('item_hovered', _on_inventory_item_hovered)
+	inventory.connect('item_clicked', _on_inventory_item_clicked)
 
 
 func update_labels() -> void:
@@ -92,19 +87,34 @@ func _on_menu_button_pressed() -> void:
 	menu.show_in_game_menu(self)
 
 
-func _on_item_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	for child in shop_grid_container.get_children():
-		var item_texture_button = child.find_child('ItemTextureButton')
-		if child.id == id:
-			item_texture_button.set_pressed_no_signal(toggled_on)
-			item_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-		else:
-			item_texture_button.set_pressed_no_signal(false)
-			item_texture_button.modulate.a = 0.5
-	
-	selected_item_id = (id) if (toggled_on) else (-1)
-	
-	shop_buy_button.set_disabled(not toggled_on)
+func _on_shop_item_hovered(item_id: ItemType, is_hovered: bool) -> void:
+	print('_on_shop_item_hovered' + str(item_id) + str(is_hovered))
+
+
+func _on_shop_item_clicked(item_id: ItemType, is_clicked: bool) -> void:
+	# TODO
+	print('_on_shop_item_clicked' + str(item_id) + str(is_clicked))
+
+
+func _on_inventory_item_hovered(item_id: ItemType, is_hovered: bool) -> void:
+	print('_on_inventory_item_hovered' + str(item_id) + str(is_hovered))
+
+
+func _on_inventory_item_clicked(item_id: ItemType, is_clicked: bool) -> void:
+	# TODO
+	print('_on_inventory_item_clicked' + str(item_id) + str(is_clicked))
+	#for child in shop_grid_container.get_children():
+		#var item_texture_button = child.find_child('ItemTextureButton')
+		#if child.id == id:
+			#item_texture_button.set_pressed_no_signal(toggled_on)
+			#item_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+		#else:
+			#item_texture_button.set_pressed_no_signal(false)
+			#item_texture_button.modulate.a = 0.5
+	#
+	#selected_item_id = (id) if (toggled_on) else (-1)
+	#
+	#shop_buy_button.set_disabled(not toggled_on)
 
 
 func _on_shop_buy_button_pressed() -> void:
@@ -116,16 +126,16 @@ func _on_shop_buy_button_pressed() -> void:
 	Global.money -= selected_item.cost
 	update_labels()
 	
-	for child in shop_grid_container.get_children():
-		var item_texture_button = child.find_child('ItemTextureButton')
-		if child.id == selected_item_id:
-			item_texture_button.set_pressed_no_signal(false)
-			on_button_disabled(item_texture_button, true)
-			item_texture_button.flip_v = true
-		else:
-			var item = Global.all_items.filter(func(item): return item.id == child.id).front()
-			item_texture_button.set_disabled(Global.money < item.cost)
-			item_texture_button.modulate.a = 0.5
+	#for child in shop_grid_container.get_children():
+		#var item_texture_button = child.find_child('ItemTextureButton')
+		#if child.id == selected_item_id:
+			#item_texture_button.set_pressed_no_signal(false)
+			#on_button_disabled(item_texture_button, true)
+			#item_texture_button.flip_v = true
+		#else:
+			#var item = Global.all_items.filter(func(item): return item.id == child.id).front()
+			#item_texture_button.set_disabled(Global.money < item.cost)
+			#item_texture_button.modulate.a = 0.5
 
 
 func _on_shop_skip_button_pressed() -> void:

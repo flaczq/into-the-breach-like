@@ -9,7 +9,7 @@ enum EngineMode {MENU, GAME, EDITOR}
 enum PlayerType {PLAYER_1 = 1, PLAYER_2, PLAYER_3}
 enum EnemyType {ENEMY_1 = 1, ENEMY_2, ENEMY_3, ENEMY_4}
 enum CivilianType {CIVILIAN_1 = 1}
-enum ItemType {ITEM_1 = 1}
+enum ItemType {ITEM_1 = 1, ITEM_2, ITEM_3, ITEM_4, ITEM_5}
 enum ActionDirection {HORIZONTAL_LINE, VERTICAL_LINE, HORIZONTAL_DOT, VERTICAL_DOT, NONE = -1}
 enum ActionType {PUSH_BACK, PULL_FRONT, MISS_MOVE, MISS_ACTION, HIT_ALLY, GIVE_SHIELD, SLOW_DOWN, CROSS_PUSH_BACK, NONE = -1}
 enum PassiveType {HEALING, NONE = -1}

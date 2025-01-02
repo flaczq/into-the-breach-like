@@ -1,0 +1,99 @@
+[gd_scene load_steps=4 format=3 uid="uid://csdmgetagn410"]
+
+[ext_resource type="Script" path="res://Scripts/shop.gd" id="1_6ijsm"]
+[ext_resource type="Texture2D" uid="uid://cvo10bsngc4f3" path="res://Assets/penzilla.vector-icon-pack/Icon_Award.png" id="2_cvbya"]
+[ext_resource type="Texture2D" uid="uid://co5uqlmcfipao" path="res://Assets/penzilla.vector-icon-pack/Item3.png" id="2_vv08l"]
+
+[node name="Shop" type="VBoxContainer"]
+script = ExtResource("1_6ijsm")
+
+[node name="ShopBackgroundTextureRect" type="TextureRect" parent="."]
+self_modulate = Color(0.431373, 0.745098, 1, 1)
+custom_minimum_size = Vector2(350, 200)
+layout_mode = 2
+texture = ExtResource("2_vv08l")
+expand_mode = 1
+
+[node name="ShopItemsHBoxContainer" type="HBoxContainer" parent="ShopBackgroundTextureRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -54.0
+offset_right = 30.0
+offset_bottom = 54.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+
+[node name="ShopItem1VBoxContainer" type="VBoxContainer" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer"]
+layout_mode = 2
+
+[node name="ShopItem1CostLabel" type="Label" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem1VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"LabelMoney"
+text = "1$"
+horizontal_alignment = 1
+
+[node name="ShopItem1TextureButton" type="TextureButton" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem1VBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("2_cvbya")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopItem1NameLabel" type="Label" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem1VBoxContainer"]
+layout_mode = 2
+text = "ITEM"
+horizontal_alignment = 1
+
+[node name="ShopItem2VBoxContainer" type="VBoxContainer" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer"]
+layout_mode = 2
+
+[node name="ShopItem2CostLabel" type="Label" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem2VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"LabelMoney"
+text = "1$"
+horizontal_alignment = 1
+
+[node name="ShopItem2TextureButton" type="TextureButton" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem2VBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("2_cvbya")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopItem2NameLabel" type="Label" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem2VBoxContainer"]
+layout_mode = 2
+text = "ITEM"
+horizontal_alignment = 1
+
+[node name="ShopItem3VBoxContainer" type="VBoxContainer" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer"]
+layout_mode = 2
+
+[node name="ShopItem3CostLabel" type="Label" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem3VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"LabelMoney"
+text = "1$"
+horizontal_alignment = 1
+
+[node name="ShopItem3TextureButton" type="TextureButton" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem3VBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("2_cvbya")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ShopItem3NameLabel" type="Label" parent="ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem3VBoxContainer"]
+layout_mode = 2
+text = "ITEM"
+horizontal_alignment = 1

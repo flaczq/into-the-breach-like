@@ -5,10 +5,11 @@ class_name InitManager
 # TODO
 const item_1_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_Award.png')
 const items_data: Array[Dictionary] = [
-	{ 'id': 1, 'item_name': 'Item 1', 'cost': 1, 'available': true, 'texture': item_1_texture },
-	{ 'id': 2, 'item_name': 'Item 2', 'cost': 2, 'available': true, 'texture': item_1_texture },
-	{ 'id': 3, 'item_name': 'Item 3', 'cost': 3, 'available': true, 'texture': item_1_texture },
-	{ 'id': 4, 'item_name': 'Item 4', 'cost': 4, 'available': true, 'texture': item_1_texture }
+	{ 'id': Util.ItemType.ITEM_1, 'item_name': 'Item 1', 'cost': 1, 'available': true, 'texture': item_1_texture },
+	{ 'id': Util.ItemType.ITEM_2, 'item_name': 'Item 2', 'cost': 2, 'available': true, 'texture': item_1_texture },
+	{ 'id': Util.ItemType.ITEM_3, 'item_name': 'Item 3', 'cost': 3, 'available': true, 'texture': item_1_texture },
+	{ 'id': Util.ItemType.ITEM_4, 'item_name': 'Item 4', 'cost': 4, 'available': true, 'texture': item_1_texture },
+	{ 'id': Util.ItemType.ITEM_5, 'item_name': 'Item 5', 'cost': 5, 'available': true, 'texture': item_1_texture }
 ]
 
 var players_scripts: Array[Player] = [

@@ -17,7 +17,7 @@ extends Util
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton
 
-var selected_item_id: int
+var selected_item_id: ItemType
 var selected_level_type: LevelType
 
 
@@ -87,41 +87,43 @@ func _on_menu_button_pressed() -> void:
 	menu.show_in_game_menu(self)
 
 
-func _on_shop_item_hovered(item_id: ItemType, is_hovered: bool) -> void:
-	print('_on_shop_item_hovered' + str(item_id) + str(is_hovered))
+func _on_shop_item_hovered(shop_item_id: int, item_id: ItemType, is_hovered: bool) -> void:
+	#print('_on_shop_item_hovered' + str(item_id) + str(is_hovered))
+	pass
 
 
-func _on_shop_item_clicked(item_id: ItemType, is_clicked: bool) -> void:
+func _on_shop_item_clicked(shop_item_id: int, item_id: ItemType) -> void:
+	selected_item_id = item_id
+	
+	if selected_item_id == ItemType.NONE:
+		shop_buy_button.set_disabled(true)
+	else:
+		var selected_item = Global.all_items.filter(func(item): return item.id == selected_item_id).front() as ItemObject
+		shop_buy_button.set_disabled(selected_item.cost > Global.money)
+
+
+func _on_inventory_item_hovered(inventory_item_id: int, item_id: ItemType, is_hovered: bool) -> void:
+	#print('_on_inventory_item_hovered' + str(inventory_item_id) + str(is_hovered))
+	pass
+
+
+func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> void:
 	# TODO
-	print('_on_shop_item_clicked' + str(item_id) + str(is_clicked))
-
-
-func _on_inventory_item_hovered(item_id: ItemType, is_hovered: bool) -> void:
-	print('_on_inventory_item_hovered' + str(item_id) + str(is_hovered))
-
-
-func _on_inventory_item_clicked(item_id: ItemType, is_clicked: bool) -> void:
-	# TODO
-	print('_on_inventory_item_clicked' + str(item_id) + str(is_clicked))
-	#for child in shop_grid_container.get_children():
-		#var item_texture_button = child.find_child('ItemTextureButton')
-		#if child.id == id:
-			#item_texture_button.set_pressed_no_signal(toggled_on)
-			#item_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-		#else:
-			#item_texture_button.set_pressed_no_signal(false)
-			#item_texture_button.modulate.a = 0.5
-	#
-	#selected_item_id = (id) if (toggled_on) else (-1)
-	#
-	#shop_buy_button.set_disabled(not toggled_on)
+	print('_on_inventory_item_clicked ' + str(inventory_item_id) + ' ' + str(item_id))
 
 
 func _on_shop_buy_button_pressed() -> void:
 	shop_buy_button.set_disabled(true)
 	
+	if selected_item_id == ItemType.NONE:
+		return
+	
 	var selected_item = Global.all_items.filter(func(item): return item.id == selected_item_id).front()
+	if selected_item.cost > Global.money:
+		return
+	
 	inventory.add_item(selected_item)
+	shop.item_bought(selected_item_id)
 	
 	Global.money -= selected_item.cost
 	update_labels()

@@ -37,3 +37,11 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	state_types = player_data.state_types
 	items_ids = player_data.items_ids
 	texture = player_data.texture
+
+
+func add_item(new_item_id: Util.ItemType) -> void:
+	assert(items_ids[0] != Util.ItemType.NONE or items_ids[1] != Util.ItemType.NONE, 'No space to add item to player')
+	if items_ids[0] != Util.ItemType.NONE:
+		items_ids[0] = new_item_id
+	elif items_ids[1] != Util.ItemType.NONE:
+		items_ids[1] = new_item_id

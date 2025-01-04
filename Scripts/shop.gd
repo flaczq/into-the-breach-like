@@ -87,12 +87,10 @@ func _on_texture_button_pressed(shop_item_id: int) -> void:
 	
 	if clicked_item_id != Util.ItemType.NONE and clicked_item_id == items_ids[shop_item_id - 1]:
 		texture_button.modulate.a = 0.5
-		
 		clicked_item_id = Util.ItemType.NONE
 	else:
 		texture_button.set_pressed_no_signal(true)
 		texture_button.modulate.a = 1.0
-		
 		clicked_item_id = items_ids[shop_item_id - 1]
 	
 	item_clicked.emit(shop_item_id, clicked_item_id)

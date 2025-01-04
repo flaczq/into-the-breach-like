@@ -44,6 +44,6 @@ func get_data() -> Dictionary:
 		'passive_type': PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[StateType],
-		'items_ids': [] as Array[ItemType],
+		'items_ids': [ItemType.NONE, ItemType.NONE] as Array[ItemType],
 		'texture': player_2_texture
 	}

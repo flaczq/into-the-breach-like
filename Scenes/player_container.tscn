@@ -73,18 +73,18 @@ text_overrun_behavior = 3
 layout_mode = 2
 alignment = 1
 
-[node name="Item1TextureRect" type="TextureRect" parent="ItemsHBoxContainer"]
+[node name="PlayerItem1TextureButton" type="TextureButton" parent="ItemsHBoxContainer"]
 modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-texture = ExtResource("6_ixwqn")
-expand_mode = 1
+texture_normal = ExtResource("6_ixwqn")
+ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Item2TextureRect" type="TextureRect" parent="ItemsHBoxContainer"]
+[node name="PlayerItem2TextureButton" type="TextureButton" parent="ItemsHBoxContainer"]
 modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-texture = ExtResource("6_ixwqn")
-expand_mode = 1
+texture_normal = ExtResource("6_ixwqn")
+ignore_texture_size = true
 stretch_mode = 5

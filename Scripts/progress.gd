@@ -17,8 +17,9 @@ extends Util
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton
 
-var selected_item_id: ItemType
-var selected_level_type: LevelType
+var selected_item_id_from_shop: ItemType = ItemType.NONE
+var selected_item_id_from_inventory: ItemType = ItemType.NONE
+var selected_level_type: LevelType = LevelType.NONE
 
 
 func _ready() -> void:
@@ -52,18 +53,20 @@ func init_ui() -> void:
 	
 	assert(Global.selected_players_ids.size() > 0 and Global.selected_players_ids.size() <= 3, 'Wrong selected players ids size')
 	for selected_player_id in Global.selected_players_ids:
-		var selected_player = Global.all_players.filter(func(player): return player.id == selected_player_id).front() as PlayerObject
+		var selected_player = get_player(selected_player_id) as PlayerObject
 		assert(selected_player.id >= 0, 'Wrong selected player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(selected_player.id, selected_player.texture, Callable(), Callable(), _on_player_texture_button_toggled)
+		player_container.init(selected_player.id, selected_player.texture)
+		player_container.init_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
 		
 		var items = [] as Array[ItemObject]
 		for item_id in selected_player.items_ids:
-			var item = Global.all_items.filter(func(item): return item.id == item_id).front()
-			items.push_back(item)
+			var item = get_item(item_id)
+			if item:
+				items.push_back(item)
 		
-		player_container.init_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
 		player_container.init_items(items)
+		player_container.connect('item_clicked', _on_player_item_clicked)
 		players_grid_container.add_child(player_container)
 	
 	# inventory
@@ -93,13 +96,13 @@ func _on_shop_item_hovered(shop_item_id: int, item_id: ItemType, is_hovered: boo
 
 
 func _on_shop_item_clicked(shop_item_id: int, item_id: ItemType) -> void:
-	selected_item_id = item_id
+	selected_item_id_from_shop = item_id
 	
-	if selected_item_id == ItemType.NONE:
+	if selected_item_id_from_shop == ItemType.NONE:
 		shop_buy_button.set_disabled(true)
 	else:
-		var selected_item = Global.all_items.filter(func(item): return item.id == selected_item_id).front() as ItemObject
-		shop_buy_button.set_disabled(selected_item.cost > Global.money)
+		var selected_item_from_shop = get_item(selected_item_id_from_shop)
+		shop_buy_button.set_disabled(selected_item_from_shop.cost > Global.money)
 
 
 func _on_inventory_item_hovered(inventory_item_id: int, item_id: ItemType, is_hovered: bool) -> void:
@@ -108,36 +111,27 @@ func _on_inventory_item_hovered(inventory_item_id: int, item_id: ItemType, is_ho
 
 
 func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> void:
-	# TODO
-	print('_on_inventory_item_clicked ' + str(inventory_item_id) + ' ' + str(item_id))
+	selected_item_id_from_inventory = item_id
+	
+	for player_container in players_grid_container.get_children():
+		player_container.toggle_empty_items(selected_item_id_from_inventory != ItemType.NONE)
 
 
 func _on_shop_buy_button_pressed() -> void:
 	shop_buy_button.set_disabled(true)
 	
-	if selected_item_id == ItemType.NONE:
+	if selected_item_id_from_shop == ItemType.NONE:
 		return
 	
-	var selected_item = Global.all_items.filter(func(item): return item.id == selected_item_id).front()
-	if selected_item.cost > Global.money:
+	var selected_item_from_shop = get_item(selected_item_id_from_shop)
+	if selected_item_from_shop.cost > Global.money:
 		return
 	
-	inventory.add_item(selected_item)
-	shop.item_bought(selected_item_id)
+	inventory.add_item(selected_item_from_shop)
+	shop.item_bought(selected_item_id_from_shop)
 	
-	Global.money -= selected_item.cost
+	Global.money -= selected_item_from_shop.cost
 	update_labels()
-	
-	#for child in shop_grid_container.get_children():
-		#var item_texture_button = child.find_child('ItemTextureButton')
-		#if child.id == selected_item_id:
-			#item_texture_button.set_pressed_no_signal(false)
-			#on_button_disabled(item_texture_button, true)
-			#item_texture_button.flip_v = true
-		#else:
-			#var item = Global.all_items.filter(func(item): return item.id == child.id).front()
-			#item_texture_button.set_disabled(Global.money < item.cost)
-			#item_texture_button.modulate.a = 0.5
 
 
 func _on_shop_skip_button_pressed() -> void:
@@ -145,16 +139,29 @@ func _on_shop_skip_button_pressed() -> void:
 	levels_container.show()
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
-	pass
-	#for child in players_grid_container.get_children():
-		#var player_texture_button = child.find_child('PlayerTextureButton')
-		#if child.id == id:
-			#player_texture_button.set_pressed_no_signal(toggled_on)
-			#player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
-		#else:
-			#player_texture_button.set_pressed_no_signal(false)
-			#player_texture_button.modulate.a = 0.5
+func _on_player_item_clicked(player_item_id: int, item_id: ItemType) -> void:
+	if selected_item_id_from_inventory == ItemType.NONE:
+		return
+	
+	if item_id != ItemType.NONE:
+		# TODO move inside to inventory
+		pass
+	else:
+		# move item outside of inventory
+		inventory.move_item(selected_item_id_from_inventory)
+		
+		var selected_player = get_player(id) as PlayerObject
+		var selected_item_from_inventory = get_item(selected_item_id_from_inventory) as ItemObject
+		selected_player.add_item(selected_item_from_inventory)
+		
+		var items = [] as Array[ItemObject]
+		for selected_player_item_id in selected_player.items_ids:
+			var item = get_item(selected_player_item_id)
+			if item:
+				items.push_back(item)
+		
+		var player_container = players_grid_container.get_children().filter(func(child): return child.id == selected_player.id).front()
+		player_container.init_items(items)
 
 
 func _on_level_type_button_pressed(level_type: LevelType) -> void:

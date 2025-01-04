@@ -18,7 +18,7 @@ enum PhaseType {MOVE, ACTION, WAIT}
 enum TileType {PLAIN, GRASS, TREE, MOUNTAIN, VOLCANO, WATER, LAVA, FLOOR, HOLE}
 enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE_HEALTHY, DESTRUCTIBLE_DAMAGED, INDESTRUCTIBLE, INDESTRUCTIBLE_WALKABLE}
 enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LEFT, UNKNOWN = -1}
-enum LevelType {TUTORIAL, KILL_ENEMIES, SURVIVE_TURNS, SAVE_CIVILIANS, SAVE_TILES}
+enum LevelType {TUTORIAL, KILL_ENEMIES, SURVIVE_TURNS, SAVE_CIVILIANS, SAVE_TILES, NONE = -1}
 enum LevelEvent {ENEMIES_FROM_BELOW, ENEMIES_FROM_ABOVE, MINE, FALLING_MISSLE, FALLING_ROCK, FALLING_LAVA, FLOOD, MOVING_PLATFORMS, NONE = -1}
 
 const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
@@ -104,3 +104,11 @@ func get_character_color(character: Character) -> Color:
 	if character.is_in_group('ENEMIES'): return character.arrow_color
 	if character.is_in_group('CIVILIANS'): return CIVILIAN_ARROW_COLOR
 	return Color.BLACK
+
+
+static func get_player(player_id: PlayerType) -> PlayerObject:
+	return Global.all_players.filter(func(player): return player.id == player_id).front()
+
+
+static func get_item(item_id: ItemType) -> ItemObject:
+	return Global.all_items.filter(func(item): return item.id == item_id).front()

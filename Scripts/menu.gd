@@ -136,7 +136,7 @@ func init_ui() -> void:
 	for player in Global.all_players as Array[PlayerObject]:
 		assert(player.id >= 0, 'Wrong player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(player.id, player.texture, Callable(), Callable(), _on_player_texture_button_toggled)
+		player_container.init(player.id, player.texture, _on_player_texture_button_toggled)
 		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
 		var player_texture_button = player_container.find_child('PlayerTextureButton')
 		player_texture_button.modulate.a = 0.5

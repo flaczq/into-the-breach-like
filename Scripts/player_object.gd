@@ -40,8 +40,8 @@ func init_from_player_data(player_data: Dictionary) -> void:
 
 
 func add_item(new_item_id: Util.ItemType) -> void:
-	assert(items_ids[0] != Util.ItemType.NONE or items_ids[1] != Util.ItemType.NONE, 'No space to add item to player')
-	if items_ids[0] != Util.ItemType.NONE:
+	assert(items_ids[0] == Util.ItemType.NONE or items_ids[1] == Util.ItemType.NONE, 'No space to add item to player')
+	if items_ids[0] == Util.ItemType.NONE:
 		items_ids[0] = new_item_id
-	elif items_ids[1] != Util.ItemType.NONE:
+	elif items_ids[1] == Util.ItemType.NONE:
 		items_ids[1] = new_item_id

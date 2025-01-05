@@ -2,7 +2,7 @@ extends Node
 
 class_name PlayerContainer
 
-signal item_clicked(player_item_id: int, item_id: Util.ItemType)
+signal item_clicked(player_item_id: int, item_id: Util.ItemType, player_id: int)
 
 var empty_item_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png')
 
@@ -94,4 +94,4 @@ func toggle_empty_items(is_toggled: bool) -> void:
 
 func _on_item_texture_button_pressed(player_item_id: int) -> void:
 	var item_id = items_ids[player_item_id - 1]
-	item_clicked.emit(player_item_id, item_id)
+	item_clicked.emit(player_item_id, item_id, id)

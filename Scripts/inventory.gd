@@ -56,36 +56,44 @@ func _ready() -> void:
 		add_item(selected_item)
 
 
-func add_item(item_object: ItemObject) -> void:
+func add_item(item_object: ItemObject, target_inventory_item_id: int = -1) -> void:
 	var item_id: Util.ItemType = item_object.id
-	var new_inventory_item_id = items_ids.find(Util.ItemType.NONE) + 1
-	assert(new_inventory_item_id >= 1 and new_inventory_item_id <= 8, 'Wrong inventory item id')
-	var inventory_items = find_child('InventoryItemsGridContainer') as GridContainer
-	var texture_button = inventory_items.find_child('InventoryItem' + str(new_inventory_item_id) + 'TextureButton') as TextureButton
+	var inventory_item_id = (target_inventory_item_id) if (target_inventory_item_id >= 1) else (items_ids.find(Util.ItemType.NONE) + 1)
+	var texture_button = inventory_items_texture_buttons[inventory_item_id - 1]
 	texture_button.texture_normal = item_object.texture
 	texture_button.modulate.a = 1.0
 	
-	items_ids[new_inventory_item_id - 1] = item_id
+	items_ids[inventory_item_id - 1] = item_id
 
 
 func remove_item(item_object: ItemObject) -> void:
 	var item_id: Util.ItemType = item_object.id
 	var inventory_item_id = items_ids.find(item_id) + 1
-	var inventory_items = find_child('InventoryItemsGridContainer') as GridContainer
-	var texture_button = inventory_items.find_child('InventoryItem' + str(inventory_item_id) + 'TextureButton') as TextureButton
+	var texture_button = inventory_items_texture_buttons[inventory_item_id - 1]
 	texture_button.texture_normal = empty_item_texture
 	texture_button.modulate.a = 0.5
 	
 	items_ids[inventory_item_id - 1] = Util.ItemType.NONE
 
 
-func move_item(item_id: Util.ItemType, new_inventory_item_id: int = -1) -> void:
-	var inventory_item_id = items_ids.find(item_id) + 1
-	items_ids[inventory_item_id - 1] = Util.ItemType.NONE
+func move_item(item_id: Util.ItemType, target_inventory_item_id: int) -> void:
+	var item = Util.get_item(item_id)
+	if item_id != Util.ItemType.NONE:
+		remove_item(item)
 	
-	if new_inventory_item_id >= 0:
-		assert(items_ids[new_inventory_item_id] == Util.ItemType.NONE, 'New inventory item not empty')
-		items_ids[new_inventory_item_id] = item_id
+	if target_inventory_item_id >= 1:
+		assert(items_ids[target_inventory_item_id - 1] == Util.ItemType.NONE, 'Target inventory item not empty')
+		add_item(item, target_inventory_item_id)
+
+
+func reset_items_click() -> void:
+	var index = 0
+	for inventory_item_texture_button in inventory_items_texture_buttons:
+		inventory_item_texture_button.set_pressed_no_signal(false)
+		inventory_item_texture_button.modulate.a = (0.5) if (items_ids[index] == Util.ItemType.NONE) else (1.0)
+		index += 1
+	
+	clicked_item_id = Util.ItemType.NONE
 
 
 func _on_texture_button_mouse_entered(inventory_item_id: int) -> void:
@@ -99,29 +107,33 @@ func _on_texture_button_mouse_exited(inventory_item_id: int) -> void:
 
 
 func _on_texture_button_pressed(inventory_item_id: int) -> void:
-	# clicked empty inventory item
-	if clicked_item_id == Util.ItemType.NONE and items_ids[inventory_item_id - 1] == Util.ItemType.NONE:
+	var new_clicked_item_id = items_ids[inventory_item_id - 1]
+	# clicked empty inventory item when nothing was clicked before
+	if clicked_item_id == Util.ItemType.NONE and new_clicked_item_id == Util.ItemType.NONE:
 		return
 	
-	# show empty inventory items to move selected item
 	var index = 0
 	for inventory_item_texture_button in inventory_items_texture_buttons:
 		inventory_item_texture_button.set_pressed_no_signal(false)
-		inventory_item_texture_button.modulate.a = (1.0) if (clicked_item_id == Util.ItemType.NONE and items_ids[index] == Util.ItemType.NONE) else (0.5)
-		inventory_item_texture_button.custom_minimum_size = Vector2(60.0, 60.0)
+		if items_ids[index] == Util.ItemType.NONE:
+			# highlight empty inventory items to move clicked item to
+			inventory_item_texture_button.modulate.a = (1.0) if (new_clicked_item_id != Util.ItemType.NONE and clicked_item_id != new_clicked_item_id) else (0.5)
+		else:
+			inventory_item_texture_button.modulate.a = 1.0
 		index += 1
 	
-	var inventory_items = find_child('InventoryItemsGridContainer') as GridContainer
-	var texture_button = inventory_items.find_child('InventoryItem' + str(inventory_item_id) + 'TextureButton') as TextureButton
-	
-	if clicked_item_id != Util.ItemType.NONE and clicked_item_id == items_ids[inventory_item_id - 1]:
-		texture_button.modulate.a = 0.5
+	var texture_button = inventory_items_texture_buttons[inventory_item_id - 1]
+	if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item_id:
+		# declick item
+		texture_button.modulate.a = 1.0
 		clicked_item_id = Util.ItemType.NONE
 	else:
-		#move_item(clicked_item_id, inventory_item_id - 1)
-		texture_button.set_pressed_no_signal(true)
-		texture_button.modulate.a = 1.0
-		texture_button.custom_minimum_size = Vector2(65.0, 65.0)
-		clicked_item_id = items_ids[inventory_item_id - 1]
+		if new_clicked_item_id == Util.ItemType.NONE:
+			move_item(clicked_item_id, inventory_item_id)
+			clicked_item_id = Util.ItemType.NONE
+		else:
+			texture_button.set_pressed_no_signal(true)
+			texture_button.modulate.a = 1.0
+			clicked_item_id = new_clicked_item_id
 	
 	item_clicked.emit(inventory_item_id, clicked_item_id)

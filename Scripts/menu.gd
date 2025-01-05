@@ -58,7 +58,6 @@ func _ready() -> void:
 	
 	init_all_players()
 	init_all_items()
-	
 	init_ui()
 
 

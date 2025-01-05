@@ -101,7 +101,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -167,5 +166,9 @@ text = "MAIN_MENU"
 
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyButton" to="." method="_on_shop_buy_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton" to="." method="_on_shop_skip_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [2]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [4]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton" to="." method="_on_levels_next_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]

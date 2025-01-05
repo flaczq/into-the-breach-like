@@ -60,37 +60,52 @@ func item_bought(item_id: Util.ItemType) -> void:
 	var texture_button = shop_item.find_child('ShopItem' + str(shop_item_id) + 'TextureButton') as TextureButton
 	texture_button.set_disabled(true)
 	texture_button.set_pressed_no_signal(false)
-	texture_button.modulate.a = 0.5
-	texture_button.flip_v = true
+	texture_button.modulate.a = 0.2
+	#texture_button.flip_v = true
+	
+	var cost_label = shop_item.find_child('ShopItem' + str(shop_item_id) + 'CostLabel') as Label
+	cost_label.modulate.a = 0.2
+	
+	var name_label = shop_item.find_child('ShopItem' + str(shop_item_id) + 'NameLabel') as Label
+	name_label.modulate.a = 0.2
 	
 	clicked_item_id = Util.ItemType.NONE
 
 
 func _on_texture_button_mouse_entered(shop_item_id: int) -> void:
 	var hovered_item_id = items_ids[shop_item_id - 1]
-	item_hovered.emit(shop_item_id, hovered_item_id, true)
+	var hovered_item = Util.get_item(hovered_item_id)
+	if Global.money >= hovered_item.cost:
+		item_hovered.emit(shop_item_id, hovered_item_id, true)
 
 
 func _on_texture_button_mouse_exited(shop_item_id: int) -> void:
 	var hovered_item_id = items_ids[shop_item_id - 1]
-	item_hovered.emit(shop_item_id, hovered_item_id, false)
+	var hovered_item = Util.get_item(hovered_item_id)
+	if Global.money >= hovered_item.cost:
+		item_hovered.emit(shop_item_id, hovered_item_id, false)
 
 
 func _on_texture_button_pressed(shop_item_id: int) -> void:
 	for shop_item_texture_button in shop_items_texture_buttons:
 		shop_item_texture_button.set_pressed_no_signal(false)
-		shop_item_texture_button.modulate.a = 0.5
+		shop_item_texture_button.modulate.a = (0.2) if (shop_item_texture_button.is_disabled()) else (0.5)
 	
-	var shop_items = find_child('ShopItemsHBoxContainer') as HBoxContainer
-	var shop_item = shop_items.find_child('ShopItem' + str(shop_item_id) + 'VBoxContainer') as VBoxContainer
-	var texture_button = shop_item.find_child('ShopItem' + str(shop_item_id) + 'TextureButton') as TextureButton
-	
-	if clicked_item_id != Util.ItemType.NONE and clicked_item_id == items_ids[shop_item_id - 1]:
-		texture_button.modulate.a = 0.5
-		clicked_item_id = Util.ItemType.NONE
+	var new_clicked_item_id = items_ids[shop_item_id - 1]
+	var new_clicked_item = Util.get_item(new_clicked_item_id)
+	if Global.money >= new_clicked_item.cost:
+		var shop_items = find_child('ShopItemsHBoxContainer') as HBoxContainer
+		var shop_item = shop_items.find_child('ShopItem' + str(shop_item_id) + 'VBoxContainer') as VBoxContainer
+		var texture_button = shop_item.find_child('ShopItem' + str(shop_item_id) + 'TextureButton') as TextureButton
+		
+		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item_id:
+			texture_button.modulate.a = 0.5
+			clicked_item_id = Util.ItemType.NONE
+		else:
+			texture_button.set_pressed_no_signal(true)
+			texture_button.modulate.a = 1.0
+			clicked_item_id = new_clicked_item_id
 	else:
-		texture_button.set_pressed_no_signal(true)
-		texture_button.modulate.a = 1.0
-		clicked_item_id = items_ids[shop_item_id - 1]
+		clicked_item_id = Util.ItemType.NONE
 	
 	item_clicked.emit(shop_item_id, clicked_item_id)

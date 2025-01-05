@@ -103,18 +103,11 @@ func _on_shop_item_clicked(shop_item_id: int, item_id: ItemType) -> void:
 	else:
 		var selected_item_from_shop = get_item(selected_item_id_from_shop)
 		shop_buy_button.set_disabled(selected_item_from_shop.cost > Global.money)
-
-
-func _on_inventory_item_hovered(inventory_item_id: int, item_id: ItemType, is_hovered: bool) -> void:
-	#print('_on_inventory_item_hovered' + str(inventory_item_id) + str(is_hovered))
-	pass
-
-
-func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> void:
-	selected_item_id_from_inventory = item_id
 	
-	for player_container in players_grid_container.get_children():
-		player_container.toggle_empty_items(selected_item_id_from_inventory != ItemType.NONE)
+	for player_container in players_grid_container.get_children() as Array[PlayerContainer]:
+		player_container.toggle_empty_items(false)
+	
+	inventory.reset_items_click()
 
 
 func _on_shop_buy_button_pressed() -> void:
@@ -132,6 +125,8 @@ func _on_shop_buy_button_pressed() -> void:
 	
 	Global.money -= selected_item_from_shop.cost
 	update_labels()
+	
+	selected_item_id_from_shop = ItemType.NONE
 
 
 func _on_shop_skip_button_pressed() -> void:
@@ -139,20 +134,20 @@ func _on_shop_skip_button_pressed() -> void:
 	levels_container.show()
 
 
-func _on_player_item_clicked(player_item_id: int, item_id: ItemType) -> void:
+func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: int) -> void:
 	if selected_item_id_from_inventory == ItemType.NONE:
 		return
 	
 	if item_id != ItemType.NONE:
-		# TODO move inside to inventory
+		# switching items not available
 		pass
 	else:
 		# move item outside of inventory
-		inventory.move_item(selected_item_id_from_inventory)
-		
-		var selected_player = get_player(id) as PlayerObject
 		var selected_item_from_inventory = get_item(selected_item_id_from_inventory) as ItemObject
-		selected_player.add_item(selected_item_from_inventory)
+		inventory.remove_item(selected_item_from_inventory)
+		
+		var selected_player = get_player(player_id) as PlayerObject
+		selected_player.add_item(selected_item_id_from_inventory)
 		
 		var items = [] as Array[ItemObject]
 		for selected_player_item_id in selected_player.items_ids:
@@ -162,6 +157,25 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType) -> void:
 		
 		var player_container = players_grid_container.get_children().filter(func(child): return child.id == selected_player.id).front()
 		player_container.init_items(items)
+	
+	selected_item_id_from_inventory = ItemType.NONE
+	
+	for player_container in players_grid_container.get_children() as Array[PlayerContainer]:
+		player_container.toggle_empty_items(false)
+	
+	inventory.reset_items_click()
+
+
+func _on_inventory_item_hovered(inventory_item_id: int, item_id: ItemType, is_hovered: bool) -> void:
+	#print('_on_inventory_item_hovered' + str(inventory_item_id) + str(is_hovered))
+	pass
+
+
+func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> void:
+	selected_item_id_from_inventory = item_id
+	
+	for player_container in players_grid_container.get_children() as Array[PlayerContainer]:
+		player_container.toggle_empty_items(selected_item_id_from_inventory != ItemType.NONE)
 
 
 func _on_level_type_button_pressed(level_type: LevelType) -> void:

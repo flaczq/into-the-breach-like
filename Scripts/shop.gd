@@ -14,6 +14,7 @@ var shop_items_texture_buttons: Array[TextureButton]
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE, Util.ItemType.NONE]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 
+
 func _ready() -> void:
 	shop_items_texture_buttons = [
 		shop_item_1_texture_button,
@@ -68,8 +69,14 @@ func item_bought(item_id: Util.ItemType) -> void:
 	
 	var name_label = shop_item.find_child('ShopItem' + str(shop_item_id) + 'NameLabel') as Label
 	name_label.modulate.a = 0.2
-	
-	clicked_item_id = Util.ItemType.NONE
+
+
+func reset_items(declick_item_id: bool = true) -> void:
+	for shop_item_texture_button in shop_items_texture_buttons:
+		shop_item_texture_button.set_pressed_no_signal(false)
+		shop_item_texture_button.modulate.a = (0.2) if (shop_item_texture_button.is_disabled()) else (0.5)
+	if declick_item_id:
+		clicked_item_id = Util.ItemType.NONE
 
 
 func _on_texture_button_mouse_entered(shop_item_id: int) -> void:
@@ -87,9 +94,7 @@ func _on_texture_button_mouse_exited(shop_item_id: int) -> void:
 
 
 func _on_texture_button_pressed(shop_item_id: int) -> void:
-	for shop_item_texture_button in shop_items_texture_buttons:
-		shop_item_texture_button.set_pressed_no_signal(false)
-		shop_item_texture_button.modulate.a = (0.2) if (shop_item_texture_button.is_disabled()) else (0.5)
+	reset_items(false)
 	
 	var new_clicked_item_id = items_ids[shop_item_id - 1]
 	var new_clicked_item = Util.get_item(new_clicked_item_id)

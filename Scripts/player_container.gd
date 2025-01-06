@@ -6,8 +6,11 @@ signal item_clicked(player_item_id: int, item_id: Util.ItemType, player_id: int)
 
 var empty_item_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png')
 
+var player_items_texture_buttons: Array[TextureButton]
 var id: int
+
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE]
+var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 
 
 func init(new_id: int, new_texture: CompressedTexture2D, on_toggled: Callable = Callable(), on_mouse_entered: Callable = Callable(), on_mouse_exited: Callable = Callable()) -> void:
@@ -36,6 +39,11 @@ func init(new_id: int, new_texture: CompressedTexture2D, on_toggled: Callable = 
 	player_item_1_texture_button.connect('pressed', _on_item_texture_button_pressed.bind(1))
 	var player_item_2_texture_button = items_container.find_child('PlayerItem2TextureButton') as TextureButton
 	player_item_2_texture_button.connect('pressed', _on_item_texture_button_pressed.bind(2))
+	
+	player_items_texture_buttons = [
+		player_item_1_texture_button,
+		player_item_2_texture_button
+	]
 
 
 func init_stats(max_health: int, move_distance: int, damage: int, action_type: Util.ActionType) -> void:
@@ -63,35 +71,85 @@ func init_stats(max_health: int, move_distance: int, damage: int, action_type: U
 func init_items(item_objects: Array[ItemObject]) -> void:
 	assert(item_objects.size() <= 2, 'Wrong item objects size')
 	var items_container = find_child('ItemsHBoxContainer')
-	var inventory_item_1_texture_button = items_container.find_child('PlayerItem1TextureButton') as TextureButton
-	if item_objects.size() > 0:
-		inventory_item_1_texture_button.texture_normal = item_objects[0].texture
-		inventory_item_1_texture_button.modulate.a = 1.0
+	items_container.show()
+	
+	if item_objects[0]:
+		player_items_texture_buttons[0].texture_normal = item_objects[0].texture
+		player_items_texture_buttons[0].modulate.a = 1.0
 		items_ids[0] = item_objects[0].id
 	else:
-		inventory_item_1_texture_button.texture_normal = empty_item_texture
-		inventory_item_1_texture_button.modulate.a = 0.5
+		player_items_texture_buttons[0].texture_normal = empty_item_texture
+		player_items_texture_buttons[0].modulate.a = 0.5
 	
-	var inventory_item_2_texture_button = items_container.find_child('PlayerItem2TextureButton') as TextureButton
-	if item_objects.size() > 1:
-		inventory_item_2_texture_button.texture_normal = item_objects[1].texture
-		inventory_item_2_texture_button.modulate.a = 1.0
+	if item_objects[1]:
+		player_items_texture_buttons[1].texture_normal = item_objects[1].texture
+		player_items_texture_buttons[1].modulate.a = 1.0
 		items_ids[1] = item_objects[1].id
 	else:
-		inventory_item_2_texture_button.texture_normal = empty_item_texture
-		inventory_item_2_texture_button.modulate.a = 0.5
+		player_items_texture_buttons[1].texture_normal = empty_item_texture
+		player_items_texture_buttons[1].modulate.a = 0.5
+
+
+func remove_item(item_object: ItemObject) -> void:
+	var item_id: Util.ItemType = item_object.id
+	var player_item_id = items_ids.find(item_id) + 1
+	var texture_button = player_items_texture_buttons[player_item_id - 1]
+	texture_button.texture_normal = empty_item_texture
+	texture_button.modulate.a = 0.5
+	items_ids[player_item_id - 1] = Util.ItemType.NONE
+
+
+func move_item(item_id: Util.ItemType, target_player_item_id: int) -> void:
+	var item = Util.get_selected_item(item_id)
+	if item_id != Util.ItemType.NONE:
+		remove_item(item)
 	
-	items_container.show()
+	if target_player_item_id >= 1:
+		assert(items_ids[target_player_item_id - 1] == Util.ItemType.NONE, 'Target player item not empty')
+		items_ids[target_player_item_id - 1] = item_id
+	
+	var items = [] as Array[ItemObject]
+	for current_item_id in items_ids:
+		var current_item = Util.get_selected_item(current_item_id)
+		items.push_back(current_item)
+	init_items(items)
 
 
-func toggle_empty_items(is_toggled: bool) -> void:
-	var items_container = find_child('ItemsHBoxContainer')
-	var inventory_item_1_texture_button = items_container.find_child('PlayerItem1TextureButton') as TextureButton
-	inventory_item_1_texture_button.modulate.a = (1.0) if (is_toggled) else (0.5)
-	var inventory_item_2_texture_button = items_container.find_child('PlayerItem2TextureButton') as TextureButton
-	inventory_item_2_texture_button.modulate.a = (1.0) if (is_toggled) else (0.5)
+func reset_items(is_highlighted: bool = false) -> void:
+	player_items_texture_buttons[0].modulate.a = (1.0) if (is_highlighted or items_ids[0] != Util.ItemType.NONE) else (0.5)
+	player_items_texture_buttons[1].modulate.a = (1.0) if (is_highlighted or items_ids[1] != Util.ItemType.NONE) else (0.5)
+
+
+func reset_clicked_item_id():
+	clicked_item_id = Util.ItemType.NONE
 
 
 func _on_item_texture_button_pressed(player_item_id: int) -> void:
-	var item_id = items_ids[player_item_id - 1]
-	item_clicked.emit(player_item_id, item_id, id)
+	var new_clicked_item_id = items_ids[player_item_id - 1]
+	# clicked empty inventory item when nothing was clicked before
+	if clicked_item_id != Util.ItemType.NONE or new_clicked_item_id != Util.ItemType.NONE:
+		var index = 0
+		for player_item_texture_button in player_items_texture_buttons:
+			player_item_texture_button.set_pressed_no_signal(false)
+			if items_ids[index] == Util.ItemType.NONE:
+				# highlight empty inventory items to move clicked item to
+				player_item_texture_button.modulate.a = (1.0) if (new_clicked_item_id != Util.ItemType.NONE and clicked_item_id != new_clicked_item_id) else (0.5)
+			else:
+				player_item_texture_button.modulate.a = 1.0
+			index += 1
+		
+		var texture_button = player_items_texture_buttons[player_item_id - 1]
+		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item_id:
+			# declick item
+			texture_button.modulate.a = 1.0
+			clicked_item_id = Util.ItemType.NONE
+		else:
+			if new_clicked_item_id == Util.ItemType.NONE:
+				move_item(clicked_item_id, player_item_id)
+				clicked_item_id = Util.ItemType.NONE
+			else:
+				texture_button.set_pressed_no_signal(true)
+				texture_button.modulate.a = 1.0
+				clicked_item_id = new_clicked_item_id
+	
+	item_clicked.emit(player_item_id, clicked_item_id, id)

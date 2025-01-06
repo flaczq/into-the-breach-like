@@ -98,8 +98,8 @@ func show_cutscenes() -> void:
 
 
 func show_players_selection() -> void:
-	Global.selected_items_ids = []
-	Global.selected_players_ids = []
+	Global.selected_items = []
+	Global.selected_players = []
 	Global.played_maps_ids = []
 	
 	for player_container in players_grid_container.get_children():
@@ -243,10 +243,11 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
 	var player_texture_button = player_container.find_child('PlayerTextureButton')
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
+	var selected_player = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:
-		Global.selected_players_ids.push_back(id)
+		Global.selected_players.push_back(selected_player)
 	else:
-		Global.selected_players_ids.erase(id)
+		Global.selected_players.erase(selected_player)
 	
-	next_button.set_disabled(Global.selected_players_ids.size() != 3)
-	assert(Global.selected_players_ids.size() <= 3, 'Too many selected players ids')
+	next_button.set_disabled(Global.selected_players.size() != 3)
+	assert(Global.selected_players.size() <= 3, 'Too many selected players')

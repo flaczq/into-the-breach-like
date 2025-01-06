@@ -50,9 +50,8 @@ func _ready() -> void:
 		inventory_item_texture_button.connect('pressed', _on_texture_button_pressed.bind(id))
 		id += 1
 	
-	for selected_item_id in Global.selected_items_ids:
-		assert(selected_item_id >= 0, 'Wrong selected item id')
-		var selected_item = Util.get_item(selected_item_id)
+	for selected_item in Global.selected_items:
+		assert(selected_item.id >= 0, 'Wrong selected item id')
 		add_item(selected_item)
 
 
@@ -72,12 +71,11 @@ func remove_item(item_object: ItemObject) -> void:
 	var texture_button = inventory_items_texture_buttons[inventory_item_id - 1]
 	texture_button.texture_normal = empty_item_texture
 	texture_button.modulate.a = 0.5
-	
 	items_ids[inventory_item_id - 1] = Util.ItemType.NONE
 
 
 func move_item(item_id: Util.ItemType, target_inventory_item_id: int) -> void:
-	var item = Util.get_item(item_id)
+	var item = Util.get_selected_item(item_id)
 	if item_id != Util.ItemType.NONE:
 		remove_item(item)
 	
@@ -86,13 +84,12 @@ func move_item(item_id: Util.ItemType, target_inventory_item_id: int) -> void:
 		add_item(item, target_inventory_item_id)
 
 
-func reset_items_click() -> void:
+func reset_items(is_highlighted: bool = false) -> void:
 	var index = 0
 	for inventory_item_texture_button in inventory_items_texture_buttons:
 		inventory_item_texture_button.set_pressed_no_signal(false)
-		inventory_item_texture_button.modulate.a = (0.5) if (items_ids[index] == Util.ItemType.NONE) else (1.0)
+		inventory_item_texture_button.modulate.a = (1.0) if (is_highlighted or items_ids[index] != Util.ItemType.NONE) else (0.5)
 		index += 1
-	
 	clicked_item_id = Util.ItemType.NONE
 
 

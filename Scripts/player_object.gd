@@ -39,7 +39,46 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	texture = player_data.texture
 
 
+func init_from_player_object(player_object: PlayerObject) -> void:
+	id = player_object.id
+	model_name = player_object.model_name
+	max_health = player_object.max_health
+	damage = player_object.damage
+	move_distance = player_object.move_distance
+	action_min_distance = player_object.action_min_distance
+	action_max_distance = player_object.action_max_distance
+	action_direction = player_object.action_direction
+	action_type = player_object.action_type
+	action_damage = player_object.action_damage
+	passive_type = player_object.passive_type
+	can_fly = player_object.can_fly
+	# have to duplicate() to make them unique
+	state_types = player_object.state_types.duplicate()
+	items_ids = player_object.items_ids.duplicate()
+	texture = player_object.texture
+
+
+func init_items(new_items_ids: Array[Util.ItemType]) -> void:
+	assert(new_items_ids.size() == 2, 'Wrong new items ids size')
+	items_ids[0] = new_items_ids[0]
+	items_ids[1] = new_items_ids[1]
+
+
 func add_item(new_item_id: Util.ItemType, target_player_item_id: int = -1) -> void:
 	var player_item_id = (target_player_item_id) if (target_player_item_id >= 1) else (items_ids.find(Util.ItemType.NONE) + 1)
 	assert(items_ids[player_item_id - 1] == Util.ItemType.NONE, 'No space to add item to player')
 	items_ids[player_item_id - 1] = new_item_id
+
+
+func remove_item(item_id: Util.ItemType) -> void:
+	var item_index = items_ids.find(item_id)
+	assert(item_index >= 0, 'No item in player to remove')
+	items_ids[item_index] = Util.ItemType.NONE
+
+
+func move_item(item_id: Util.ItemType, target_player_item_id: int) -> void:
+	# switching items not available
+	assert(items_ids[target_player_item_id - 1] == Util.ItemType.NONE, 'No space to move item inside player')
+	var item_index = items_ids.find(item_id)
+	items_ids[item_index] = Util.ItemType.NONE
+	items_ids[target_player_item_id - 1] = item_id

@@ -692,13 +692,13 @@ func recalculate_enemies_planned_actions() -> void:
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
-func get_player_texture_button_by_id(id: int) -> TextureButton:
+func get_player_texture_button_by_id(id: PlayerType) -> TextureButton:
 	#var player_container = get_player_container_by_index(index)
 	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
 	return player_container.find_child('PlayerTextureButton')
 
 
-func get_player_label_by_id_and_names(id: int, container_name: String, name: String) -> Label:
+func get_player_label_by_id_and_names(id: PlayerType, container_name: String, name: String) -> Label:
 	#var player_container = get_player_container_by_index(index)
 	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
 	var child = player_container.find_child(container_name)
@@ -1248,7 +1248,7 @@ func _on_undo_texture_button_pressed() -> void:
 		recalculate_enemies_planned_actions()
 
 
-func _on_player_texture_button_mouse_entered(id: int) -> void:
+func _on_player_texture_button_mouse_entered(id: PlayerType) -> void:
 	if players.is_empty():
 		return
 	
@@ -1261,7 +1261,7 @@ func _on_player_texture_button_mouse_entered(id: int) -> void:
 	_on_player_hovered(target_player, true)
 
 
-func _on_player_texture_button_mouse_exited(id: int) -> void:
+func _on_player_texture_button_mouse_exited(id: PlayerType) -> void:
 	if players.is_empty():
 		return
 	
@@ -1273,7 +1273,7 @@ func _on_player_texture_button_mouse_exited(id: int) -> void:
 	_on_player_hovered(target_player, false)
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
+func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void:
 	if players.is_empty():
 		return
 	

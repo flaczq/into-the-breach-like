@@ -2,20 +2,20 @@ extends Node
 
 class_name PlayerContainer
 
-signal item_clicked(player_item_id: int, item_id: Util.ItemType, player_id: int)
+signal item_clicked(player_item_id: int, item_id: Util.ItemType, player_id: Util.PlayerType)
 
 var empty_item_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png')
 
 var player_items_texture_buttons: Array[TextureButton]
-var id: int
+var id: Util.PlayerType
 
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 
 
-func init(new_id: int, new_texture: CompressedTexture2D, on_toggled: Callable = Callable(), on_mouse_entered: Callable = Callable(), on_mouse_exited: Callable = Callable()) -> void:
+func init(new_id: Util.PlayerType, new_texture: CompressedTexture2D, on_toggled: Callable = Callable(), on_mouse_entered: Callable = Callable(), on_mouse_exited: Callable = Callable()) -> void:
 	id = new_id
-	assert(id >= 0, 'Wrong player object id')
+	assert(id != Util.PlayerType.NONE, 'Wrong player object id')
 	
 	name = name.replace('X', str(id))
 	
@@ -69,7 +69,7 @@ func init_stats(max_health: int, move_distance: int, damage: int, action_type: U
 
 
 func init_items(item_objects: Array[ItemObject]) -> void:
-	assert(item_objects.size() <= 2, 'Wrong item objects size')
+	assert(item_objects.size() == 2, 'Wrong item objects size')
 	var items_container = find_child('ItemsHBoxContainer')
 	items_container.show()
 	
@@ -80,6 +80,7 @@ func init_items(item_objects: Array[ItemObject]) -> void:
 	else:
 		player_items_texture_buttons[0].texture_normal = empty_item_texture
 		player_items_texture_buttons[0].modulate.a = 0.5
+		items_ids[0] = Util.ItemType.NONE
 	
 	if item_objects[1]:
 		player_items_texture_buttons[1].texture_normal = item_objects[1].texture
@@ -88,10 +89,10 @@ func init_items(item_objects: Array[ItemObject]) -> void:
 	else:
 		player_items_texture_buttons[1].texture_normal = empty_item_texture
 		player_items_texture_buttons[1].modulate.a = 0.5
+		items_ids[1] = Util.ItemType.NONE
 
 
-func remove_item(item_object: ItemObject) -> void:
-	var item_id: Util.ItemType = item_object.id
+func remove_item(item_id: Util.ItemType) -> void:
 	var player_item_id = items_ids.find(item_id) + 1
 	var texture_button = player_items_texture_buttons[player_item_id - 1]
 	texture_button.texture_normal = empty_item_texture
@@ -100,13 +101,12 @@ func remove_item(item_object: ItemObject) -> void:
 
 
 func move_item(item_id: Util.ItemType, target_player_item_id: int) -> void:
-	var item = Util.get_selected_item(item_id)
+	#var item = Util.get_selected_item(item_id)
 	if item_id != Util.ItemType.NONE:
-		remove_item(item)
+		remove_item(item_id)
 	
-	if target_player_item_id >= 1:
-		assert(items_ids[target_player_item_id - 1] == Util.ItemType.NONE, 'Target player item not empty')
-		items_ids[target_player_item_id - 1] = item_id
+	assert(items_ids[target_player_item_id - 1] == Util.ItemType.NONE, 'Target player item not empty')
+	items_ids[target_player_item_id - 1] = item_id
 	
 	var items = [] as Array[ItemObject]
 	for current_item_id in items_ids:
@@ -115,13 +115,11 @@ func move_item(item_id: Util.ItemType, target_player_item_id: int) -> void:
 	init_items(items)
 
 
-func reset_items(is_highlighted: bool = false) -> void:
+func reset_items(is_highlighted: bool = false, declick_item_id: bool = true) -> void:
 	player_items_texture_buttons[0].modulate.a = (1.0) if (is_highlighted or items_ids[0] != Util.ItemType.NONE) else (0.5)
 	player_items_texture_buttons[1].modulate.a = (1.0) if (is_highlighted or items_ids[1] != Util.ItemType.NONE) else (0.5)
-
-
-func reset_clicked_item_id():
-	clicked_item_id = Util.ItemType.NONE
+	if declick_item_id:
+		clicked_item_id = Util.ItemType.NONE
 
 
 func _on_item_texture_button_pressed(player_item_id: int) -> void:

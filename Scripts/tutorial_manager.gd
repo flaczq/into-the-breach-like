@@ -7,7 +7,7 @@ var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
 
 func init_player(player: Player, level: int) -> void:
 	if level == 1 or level == 2:
-		player.id = 0
+		player.id = PlayerType.PLAYER_TUTORIAL
 		player.model_name = 'Tutorial player 1'
 		player.max_health = 3
 		player.health = 3
@@ -31,7 +31,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 	if level == 1:
 		enemy.arrow_color = ENEMY_TUTORIAL_ARROW_COLOR
 		enemy.arrow_highlighted_color = ENEMY_TUTORIAL_ARROW_HIGHLIGHTED_COLOR
-		enemy.id = 0
+		enemy.id = EnemyType.ENEMY_TUTORIAL
 		enemy.model_name = 'Tutorial enemy 1'
 		enemy.max_health = 3
 		enemy.health = 3
@@ -47,7 +47,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 	elif level == 2:
 		enemy.arrow_color = ENEMY_TUTORIAL_ARROW_COLOR
 		enemy.arrow_highlighted_color = ENEMY_TUTORIAL_ARROW_HIGHLIGHTED_COLOR
-		enemy.id = 0
+		enemy.id = EnemyType.ENEMY_TUTORIAL
 		enemy.model_name = 'Tutorial enemy 1'
 		enemy.max_health = 3
 		enemy.health = 3
@@ -66,7 +66,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 
 func init_civilian(civilian: Civilian, level: int) -> void:
 	if level == 1 or level == 2:
-		civilian.id = 0
+		civilian.id = CivilianType.CIVILIAN_TUTORIAL
 		civilian.model_name = 'Tutorial civilian 1'
 		civilian.max_health = 2
 		civilian.health = 2

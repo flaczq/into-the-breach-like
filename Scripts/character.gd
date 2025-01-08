@@ -175,10 +175,10 @@ func spawn_arrow(target_tile: MapTile) -> void:
 	var position_difference = target_position - origin_position
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
 		var amount = roundi(1.3 * position_difference.length())
-		#if position_difference.length() > 1:
-		if position_difference.length() >= 1:
-			#for i in range(1, amount):
-			for i in range(1, amount + 1):
+		if position_difference.length() > 1:
+		#if position_difference.length() >= 1:
+			for i in range(1, amount):
+			#for i in range(1, amount + 1):
 				arrow_sphere_model.position = origin_position.lerp(target_position, i / float(amount + 1.0))
 				# distinguish player arrow spheres by showing them higher
 				if is_in_group('PLAYERS'):
@@ -196,7 +196,8 @@ func spawn_arrow(target_tile: MapTile) -> void:
 		var control_1 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		var amount = maxi(roundi(2 * position_difference.length()), 6)
-		for i in range(1, amount + 1):
+		for i in range(1, amount):
+		#for i in range(1, amount + 1):
 			arrow_sphere_model.position = origin_position.bezier_interpolate(control_1, control_2, target_position, i / float(amount + 0.5))
 			arrow_sphere_model.show()
 			add_child(arrow_sphere_model.duplicate())
@@ -205,9 +206,9 @@ func spawn_arrow(target_tile: MapTile) -> void:
 		arrow_model.rotation_degrees.z = -60
 		arrow_model.position = origin_position.bezier_interpolate(control_1, control_2, target_position, amount / float(amount + 0.5))
 	
-	#arrow_model.show()
-	#arrow_model.get_child(0).show()
-	#add_child(arrow_model)
+	arrow_model.show()
+	arrow_model.get_child(0).show()
+	add_child(arrow_model)
 
 
 func clear_arrows() -> void:

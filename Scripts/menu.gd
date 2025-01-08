@@ -119,6 +119,7 @@ func init_all_players() -> void:
 	# FIXME include in save
 	var all_players = init_manager_script.init_all_players()
 	Global.all_players.append_array(all_players)
+	assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.items_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
 
 
 func init_all_items() -> void:
@@ -133,7 +134,7 @@ func init_ui() -> void:
 	
 	assert(Global.all_players.size() >= 3, 'Wrong all players size')
 	for player in Global.all_players as Array[PlayerObject]:
-		assert(player.id >= 0, 'Wrong player id')
+		assert(player.id != PlayerType.NONE, 'Wrong player id')
 		var player_container = player_container_scene.instantiate() as PlayerContainer
 		player_container.init(player.id, player.texture, _on_player_texture_button_toggled)
 		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
@@ -238,16 +239,18 @@ func _on_next_button_pressed() -> void:
 	show_main()
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: int) -> void:
+func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void:
 	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
 	var player_texture_button = player_container.find_child('PlayerTextureButton')
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
-	var selected_player = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
+	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:
-		Global.selected_players.push_back(selected_player)
+		var new_selected_player = selected_player_object.duplicate()
+		new_selected_player.init_from_player_object(selected_player_object)
+		Global.selected_players.push_back(new_selected_player)
 	else:
-		Global.selected_players.erase(selected_player)
+		Global.selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id != selected_player_object.id)
 	
 	next_button.set_disabled(Global.selected_players.size() != 3)
 	assert(Global.selected_players.size() <= 3, 'Too many selected players')

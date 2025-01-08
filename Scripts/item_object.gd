@@ -15,3 +15,11 @@ func init_from_item_data(item_data: Dictionary) -> void:
 	cost = item_data.cost
 	available = item_data.available
 	texture = item_data.texture
+
+
+func init_from_item_object(item_object: ItemObject) -> void:
+	id = item_object.id
+	item_name = item_object.item_name
+	cost = item_object.cost
+	available = item_object.available
+	texture = item_object.texture

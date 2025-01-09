@@ -20,8 +20,9 @@ func init_player(player: Player, level: int) -> void:
 		player.action_damage = 0
 		player.passive_type = PassiveType.NONE
 		player.can_fly = false
-		player.items_ids = []
+		player.items_ids = [ItemType.NONE, ItemType.NONE] as Array[ItemType]
 		player.texture = player_1_texture
+		player.items_applied = [false, false] as Array[bool]
 	
 	player.include_upgrades()
 	player.init_health_bar()

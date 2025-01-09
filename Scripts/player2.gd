@@ -23,6 +23,7 @@ func _ready() -> void:
 	state_types = player_data.state_types
 	items_ids = player_data.items_ids
 	texture = player_data.texture
+	items_applied = player_data.items_applied
 	
 	include_upgrades()
 	init_health_bar()
@@ -45,5 +46,6 @@ func get_data() -> Dictionary:
 		'can_fly': false,
 		'state_types': [] as Array[StateType],
 		'items_ids': [ItemType.NONE, ItemType.NONE] as Array[ItemType],
-		'texture': player_2_texture
+		'texture': player_2_texture,
+		'items_applied': [false, false] as Array[bool]
 	}

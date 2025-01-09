@@ -134,10 +134,10 @@ func init_players() -> void:
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate() as Player
 		add_sibling(player_instance)
+		player_instance.init()
 		if Global.tutorial:
 			tutorial_manager_script.init_player(player_instance, level)
 		
-		#player_instance.init(current_level_player)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
 		if not spawn_tile:
 			print('no tiles to spawn for spawn player coords: ' + str(level_data.spawn_player_coords))

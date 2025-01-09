@@ -75,7 +75,6 @@ func update_labels() -> void:
 
 func show_back() -> void:
 	Global.engine_mode = EngineMode.MENU
-	
 	toggle_visibility(true)
 
 
@@ -102,7 +101,6 @@ func get_inventory_clicked_item_id() -> ItemType:
 
 func _on_menu_button_pressed() -> void:
 	toggle_visibility(false)
-	
 	menu.show_in_game_menu(self)
 
 
@@ -135,6 +133,8 @@ func _on_shop_buy_button_pressed() -> void:
 	if selected_item_from_shop.cost > Global.money:
 		return
 	
+	selected_item_from_shop.available = false
+	
 	var new_selected_item_from_shop = selected_item_from_shop.duplicate()
 	new_selected_item_from_shop.init_from_item_object(selected_item_from_shop)
 	Global.selected_items.push_back(new_selected_item_from_shop)
@@ -161,7 +161,6 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 	var inventory_clicked_item_id = get_inventory_clicked_item_id()
 	if player_clicked_item_id == ItemType.NONE and inventory_clicked_item_id != ItemType.NONE:
 		# inventory -> player
-		#var selected_item_from_inventory = get_selected_item(inventory_clicked_item_id) as ItemObject
 		inventory.remove_item(inventory_clicked_item_id)
 		
 		var selected_player = get_selected_player(player_id) as PlayerObject
@@ -175,7 +174,6 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 		player_container.init_items(items)
 	elif player_clicked_item_id != ItemType.NONE and item_id == ItemType.NONE:
 		# player X -> player Y
-		#var selected_item_from_player = get_selected_item(player_clicked_item_id) as ItemObject
 		var origin_player_container = players_grid_container.get_children().filter(func(child): return child.clicked_item_id == player_clicked_item_id).front() as PlayerContainer
 		origin_player_container.remove_item(player_clicked_item_id)
 		

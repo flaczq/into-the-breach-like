@@ -51,7 +51,6 @@ func spawn(spawn_tile: MapTile, new_order: int) -> void:
 	tile.set_enemy(self)
 	
 	position = Vector3(tile.position.x, 0.0, tile.position.z)
-	
 	order = new_order
 
 

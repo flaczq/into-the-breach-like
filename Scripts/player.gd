@@ -14,6 +14,7 @@ var current_phase: PhaseType = PhaseType.WAIT
 var is_clicked: bool = false
 var is_ghost: bool = false
 var items_ids: Array[ItemType] = []
+var items_applied: Array[bool] = []
 
 var id: PlayerType
 var texture: CompressedTexture2D
@@ -41,11 +42,17 @@ func _ready() -> void:
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
+func init():
+	# items
+	var player_object = get_selected_player(id)
+	items_ids = player_object.items_ids
+
+
 func include_upgrades():
-	# TODO
-	if not items_ids.is_empty():
-		for item_id in items_ids:
-			Global.all_items
+	for item_id in items_ids.filter(func(item_id): return item_id != ItemType.NONE):
+		var item = get_selected_item(item_id)
+		if not item.applied:
+			item.apply_to_player(self)
 
 
 func spawn(spawn_tile: MapTile) -> void:
@@ -53,7 +60,6 @@ func spawn(spawn_tile: MapTile) -> void:
 	tile.set_player(self)
 	
 	position = Vector3(tile.position.x, 0, tile.position.z)
-	
 	#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(moves_per_turn) + ' MOVE(S) / ' + str(actions_per_turn) + ' ACTION(S)')
 
 

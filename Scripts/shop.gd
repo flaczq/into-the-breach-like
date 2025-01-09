@@ -23,11 +23,12 @@ func _ready() -> void:
 	]
 
 	var random_items: Array[ItemObject] = []
-	var all_items_indices = range(Global.all_items.size())
-	# hardcoded 3 items in shop
+	var available_items: Array[ItemObject] = Global.all_items.filter(func(item): return item.available)
+	var all_items_indices = range(available_items.size())
+	# hardcoded random 3 items in shop
 	for i in range(3):
 		var random_item_index = all_items_indices.pick_random()
-		random_items.push_back(Global.all_items[random_item_index])
+		random_items.push_back(available_items[random_item_index])
 		all_items_indices.erase(random_item_index)
 	
 	assert(random_items.size() == 3, 'Wrong random items size in shop')
@@ -66,7 +67,6 @@ func item_bought(item_id: Util.ItemType) -> void:
 	
 	var cost_label = shop_item.find_child('ShopItem' + str(shop_item_id) + 'CostLabel') as Label
 	cost_label.modulate.a = 0.2
-	
 	var name_label = shop_item.find_child('ShopItem' + str(shop_item_id) + 'NameLabel') as Label
 	name_label.modulate.a = 0.2
 

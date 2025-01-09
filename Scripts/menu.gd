@@ -246,6 +246,7 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void
 	
 	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:
+		# FIXME maybe do it after next_button_pressed and here only save ids..?
 		var new_selected_player = selected_player_object.duplicate()
 		new_selected_player.init_from_player_object(selected_player_object)
 		Global.selected_players.push_back(new_selected_player)

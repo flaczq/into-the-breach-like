@@ -74,6 +74,10 @@ func _ready() -> void:
 			default_money_model = asset
 
 
+func after_ready() -> void:
+	init_health_bar()
+
+
 func init_models() -> void:
 	model_container = get_children().filter(func(child): return child.is_in_group('MODEL_CONTAINERS')).front()
 	

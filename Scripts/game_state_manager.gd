@@ -133,10 +133,10 @@ func init_players() -> void:
 	
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate() as Player
-		add_sibling(player_instance)
-		player_instance.init()
 		if Global.tutorial:
 			tutorial_manager_script.init_player(player_instance, level)
+		add_sibling(player_instance)
+		player_instance.after_ready()
 		
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_player_coords).pick_random()
 		if not spawn_tile:
@@ -181,9 +181,10 @@ func init_civilians() -> void:
 	
 	for civilian_scene in level_data.civilian_scenes:
 		var civilian_instance = civilian_scenes[civilian_scene].instantiate() as Civilian
-		add_sibling(civilian_instance)
 		if Global.tutorial:
 			tutorial_manager_script.init_civilian(civilian_instance, level)
+		add_sibling(civilian_instance)
+		civilian_instance.after_ready()
 		
 		#civilian_instance.init(current_level_civilian)
 		var spawn_tile = map.get_spawnable_tiles(level_data.spawn_civilian_coords).pick_random()
@@ -502,18 +503,17 @@ func calculate_tiles_path(character: Character, target_tile: MapTile) -> Array[M
 	astar_grid_map.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	astar_grid_map.update()
 	
-	for tile in map.tiles:
-		var occupied_by_health_type = (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE)
-		var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
-		if occupied_by_health_type or occupied_by_characters:
-			astar_grid_map.set_point_solid(tile.coords, true)
+	if not character.can_fly:
+		for tile in map.tiles:
+			var occupied_by_health_type = (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE)
+			var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
+			if occupied_by_health_type or occupied_by_characters:
+				astar_grid_map.set_point_solid(tile.coords, true)
 	
 	var tiles_coords_path = astar_grid_map.get_id_path(character.tile.coords, target_tile.coords)
 	if tiles_coords_path.size() > 1:
 		tiles_coords_path.erase(character.tile.coords)
-	
-	if tiles_coords_path.size() > character.move_distance:
-		printerr('wtf?! ' + str(tiles_coords_path) + ' ' + str(character))
+	assert(tiles_coords_path.size() <= character.move_distance, 'Path longer than character move distance')
 	
 	var tiles_path: Array[MapTile] = []
 	tiles_path.append_array(tiles_coords_path.map(func(tile_coords: Vector2i): return map.tiles.filter(func(tile: MapTile): return tile.coords == tile_coords).front()))
@@ -1064,8 +1064,8 @@ func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	var enemy_instance = enemy_scenes[enemy_scene].instantiate() as Enemy
 	if Global.tutorial:
 		tutorial_manager_script.init_enemy(enemy_instance, level)
-	
 	add_sibling(enemy_instance)
+	enemy_instance.after_ready()
 	
 	# find max order
 	var enemies_orders = enemies.map(func(enemy): return enemy.order)

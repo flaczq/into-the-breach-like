@@ -17,7 +17,6 @@ var can_fly: bool
 var state_types: Array[Util.StateType]
 var items_ids: Array[Util.ItemType]
 var texture: CompressedTexture2D
-#var items_applied: Array[bool]
 
 
 func init_from_player_data(player_data: Dictionary) -> void:
@@ -38,7 +37,6 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	state_types = player_data.state_types
 	items_ids = player_data.items_ids
 	texture = player_data.texture
-	#items_applied = player_data.items_applied
 
 
 func init_from_player_object(player_object: PlayerObject) -> void:
@@ -58,32 +56,23 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 	state_types = player_object.state_types.duplicate()
 	items_ids = player_object.items_ids.duplicate()
 	texture = player_object.texture
-	#items_applied = player_object.items_applied
 
 
 func init_items(new_items_ids: Array[Util.ItemType]) -> void:
 	assert(new_items_ids.size() == 2, 'Wrong new items ids size')
-	items_ids[0] = new_items_ids[0]
-	items_ids[1] = new_items_ids[1]
-	#if items_ids[0] != Util.ItemType.NONE and not items_applied[0]:
-		#var item_1 = Util.get_selected_item(items_ids[0]) as ItemObject
-		#item_1.apply_to_character(self)
-		#items_applied[0] = true
+	items_ids = new_items_ids
 
 
 func add_item(new_item_id: Util.ItemType, target_player_item_id: int = -1) -> void:
 	var item_index = (target_player_item_id - 1) if (target_player_item_id >= 1) else (items_ids.find(Util.ItemType.NONE))
 	assert(items_ids[item_index] == Util.ItemType.NONE, 'No space to add item to player')
 	items_ids[item_index] = new_item_id
-	#assert(not items_applied[item_index], 'Wrong value for item applied flag')
-	#items_applied[item_index] = true
 
 
 func remove_item(item_id: Util.ItemType) -> void:
 	var item_index = items_ids.find(item_id)
 	assert(item_index >= 0, 'No item in player to remove')
 	items_ids[item_index] = Util.ItemType.NONE
-	#items_applied[item_index] = false
 
 
 func move_item(item_id: Util.ItemType, target_player_item_id: int) -> void:

@@ -42,17 +42,26 @@ func _ready() -> void:
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
-func init():
-	# items
+func after_ready() -> void:
+	super()
+	
+	init_items()
+
+
+func init_items() -> void:
 	var player_object = get_selected_player(id)
-	items_ids = player_object.items_ids
-
-
-func include_upgrades():
-	for item_id in items_ids.filter(func(item_id): return item_id != ItemType.NONE):
-		var item = get_selected_item(item_id)
-		if not item.applied:
-			item.apply_to_player(self)
+	if player_object:
+		items_ids = player_object.items_ids
+		
+		var index = 0
+		for item_id in items_ids:
+			if item_id != ItemType.NONE:
+				var item = get_selected_item(item_id)
+				assert(item, 'Item not existing in selected items')
+				if not items_applied[index]:
+					item.apply_to_player(self)
+					items_applied[index] = true
+				index += 1
 
 
 func spawn(spawn_tile: MapTile) -> void:

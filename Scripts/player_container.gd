@@ -73,23 +73,17 @@ func init_items(item_objects: Array[ItemObject]) -> void:
 	var items_container = find_child('ItemsHBoxContainer')
 	items_container.show()
 	
-	if item_objects[0]:
-		player_items_texture_buttons[0].texture_normal = item_objects[0].texture
-		player_items_texture_buttons[0].modulate.a = 1.0
-		items_ids[0] = item_objects[0].id
-	else:
-		player_items_texture_buttons[0].texture_normal = empty_item_texture
-		player_items_texture_buttons[0].modulate.a = 0.5
-		items_ids[0] = Util.ItemType.NONE
-	
-	if item_objects[1]:
-		player_items_texture_buttons[1].texture_normal = item_objects[1].texture
-		player_items_texture_buttons[1].modulate.a = 1.0
-		items_ids[1] = item_objects[1].id
-	else:
-		player_items_texture_buttons[1].texture_normal = empty_item_texture
-		player_items_texture_buttons[1].modulate.a = 0.5
-		items_ids[1] = Util.ItemType.NONE
+	var index = 0
+	for item_object in item_objects:
+		if item_object and item_object.id != Util.ItemType.NONE:
+			player_items_texture_buttons[index].texture_normal = item_object.texture
+			player_items_texture_buttons[index].modulate.a = 1.0
+			items_ids[index] = item_object.id
+		else:
+			player_items_texture_buttons[index].texture_normal = empty_item_texture
+			player_items_texture_buttons[index].modulate.a = 0.5
+			items_ids[index] = Util.ItemType.NONE
+		index += 1
 
 
 func remove_item(item_id: Util.ItemType) -> void:

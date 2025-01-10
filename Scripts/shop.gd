@@ -25,8 +25,9 @@ func _ready() -> void:
 	var random_items: Array[ItemObject] = []
 	var available_items: Array[ItemObject] = Global.all_items.filter(func(item): return item.available)
 	var all_items_indices = range(available_items.size())
-	# hardcoded random 3 items in shop
-	for i in range(3):
+	var min_range = mini(available_items.size(), 3)
+	# hardcoded random max 3 items in shop
+	for i in range(min_range):
 		var random_item_index = all_items_indices.pick_random()
 		random_items.push_back(available_items[random_item_index])
 		all_items_indices.erase(random_item_index)

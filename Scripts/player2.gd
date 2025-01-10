@@ -24,9 +24,6 @@ func _ready() -> void:
 	items_ids = player_data.items_ids
 	texture = player_data.texture
 	items_applied = player_data.items_applied
-	
-	include_upgrades()
-	init_health_bar()
 
 
 func get_data() -> Dictionary:

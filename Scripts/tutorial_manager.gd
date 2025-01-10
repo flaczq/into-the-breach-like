@@ -23,9 +23,6 @@ func init_player(player: Player, level: int) -> void:
 		player.items_ids = [ItemType.NONE, ItemType.NONE] as Array[ItemType]
 		player.texture = player_1_texture
 		player.items_applied = [false, false] as Array[bool]
-	
-	player.include_upgrades()
-	player.init_health_bar()
 
 
 func init_enemy(enemy: Enemy, level: int) -> void:
@@ -61,8 +58,6 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_damage = 0
 		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
-	
-	enemy.init_health_bar()
 
 
 func init_civilian(civilian: Civilian, level: int) -> void:
@@ -80,5 +75,3 @@ func init_civilian(civilian: Civilian, level: int) -> void:
 		civilian.action_damage = 0
 		civilian.passive_type = PassiveType.NONE
 		civilian.can_fly = false
-	
-	civilian.init_health_bar()

@@ -7,7 +7,6 @@ var item_name: String
 var cost: int
 var available: bool
 var texture: CompressedTexture2D
-var applied: bool
 
 
 func init_from_item_data(item_data: Dictionary) -> void:
@@ -16,7 +15,6 @@ func init_from_item_data(item_data: Dictionary) -> void:
 	cost = item_data.cost
 	available = item_data.available
 	texture = item_data.texture
-	applied = item_data.applied
 
 
 func init_from_item_object(item_object: ItemObject) -> void:
@@ -25,11 +23,9 @@ func init_from_item_object(item_object: ItemObject) -> void:
 	cost = item_object.cost
 	available = item_object.available
 	texture = item_object.texture
-	applied = item_object.applied
 
 
 func apply_to_player(target_player: Player) -> void:
-	# if?
 	match id:
 		Util.ItemType.HEALTH:
 			target_player.max_health += 1
@@ -43,5 +39,3 @@ func apply_to_player(target_player: Player) -> void:
 		Util.ItemType.FLYING:
 			target_player.can_fly = true
 		_: pass
-	
-	applied = true

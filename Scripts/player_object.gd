@@ -34,8 +34,9 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	action_damage = player_data.action_damage
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
-	state_types = player_data.state_types
-	items_ids = player_data.items_ids
+	# have to duplicate() to make them unique
+	state_types = player_data.state_types.duplicate()
+	items_ids = player_data.items_ids.duplicate()
 	texture = player_data.texture
 
 
@@ -60,7 +61,8 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 
 func init_items(new_items_ids: Array[Util.ItemType]) -> void:
 	assert(new_items_ids.size() == 2, 'Wrong new items ids size')
-	items_ids = new_items_ids
+	items_ids[0] = new_items_ids[0]
+	items_ids[1] = new_items_ids[1]
 
 
 func add_item(new_item_id: Util.ItemType, target_player_item_id: int = -1) -> void:

@@ -51,7 +51,8 @@ func after_ready() -> void:
 func init_items() -> void:
 	var player_object = get_selected_player(id)
 	if player_object:
-		items_ids = player_object.items_ids
+		# have to duplicate() to make them unique
+		items_ids = player_object.items_ids.duplicate()
 		
 		var index = 0
 		for item_id in items_ids:

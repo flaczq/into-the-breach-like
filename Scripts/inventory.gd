@@ -5,14 +5,14 @@ class_name Inventory
 signal item_hovered(inventory_item_id: int, item_id: Util.ItemType, is_hovered: bool)
 signal item_clicked(inventory_item_id: int, item_id: Util.ItemType)
 
-@onready var inventory_item_1_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem1TextureButton
-@onready var inventory_item_2_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem2TextureButton
-@onready var inventory_item_3_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem3TextureButton
-@onready var inventory_item_4_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem4TextureButton
-@onready var inventory_item_5_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem5TextureButton
-@onready var inventory_item_6_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem6TextureButton
-@onready var inventory_item_7_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem7TextureButton
-@onready var inventory_item_8_texture_button = $InventoryBackgroundTextureRect/InventoryItemsGridContainer/InventoryItem8TextureButton
+@onready var inventory_item_1_texture_button = $InventoryItemsGridContainer/InventoryItem1TextureButton
+@onready var inventory_item_2_texture_button = $InventoryItemsGridContainer/InventoryItem2TextureButton
+@onready var inventory_item_3_texture_button = $InventoryItemsGridContainer/InventoryItem3TextureButton
+@onready var inventory_item_4_texture_button = $InventoryItemsGridContainer/InventoryItem4TextureButton
+@onready var inventory_item_5_texture_button = $InventoryItemsGridContainer/InventoryItem5TextureButton
+@onready var inventory_item_6_texture_button = $InventoryItemsGridContainer/InventoryItem6TextureButton
+@onready var inventory_item_7_texture_button = $InventoryItemsGridContainer/InventoryItem7TextureButton
+@onready var inventory_item_8_texture_button = $InventoryItemsGridContainer/InventoryItem8TextureButton
 
 var empty_item_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png')
 

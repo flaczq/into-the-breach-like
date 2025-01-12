@@ -19,9 +19,8 @@ func init(new_id: Util.PlayerType, new_texture: CompressedTexture2D, on_toggled:
 	
 	name = name.replace('X', str(id))
 	
-	# hide all children by default
-	for child in get_children():
-		child.hide()
+	var player_stats_v_box_container = find_child('PlayerStatsVBoxContainer') as VBoxContainer
+	player_stats_v_box_container.hide()
 	
 	# find_child is required instead of @onready var because of weird 'scene inheritance'
 	var player_texture_button = find_child('PlayerTextureButton') as TextureButton
@@ -32,13 +31,13 @@ func init(new_id: Util.PlayerType, new_texture: CompressedTexture2D, on_toggled:
 	if on_mouse_exited.is_valid():
 		player_texture_button.connect('mouse_exited', on_mouse_exited.bind(id))
 	player_texture_button.texture_normal = new_texture
-	player_texture_button.show()
 	
 	var items_container = find_child('ItemsHBoxContainer') as HBoxContainer
 	var player_item_1_texture_button = items_container.find_child('PlayerItem1TextureButton') as TextureButton
 	player_item_1_texture_button.connect('pressed', _on_item_texture_button_pressed.bind(1))
 	var player_item_2_texture_button = items_container.find_child('PlayerItem2TextureButton') as TextureButton
 	player_item_2_texture_button.connect('pressed', _on_item_texture_button_pressed.bind(2))
+	items_container.hide()
 	
 	player_items_texture_buttons = [
 		player_item_1_texture_button,
@@ -47,25 +46,24 @@ func init(new_id: Util.PlayerType, new_texture: CompressedTexture2D, on_toggled:
 
 
 func init_stats(max_health: int, move_distance: int, damage: int, action_type: Util.ActionType) -> void:
+	var player_stats_v_box_container = find_child('PlayerStatsVBoxContainer') as VBoxContainer
+	player_stats_v_box_container.show()
+	
 	var health_container = find_child('HealthHBoxContainer')
 	var health_label = health_container.find_child('HealthLabel') as Label
 	health_label.text = str(max_health)
-	health_container.show()
 	
 	var move_distance_container = find_child('MoveDistanceHBoxContainer')
 	var move_distance_label = move_distance_container.find_child('MoveDistanceLabel') as Label
 	move_distance_label.text = str(move_distance)
-	move_distance_container.show()
 	
 	var damage_container = find_child('DamageHBoxContainer')
 	var damage_label = damage_container.find_child('DamageLabel') as Label
 	damage_label.text = str(damage)
-	damage_container.show()
 	
 	var action_container = find_child('ActionHBoxContainer')
 	var action_label = action_container.find_child('ActionLabel') as Label
 	action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))
-	action_container.show()
 
 
 func init_items(item_objects: Array[ItemObject]) -> void:

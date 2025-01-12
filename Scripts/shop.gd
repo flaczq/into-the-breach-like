@@ -5,9 +5,9 @@ class_name Shop
 signal item_hovered(shop_item_id: int, item_id: Util.ItemType, is_hovered: bool)
 signal item_clicked(shop_item_id: int, item_id: Util.ItemType)
 
-@onready var shop_item_1_texture_button = $ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1TextureButton
-@onready var shop_item_2_texture_button = $ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2TextureButton
-@onready var shop_item_3_texture_button = $ShopBackgroundTextureRect/ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3TextureButton
+@onready var shop_item_1_texture_button = $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1TextureButton
+@onready var shop_item_2_texture_button = $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2TextureButton
+@onready var shop_item_3_texture_button = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3TextureButton
 
 var shop_items_texture_buttons: Array[TextureButton]
 

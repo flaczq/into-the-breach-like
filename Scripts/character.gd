@@ -597,7 +597,9 @@ func reset_health_bar() -> void:
 
 
 func look_at_y(target: MapTile) -> void:
-	model_container.look_at(target.position, Vector3.UP)
+	# true - looking forward, false - looking backward
+	var is_reversed = true
+	model_container.look_at(target.position, Vector3.UP, is_reversed)
 	model_container.rotation_degrees.x = 0
 	model_container.rotation_degrees.z = 0
 	# smooth rotation has bug: which side to turn by

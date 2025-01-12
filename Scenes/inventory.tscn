@@ -4,17 +4,17 @@
 [ext_resource type="Texture2D" uid="uid://bnjsn5j6wkub8" path="res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png" id="2_5dy4y"]
 [ext_resource type="Texture2D" uid="uid://co5uqlmcfipao" path="res://Assets/penzilla.vector-icon-pack/Item3.png" id="2_b6fkc"]
 
-[node name="Inventory" type="VBoxContainer"]
-alignment = 1
-script = ExtResource("1_hyxii")
-
-[node name="InventoryBackgroundTextureRect" type="TextureRect" parent="."]
+[node name="InventoryBackgroundTextureRect" type="TextureRect"]
+self_modulate = Color(1, 0.686275, 0.415686, 1)
 custom_minimum_size = Vector2(350, 200)
-layout_mode = 2
+offset_right = 350.0
+offset_bottom = 200.0
+size_flags_horizontal = 4
 texture = ExtResource("2_b6fkc")
 expand_mode = 1
+script = ExtResource("1_hyxii")
 
-[node name="InventoryItemsGridContainer" type="GridContainer" parent="InventoryBackgroundTextureRect"]
+[node name="InventoryItemsGridContainer" type="GridContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -31,7 +31,7 @@ theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 4
 
-[node name="InventoryItem1TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem1TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
@@ -39,7 +39,7 @@ texture_normal = ExtResource("2_5dy4y")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem2TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem2TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
@@ -47,7 +47,7 @@ texture_normal = ExtResource("2_5dy4y")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem3TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem3TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
@@ -55,7 +55,7 @@ texture_normal = ExtResource("2_5dy4y")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem4TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem4TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
@@ -63,7 +63,7 @@ texture_normal = ExtResource("2_5dy4y")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem5TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem5TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
@@ -71,7 +71,7 @@ texture_normal = ExtResource("2_5dy4y")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem6TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem6TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
@@ -79,7 +79,7 @@ texture_normal = ExtResource("2_5dy4y")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem7TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem7TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
@@ -87,7 +87,7 @@ texture_normal = ExtResource("2_5dy4y")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem8TextureButton" type="TextureButton" parent="InventoryBackgroundTextureRect/InventoryItemsGridContainer"]
+[node name="InventoryItem8TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2

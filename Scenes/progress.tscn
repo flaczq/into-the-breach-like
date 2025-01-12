@@ -40,7 +40,7 @@ grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 200
+theme_override_constants/separation = 100
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
 layout_mode = 2
@@ -84,7 +84,6 @@ horizontal_alignment = 1
 
 [node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer"]
 layout_mode = 2
-theme_override_constants/h_separation = 50
 columns = 3
 
 [node name="HIDEPlayer1Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
@@ -98,7 +97,6 @@ layout_mode = 2
 
 [node name="Inventory" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer" instance=ExtResource("10_0ag24")]
 layout_mode = 2
-size_flags_horizontal = 4
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
 visible = false

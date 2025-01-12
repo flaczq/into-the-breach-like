@@ -23,8 +23,8 @@ enum LevelEvent {ENEMIES_FROM_BELOW, ENEMIES_FROM_ABOVE, MINE, FALLING_MISSLE, F
 
 const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
 const PLAYER_ARROW_COLOR: Color = Color('005fcd')
-const ENEMY_TUTORIAL_ARROW_COLOR: Color = Color('9fc700')
-const ENEMY_TUTORIAL_ARROW_HIGHLIGHTED_COLOR: Color = Color('ceff2b')
+const ENEMY_TUTORIAL_ARROW_COLOR: Color = Color('cb003c')
+const ENEMY_TUTORIAL_ARROW_HIGHLIGHTED_COLOR: Color = Color('ffa3ac')
 const ENEMY_1_ARROW_COLOR: Color = Color('cb003c')
 const ENEMY_2_ARROW_COLOR: Color = Color('930029')
 const ENEMY_3_ARROW_COLOR: Color = Color('74001e')

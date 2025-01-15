@@ -49,21 +49,7 @@ func init_stats(max_health: int, move_distance: int, damage: int, action_type: U
 	var player_stats_v_box_container = find_child('PlayerStatsVBoxContainer') as VBoxContainer
 	player_stats_v_box_container.show()
 	
-	var health_container = find_child('HealthHBoxContainer')
-	var health_label = health_container.find_child('HealthLabel') as Label
-	health_label.text = str(max_health)
-	
-	var move_distance_container = find_child('MoveDistanceHBoxContainer')
-	var move_distance_label = move_distance_container.find_child('MoveDistanceLabel') as Label
-	move_distance_label.text = str(move_distance)
-	
-	var damage_container = find_child('DamageHBoxContainer')
-	var damage_label = damage_container.find_child('DamageLabel') as Label
-	damage_label.text = str(damage)
-	
-	var action_container = find_child('ActionHBoxContainer')
-	var action_label = action_container.find_child('ActionLabel') as Label
-	action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))
+	update_stats(max_health, move_distance, damage, action_type)
 
 
 func init_items(item_objects: Array[ItemObject]) -> void:
@@ -112,6 +98,31 @@ func reset_items(is_highlighted: bool = false, declick_item_id: bool = true) -> 
 	player_items_texture_buttons[1].modulate.a = (1.0) if (is_highlighted or items_ids[1] != Util.ItemType.NONE) else (0.5)
 	if declick_item_id:
 		clicked_item_id = Util.ItemType.NONE
+
+
+func update_stats(max_health: int, move_distance: int, damage: int, action_type: Util.ActionType) -> void:
+	if max_health:
+		var health_container = find_child('HealthHBoxContainer')
+		var health_label = health_container.find_child('HealthLabel') as Label
+		health_label.text = str(max_health)
+	
+	if move_distance:
+		var move_distance_container = find_child('MoveDistanceHBoxContainer')
+		var move_distance_label = move_distance_container.find_child('MoveDistanceLabel') as Label
+		move_distance_label.text = str(move_distance)
+	
+	if damage:
+		var damage_container = find_child('DamageHBoxContainer')
+		var damage_label = damage_container.find_child('DamageLabel') as Label
+		damage_label.text = str(damage)
+		if action_type:
+			#damage_label.mouse_filter = Control.MOUSE_FILTER_STOP
+			damage_label.tooltip_text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))
+	
+	#if action_type:
+		#var action_container = find_child('ActionHBoxContainer')
+		#var action_label = action_container.find_child('ActionLabel') as Label
+		#action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))
 
 
 func _on_item_texture_button_pressed(player_item_id: int) -> void:

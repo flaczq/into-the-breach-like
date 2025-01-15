@@ -45,10 +45,10 @@ func _ready() -> void:
 func after_ready() -> void:
 	super()
 	
-	init_items()
+	include_items_updates()
 
 
-func init_items() -> void:
+func include_items_updates() -> void:
 	var player_object = get_selected_player(id)
 	if player_object:
 		# have to duplicate() to make them unique

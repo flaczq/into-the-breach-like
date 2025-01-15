@@ -25,17 +25,63 @@ func init_from_item_object(item_object: ItemObject) -> void:
 	texture = item_object.texture
 
 
-func apply_to_player(target_player: Player) -> void:
+func apply_to_player(target_player: Player, is_applied: bool = true) -> void:
 	match id:
 		Util.ItemType.HEALTH:
-			target_player.max_health += 1
-			target_player.health += 1
+			if is_applied:
+				target_player.max_health += 1
+				target_player.health += 1
+			else:
+				target_player.max_health -= 1
+				target_player.health -= 1
 		Util.ItemType.DAMAGE:
-			target_player.damage += 1
+			if is_applied:
+				target_player.damage += 1
+			else:
+				target_player.damage -= 1
 		Util.ItemType.SHIELD:
-			target_player.state_types.push_back(Util.StateType.GAVE_SHIELD)
+			if is_applied:
+				target_player.state_types.push_back(Util.StateType.GAVE_SHIELD)
+			else:
+				target_player.state_types.erase(Util.StateType.GAVE_SHIELD)
 		Util.ItemType.MOVE_DISTANCE:
-			target_player.move_distance += 1
+			if is_applied:
+				target_player.move_distance += 1
+			else:
+				target_player.move_distance -= 1
 		Util.ItemType.FLYING:
-			target_player.can_fly = true
+			if is_applied:
+				target_player.can_fly = true
+			else:
+				target_player.can_fly = false
+		_: pass
+
+
+func apply_to_player_object(target_player_object: PlayerObject, is_applied: bool = true) -> void:
+	match id:
+		Util.ItemType.HEALTH:
+			if is_applied:
+				target_player_object.max_health += 1
+			else:
+				target_player_object.max_health -= 1
+		Util.ItemType.DAMAGE:
+			if is_applied:
+				target_player_object.damage += 1
+			else:
+				target_player_object.damage -= 1
+		Util.ItemType.SHIELD:
+			if is_applied:
+				target_player_object.state_types.push_back(Util.StateType.GAVE_SHIELD)
+			else:
+				target_player_object.state_types.erase(Util.StateType.GAVE_SHIELD)
+		Util.ItemType.MOVE_DISTANCE:
+			if is_applied:
+				target_player_object.move_distance += 1
+			else:
+				target_player_object.move_distance -= 1
+		Util.ItemType.FLYING:
+			if is_applied:
+				target_player_object.can_fly = true
+			else:
+				target_player_object.can_fly = false
 		_: pass

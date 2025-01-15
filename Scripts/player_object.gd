@@ -59,25 +59,25 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 	texture = player_object.texture
 
 
-func init_items(new_items_ids: Array[Util.ItemType]) -> void:
+func set_items(new_items_ids: Array[Util.ItemType]) -> void:
 	assert(new_items_ids.size() == 2, 'Wrong new items ids size')
 	items_ids[0] = new_items_ids[0]
 	items_ids[1] = new_items_ids[1]
 
 
-func add_item(new_item_id: Util.ItemType, target_player_item_id: int = -1) -> void:
+func set_item(new_item_id: Util.ItemType, target_player_item_id: int = -1) -> void:
 	var item_index = (target_player_item_id - 1) if (target_player_item_id >= 1) else (items_ids.find(Util.ItemType.NONE))
 	assert(items_ids[item_index] == Util.ItemType.NONE, 'No space to add item to player')
 	items_ids[item_index] = new_item_id
 
 
-func remove_item(item_id: Util.ItemType) -> void:
+func unset_item(item_id: Util.ItemType) -> void:
 	var item_index = items_ids.find(item_id)
 	assert(item_index >= 0, 'No item in player to remove')
 	items_ids[item_index] = Util.ItemType.NONE
 
 
-func move_item(item_id: Util.ItemType, target_player_item_id: int) -> void:
+func move_item_to_empty(item_id: Util.ItemType, target_player_item_id: int) -> void:
 	# switching items not available
 	assert(items_ids[target_player_item_id - 1] == Util.ItemType.NONE, 'No space to move item inside player')
 	var item_index = items_ids.find(item_id)

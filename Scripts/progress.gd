@@ -164,7 +164,10 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 		inventory.remove_item(inventory_clicked_item_id)
 		
 		var selected_player = get_selected_player(player_id) as PlayerObject
-		selected_player.add_item(inventory_clicked_item_id, player_item_id)
+		selected_player.set_item(inventory_clicked_item_id, player_item_id)
+		var inventory_clicked_item = get_selected_item(inventory_clicked_item_id)
+		if inventory_clicked_item and inventory_clicked_item.id != Util.ItemType.NONE:
+			inventory_clicked_item.apply_to_player_object(selected_player)
 		
 		var player_container = players_grid_container.get_children().filter(func(child): return child.id == selected_player.id).front() as PlayerContainer
 		var items = [] as Array[ItemObject]
@@ -172,22 +175,29 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 			var item = get_selected_item(selected_player_item_id)
 			items.push_back(item)
 		player_container.init_items(items)
+		player_container.update_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
 	elif player_clicked_item_id != ItemType.NONE and item_id == ItemType.NONE:
 		# player X -> player Y
 		var origin_player_container = players_grid_container.get_children().filter(func(child): return child.clicked_item_id == player_clicked_item_id).front() as PlayerContainer
 		origin_player_container.remove_item(player_clicked_item_id)
 		
 		var origin_player = get_selected_player(origin_player_container.id) as PlayerObject
-		origin_player.remove_item(player_clicked_item_id)
+		var player_clicked_item = get_selected_item(player_clicked_item_id)
+		if player_clicked_item and player_clicked_item.id != Util.ItemType.NONE:
+			player_clicked_item.apply_to_player_object(origin_player, false)
+		origin_player.unset_item(player_clicked_item_id)
 		
-		var origin_items = [] as Array[ItemObject]
-		for origin_player_item_id in origin_player.items_ids:
-			var origin_item = get_selected_item(origin_player_item_id)
-			origin_items.push_back(origin_item)
-		origin_player_container.init_items(origin_items)
+		#var origin_items = [] as Array[ItemObject]
+		#for origin_player_item_id in origin_player.items_ids:
+			#var origin_item = get_selected_item(origin_player_item_id)
+			#origin_items.push_back(origin_item)
+		#origin_player_container.init_items(origin_items)
+		origin_player_container.update_stats(origin_player.max_health, origin_player.move_distance, origin_player.damage, origin_player.action_type)
 	
 		var target_player = get_selected_player(player_id) as PlayerObject
-		target_player.add_item(player_clicked_item_id, player_item_id)
+		target_player.set_item(player_clicked_item_id, player_item_id)
+		if player_clicked_item and player_clicked_item.id != Util.ItemType.NONE:
+			player_clicked_item.apply_to_player_object(target_player)
 		
 		var target_player_container = players_grid_container.get_children().filter(func(child): return child.id == target_player.id).front() as PlayerContainer
 		var target_items = [] as Array[ItemObject]
@@ -195,11 +205,12 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 			var target_item = get_selected_item(target_player_item_id)
 			target_items.push_back(target_item)
 		target_player_container.init_items(target_items)
+		target_player_container.update_stats(target_player.max_health, target_player.move_distance, target_player.damage, target_player.action_type)
 	else:
-		# reinit items in single player container in case they were moved
+		# set items in single player container in case they were moved
 		var selected_player = get_selected_player(player_id) as PlayerObject
 		var player_container = players_grid_container.get_children().filter(func(child): return child.id == selected_player.id).front() as PlayerContainer
-		selected_player.init_items(player_container.items_ids)
+		selected_player.set_items(player_container.items_ids)
 	
 	shop_buy_button.set_disabled(true)
 	shop.reset_items()
@@ -221,16 +232,20 @@ func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> vo
 	var player_clicked_item_id = get_player_clicked_item_id()
 	var inventory_clicked_item_id = get_inventory_clicked_item_id()
 	if player_clicked_item_id != ItemType.NONE:
+		# player -> inventory
 		player_clicked_container = players_grid_container.get_children().filter(func(child): return child.items_ids.has(player_clicked_item_id)).front() as PlayerContainer
 		
 		if inventory_clicked_item_id == ItemType.NONE:
 			player_clicked_container.remove_item(player_clicked_item_id)
 			
 			var selected_player = get_selected_player(player_clicked_container.id) as PlayerObject
-			selected_player.remove_item(player_clicked_item_id)
+			var player_clicked_item = get_selected_item(player_clicked_item_id) as ItemObject
+			if player_clicked_item and player_clicked_item.id != Util.ItemType.NONE:
+				player_clicked_item.apply_to_player_object(selected_player, false)
+			selected_player.unset_item(player_clicked_item_id)
 			
-			var selected_item_from_player = get_selected_item(player_clicked_item_id) as ItemObject
-			inventory.add_item(selected_item_from_player, inventory_item_id)
+			player_clicked_container.update_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
+			inventory.add_item(player_clicked_item, inventory_item_id)
 			inventory.reset_items(false)
 	
 	shop_buy_button.set_disabled(true)

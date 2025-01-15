@@ -82,9 +82,12 @@ expand_mode = 3
 
 [node name="DamageLabel" type="Label" parent="PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer/DamageHBoxContainer"]
 layout_mode = 2
+tooltip_text = "ACTION_PUSH_BACK"
+mouse_filter = 0
 text = "1"
 
 [node name="ActionHBoxContainer" type="HBoxContainer" parent="PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="ActionTextureRect" type="TextureRect" parent="PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer/ActionHBoxContainer"]

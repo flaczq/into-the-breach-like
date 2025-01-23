@@ -27,6 +27,7 @@ var player: Player
 var ghost: Player
 var enemy: Enemy
 var civilian: Civilian
+var money: int
 
 
 func _ready() -> void:
@@ -48,6 +49,7 @@ func init(map_tile_object: MapTileObject) -> void:
 	models = map_tile_object.models
 	tile_type = map_tile_object.tile_type
 	health_type = map_tile_object.health_type
+	money = map_tile_object.money
 	
 	# setup model with texture/shader/color
 	shader_material.set_shader(models.tile_shader)
@@ -192,11 +194,6 @@ func is_free() -> bool:
 	return not is_occupied() and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
 
 
-func is_for_calculating_money() -> bool:
-	# FIXME: add tiles that had assets and now they're destroyed
-	return health_type == TileHealthType.HEALTHY or health_type == TileHealthType.DAMAGED or health_type == TileHealthType.DESTROYED or health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or health_type == TileHealthType.DESTRUCTIBLE_DAMAGED
-
-
 func is_able_to_move_on() -> bool:
 	return get_character() != null
 
@@ -249,8 +246,9 @@ func toggle_asset_outline(is_toggled: bool) -> void:
 			models.asset_damaged_outline.hide()
 
 
-func toggle_text(is_toggled: bool, text: String = '') -> void:
+func toggle_text(is_toggled: bool, text: String = '', color: Color = Color.WHITE) -> void:
 	if is_toggled:
+		models.tile_text.mesh.surface_get_material(0).albedo_color = color
 		models.tile_text.mesh.text = text
 		models.tile_text.show()
 	else:
@@ -303,6 +301,7 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 			
 			if health_type == TileHealthType.DESTRUCTIBLE_HEALTHY:
 				health_type = TileHealthType.DESTRUCTIBLE_DAMAGED
+				money = 2
 				
 				# damage asset with outline for destructible tile
 				if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
@@ -317,6 +316,7 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 				print('ttile ' + str(coords) + ' -> destructible damaged tile')
 			elif health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
 				health_type = TileHealthType.HEALTHY
+				money = 1
 				
 				# destroy assets with outlines for destructible tile
 				if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
@@ -337,11 +337,13 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 				print('ttile ' + str(coords) + ' -> healthy tile')
 			elif health_type == TileHealthType.HEALTHY:
 				health_type = TileHealthType.DAMAGED
+				money = 0
 				
 				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> damaged tile')
 			elif health_type == TileHealthType.DAMAGED:
 				health_type = TileHealthType.DESTROYED
+				money = -1
 				
 				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> destroyed')

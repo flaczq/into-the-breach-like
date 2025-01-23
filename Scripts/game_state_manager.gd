@@ -16,7 +16,7 @@ class_name GameStateManager
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
 @onready var players_grid_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer'
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
-@onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/DebugInfoLabel'
+@onready var debug_info_label = $"../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel"
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
@@ -387,15 +387,8 @@ func check_for_level_end(turn_ended: bool = true) -> void:
 
 
 func level_won() -> void:
-	var money_for_level: int = 0
-	for tile in map.get_tiles_for_calculating_money():
-		if tile.health_type == TileHealthType.HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY:
-			money_for_level += 1
-		elif tile.health_type == TileHealthType.DAMAGED or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
-			# i know...
-			money_for_level += 0
-		elif tile.health_type == TileHealthType.DESTROYED:
-			money_for_level -= 3
+	var tiles_money = map.tiles.map(func(tile): return tile.money)
+	var money_for_level = tiles_money.reduce(func(accum, money): return accum + money, 0)
 	
 	print('added money for level: ' + str(money_for_level))
 	if money_for_level > 0:
@@ -789,10 +782,10 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 					target_tile.enemy.planned_tile.toggle_asset_outline(true)
 					
 					# highlight tile itself if it's empty
-					if not target_tile.enemy.planned_tile.is_occupied():
-						#target_tile.enemy.planned_tile.toggle_shader(true)
-						if target_tile.enemy.planned_tile.is_free():
-							target_tile.enemy.planned_tile.toggle_text(true, str(target_tile.enemy.damage))
+					#if not target_tile.enemy.planned_tile.is_occupied():
+						##target_tile.enemy.planned_tile.toggle_shader(true)
+						#if target_tile.enemy.planned_tile.is_free():
+							#target_tile.enemy.planned_tile.toggle_text(true, str(target_tile.enemy.damage))
 					
 					# show outline with predicted health for enemy targets
 					if target_tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
@@ -851,10 +844,10 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
 				
 				# highlight tile itself if it's empty
-				if not first_occupied_tile_in_line.is_occupied():
-					#first_occupied_tile_in_line.toggle_shader(true)
-					if first_occupied_tile_in_line.is_free():
-						first_occupied_tile_in_line.toggle_text(true, str(selected_player.damage))
+				#if not first_occupied_tile_in_line.is_occupied():
+					##first_occupied_tile_in_line.toggle_shader(true)
+					#if first_occupied_tile_in_line.is_free():
+						#first_occupied_tile_in_line.toggle_text(true, str(selected_player.damage))
 				
 				# show outline with predicted health for player targets
 				if selected_player.action_type == ActionType.CROSS_PUSH_BACK:
@@ -1246,6 +1239,26 @@ func _on_undo_texture_button_pressed() -> void:
 		last_undo_player.start_turn()
 		
 		recalculate_enemies_planned_actions()
+
+
+func _on_money_texture_button_down() -> void:
+	for tile in map.tiles:
+		tile.toggle_text(true, str(tile.money))
+
+
+func _on_money_texture_button_up() -> void:
+	for tile in map.tiles:
+		tile.toggle_text(false)
+
+
+func _on_order_texture_button_down():
+	for tile in map.tiles.filter(func(tile): return tile.enemy) as Array[MapTile]:
+		tile.toggle_text(true, str(tile.enemy.order), Color.RED)
+
+
+func _on_order_texture_button_up():
+	for tile in map.tiles:
+		tile.toggle_text(false)
 
 
 func _on_player_texture_button_mouse_entered(id: PlayerType) -> void:

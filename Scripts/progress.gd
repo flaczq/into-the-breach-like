@@ -22,7 +22,7 @@ var selected_level_type: LevelType = LevelType.NONE
 
 func _ready() -> void:
 	Global.engine_mode = EngineMode.MENU
-	Global.money = 5
+	#Global.money = 5
 	
 	if Global.money > 0:
 		upgrades_container.show()

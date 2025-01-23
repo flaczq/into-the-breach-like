@@ -28,7 +28,7 @@ var default_arrow_model: Node3D
 var default_arrow_sphere_model: MeshInstance3D
 var default_bullet_model: MeshInstance3D
 var default_forced_action_model: MeshInstance3D
-var default_money_model: MeshInstance3D
+var default_bonus_model: MeshInstance3D
 var health_bar: TextureProgressBar
 var health_bar_tween: Tween
 var tile: MapTile
@@ -71,7 +71,7 @@ func _ready() -> void:
 		elif asset.name == 'floor-small-diagonal':
 			default_forced_action_model = asset
 		elif asset.name == 'crate-color':
-			default_money_model = asset
+			default_bonus_model = asset
 
 
 func after_ready() -> void:

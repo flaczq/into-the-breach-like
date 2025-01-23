@@ -32,8 +32,9 @@ func spawn(level_data: Dictionary) -> void:
 		var asset_filename = convert_asset_initial_to_filename(level_data.tiles_assets[index])
 		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.level_type, level_data.level)
 		var health_type = get_health_type_by_tile_type(tile_type, asset_filename)
+		var money = get_money_by_tile_type(tile_type, asset_filename)
 		var map_tile_object: MapTileObject = MapTileObject.new()
-		map_tile_object.init(models, tile_type, health_type)
+		map_tile_object.init(models, tile_type, health_type, money)
 		
 		tile.reset()
 		tile.init(map_tile_object)
@@ -224,6 +225,33 @@ func get_health_type_by_tile_type(tile_type: TileType, asset_filename: String) -
 			return TileHealthType.HEALTHY
 
 
+func get_money_by_tile_type(tile_type: TileType, asset_filename: String) -> int:
+	# FIXME hardcoded
+	if asset_filename:
+		if asset_filename == 'house':
+			return 5
+		
+		if asset_filename == 'tree' or asset_filename == 'sign':
+			return 2
+		
+		if asset_filename == 'mountain' or asset_filename == 'volcano':
+			return 0
+	
+	match tile_type:
+		TileType.PLAIN: return 1
+		TileType.GRASS: return 1
+		TileType.TREE: return 1
+		TileType.MOUNTAIN: return 0
+		TileType.VOLCANO: return 0
+		TileType.WATER: return 0
+		TileType.LAVA: return 0
+		TileType.FLOOR: return 1
+		TileType.HOLE: return -1
+		_:
+			print('[get_money_by_tile_type] -> unknown tile type: ' + str(tile_type))
+			return 0
+
+
 func get_side_dimension() -> int:
 	return sqrt(tiles.size())
 
@@ -250,10 +278,6 @@ func get_spawnable_tiles(tiles_coords: Array) -> Array[MapTile]:
 		return get_available_tiles()
 	
 	return spawnable_tiles
-
-
-func get_tiles_for_calculating_money() -> Array[MapTile]:
-	return tiles.filter(func(tile: MapTile): return tile.is_for_calculating_money())
 
 
 func get_targetable_tiles() -> Array[MapTile]:

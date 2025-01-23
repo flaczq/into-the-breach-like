@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=30 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="19_s0a28"]
 [ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="20_6obs3"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="21_mwtkn"]
+[ext_resource type="Texture2D" uid="uid://c1j8oguuv8xfv" path="res://Assets/penzilla.vector-icon-pack/Icon_Question.png" id="24_w510i"]
 
 [sub_resource type="Environment" id="Environment_54ekw"]
 background_mode = 3
@@ -105,6 +106,7 @@ layout_mode = 2
 [node name="SettingsTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+tooltip_text = "SETTINGS"
 texture_normal = ExtResource("17_1dry2")
 ignore_texture_size = true
 stretch_mode = 5
@@ -112,6 +114,7 @@ stretch_mode = 5
 [node name="EndTurnTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+tooltip_text = "END TURN"
 texture_normal = ExtResource("19_mojst")
 ignore_texture_size = true
 stretch_mode = 5
@@ -119,6 +122,7 @@ stretch_mode = 5
 [node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+tooltip_text = "ATTACK"
 toggle_mode = true
 texture_normal = ExtResource("20_6obs3")
 ignore_texture_size = true
@@ -127,6 +131,7 @@ stretch_mode = 5
 [node name="UndoTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+tooltip_text = "UNDO"
 disabled = true
 texture_normal = ExtResource("21_mwtkn")
 ignore_texture_size = true
@@ -140,7 +145,7 @@ theme_override_constants/separation = 20
 layout_mode = 2
 text = "LEVEL: 0
 TURN: 0
-POINTS: 0"
+MONEY: 0"
 
 [node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
@@ -159,7 +164,6 @@ text = "TILE INFO"
 
 [node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
-theme_override_constants/h_separation = 50
 columns = 3
 
 [node name="HIDEPlayer1Container" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("19_s0a28")]
@@ -191,9 +195,33 @@ theme_override_constants/margin_bottom = 5
 
 [node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
 layout_mode = 2
+
+[node name="RightTopContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+layout_mode = 2
 alignment = 2
 
-[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+[node name="MoneyTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+tooltip_text = "INFO"
+texture_normal = ExtResource("24_w510i")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="OrderTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+tooltip_text = "INFO"
+texture_normal = ExtResource("24_w510i")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RightBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 2
+
+[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer"]
 layout_mode = 2
 text = "DEBUG INFO"
 
@@ -256,4 +284,8 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
+[connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/MoneyTextureButton" to="GameStateManager" method="_on_money_texture_button_down"]
+[connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/MoneyTextureButton" to="GameStateManager" method="_on_money_texture_button_up"]
+[connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_down"]
+[connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_up"]
 [connection signal="gui_input" from="CanvasLayer/PanelFullScreenContainer/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

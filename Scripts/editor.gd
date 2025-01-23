@@ -13,18 +13,18 @@ extends Util
 @onready var end_turn_texture_button = $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton
 @onready var action_first_texture_button = $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton
 @onready var undo_texture_button = $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton
-@onready var play_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/PlayButton
-@onready var reset_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/ResetButton
-@onready var delete_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/DeleteButton
-@onready var save_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/SaveButton
-@onready var load_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/LoadMenuButton
-@onready var maps_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MapsMenuButton
-@onready var tiles_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/TilesContainer/TilesMenuButton
-@onready var assets_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/AssetsMenuButton
-@onready var players_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/PlayersMenuButton
-@onready var enemies_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/EnemiesMenuButton
-@onready var civilians_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/CiviliansMenuButton
-@onready var selected_tile_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/SelectedTileMenuButton
+@onready var play_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayButton
+@onready var reset_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/ResetButton
+@onready var delete_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DeleteButton
+@onready var save_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SaveButton
+@onready var load_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/LoadMenuButton
+@onready var maps_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/MapsMenuButton
+@onready var tiles_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/TilesContainer/TilesMenuButton
+@onready var assets_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/AssetsMenuButton
+@onready var players_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayersMenuButton
+@onready var enemies_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/EnemiesMenuButton
+@onready var civilians_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CiviliansMenuButton
+@onready var selected_tile_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SelectedTileMenuButton
 
 const SAVED_LEVELS_FILE_PATH = 'res://Other/saved_levels.txt'
 

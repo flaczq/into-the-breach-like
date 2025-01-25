@@ -104,7 +104,7 @@ func show_players_selection() -> void:
 	
 	for player_container in players_grid_container.get_children():
 		# FIXME disable state
-		var player_texture_button = player_container.find_child('PlayerTextureButton')
+		var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
 		player_texture_button.set_pressed_no_signal(false)
 		player_texture_button.modulate.a = 0.5
 	
@@ -138,7 +138,7 @@ func init_ui() -> void:
 		var player_container = player_container_scene.instantiate() as PlayerContainer
 		player_container.init(player.id, player.texture, _on_player_texture_button_toggled)
 		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
-		var player_texture_button = player_container.find_child('PlayerTextureButton')
+		var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
 		player_texture_button.modulate.a = 0.5
 		players_grid_container.add_child(player_container)
 
@@ -241,7 +241,7 @@ func _on_next_button_pressed() -> void:
 
 func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void:
 	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
-	var player_texture_button = player_container.find_child('PlayerTextureButton')
+	var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
 	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject

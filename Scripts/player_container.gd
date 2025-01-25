@@ -19,11 +19,11 @@ func init(new_id: Util.PlayerType, new_texture: CompressedTexture2D, on_toggled:
 	
 	name = name.replace('X', str(id))
 	
-	var player_stats_v_box_container = find_child('PlayerStatsVBoxContainer') as VBoxContainer
-	player_stats_v_box_container.hide()
+	var player_stats = get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer') as VBoxContainer
+	player_stats.hide()
 	
-	# find_child is required instead of @onready var because of weird 'scene inheritance'
-	var player_texture_button = find_child('PlayerTextureButton') as TextureButton
+	# get_node is required instead of @onready var because of weird 'scene inheritance'
+	var player_texture_button = get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton') as TextureButton
 	if on_toggled.is_valid():
 		player_texture_button.connect('toggled', on_toggled.bind(id))
 	if on_mouse_entered.is_valid():
@@ -32,10 +32,10 @@ func init(new_id: Util.PlayerType, new_texture: CompressedTexture2D, on_toggled:
 		player_texture_button.connect('mouse_exited', on_mouse_exited.bind(id))
 	player_texture_button.texture_normal = new_texture
 	
-	var items_container = find_child('ItemsHBoxContainer') as HBoxContainer
-	var player_item_1_texture_button = items_container.find_child('PlayerItem1TextureButton') as TextureButton
+	var items_container = get_node('PlayerVBoxContainer/ItemsHBoxContainer') as HBoxContainer
+	var player_item_1_texture_button = items_container.get_node('PlayerItem1TextureButton') as TextureButton
 	player_item_1_texture_button.connect('pressed', _on_item_texture_button_pressed.bind(1))
-	var player_item_2_texture_button = items_container.find_child('PlayerItem2TextureButton') as TextureButton
+	var player_item_2_texture_button = items_container.get_node('PlayerItem2TextureButton') as TextureButton
 	player_item_2_texture_button.connect('pressed', _on_item_texture_button_pressed.bind(2))
 	items_container.hide()
 	
@@ -46,15 +46,15 @@ func init(new_id: Util.PlayerType, new_texture: CompressedTexture2D, on_toggled:
 
 
 func init_stats(max_health: int, move_distance: int, damage: int, action_type: Util.ActionType) -> void:
-	var player_stats_v_box_container = find_child('PlayerStatsVBoxContainer') as VBoxContainer
-	player_stats_v_box_container.show()
+	var player_stats = get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer') as VBoxContainer
+	player_stats.show()
 	
 	update_stats(max_health, move_distance, damage, action_type)
 
 
 func init_items(item_objects: Array[ItemObject]) -> void:
 	assert(item_objects.size() == 2, 'Wrong item objects size')
-	var items_container = find_child('ItemsHBoxContainer')
+	var items_container = get_node('PlayerVBoxContainer/ItemsHBoxContainer') as HBoxContainer
 	items_container.show()
 	
 	var index = 0
@@ -102,26 +102,26 @@ func reset_items(is_highlighted: bool = false, declick_item_id: bool = true) -> 
 
 func update_stats(max_health: int, move_distance: int, damage: int, action_type: Util.ActionType) -> void:
 	if max_health:
-		var health_container = find_child('HealthHBoxContainer')
-		var health_label = health_container.find_child('HealthLabel') as Label
+		#var health_container = get_node('HealthHBoxContainer')
+		var health_label = get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer/HealthHBoxContainer/HealthLabel') as Label
 		health_label.text = str(max_health)
 	
 	if move_distance:
-		var move_distance_container = find_child('MoveDistanceHBoxContainer')
-		var move_distance_label = move_distance_container.find_child('MoveDistanceLabel') as Label
+		#var move_distance_container = get_node('MoveDistanceHBoxContainer')
+		var move_distance_label = get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer/MoveDistanceHBoxContainer/MoveDistanceLabel') as Label
 		move_distance_label.text = str(move_distance)
 	
 	if damage:
-		var damage_container = find_child('DamageHBoxContainer')
-		var damage_label = damage_container.find_child('DamageLabel') as Label
+		#var damage_container = get_node('DamageHBoxContainer')
+		var damage_label = get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer/DamageHBoxContainer/DamageLabel') as Label
 		damage_label.text = str(damage)
 		if action_type:
 			#damage_label.mouse_filter = Control.MOUSE_FILTER_STOP
 			damage_label.tooltip_text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))
 	
 	#if action_type:
-		#var action_container = find_child('ActionHBoxContainer')
-		#var action_label = action_container.find_child('ActionLabel') as Label
+		##var action_container = get_node('ActionHBoxContainer')
+		#var action_label = get_node('ActionLabel') as Label
 		#action_label.text = tr('ACTION_' + str(Util.ActionType.keys()[action_type]))
 
 

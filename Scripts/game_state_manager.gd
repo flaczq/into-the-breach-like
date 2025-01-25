@@ -213,12 +213,17 @@ func init_ui() -> void:
 	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
-		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(player.id, player.texture, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
-		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
-		var player_texture_button = player_container.find_child('PlayerTextureButton')
-		player_texture_button.modulate.a = 0.5
-		players_grid_container.add_child(player_container)
+		var existing_player_container = players_grid_container.get_node('Player' + str(player.id) + 'Container')
+		if existing_player_container:
+			#existing_player_container.init(player.id, player.texture, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+			existing_player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
+		else:
+			var player_container = player_container_scene.instantiate() as PlayerContainer
+			player_container.init(player.id, player.texture, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+			player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
+			var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
+			player_texture_button.modulate.a = 0.5
+			players_grid_container.add_child(player_container)
 
 
 func start_turn() -> void:
@@ -325,6 +330,7 @@ func end_turn() -> void:
 	
 	await level_manager_script.execute_events(self)
 	
+	recalculate_enemies_order()
 	check_for_level_end()
 	
 	#########################################
@@ -685,17 +691,18 @@ func recalculate_enemies_planned_actions() -> void:
 			enemy.planned_tile.set_planned_enemy_action(true)
 
 
+func recalculate_enemies_order() -> void:
+	var order = 1
+	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
+	for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive) as Array[Enemy]:
+		alive_enemy.order = order
+		order += 1
+
+
 func get_player_texture_button_by_id(id: PlayerType) -> TextureButton:
 	#var player_container = get_player_container_by_index(index)
 	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
-	return player_container.find_child('PlayerTextureButton')
-
-
-func get_player_label_by_id_and_names(id: PlayerType, container_name: String, name: String) -> Label:
-	#var player_container = get_player_container_by_index(index)
-	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
-	var child = player_container.find_child(container_name)
-	return child.find_child(name)
+	return player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
 
 
 func set_clicked_player_texture_button(player_texture_button: TextureButton, is_clicked: bool) -> void:
@@ -1049,7 +1056,8 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 
 
 func _on_player_health_changed(target_player: Player):
-	var player_health_label = get_player_label_by_id_and_names(target_player.id, 'HealthHBoxContainer', 'HealthLabel')
+	var player_container = players_grid_container.get_children().filter(func(child): return child.id == target_player.id).front()
+	var player_health_label = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer/HealthHBoxContainer/HealthLabel')
 	player_health_label.text = str(target_player.health) + '/' + str(target_player.max_health)
 
 
@@ -1101,13 +1109,7 @@ func _on_enemy_planned_action_miss_action(target_character: Character, is_applie
 func _on_enemy_killed_event(target_enemy: Enemy) -> void:
 	enemies_killed += 1
 	
-	# recalculate enemies order
-	var order = 1
-	enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
-	for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive) as Array[Enemy]:
-		alive_enemy.order = order
-		order += 1
-	
+	recalculate_enemies_order()
 	check_for_level_end(false)
 
 

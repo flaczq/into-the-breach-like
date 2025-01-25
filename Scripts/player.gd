@@ -32,6 +32,8 @@ func _ready() -> void:
 	
 	var forced_action_model_material = StandardMaterial3D.new()
 	forced_action_model_material.albedo_color = PLAYER_ARROW_COLOR
+	#forced_action_model_material.no_depth_test = true
+	#forced_action_model_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	
 	# draw a player arrow on top of an enemy arrow
 	# player arrow 1.2 > player sphere 1.1 > enemy arrow 1.0 > enemy sphere 0.9
@@ -39,6 +41,7 @@ func _ready() -> void:
 	default_arrow_model.get_child(0).set_surface_override_material(0, arrow_model_material)
 	default_arrow_sphere_model.set_sorting_offset(1.1)
 	default_arrow_sphere_model.set_surface_override_material(0, arrow_model_material)
+	#default_forced_action_model.set_sorting_offset(1.1)
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 

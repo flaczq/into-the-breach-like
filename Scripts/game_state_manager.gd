@@ -123,6 +123,8 @@ func init_map() -> void:
 	for tile in map.tiles:
 		tile.connect('hovered_event', _on_tile_hovered)
 		tile.connect('clicked_event', _on_tile_clicked)
+		tile.connect('action_towards_and_push_back', _on_tile_action_towards_and_push_back)
+		tile.connect('action_pull_together', _on_tile_action_pull_together)
 		tile.connect('action_cross_push_back', _on_tile_action_cross_push_back)
 
 
@@ -149,7 +151,9 @@ func init_players() -> void:
 		player_instance.connect('clicked_event', _on_player_clicked)
 		player_instance.connect('health_changed_event', _on_player_health_changed)
 		player_instance.connect('action_push_back', _on_character_action_push_back)
+		player_instance.connect('action_towards_and_push_back', _on_character_action_towards_and_push_back)
 		player_instance.connect('action_pull_front', _on_character_action_pull_front)
+		player_instance.connect('action_pull_together', _on_character_action_pull_together)
 		player_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 		player_instance.connect('action_give_shield', _on_character_action_give_shield)
 		player_instance.connect('action_slow_down', _on_character_action_slow_down)
@@ -195,7 +199,9 @@ func init_civilians() -> void:
 		civilian_instance.spawn(spawn_tile)
 		
 		civilian_instance.connect('action_push_back', _on_character_action_push_back)
+		civilian_instance.connect('action_towards_and_push_back', _on_character_action_towards_and_push_back)
 		civilian_instance.connect('action_pull_front', _on_character_action_pull_front)
+		civilian_instance.connect('action_pull_together', _on_character_action_pull_together)
 		civilian_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 		civilian_instance.connect('action_give_shield', _on_character_action_give_shield)
 		civilian_instance.connect('action_slow_down', _on_character_action_slow_down)
@@ -495,7 +501,7 @@ func is_tile_adjacent(origin_tile: MapTile, target_tile: MapTile, check_for_move
 	return is_tile_adjacent_by_coords(origin_tile.coords, target_tile.coords)
 
 
-func calculate_tiles_path(character: Character, target_tile: MapTile) -> Array[MapTile]:
+func calculate_tiles_path(character: Character, target_tile: MapTile, forced: bool = false) -> Array[MapTile]:
 	var map_dimension = map.get_side_dimension()
 	var astar_grid_map = AStarGrid2D.new()
 	astar_grid_map.region = Rect2i(1, 1, map_dimension, map_dimension)
@@ -512,7 +518,9 @@ func calculate_tiles_path(character: Character, target_tile: MapTile) -> Array[M
 	var tiles_coords_path = astar_grid_map.get_id_path(character.tile.coords, target_tile.coords)
 	if tiles_coords_path.size() > 1:
 		tiles_coords_path.erase(character.tile.coords)
-	assert(tiles_coords_path.size() <= character.move_distance, 'Path longer than character move distance')
+	
+	if not forced:
+		assert(tiles_coords_path.size() <= character.move_distance, 'Path longer than character move distance')
 	
 	var tiles_path: Array[MapTile] = []
 	tiles_path.append_array(tiles_coords_path.map(func(tile_coords: Vector2i): return map.tiles.filter(func(tile: MapTile): return tile.coords == tile_coords).front()))
@@ -528,8 +536,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 		
 		if character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.HORIZONTAL_DOT:
 			for tile in map.tiles.filter(func(tile: MapTile): return not tile.coords == character.tile.coords) as Array[MapTile]:
-				if (tile.coords.x == origin_tile.coords.x and absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) \
-					or (tile.coords.y == origin_tile.coords.y and absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance):
+				if tile.coords.x == origin_tile.coords.x or tile.coords.y == origin_tile.coords.y:
 					# include all tiles in path
 					if character.is_in_group('PLAYERS'):
 						push_unique_to_array(tiles_for_action, tile)
@@ -561,29 +568,33 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 						if index == 4:
 							break
 		
-		# exclude tiles behind occupied tiles
-		if character.is_in_group('PLAYERS') and character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.VERTICAL_LINE:
-			var occupied_tiles = tiles_for_action.filter(func(tile: MapTile): return tile.is_occupied()) as Array[MapTile]
-			if not occupied_tiles.is_empty():
-				for occupied_tile in occupied_tiles:
-					var origin_to_target_sign = (character.tile.coords - occupied_tile.coords).sign()
-					var hit_direction = get_hit_direction(origin_to_target_sign)
-					if hit_direction == HitDirection.DOWN_LEFT:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
-					elif hit_direction == HitDirection.UP_RIGHT:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
-					elif hit_direction == HitDirection.RIGHT_DOWN:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y <= occupied_tile.coords.y)
-					elif hit_direction == HitDirection.LEFT_UP:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y >= occupied_tile.coords.y)
-					elif hit_direction == HitDirection.DOWN:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
-					elif hit_direction == HitDirection.UP:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
-					elif hit_direction == HitDirection.RIGHT:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y >= occupied_tile.coords.x - occupied_tile.coords.y)
-					elif hit_direction == HitDirection.LEFT:
-						tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
+		if character.action_direction == ActionDirection.HORIZONTAL_LINE or character.action_direction == ActionDirection.VERTICAL_LINE:
+			# exclude tiles behind occupied tiles
+			if character.is_in_group('PLAYERS'):
+				var occupied_tiles = tiles_for_action.filter(func(tile: MapTile): return tile.is_occupied()) as Array[MapTile]
+				if not occupied_tiles.is_empty():
+					for occupied_tile in occupied_tiles:
+						var origin_to_target_sign = (character.tile.coords - occupied_tile.coords).sign()
+						var hit_direction = get_hit_direction(origin_to_target_sign)
+						if hit_direction == HitDirection.DOWN_LEFT:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
+						elif hit_direction == HitDirection.UP_RIGHT:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.y != occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
+						elif hit_direction == HitDirection.RIGHT_DOWN:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y <= occupied_tile.coords.y)
+						elif hit_direction == HitDirection.LEFT_UP:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x != occupied_tile.coords.x or tile.coords.y >= occupied_tile.coords.y)
+						elif hit_direction == HitDirection.DOWN:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x <= occupied_tile.coords.x)
+						elif hit_direction == HitDirection.UP:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y != occupied_tile.coords.x - occupied_tile.coords.y or tile.coords.x >= occupied_tile.coords.x)
+						elif hit_direction == HitDirection.RIGHT:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y >= occupied_tile.coords.x - occupied_tile.coords.y)
+						elif hit_direction == HitDirection.LEFT:
+							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
+			
+			# exclude tiles closer than min distance and farther than max distance
+			tiles_for_action = tiles_for_action.filter(func(tile): return (absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) or (absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance))
 	else:
 		tiles_for_action = map.tiles
 	
@@ -980,6 +991,30 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 		action_first_texture_button.set_pressed_no_signal(false)
 
 
+func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: int, origin_tile_coords: Vector2i) -> void:
+	if target_tile.is_occupied_by_asset():
+		var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+		var hit_direction = (origin_tile_coords - target_tile.coords).sign()
+		var pull_direction = hit_direction
+		var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile.coords + pull_direction).front()
+		var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
+		await origin_character.move(tiles_path, true)
+	else:
+		var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+		var tiles_path = calculate_tiles_path(origin_character, target_tile, true)
+		await origin_character.move(tiles_path, true)
+
+
+func _on_tile_action_pull_together(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
+	var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+	var hit_direction = (origin_tile_coords - target_tile_coords).sign()
+	var pull_direction = hit_direction
+	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile_coords + pull_direction).front()
+	var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
+	# pull only by one tile
+	await origin_character.move([tiles_path.front()] as Array[MapTile], true)
+
+
 func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	var tiles_to_be_pushed: Array[MapTile] = []
 	for tile in map.tiles:
@@ -1074,7 +1109,9 @@ func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	enemy_instance.spawn(spawn_tile, max_order + 1)
 	
 	enemy_instance.connect('action_push_back', _on_character_action_push_back)
+	enemy_instance.connect('action_towards_and_push_back', _on_character_action_towards_and_push_back)
 	enemy_instance.connect('action_pull_front', _on_character_action_pull_front)
+	enemy_instance.connect('action_pull_together', _on_character_action_pull_together)
 	enemy_instance.connect('action_hit_ally', _on_character_action_hit_ally)
 	enemy_instance.connect('action_give_shield', _on_character_action_give_shield)
 	enemy_instance.connect('action_slow_down', _on_character_action_slow_down)
@@ -1151,6 +1188,17 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 	recalculate_enemies_planned_actions()
 
 
+func _on_character_action_towards_and_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
+	var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
+	var pull_direction = hit_direction
+	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
+	var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
+	await origin_character.move(tiles_path, true)
+	
+	_on_character_action_push_back(target_character, action_damage, origin_tile_coords)
+
+
 func _on_character_action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var pull_direction = hit_direction
@@ -1189,6 +1237,12 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 	recalculate_enemies_planned_actions()
 
 
+func _on_character_action_pull_together(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
+	# conscious no 'await'
+	_on_tile_action_pull_together(target_character.tile.coords, action_damage, origin_tile_coords)
+	_on_character_action_pull_front(target_character, action_damage, origin_tile_coords)
+
+
 func _on_character_action_hit_ally(target_character: Character) -> void:
 	target_character.state_types.push_back(StateType.MADE_HIT_ALLY)
 
@@ -1202,8 +1256,7 @@ func _on_character_action_slow_down(target_character: Character) -> void:
 
 
 func _on_character_action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	# does this even work if it's called from signal? i don't think so...
-	await _on_tile_action_cross_push_back(target_character.tile.coords, action_damage, origin_tile_coords)
+	_on_tile_action_cross_push_back(target_character.tile.coords, action_damage, origin_tile_coords)
 
 
 func _on_action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3) -> void:

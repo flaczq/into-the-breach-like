@@ -4,6 +4,8 @@ class_name MapTile
 
 signal hovered_event(tile: MapTile, is_hovered: bool)
 signal clicked_event(tile: MapTile)
+signal action_towards_and_push_back(tile: MapTile, action_damage: int, origin_tile_coords: Vector2i)
+signal action_pull_together(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i)
 signal action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i)
 
 @onready var area_3d = $Area3D
@@ -184,9 +186,13 @@ func can_be_occupied() -> bool:
 	return health_type != TileHealthType.DESTRUCTIBLE_HEALTHY and health_type != TileHealthType.DESTRUCTIBLE_DAMAGED and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
 
 
+func is_occupied_by_asset() -> bool:
+	return health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or health_type == TileHealthType.INDESTRUCTIBLE
+
+
 func is_occupied() -> bool:
 	# is occupied by character or asset
-	return get_character() or health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or health_type == TileHealthType.INDESTRUCTIBLE
+	return is_able_to_move_on() or is_occupied_by_asset()
 
 
 func is_free() -> bool:
@@ -276,6 +282,8 @@ func set_planned_enemy_action(new_is_planned_enemy_action: bool) -> void:
 func apply_action(action_type: ActionType, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	match action_type:
 		ActionType.NONE: print('no applied action for tile coords ' + str(coords))
+		ActionType.TOWARDS_AND_PUSH_BACK: action_towards_and_push_back.emit(self, action_damage, origin_tile_coords)
+		ActionType.PULL_TOGETHER: action_pull_together.emit(coords, action_damage, origin_tile_coords)
 		ActionType.CROSS_PUSH_BACK: action_cross_push_back.emit(coords, action_damage, origin_tile_coords)
 		_: pass#print('no need for applied action ' + ActionType.keys()[action_type] + ' for tile coords ' + str(coords))
 
@@ -288,6 +296,10 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 	elif civilian:
 		await civilian.get_shot(damage, action_type, action_damage, origin_tile_coords)
 	else:
+		# move to the edge of the map
+		if action_type == ActionType.TOWARDS_AND_PUSH_BACK and not is_occupied_by_asset():
+			damage = 0
+		
 		apply_action(action_type, action_damage, origin_tile_coords)
 		
 		if damage > 0:

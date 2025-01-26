@@ -142,7 +142,8 @@ func execute_planned_action() -> void:
 			return
 		
 		if temp_planned_tile:
-			await spawn_bullet(temp_planned_tile)
+			if action_type != ActionType.TOWARDS_AND_PUSH_BACK:
+				await spawn_bullet(temp_planned_tile)
 			await temp_planned_tile.get_shot(damage, action_type, action_damage, tile.coords)
 			
 			animation_player.play('idle')

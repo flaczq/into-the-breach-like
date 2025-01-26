@@ -3,7 +3,9 @@ extends Util
 class_name Character
 
 signal action_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
+signal action_towards_and_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 signal action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
+signal action_pull_together(target_character: Character, action_damage: int, origin_tile_coords: Vector2i)
 #signal action_miss_move(target_character: Character)
 #signal action_miss_action(target_character: Character)
 signal action_hit_ally(target_character: Character)
@@ -238,7 +240,7 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 	# FIXME: arrow on the floor looks bad, maybe icon near tile?
 	match target_action_type:
 		ActionType.NONE: pass
-		ActionType.PUSH_BACK:
+		ActionType.PUSH_BACK, ActionType.TOWARDS_AND_PUSH_BACK:
 			#if not target_tile.is_able_to_move_on():
 				#return
 			
@@ -310,10 +312,14 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 			
 			# move it at the target back
 			var target_position = get_vector3_on_map(-1 * position_to_target)
-			forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
+			forced_action_model.position = target_position + origin_tile.position - first_origin_position
+			#forced_action_model.position = Vector3(target_position.x, 0.1, target_position.z)
 			# move it at the target back
 			forced_action_model.position += 0.4 * Vector3(origin_to_target_sign.y, 0, origin_to_target_sign.x)
+			forced_action_model.position.y = 0.1
 			
+			# make materials unique
+			forced_action_model.set_surface_override_material(0, forced_action_model.get_active_material(0).duplicate())
 			if target_tile.get_character():
 				forced_action_model.get_active_material(0).transparency = BaseMaterial3D.Transparency.TRANSPARENCY_DISABLED
 				forced_action_model.get_active_material(0).albedo_color = Color(forced_action_model.get_active_material(0).albedo_color, 1.0)
@@ -324,6 +330,11 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 			
 			forced_action_model.show()
 			add_child(forced_action_model)
+		ActionType.PULL_TOGETHER:
+			# pull target towards origin
+			spawn_action_indicators(target_tile, origin_tile, first_origin_position, ActionType.PULL_FRONT)
+			# pull origin towards target
+			spawn_action_indicators(origin_tile, target_tile, first_origin_position, ActionType.PULL_FRONT)
 		ActionType.CROSS_PUSH_BACK:
 			# 'target_tile' is origin, 'origin_tile.position' is first_origin_position
 			action_indicators_cross_push_back.emit(self, target_tile, origin_tile.position)
@@ -400,7 +411,9 @@ func apply_action(action_type: ActionType, action_damage: int = 0, origin_tile_c
 	match action_type:
 		ActionType.NONE: print('no applied action for character: ' + str(tile.coords))
 		ActionType.PUSH_BACK: action_push_back.emit(self, action_damage, origin_tile_coords)
+		ActionType.TOWARDS_AND_PUSH_BACK: action_towards_and_push_back.emit(self, action_damage, origin_tile_coords)
 		ActionType.PULL_FRONT: action_pull_front.emit(self, action_damage, origin_tile_coords)
+		ActionType.PULL_TOGETHER: action_pull_together.emit(self, action_damage, origin_tile_coords)
 		#ActionType.MISS_MOVE: action_miss_move.emit(self)
 		#ActionType.MISS_ACTION: action_miss_action.emit(self)
 		ActionType.HIT_ALLY: action_hit_ally.emit(self)
@@ -492,7 +505,7 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 			target_character.toggle_health_bar(true)
 		else:
 			# include damage from hiting something after being pushed or pulled
-			if origin_action_type == ActionType.PUSH_BACK or origin_action_type == ActionType.CROSS_PUSH_BACK:
+			if origin_action_type == ActionType.PUSH_BACK or origin_action_type == ActionType.TOWARDS_AND_PUSH_BACK or origin_action_type == ActionType.CROSS_PUSH_BACK:
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var push_direction = -1 * hit_direction_sign
@@ -510,7 +523,7 @@ func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTi
 					elif pushed_into_tile.health_type == TileHealthType.DESTROYED:
 						# pushed into a hole = dead
 						damage_dealt = target_character.health
-			elif origin_action_type == ActionType.PULL_FRONT:
+			elif origin_action_type == ActionType.PULL_FRONT or origin_action_type == ActionType.PULL_TOGETHER:
 				var hit_direction = (tile.coords - target_tile.coords) if (origin_tile == target_tile) else (origin_tile.coords - target_tile.coords)
 				var hit_direction_sign = hit_direction.sign()
 				var pull_direction = hit_direction_sign

@@ -125,7 +125,8 @@ func execute_action(target_tile: MapTile) -> void:
 	
 	reset_tiles()
 	
-	await spawn_bullet(target_tile)
+	if action_type != ActionType.TOWARDS_AND_PUSH_BACK:
+		await spawn_bullet(target_tile)
 	await target_tile.get_shot(damage, action_type, action_damage, tile.coords)
 	
 	after_action()

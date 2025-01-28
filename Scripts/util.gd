@@ -7,7 +7,7 @@ enum CameraPosition {HIGH, MIDDLE, LOW}
 enum BuildMode {RELEASE, DEBUG}
 enum EngineMode {MENU, GAME, EDITOR}
 enum PlayerType {PLAYER_TUTORIAL, PLAYER_1, PLAYER_2, PLAYER_3, NONE = -1}
-enum EnemyType {ENEMY_TUTORIAL, ENEMY_1, ENEMY_2, ENEMY_3, ENEMY_4}
+enum EnemyType {ENEMY_TUTORIAL, ENEMY_1, ENEMY_2, ENEMY_3, ENEMY_4, NONE = -1}
 enum CivilianType {CIVILIAN_TUTORIAL, CIVILIAN_1}
 enum ItemType {HEALTH, DAMAGE, SHIELD, MOVE_DISTANCE, FLYING, NONE = -1}
 enum ActionDirection {HORIZONTAL_LINE, VERTICAL_LINE, HORIZONTAL_DOT, VERTICAL_DOT, NONE = -1}
@@ -19,7 +19,7 @@ enum TileType {PLAIN, GRASS, TREE, MOUNTAIN, VOLCANO, WATER, LAVA, FLOOR, HOLE}
 enum TileHealthType {HEALTHY, DAMAGED, DESTROYED, DESTRUCTIBLE_HEALTHY, DESTRUCTIBLE_DAMAGED, INDESTRUCTIBLE, INDESTRUCTIBLE_WALKABLE}
 enum HitDirection {DOWN_LEFT, UP_RIGHT, RIGHT_DOWN, LEFT_UP, DOWN, UP, RIGHT, LEFT, UNKNOWN = -1}
 enum LevelType {TUTORIAL, KILL_ENEMIES, SURVIVE_TURNS, SAVE_CIVILIANS, SAVE_TILES, NONE = -1}
-enum LevelEvent {ENEMIES_FROM_BELOW, ENEMIES_FROM_ABOVE, MINE, FALLING_MISSLE, FALLING_ROCK, FALLING_LAVA, FLOOD, MOVING_PLATFORMS, NONE = -1}
+enum LevelEvent {ENEMIES_FROM_BELOW, ENEMIES_FROM_ABOVE, FALLING_MISSLE, FALLING_ROCK, MINE, FLOOD, MOVING_PLATFORMS, NONE = -1}
 
 const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
 const PLAYER_ARROW_COLOR: Color = Color('005fcd')
@@ -97,6 +97,16 @@ func get_hit_direction(origin_to_target_sign: Vector2i) -> HitDirection:
 	if origin_to_target_sign == Vector2i(-1, 1):
 		return HitDirection.LEFT
 	return HitDirection.UNKNOWN
+
+
+func is_good_hit_direction(hit_direction: HitDirection, action_direction: ActionDirection) -> bool:
+	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.HORIZONTAL_DOT:
+		return hit_direction == HitDirection.DOWN_LEFT or hit_direction == HitDirection.UP_RIGHT or hit_direction == HitDirection.RIGHT_DOWN or hit_direction == HitDirection.LEFT_UP
+	
+	if action_direction == ActionDirection.VERTICAL_LINE or action_direction == ActionDirection.VERTICAL_DOT:
+		return hit_direction == HitDirection.DOWN or hit_direction == HitDirection.UP or hit_direction == HitDirection.RIGHT or hit_direction == HitDirection.LEFT
+	
+	return false
 
 
 func get_character_color(character: Character) -> Color:

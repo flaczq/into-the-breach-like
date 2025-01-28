@@ -32,9 +32,9 @@ func spawn(level_data: Dictionary) -> void:
 		var asset_filename = convert_asset_initial_to_filename(level_data.tiles_assets[index])
 		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.level_type, level_data.level)
 		var health_type = get_health_type_by_tile_type(tile_type, asset_filename)
-		var money = get_money_by_tile_type(tile_type, asset_filename)
+		var points = get_points_by_tile_type(tile_type, asset_filename)
 		var map_tile_object: MapTileObject = MapTileObject.new()
-		map_tile_object.init(models, tile_type, health_type, money)
+		map_tile_object.init(models, tile_type, health_type, points)
 		
 		tile.reset()
 		tile.init(map_tile_object)
@@ -225,7 +225,7 @@ func get_health_type_by_tile_type(tile_type: TileType, asset_filename: String) -
 			return TileHealthType.HEALTHY
 
 
-func get_money_by_tile_type(tile_type: TileType, asset_filename: String) -> int:
+func get_points_by_tile_type(tile_type: TileType, asset_filename: String) -> int:
 	# FIXME hardcoded
 	if asset_filename:
 		if asset_filename == 'house':
@@ -248,7 +248,7 @@ func get_money_by_tile_type(tile_type: TileType, asset_filename: String) -> int:
 		TileType.FLOOR: return 1
 		TileType.HOLE: return -1
 		_:
-			print('[get_money_by_tile_type] -> unknown tile type: ' + str(tile_type))
+			print('[get_points_by_tile_type] -> unknown tile type: ' + str(tile_type))
 			return 0
 
 

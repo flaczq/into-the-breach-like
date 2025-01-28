@@ -29,7 +29,7 @@ var player: Player
 var ghost: Player
 var enemy: Enemy
 var civilian: Civilian
-var money: int
+var points: int
 
 
 func _ready() -> void:
@@ -51,7 +51,7 @@ func init(map_tile_object: MapTileObject) -> void:
 	models = map_tile_object.models
 	tile_type = map_tile_object.tile_type
 	health_type = map_tile_object.health_type
-	money = map_tile_object.money
+	points = map_tile_object.points
 	
 	# setup model with texture/shader/color
 	shader_material.set_shader(models.tile_shader)
@@ -313,7 +313,7 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 			
 			if health_type == TileHealthType.DESTRUCTIBLE_HEALTHY:
 				health_type = TileHealthType.DESTRUCTIBLE_DAMAGED
-				money = 2
+				points = 2
 				
 				# damage asset with outline for destructible tile
 				if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
@@ -328,7 +328,7 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 				print('ttile ' + str(coords) + ' -> destructible damaged tile')
 			elif health_type == TileHealthType.DESTRUCTIBLE_DAMAGED:
 				health_type = TileHealthType.HEALTHY
-				money = 1
+				points = 1
 				
 				# destroy assets with outlines for destructible tile
 				if is_instance_valid(models.get('asset')) and not models.asset.is_queued_for_deletion():
@@ -349,13 +349,13 @@ func get_shot(damage: int, action_type: ActionType = ActionType.NONE, action_dam
 				print('ttile ' + str(coords) + ' -> healthy tile')
 			elif health_type == TileHealthType.HEALTHY:
 				health_type = TileHealthType.DAMAGED
-				money = 0
+				points = 0
 				
 				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> damaged tile')
 			elif health_type == TileHealthType.DAMAGED:
 				health_type = TileHealthType.DESTROYED
-				money = -1
+				points = -1
 				
 				reset_tile_models()
 				print('ttile ' + str(coords) + ' -> destroyed')

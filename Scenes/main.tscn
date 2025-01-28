@@ -200,7 +200,7 @@ layout_mode = 2
 layout_mode = 2
 alignment = 2
 
-[node name="MoneyTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+[node name="PointsTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 tooltip_text = "INFO"
@@ -284,8 +284,8 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
-[connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/MoneyTextureButton" to="GameStateManager" method="_on_money_texture_button_down"]
-[connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/MoneyTextureButton" to="GameStateManager" method="_on_money_texture_button_up"]
+[connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/PointsTextureButton" to="GameStateManager" method="_on_points_texture_button_down"]
+[connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/PointsTextureButton" to="GameStateManager" method="_on_points_texture_button_up"]
 [connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_down"]
 [connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_up"]
 [connection signal="gui_input" from="CanvasLayer/PanelFullScreenContainer/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

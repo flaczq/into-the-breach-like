@@ -399,13 +399,15 @@ func check_for_level_end(turn_ended: bool = true) -> void:
 
 
 func level_won() -> void:
-	var tiles_money = map.tiles.map(func(tile): return tile.money)
-	var money_for_level = tiles_money.reduce(func(accum, money): return accum + money, 0)
+	var tiles_points = map.tiles.map(func(tile): return tile.points)
+	var points_for_level = tiles_points.reduce(func(accum, points): return accum + points, 0)
+	var dead_players_size = players.filter(func(player): return not player.is_alive).size()
+	var money_for_level = floori(sqrt(points_for_level)) - 3 * dead_players_size
 	
-	print('added money for level: ' + str(money_for_level))
+	print('adding money for level: ' + str(money_for_level))
+	
 	if money_for_level > 0:
 		Global.money += money_for_level
-		print('now you have money: ' + str(Global.money))
 	
 	# TODO
 	if level < max_levels and not Global.editor:
@@ -669,13 +671,18 @@ func calculate_tile_for_action_towards_characters(tiles_for_action: Array[MapTil
 
 
 func calculate_first_occupied_tile_for_action_direction_line(origin_character: Character, origin_tile_coords: Vector2i, target_tile_coords: Vector2i) -> MapTile:
+	var origin_to_target_sign = (origin_tile_coords - target_tile_coords).sign()
+	var hit_direction = get_hit_direction(origin_to_target_sign)
+	# this can happen if two+ characters are pushed/pulled at the same time (CROSS_PUSH_BACK)
+	if not is_good_hit_direction(hit_direction, origin_character.action_direction):
+		return null
+	
 	if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE:
-		var hit_direction = (origin_tile_coords - target_tile_coords).sign()
 		var tiles_in_line = []
 		var min_range = maxi(1, origin_character.action_min_distance)
 		var max_range = mini(map.get_side_dimension(), origin_character.action_max_distance)
 		for i in range(min_range, max_range + 1):
-			var current_tiles_in_line = map.tiles.filter(func(tile: MapTile): return tile.coords == origin_tile_coords - hit_direction * i)
+			var current_tiles_in_line = map.tiles.filter(func(tile: MapTile): return tile.coords == origin_tile_coords - origin_to_target_sign * i)
 			if not current_tiles_in_line.is_empty():
 				push_unique_to_array(tiles_in_line, current_tiles_in_line.front())
 		
@@ -993,20 +1000,20 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 
 func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: int, origin_tile_coords: Vector2i) -> void:
 	if target_tile.is_occupied_by_asset():
-		var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+		var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 		var hit_direction = (origin_tile_coords - target_tile.coords).sign()
 		var pull_direction = hit_direction
 		var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile.coords + pull_direction).front()
 		var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
 		await origin_character.move(tiles_path, true)
 	else:
-		var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+		var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 		var tiles_path = calculate_tiles_path(origin_character, target_tile, true)
 		await origin_character.move(tiles_path, true)
 
 
 func _on_tile_action_pull_together(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+	var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 	var hit_direction = (origin_tile_coords - target_tile_coords).sign()
 	var pull_direction = hit_direction
 	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile_coords + pull_direction).front()
@@ -1030,7 +1037,7 @@ func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage
 		if i < tiles_to_be_pushed.size():
 			tile_to_be_pushed.get_shot(action_damage, ActionType.PUSH_BACK, 0, target_tile_coords)
 		else:
-			# does this even work if it's called from signal? i don't think so...
+			# await for the last pushed tile
 			await tile_to_be_pushed.get_shot(action_damage, ActionType.PUSH_BACK, 0, target_tile_coords)
 
 
@@ -1189,14 +1196,14 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 
 
 func _on_character_action_towards_and_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	var origin_character = (players + enemies + civilians).filter(func(character): return character.tile.coords == origin_tile_coords).front() as Character
+	var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var pull_direction = hit_direction
 	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
 	var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
 	await origin_character.move(tiles_path, true)
 	
-	_on_character_action_push_back(target_character, action_damage, origin_tile_coords)
+	await _on_character_action_push_back(target_character, action_damage, origin_tile_coords)
 
 
 func _on_character_action_pull_front(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1238,9 +1245,9 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 
 
 func _on_character_action_pull_together(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	# conscious no 'await'
-	_on_tile_action_pull_together(target_character.tile.coords, action_damage, origin_tile_coords)
-	_on_character_action_pull_front(target_character, action_damage, origin_tile_coords)
+	await _on_tile_action_pull_together(target_character.tile.coords, action_damage, origin_tile_coords)
+	
+	await _on_character_action_pull_front(target_character, action_damage, origin_tile_coords)
 
 
 func _on_character_action_hit_ally(target_character: Character) -> void:
@@ -1256,7 +1263,7 @@ func _on_character_action_slow_down(target_character: Character) -> void:
 
 
 func _on_character_action_cross_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	_on_tile_action_cross_push_back(target_character.tile.coords, action_damage, origin_tile_coords)
+	await _on_tile_action_cross_push_back(target_character.tile.coords, action_damage, origin_tile_coords)
 
 
 func _on_action_indicators_cross_push_back(target_character: Character, origin_tile: MapTile, first_origin_position: Vector3) -> void:
@@ -1296,12 +1303,12 @@ func _on_undo_texture_button_pressed() -> void:
 		recalculate_enemies_planned_actions()
 
 
-func _on_money_texture_button_down() -> void:
+func _on_points_texture_button_down() -> void:
 	for tile in map.tiles:
-		tile.toggle_text(true, str(tile.money))
+		tile.toggle_text(true, str(tile.points))
 
 
-func _on_money_texture_button_up() -> void:
+func _on_points_texture_button_up() -> void:
 	for tile in map.tiles:
 		tile.toggle_text(false)
 

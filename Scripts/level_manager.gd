@@ -110,23 +110,27 @@ func add_events_details(level_data: Dictionary, enemy_scenes_size: int) -> void:
 		return
 	
 	for level_event in level_data.level_events:
+		# FIXME hardcoded
 		if level_event == LevelEvent.ENEMIES_FROM_BELOW:
 			if not level_data.has('enemies_from_below'):
 				level_data.enemies_from_below = []
 			
 			level_data.enemies_from_below.push_back(randi_range(1, enemy_scenes_size - 1))
-			# FIXME hardcoded
 			level_data.enemies_from_below_first_turn = 2
-			level_data.enemies_from_below_last_turn = 4
+			level_data.enemies_from_below_last_turn = 3
 		elif level_event == LevelEvent.ENEMIES_FROM_ABOVE:
 			if not level_data.has('enemies_from_above'):
 				level_data.enemies_from_above = []
 			
 			level_data.enemies_from_above.push_back(randi_range(1, enemy_scenes_size - 1))
-			# FIXME hardcoded
 			level_data.enemies_from_above_first_turn = 2
-			level_data.enemies_from_above_last_turn = 4
-			
+			level_data.enemies_from_above_last_turn = 3
+		elif level_event == LevelEvent.FALLING_MISSLE:
+			level_data.falling_missle_first_turn = 2
+			level_data.falling_missle_last_turn = 3
+		elif level_event == LevelEvent.FALLING_ROCK:
+			level_data.falling_rock_first_turn = 2
+			level_data.falling_rock_last_turn = 99
 
 
 func plan_events(game_state_manager: GameStateManager) -> void:
@@ -206,7 +210,9 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				await game_state_manager.get_tree().create_timer(1.0).timeout
 		# missle spawned at random tile
 		elif level_event == LevelEvent.FALLING_MISSLE:
-			if current_turn > 1:
+			assert(level_data.has('falling_missle_first_turn'), 'Set falling_missle_first_turn for level_event: FALLING_MISSLE')
+			assert(level_data.has('falling_missle_last_turn'), 'Set falling_missle_last_turn for level_event: FALLING_MISSLE')
+			if current_turn >= level_data.falling_missle_first_turn and current_turn <= level_data.falling_missle_last_turn:
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('FF0000')#red
@@ -225,9 +231,11 @@ func plan_events(game_state_manager: GameStateManager) -> void:
 				
 				print('spawned missle at ' + str(event_tile.coords))
 				await game_state_manager.get_tree().create_timer(1.0).timeout
-		# rock spawned near mountains
+		# rock spawned near volcano
 		elif level_event == LevelEvent.FALLING_ROCK:
-			if current_turn > 1:
+			assert(level_data.has('falling_rock_first_turn'), 'Set falling_rock_first_turn for level_event: FALLING_ROCK')
+			assert(level_data.has('falling_rock_last_turn'), 'Set falling_rock_last_turn for level_event: FALLING_ROCK')
+			if current_turn >= level_data.falling_rock_first_turn and current_turn <= level_data.falling_rock_last_turn:
 				var event_asset = map.assets.filter(func(asset): return asset.name == 'indicator-special-cross').front().duplicate()
 				var event_asset_material = StandardMaterial3D.new()
 				event_asset_material.albedo_color = Color('7A5134')#brown
@@ -270,12 +278,10 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_below_first_turn'), 'Set enemies_from_below_first_turn for level_event: ENEMIES_FROM_BELOW')
 			assert(level_data.has('enemies_from_below_last_turn'), 'Set enemies_from_below_last_turn for level_event: ENEMIES_FROM_BELOW')
 			assert(level_data.get('enemies_from_below'), 'Set enemies_from_below for level_event: ENEMIES_FROM_ABOVE')
-			if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
-				var event_tile: MapTile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS') and not already_checked_enemies_tiles.has(tile)).front()
-				if not event_tile:
-					print('no event tiles for ENEMIES_FROM_BELOW');
-					continue
-				
+			var event_tiles: MapTile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS') and not already_checked_enemies_tiles.has(tile))
+			#if current_turn >= level_data.enemies_from_below_first_turn and current_turn <= level_data.enemies_from_below_last_turn:
+			if not event_tiles.is_empty():
+				var event_tile = event_tiles.front()
 				var target_character = event_tile.get_character()
 				if target_character:
 					already_checked_enemies_tiles.push_back(event_tile)
@@ -296,8 +302,10 @@ func execute_events(game_state_manager: GameStateManager) -> void:
 			assert(level_data.has('enemies_from_above_first_turn'), 'Set enemies_from_above_first_turn for level_event: ENEMIES_FROM_ABOVE')
 			assert(level_data.has('enemies_from_above_last_turn'), 'Set enemies_from_above_last_turn for level_event: ENEMIES_FROM_ABOVE')
 			assert(level_data.get('enemies_from_above'), 'Set enemies_from_above for level_event: ENEMIES_FROM_ABOVE')
-			if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
-				var event_tile = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS') and not already_checked_enemies_tiles.has(tile)).front()
+			var event_tiles = map.tiles.filter(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS') and not already_checked_enemies_tiles.has(tile))
+			#if current_turn >= level_data.enemies_from_above_first_turn and current_turn <= level_data.enemies_from_above_last_turn:
+			if not event_tiles.is_empty():
+				var event_tile = event_tiles.front()
 				if not event_tile or event_tile.get_character():
 					print('no event tiles or character on tile for ENEMIES_FROM_ABOVE');
 					already_checked_enemies_tiles.push_back(event_tile)

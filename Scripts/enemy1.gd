@@ -12,7 +12,7 @@ func _ready() -> void:
 	max_health = 2
 	health = 2
 	damage = 2
-	move_distance = 3
+	move_distance = 4
 	action_min_distance = 1
 	action_max_distance = 1
 	action_direction = ActionDirection.HORIZONTAL_LINE

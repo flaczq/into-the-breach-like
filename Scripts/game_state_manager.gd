@@ -402,8 +402,8 @@ func level_won() -> void:
 	var tiles_points = map.tiles.map(func(tile): return tile.points)
 	var points_for_level = tiles_points.reduce(func(accum, points): return accum + points, 0)
 	var dead_players_size = players.filter(func(player): return not player.is_alive).size()
+	# FIXME hardcoded, adjust algorithm
 	var money_for_level = floori(sqrt(points_for_level)) - 3 * dead_players_size
-	
 	print('adding money for level: ' + str(money_for_level))
 	
 	if money_for_level > 0:

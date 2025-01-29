@@ -288,3 +288,8 @@ func get_targetable_tiles() -> Array[MapTile]:
 
 func get_untargetable_tiles() -> Array[MapTile]:
 	return tiles.filter(func(tile: MapTile): return not get_targetable_tiles().has(tile) and (not tile.models.get('event_asset') or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))
+
+
+func get_tiles_in_cross(middle_tile: MapTile) -> Array[MapTile]:
+	return tiles.filter(func(tile): return (absi(tile.coords.x - middle_tile.coords.x) == 1 and tile.coords.y == middle_tile.coords.y) \
+		or (absi(tile.coords.y - middle_tile.coords.y) == 1 and tile.coords.x == middle_tile.coords.x))

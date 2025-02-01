@@ -153,13 +153,10 @@ func set_civilian(new_civilian: Civilian) -> void:
 func get_character() -> Character:
 	if player:
 		return player
-		
 	if enemy:
 		return enemy
-		
 	if civilian:
 		return civilian
-		
 	return null
 
 
@@ -182,26 +179,18 @@ func get_collectable() -> Node3D:
 	return collectables.front()
 
 
-func can_be_occupied() -> bool:
-	return health_type != TileHealthType.DESTRUCTIBLE_HEALTHY and health_type != TileHealthType.DESTRUCTIBLE_DAMAGED and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
-
-
 func is_occupied_by_asset() -> bool:
 	return health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or health_type == TileHealthType.INDESTRUCTIBLE
 
 
 func is_occupied() -> bool:
 	# is occupied by character or asset
-	return is_able_to_move_on() or is_occupied_by_asset()
+	return get_character() != null or is_occupied_by_asset()
 
 
 func is_free() -> bool:
-	# is occupied by character or asset
+	# is not occupied and not hole/water/lava
 	return not is_occupied() and health_type != TileHealthType.DESTROYED and health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE
-
-
-func is_able_to_move_on() -> bool:
-	return get_character() != null
 
 
 func setup_assets() -> void:

@@ -124,7 +124,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 func force_into_occupied_tile(target_tile_position: Vector3, target_tile: MapTile = null) -> void:
 	# remember position to bounce back to it
 	var origin_position = position
-	var duration = Global.default_speed / Global.speed
+	var duration = Global.move_speed / Global.default_speed
 	var position_tween = create_tween()
 	position_tween.tween_property(self, 'position', target_tile_position, duration)
 	await position_tween.finished
@@ -241,9 +241,6 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 	match target_action_type:
 		ActionType.NONE: pass
 		ActionType.PUSH_BACK, ActionType.TOWARDS_AND_PUSH_BACK:
-			#if not target_tile.is_able_to_move_on():
-				#return
-			
 			var forced_action_model = default_forced_action_model.duplicate()
 			# near tile floor
 			forced_action_model.position = Vector3(0, 0.1, 0)
@@ -285,9 +282,6 @@ func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, 
 			forced_action_model.show()
 			add_child(forced_action_model)
 		ActionType.PULL_FRONT:
-			#if not target_tile.is_able_to_move_on():
-				#return
-			
 			var forced_action_model = default_forced_action_model.duplicate()
 			# near tile floor
 			forced_action_model.position = Vector3(0, 0.1, 0)
@@ -387,7 +381,7 @@ func spawn_bullet(target_tile: MapTile) -> void:
 	
 	var position_tween = create_tween()
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
-		var duration = 0.2 * position_to_target.length() / Global.speed
+		var duration = 0.2 * position_to_target.length() / Global.default_speed
 		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * position_to_target), duration)
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		var origin_position = get_vector3_on_map(Vector3.ZERO)
@@ -397,7 +391,7 @@ func spawn_bullet(target_tile: MapTile) -> void:
 		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		# more = smoother
 		var amount = maxi(2 * roundi(position_difference.length()), 6)
-		var duration = 0.1 / Global.speed#position_difference.length() / (amount * 6.0)
+		var duration = 0.1 / Global.default_speed#position_difference.length() / (amount * 6.0)
 		for i in range(1, amount + 1):
 			# manually slowing down the bullet in the top part of the trajectory
 			#var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)

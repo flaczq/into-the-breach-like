@@ -404,7 +404,7 @@ func level_won() -> void:
 	var dead_players_size = players.filter(func(player): return not player.is_alive).size()
 	# FIXME hardcoded, adjust algorithm
 	var money_for_level = floori(sqrt(points_for_level)) - 3 * dead_players_size
-	print('adding money for level: ' + str(money_for_level))
+	print('adding money for level: ' + str(money_for_level) + '(' + str(points_for_level) + ' ' + str(dead_players_size) + ')')
 	
 	if money_for_level > 0:
 		Global.money += money_for_level
@@ -480,7 +480,7 @@ func calculate_tiles_for_movement(active: bool, character: Character) -> Array[M
 				for tile in map.tiles.filter(func(tile: MapTile): return tile.health_type != TileHealthType.INDESTRUCTIBLE_WALKABLE) as Array[MapTile]:
 					# characters can move through other characters of the same type
 					var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
-					if not occupied_by_characters and not tiles_for_movement.has(tile):
+					if (character.can_fly or not occupied_by_characters) and not tiles_for_movement.has(tile):
 						if is_tile_adjacent(origin_tile, tile):
 							push_unique_to_array(tiles_for_movement, tile)
 							push_unique_to_array(temp_origin_tiles, tile)
@@ -594,9 +594,9 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y >= occupied_tile.coords.x - occupied_tile.coords.y)
 						elif hit_direction == HitDirection.LEFT:
 							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
-			
-			# exclude tiles closer than min distance and farther than max distance
-			tiles_for_action = tiles_for_action.filter(func(tile): return (absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) or (absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance))
+		
+		# exclude tiles closer than min distance and farther than max distance
+		tiles_for_action = tiles_for_action.filter(func(tile): return (absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) or (absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance))
 	else:
 		tiles_for_action = map.tiles
 	
@@ -1202,7 +1202,6 @@ func _on_character_action_towards_and_push_back(target_character: Character, act
 	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
 	var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
 	await origin_character.move(tiles_path, true)
-	
 	await _on_character_action_push_back(target_character, action_damage, origin_tile_coords)
 
 

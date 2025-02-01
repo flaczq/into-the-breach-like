@@ -80,7 +80,11 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 	if not forced and current_phase != PhaseType.MOVE:
 		return
 	
+	# can get killed here
 	await super(tiles_path, forced, outside_tile_position)
+	
+	if not is_alive:
+		return
 	
 	var target_tile = tiles_path.back() as MapTile
 	if target_tile != tile:
@@ -93,7 +97,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			# need call set_player() after reset_tiles() to properly toggle target tile
 			tile.set_player(self)
 			
-			var duration = Global.default_speed / Global.speed
+			var duration = Global.move_speed / Global.default_speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)
@@ -104,9 +108,8 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			
 			if not forced:
 				moves_made_current_turn += 1
-			
 				#print('playe ' + str(tile.coords) + ' -> moved: ' + str(moves_per_turn - moves_made_current_turn) + ' more move(s) in this turn')
-			
+				
 				if no_more_moves_this_turn():
 					current_phase = PhaseType.ACTION
 					#print('playe ' + str(tile.coords) + ' -> ' + PhaseType.keys()[current_phase] + ': ' + str(actions_per_turn) + ' ACTION(S)')

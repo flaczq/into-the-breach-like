@@ -286,8 +286,8 @@ func get_targetable_tiles() -> Array[MapTile]:
 		or (is_instance_valid(tile.models.get('asset_damaged')) and not tile.models.asset_damaged.is_queued_for_deletion() and tile.models.asset_damaged.is_in_group('TARGETABLES')))
 
 
-func get_untargetable_tiles() -> Array[MapTile]:
-	return tiles.filter(func(tile: MapTile): return not get_targetable_tiles().has(tile) and (not tile.models.get('event_asset') or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))
+func get_tiles_for_events() -> Array[MapTile]:
+	return tiles.filter(func(tile: MapTile): return not get_targetable_tiles().has(tile) and not tile.models.get('asset') and (not tile.models.get('event_asset')))# or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))
 
 
 func get_tiles_in_cross(middle_tile: MapTile) -> Array[MapTile]:

@@ -29,7 +29,11 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 		print('civil ' + str(tile.coords) + ' -> slowed down')
 		state_types.erase(StateType.SLOWED_DOWN)
 	
+	# can get killed here
 	await super(tiles_path, forced, outside_tile_position)
+	
+	if not is_alive:
+		return
 	
 	var target_tile = tiles_path.back() as MapTile
 	if target_tile != tile:
@@ -38,7 +42,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			tile = target_tile
 			tile.set_civilian(self)
 			
-			var duration = Global.default_speed / Global.speed
+			var duration = Global.move_speed / Global.default_speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)

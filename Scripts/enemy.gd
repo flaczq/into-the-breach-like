@@ -69,7 +69,11 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 	toggle_arrows(false)
 	#toggle_action_indicators(false)
 	
+	# can get killed here
 	await super(tiles_path, forced, outside_tile_position)
+	
+	if not is_alive:
+		return
 	
 	var target_tile = tiles_path.back() as MapTile
 	if target_tile != tile:
@@ -81,7 +85,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			tile = target_tile
 			tile.set_enemy(self)
 			
-			var duration = Global.default_speed / Global.speed
+			var duration = Global.move_speed / Global.default_speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)
@@ -171,7 +175,7 @@ func get_killed() -> void:
 
 
 func spawn_bonus() -> void:
-	if tile.can_be_occupied() and (randi() % bonus_chance) == (bonus_chance - 1):
+	if tile.is_free() and (randi() % bonus_chance) == (bonus_chance - 1):
 		var bonus_model = default_bonus_model.duplicate()
 		bonus_model.position = Vector3(0, 0.2, 0)
 		bonus_model.show()

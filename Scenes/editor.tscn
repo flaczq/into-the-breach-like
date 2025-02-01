@@ -305,7 +305,6 @@ popup/item_3/text = "MOUNTAIN"
 popup/item_3/id = 3
 popup/item_4/text = "VOLCANO"
 popup/item_4/id = 4
-popup/item_4/disabled = true
 popup/item_5/text = "WATER"
 popup/item_5/id = 5
 popup/item_6/text = "LAVA"

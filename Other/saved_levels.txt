@@ -5,5 +5,13 @@
 1-1-1->STOP
 
 2-1-1->START
-{ "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0, 2], "tiles": "MMMPPGGGMMMPPPGGPPPPPPPGPPPPPPPGPPPPPPPGGPPPPPPGGGWWWWWWGGWWWWWW", "tiles_assets": "MMM000TTMMM0000T0000000T0000000T0000000000000000T0000000TT000000", "spawn_player_coords": [{ "x": 4, "y": 2 }, { "x": 5, "y": 2 }, { "x": 6, "y": 2 }], "spawn_enemy_coords": [{ "x": 4, "y": 6 }, { "x": 5, "y": 6 }, { "x": 3, "y": 6 }], "spawn_civilian_coords": [] }
+{ "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0, 2], "tiles": "MMMPPGGGMMMPPPGGPPPPPPPGPPPPPPPGPPPPPPPGGPPPPPPGGGPPWWWWGGGWWWWW", "tiles_assets": "MMM000TTMMM0000T0000000T0000000T0000000000000000T0000000TT000000", "spawn_player_coords": [{ "x": 4, "y": 2 }, { "x": 5, "y": 2 }, { "x": 6, "y": 2 }], "spawn_enemy_coords": [{ "x": 4, "y": 6 }, { "x": 5, "y": 6 }, { "x": 3, "y": 6 }], "spawn_civilian_coords": [] }
 2-1-1->STOP
+
+3-1-1->START
+{ "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0], "tiles": "MMMWWHHHPPPPPGHHPPPPPGGHGPPPPGGHGGPPPPGWHGPPPPGWHHGPPPPWHHHGGPPW", "tiles_assets": "MMM0000000000T0000000TT000000000TT0000T00T0000T000000000000TT000", "spawn_player_coords": [{ "x": 2, "y": 2 }, { "x": 3, "y": 2 }, { "x": 4, "y": 2 }], "spawn_enemy_coords": [{ "x": 7, "y": 6 }, { "x": 6, "y": 6 }, { "x": 5, "y": 6 }], "spawn_civilian_coords": [] }
+3-1-1->STOP
+
+4-1-1->START
+{ "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0], "tiles": "GGGGGMMMGGPPPPPMWPPHHPPWWPPPPPPWWPPPPPGGMPHHPPGGMPPPPPPGMMMPPPPG", "tiles_assets": "TTTT00MM000000000000000000000000000000000000000TM000000TMM00000T", "spawn_player_coords": [{ "x": 4, "y": 2 }, { "x": 5, "y": 2 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }], "spawn_enemy_coords": [{ "x": 4, "y": 7 }, { "x": 5, "y": 7 }, { "x": 6, "y": 7 }], "spawn_civilian_coords": [] }
+4-1-1->STOP

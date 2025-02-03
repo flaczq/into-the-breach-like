@@ -510,7 +510,8 @@ func calculate_tiles_path(character: Character, target_tile: MapTile, forced: bo
 	astar_grid_map.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	astar_grid_map.update()
 	
-	if not character.can_fly:
+	# FIXME check if this works
+	if not forced and not character.can_fly:
 		for tile in map.tiles:
 			var occupied_by_health_type = (tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_HEALTHY or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED or tile.health_type == TileHealthType.INDESTRUCTIBLE)
 			var occupied_by_characters = (not character.is_in_group('PLAYERS') and tile.player) or (not character.is_in_group('ENEMIES') and tile.enemy) or (not character.is_in_group('CIVILIANS') and tile.civilian)
@@ -1005,10 +1006,12 @@ func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: 
 		var pull_direction = hit_direction
 		var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile.coords + pull_direction).front()
 		var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
+		assert(not tiles_path.is_empty(), 'tiles path is empty')
 		await origin_character.move(tiles_path, true)
 	else:
 		var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 		var tiles_path = calculate_tiles_path(origin_character, target_tile, true)
+		assert(not tiles_path.is_empty(), 'tiles path is empty')
 		await origin_character.move(tiles_path, true)
 
 
@@ -1018,6 +1021,7 @@ func _on_tile_action_pull_together(target_tile_coords: Vector2i, action_damage: 
 	var pull_direction = hit_direction
 	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile_coords + pull_direction).front()
 	var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
+	assert(not tiles_path.is_empty(), 'tiles path is empty')
 	# pull only by one tile
 	await origin_character.move([tiles_path.front()] as Array[MapTile], true)
 
@@ -1201,6 +1205,7 @@ func _on_character_action_towards_and_push_back(target_character: Character, act
 	var pull_direction = hit_direction
 	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
 	var tiles_path = calculate_tiles_path(origin_character, pulled_into_tile, true)
+	assert(not tiles_path.is_empty(), 'tiles path is empty')
 	await origin_character.move(tiles_path, true)
 	await _on_character_action_push_back(target_character, action_damage, origin_tile_coords)
 
@@ -1244,8 +1249,9 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 
 
 func _on_character_action_pull_together(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
+	# pull origin character one tile towards target character
 	await _on_tile_action_pull_together(target_character.tile.coords, action_damage, origin_tile_coords)
-	
+	# pull target character one tile towards origin character
 	await _on_character_action_pull_front(target_character, action_damage, origin_tile_coords)
 
 

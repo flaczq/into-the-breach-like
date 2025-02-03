@@ -140,14 +140,6 @@ texture_normal = ExtResource("22_nxh73")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InfoTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-tooltip_text = "INFO"
-texture_normal = ExtResource("25_rkgt4")
-ignore_texture_size = true
-stretch_mode = 5
-
 [node name="LeftCenterContainer" type="VBoxContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
@@ -459,7 +451,6 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/InfoTextureButton" to="GameStateManager" method="_on_info_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayButton" to="." method="_on_play_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/ResetButton" to="." method="_on_reset_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DeleteButton" to="." method="_on_delete_button_toggled"]

@@ -289,7 +289,6 @@ func _on_save_button_pressed() -> void:
 	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
 	var content = file.get_as_text()
 	var index = content.count('->START') + 1
-	var prefix = '-' + str(level_data.level) + '-' + str(level_data.level_type) + '->'
 	
 	calculate_level_data()
 	
@@ -309,6 +308,7 @@ func _on_save_button_pressed() -> void:
 	level_data.erase('enemies_from_above_first_turn')
 	level_data.erase('enemies_from_above_last_turn')
 	
+	var prefix = '-' + str(level_data.level) + '-' + str(level_data.level_type) + '->'
 	content += '\n' + str(index) + prefix + 'START\n'
 	# make it pretty
 	#content += JSON.stringify(level_data, '\t')

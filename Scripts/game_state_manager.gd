@@ -221,11 +221,10 @@ func init_ui() -> void:
 		assert(player.id >= 0, 'Wrong player id')
 		var existing_player_container = players_grid_container.get_node('Player' + str(player.id) + 'Container')
 		if existing_player_container:
-			#existing_player_container.init(player.id, player.texture, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
 			existing_player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
 		else:
 			var player_container = player_container_scene.instantiate() as PlayerContainer
-			player_container.init(player.id, player.texture, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited, _on_player_texture_button_toggled)
+			player_container.init(player.id, player.texture, _on_player_texture_button_toggled, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited)
 			player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
 			var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
 			player_texture_button.modulate.a = 0.5
@@ -279,11 +278,13 @@ func start_turn() -> void:
 			target_tile_for_movement = tiles_for_movement.pick_random()
 			print('enemy ' + str(alive_enemy.tile.coords) + ' -> random move ' + str(target_tile_for_movement.coords))
 		
+		# wait for 'thinking' about move
+		await get_tree().create_timer(0.5).timeout
 		var tiles_path = calculate_tiles_path(alive_enemy, target_tile_for_movement)
 		await alive_enemy.move(tiles_path)
 		
 		# wait for 'thinking' about action
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.5).timeout
 	
 		# enemy shouldn't but could have moved in front of the other enemy attack line
 		recalculate_enemies_planned_actions()
@@ -1067,6 +1068,9 @@ func _on_player_hovered(player: Player, is_hovered: bool) -> void:
 
 
 func _on_player_clicked(player: Player, is_clicked: bool) -> void:
+	#if Global.engine_mode == EngineMode.AWAITING:
+		#return
+	
 	# reset tiles for selected player if new player is selected
 	if selected_player and selected_player != player and selected_player.can_be_interacted_with():
 		selected_player.reset_tiles()

@@ -1118,6 +1118,7 @@ mesh = SubResource("ArrayMesh_bgdcb")
 
 [node name="ArrowSignContainer" type="Node3D" parent="." groups=["ARROW"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.006)
+visible = false
 
 [node name="ArrowSign" type="MeshInstance3D" parent="ArrowSignContainer"]
 transform = Transform3D(50, 0, 0, 0, -2.18557e-06, -50, 0, 50, -2.18557e-06, 0, 0, 0)
@@ -1135,26 +1136,31 @@ surface_material_override/0 = SubResource("StandardMaterial3D_l7r3e")
 
 [node name="floor-small-diagonal" type="MeshInstance3D" parent="." groups=["ACTION_INDICATORS"]]
 transform = Transform3D(0.424264, 0, -0.424264, 0, 0.6, 0, 0.424264, 0, 0.424264, 0, 0.21, 0)
+visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_hhqyr")
 surface_material_override/0 = SubResource("StandardMaterial3D_lnv2f")
 
 [node name="tree" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.15, 0, 0, 0, -6.55671e-09, -0.15, 0, 0.15, -6.55671e-09, 0, 0.2, 0)
+visible = false
 material_override = SubResource("StandardMaterial3D_vk68p")
 mesh = SubResource("ArrayMesh_skeun")
 script = ExtResource("5_4g6f2")
 
 [node name="tree_outline" type="MeshInstance3D" parent="tree" groups=["OUTLINES"]]
+visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_p8r5p")
 
 [node name="mountain" type="MeshInstance3D" parent="."]
 transform = Transform3D(-3.49691e-08, -0.8, 3.49691e-08, 0, -3.49691e-08, -0.8, 0.8, -3.49691e-08, 1.52855e-15, 0, 0.2, 0)
+visible = false
 mesh = SubResource("ArrayMesh_fchqw")
 script = ExtResource("5_4g6f2")
 
 [node name="mountain_outline" type="MeshInstance3D" parent="mountain" groups=["OUTLINES"]]
+visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_6edw2")
 
@@ -1178,6 +1184,7 @@ mesh = SubResource("ArrayMesh_0df47")
 script = ExtResource("5_4g6f2")
 
 [node name="volcano_outline" type="MeshInstance3D" parent="volcano" groups=["OUTLINES"]]
+visible = false
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_hi3gw")
 

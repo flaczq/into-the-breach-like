@@ -2,6 +2,6 @@
 
 [resource]
 shading_mode = 0
-albedo_color = Color(0, 0, 0, 1)
+albedo_color = Color(0.0431373, 0.0352941, 0.0392157, 1)
 proximity_fade_enabled = true
 proximity_fade_distance = 0.2

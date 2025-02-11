@@ -5,7 +5,7 @@ class_name Util
 enum Language {EN, PL}
 enum CameraPosition {HIGH, MIDDLE, LOW}
 enum BuildMode {RELEASE, DEBUG}
-enum EngineMode {MENU, GAME, EDITOR}
+enum EngineMode {MENU, GAME, EDITOR, AWAITING}
 enum PlayerType {PLAYER_TUTORIAL, PLAYER_1, PLAYER_2, PLAYER_3, NONE = -1}
 enum EnemyType {ENEMY_TUTORIAL, ENEMY_1, ENEMY_2, ENEMY_3, ENEMY_4, NONE = -1}
 enum CivilianType {CIVILIAN_TUTORIAL, CIVILIAN_1}

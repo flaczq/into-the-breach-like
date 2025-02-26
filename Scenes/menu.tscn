@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=14 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="4_1fybh"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="4_hyrgu"]
 [ext_resource type="PackedScene" uid="uid://1noimyb1f3xg" path="res://Scenes/cutscenes.tscn" id="4_om7ip"]
+[ext_resource type="Texture2D" uid="uid://7tvq3gl4pumw" path="res://Assets/aaaps/but_normal.png" id="7_jwgkg"]
+[ext_resource type="Texture2D" uid="uid://b3ghscg1sy375" path="res://Assets/aaaps/but_clicked.png" id="8_bsckg"]
+[ext_resource type="Texture2D" uid="uid://dahihn8ujkl0o" path="res://Assets/aaaps/but_hovered.png" id="9_wb45a"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5okir"]
 
@@ -44,21 +47,29 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -65.5
-offset_top = -56.0
-offset_right = 65.5
-offset_bottom = 56.0
+offset_left = -124.0
+offset_top = -103.0
+offset_right = 124.0
+offset_bottom = 103.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainMenuContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
 layout_mode = 2
 
+[node name="TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
+layout_mode = 2
+texture_normal = ExtResource("7_jwgkg")
+texture_pressed = ExtResource("8_bsckg")
+texture_hover = ExtResource("9_wb45a")
+stretch_mode = 3
+
 [node name="EditorButton" type="Button" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
 layout_mode = 2
 text = "! EDITOR !"
 
 [node name="StartButton" type="Button" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
+visible = false
 layout_mode = 2
 text = "START"
 
@@ -218,6 +229,7 @@ alignment = 2
 layout_mode = 2
 text = "version: 1.0"
 
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/TextureButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorButton" to="." method="_on_editor_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]

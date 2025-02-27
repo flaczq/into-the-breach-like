@@ -9,13 +9,13 @@ extends Util
 @onready var upgrades_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer
 @onready var shop_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopLabel
 @onready var shop: Shop = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/Shop
-@onready var shop_buy_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyButton
-@onready var shop_skip_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton
+@onready var shop_buy_texture_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton
+@onready var shop_skip_texture_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton
 @onready var inventory_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/InventoryLabel
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer
 @onready var inventory: Inventory = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
-@onready var levels_next_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton
+@onready var levels_next_texture_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
 
 var selected_level_type: LevelType = LevelType.NONE
 
@@ -31,10 +31,10 @@ func _ready() -> void:
 		upgrades_container.hide()
 		levels_container.show()
 	
-	shop_buy_button.set_disabled(true)
-	shop_skip_button.set_disabled(false)
+	shop_buy_texture_button.set_disabled(true)
+	shop_skip_texture_button.set_disabled(false)
 	inventory_label.text = 'INVENTORY'
-	levels_next_button.set_disabled(true)
+	levels_next_texture_button.set_disabled(true)
 	
 	update_labels()
 	init_ui()
@@ -112,18 +112,18 @@ func _on_shop_item_hovered(shop_item_id: int, item_id: ItemType, is_hovered: boo
 func _on_shop_item_clicked(shop_item_id: int, item_id: ItemType) -> void:
 	var shop_clicked_item_id = get_shop_clicked_item_id()
 	if shop_clicked_item_id == ItemType.NONE:
-		shop_buy_button.set_disabled(true)
+		shop_buy_texture_button.set_disabled(true)
 	else:
 		var selected_item_from_shop = get_item(shop_clicked_item_id)
-		shop_buy_button.set_disabled(selected_item_from_shop.cost > Global.money)
+		shop_buy_texture_button.set_disabled(selected_item_from_shop.cost > Global.money)
 	
 	for player_container in players_grid_container.get_children() as Array[PlayerContainer]:
 		player_container.reset_items()
 	inventory.reset_items()
 
 
-func _on_shop_buy_button_pressed() -> void:
-	shop_buy_button.set_disabled(true)
+func _on_shop_buy_texture_button_pressed() -> void:
+	shop_buy_texture_button.set_disabled(true)
 	
 	var shop_clicked_item_id = get_shop_clicked_item_id()
 	if shop_clicked_item_id == ItemType.NONE:
@@ -150,7 +150,7 @@ func _on_shop_buy_button_pressed() -> void:
 	inventory.reset_items()
 
 
-func _on_shop_skip_button_pressed() -> void:
+func _on_shop_skip_texture_button_pressed() -> void:
 	upgrades_container.hide()
 	levels_container.show()
 
@@ -212,7 +212,7 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 		var player_container = players_grid_container.get_children().filter(func(child): return child.id == selected_player.id).front() as PlayerContainer
 		selected_player.set_items(player_container.items_ids)
 	
-	shop_buy_button.set_disabled(true)
+	shop_buy_texture_button.set_disabled(true)
 	shop.reset_items()
 	var should_highlight = player_clicked_item_id != ItemType.NONE and item_id != ItemType.NONE
 	for player_container in players_grid_container.get_children() as Array[PlayerContainer]:
@@ -248,7 +248,7 @@ func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> vo
 			inventory.add_item(player_clicked_item, inventory_item_id)
 			inventory.reset_items(false)
 	
-	shop_buy_button.set_disabled(true)
+	shop_buy_texture_button.set_disabled(true)
 	shop.reset_items()
 	for player_container in players_grid_container.get_children() as Array[PlayerContainer]:
 		player_container.reset_items(inventory_clicked_item_id != ItemType.NONE)
@@ -259,10 +259,10 @@ func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> vo
 func _on_level_type_button_pressed(level_type: LevelType) -> void:
 	selected_level_type = level_type
 	
-	levels_next_button.set_disabled(not selected_level_type)
+	levels_next_texture_button.set_disabled(not selected_level_type)
 
 
-func _on_levels_next_button_pressed() -> void:
+func _on_levels_next_texture_button_pressed() -> void:
 	game_state_manager.get_parent().toggle_visibility(true)
 	game_state_manager.init_by_level_type(selected_level_type)
 	

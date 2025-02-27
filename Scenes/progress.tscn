@@ -1,10 +1,27 @@
-[gd_scene load_steps=7 format=3 uid="uid://8bvhgfxla8ng"]
+[gd_scene load_steps=12 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="2_o0rbe"]
 [ext_resource type="PackedScene" uid="uid://csdmgetagn410" path="res://Scenes/shop.tscn" id="3_7gy5r"]
 [ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="3_nypkk"]
+[ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="5_xxaj3"]
 [ext_resource type="PackedScene" uid="uid://cu5nov702pv6w" path="res://Scenes/inventory.tscn" id="10_0ag24"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5j4yl"]
+atlas = ExtResource("5_xxaj3")
+region = Rect2(0, 0, 248, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_atmjk"]
+atlas = ExtResource("5_xxaj3")
+region = Rect2(0, 78, 248, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lvxsd"]
+atlas = ExtResource("5_xxaj3")
+region = Rect2(0, 156, 248, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0cirs"]
+atlas = ExtResource("5_xxaj3")
+region = Rect2(0, 234, 248, 74)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v81p6"]
 
@@ -40,7 +57,7 @@ grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 100
+theme_override_constants/separation = 50
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
 layout_mode = 2
@@ -48,11 +65,10 @@ theme_override_constants/separation = 50
 
 [node name="ShopLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer"]
 layout_mode = 2
-theme_type_variation = &"LabelBig"
 text = "Welcome to the SHOP
 Buy upgrades and recruit new players
 
-Money: 0 / Loot: 0"
+Money: 0"
 horizontal_alignment = 1
 
 [node name="Shop" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer" instance=ExtResource("3_7gy5r")]
@@ -60,17 +76,56 @@ layout_mode = 2
 
 [node name="ShopButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 
-[node name="ShopBuyButton" type="Button" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
+[node name="ShopBuyTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-disabled = true
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+texture_disabled = SubResource("AtlasTexture_0cirs")
+
+[node name="ShopBuyLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -27.5
+offset_top = -17.5
+offset_right = 27.5
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
 text = "BUY"
+vertical_alignment = 1
+uppercase = true
 
-[node name="ShopSkipButton" type="Button" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
+[node name="ShopSkipTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+
+[node name="ShopSkipLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = -15.5
+offset_right = 30.5
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
 text = "SKIP"
+vertical_alignment = 1
+uppercase = true
 
 [node name="InventoryContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
 layout_mode = 2
@@ -78,7 +133,6 @@ theme_override_constants/separation = 50
 
 [node name="InventoryLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer"]
 layout_mode = 2
-theme_type_variation = &"LabelBig"
 text = "INVENTORY"
 horizontal_alignment = 1
 
@@ -105,7 +159,6 @@ theme_override_constants/separation = 50
 
 [node name="LevelsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/LevelsContainer"]
 layout_mode = 2
-theme_type_variation = &"LabelBig"
 text = "Select next level type:"
 horizontal_alignment = 1
 
@@ -133,10 +186,31 @@ layout_mode = 2
 disabled = true
 text = "LEVEL_SAVE_TILES"
 
-[node name="LevelsNextButton" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer"]
+[node name="LevelsNextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/LevelsContainer"]
 layout_mode = 2
-disabled = true
+size_flags_horizontal = 4
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+texture_disabled = SubResource("AtlasTexture_0cirs")
+
+[node name="LevelsNextLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.5
+offset_top = -15.5
+offset_right = 34.5
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
 text = "NEXT"
+vertical_alignment = 1
+uppercase = true
 
 [node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 11
@@ -163,11 +237,11 @@ layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_v81p6")
 text = "MAIN_MENU"
 
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyButton" to="." method="_on_shop_buy_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipButton" to="." method="_on_shop_skip_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [2]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [4]]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextButton" to="." method="_on_levels_next_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton" to="." method="_on_levels_next_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]

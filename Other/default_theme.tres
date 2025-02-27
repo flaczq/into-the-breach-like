@@ -1,20 +1,21 @@
 [gd_resource type="Theme" load_steps=3 format=3 uid="uid://bl431255d3vtg"]
 
-[ext_resource type="FontFile" uid="uid://chy0rikx47idn" path="res://Assets/kmlgames.friendly-scribbles/friendlyscribbles.ttf" id="1_3kflh"]
+[ext_resource type="SystemFont" uid="uid://bxw7laij0iht8" path="res://Other/luckiest_font.tres" id="1_rjfij"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vxr55"]
 
 [resource]
-default_font = ExtResource("1_3kflh")
 default_font_size = 18
-Button/font_sizes/font_size = 20
-Button/fonts/font = ExtResource("1_3kflh")
-Label/colors/font_outline_color = Color(0.254902, 0.133333, 0.12549, 1)
+Button/fonts/font = ExtResource("1_rjfij")
+CheckButton/font_sizes/font_size = 25
+CheckButton/fonts/font = ExtResource("1_rjfij")
+Label/colors/font_outline_color = Color(0.180392, 0.180392, 0.180392, 1)
 Label/constants/outline_size = 12
-Label/font_sizes/font_size = 20
+Label/font_sizes/font_size = 22
+Label/fonts/font = ExtResource("1_rjfij")
 LabelBig/base_type = &"Label"
-LabelBig/font_sizes/font_size = 25
+LabelBig/font_sizes/font_size = 30
 LabelMoney/base_type = &"Label"
-LabelMoney/colors/font_color = Color(0.862745, 0.666667, 0.309804, 1)
-LabelMoney/font_sizes/font_size = 20
+LabelMoney/colors/font_color = Color(0.890196, 0.560784, 0.231373, 1)
+LabelMoney/font_sizes/font_size = 30
 PanelContainer/styles/panel = SubResource("StyleBoxEmpty_vxr55")

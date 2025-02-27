@@ -8,7 +8,7 @@ class_name Menu
 @export var player_container_scene: PackedScene
 
 @onready var main_menu_container = $CanvasLayer/PanelCenterContainer/MainMenuContainer
-@onready var editor_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorButton
+@onready var editor_texture_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton
 @onready var tutorial_check_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
 @onready var in_game_menu_container = $CanvasLayer/PanelCenterContainer/InGameMenuContainer
 @onready var options_container = $CanvasLayer/PanelCenterContainer/OptionsContainer
@@ -17,7 +17,7 @@ class_name Menu
 @onready var aa_check_box = $CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox
 @onready var players_container = $CanvasLayer/PanelCenterContainer/PlayersContainer
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
-@onready var next_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextButton
+@onready var next_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton
 @onready var right_container = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
@@ -44,14 +44,14 @@ func _ready() -> void:
 	aa_check_box.set_pressed(Global.antialiasing)
 	_on_aa_check_box_toggled(Global.antialiasing)
 	
-	next_button.set_disabled(true)
+	next_texture_button.set_disabled(true)
 	
 	right_container.hide()
 	main_menu_container.show()
 	if Global.build_mode == BuildMode.DEBUG:
-		editor_button.show()
+		editor_texture_button.show()
 	else:
-		editor_button.hide()
+		editor_texture_button.hide()
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
@@ -143,13 +143,13 @@ func init_ui() -> void:
 		players_grid_container.add_child(player_container)
 
 
-func _on_editor_button_pressed() -> void:
+func _on_editor_texture_button_pressed() -> void:
 	toggle_visibility(false)
 	
 	add_sibling(editor_scene.instantiate())
 
 
-func _on_start_button_pressed() -> void:
+func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
 		show_main()
 	else:
@@ -160,7 +160,7 @@ func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
 	Global.tutorial = toggled_on
 
 
-func _on_options_button_pressed() -> void:
+func _on_options_texture_button_pressed() -> void:
 	right_container.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
@@ -168,24 +168,19 @@ func _on_options_button_pressed() -> void:
 	players_container.hide()
 
 
-func _on_exit_button_pressed() -> void:
+func _on_exit_texture_button_pressed() -> void:
 	# TODO prompt for confirmation and save
 	get_tree().quit()
 
 
-func _on_resume_button_pressed() -> void:
+func _on_resume_texture_button_pressed() -> void:
 	toggle_visibility(false)
 	
 	last_screen.show_back()
 	last_screen = null
 
 
-func _on_save_button_pressed() -> void:
-	# TODO
-	print('saved')
-
-
-func _on_main_menu_button_pressed() -> void:
+func _on_main_menu_texture_button_pressed() -> void:
 	Global.engine_mode = EngineMode.MENU
 	
 	right_container.hide()
@@ -193,7 +188,7 @@ func _on_main_menu_button_pressed() -> void:
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
-	next_button.set_disabled(true)
+	next_texture_button.set_disabled(true)
 	
 	toggle_visibility(true)
 	
@@ -201,7 +196,7 @@ func _on_main_menu_button_pressed() -> void:
 		child_to_queue.queue_free()
 
 
-func _on_back_button_pressed() -> void:
+func _on_back_texture_button_pressed() -> void:
 	right_container.hide()
 	
 	if get_node_or_null('/root/Main'):
@@ -235,7 +230,7 @@ func _on_aa_check_box_toggled(toggled_on: bool) -> void:
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)
 
 
-func _on_next_button_pressed() -> void:
+func _on_next_texture_button_pressed() -> void:
 	show_main()
 
 
@@ -246,12 +241,12 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void
 	
 	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:
-		# FIXME maybe do it after next_button_pressed and here only save ids..?
+		# FIXME maybe do it after next_texture_button_pressed and here only save ids..?
 		var new_selected_player = selected_player_object.duplicate() as PlayerObject
 		new_selected_player.init_from_player_object(selected_player_object)
 		Global.selected_players.push_back(new_selected_player)
 	else:
 		Global.selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id != selected_player_object.id)
 	
-	next_button.set_disabled(Global.selected_players.size() != 3)
+	next_texture_button.set_disabled(Global.selected_players.size() != 3)
 	assert(Global.selected_players.size() <= 3, 'Too many selected players')

@@ -28,8 +28,7 @@ window/size/viewport_height=720
 [gui]
 
 theme/custom="res://Other/default_theme.tres"
-theme/custom_font="res://Assets/kmlgames.friendly-scribbles/friendlyscribbles.ttf"
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://I18n/text.en.translation", "res://I18n/text.pl.translation")
+locale/translations=PackedStringArray("res://I18n/text.en.translation")

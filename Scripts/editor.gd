@@ -201,7 +201,7 @@ func calculate_level_data() -> void:
 
 
 func _on_settings_texture_button_pressed() -> void:
-	menu._on_main_menu_button_pressed()
+	menu._on_main_menu_texture_button_pressed()
 	
 	queue_free()
 

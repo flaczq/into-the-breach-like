@@ -1,24 +1,24 @@
-keys,en,pl
-MAIN_MENU,MAIN MENU,MENU GŁÓWNE
-MENU_OPTIONS,OPTIONS,USTAWIENIA
-TILE_TYPE_PLAIN,Nothing special,Nic wyjątkowego
-TILE_TYPE_GRASS,Nothing special,Nic wyjątkowego
-TILE_TYPE_TREE,Can be damaged,Można zniszczyć
-TILE_TYPE_MOUNTAIN,Can't be damaged,Odporne na obrażenia
-TILE_TYPE_VOLCANO,Can't be damaged,Odporne na obrażenia
-TILE_TYPE_WATER,Movement slowed down to 1 tile,Ruch spowolniony do 1 pola
-TILE_TYPE_LAVA,Movement slowed down to 1 tile,Ruch spowolniony do 1 pola
-ACTION_PUSH_BACK,Pushes target by 1 tile,Popycha cel o 1 pole
-ACTION_PULL_FRONT,Pulls target by 1 tile,Przyciąga cel o 1 pole
-ACTION_MISS_MOVE,Target cannot move for 1 turn,Cel nie może się poruszać przez 1 turę
-ACTION_MISS_ACTION,Target cannot attack for 1 turn,Cel nie może atakować przez 1 turę
-ACTION_SLOW_DOWN,Slows down target to 1 tile for 1 turn,Spowalnia cel do 1 pola na 1 turę
-ACTION_CROSS_PUSH_BACK,Pushes adjacent targets by 1 tile,Popycha sąsiadujące cele o 1 pole
-LEVEL_KILL_ENEMIES,Kill enemies,Zabij przeciwników
-LEVEL_SURVIVE_TURNS,Survive X turns,Przeżyj X tur
-LEVEL_SAVE_CIVILIANS,Save civilians,Uratuj cywili
-LEVEL_SAVE_TILES,Save tiles,Uratuj pola
-SIGN_TUTORIAL_1,TUTORIAL HINT #1:\nTake advantage of seeing enemy attack,TODO
-SIGN_TUTORIAL_2,TUTORIAL HINT #2:\nSome obstacles may be destructible,TODO
-SIGN_TUTORIAL_3,TUTORIAL HINT #3:\nSometimes using an action instead of shooting is necessary to save a civilian,TODO
-SIGN_TUTORIAL_4,TUTORIAL HINT #4:\nEnemies always use their actions while dealing damage,TODO
+keys,en
+MAIN_MENU,MAIN MENU
+MENU_OPTIONS,OPTIONS
+TILE_TYPE_PLAIN,Nothing special
+TILE_TYPE_GRASS,Nothing special
+TILE_TYPE_TREE,Can be damaged
+TILE_TYPE_MOUNTAIN,Can't be damaged
+TILE_TYPE_VOLCANO,Can't be damaged
+TILE_TYPE_WATER,Movement slowed down to 1 tile
+TILE_TYPE_LAVA,Movement slowed down to 1 tile
+ACTION_PUSH_BACK,Pushes target by 1 tile
+ACTION_PULL_FRONT,Pulls target by 1 tile
+ACTION_MISS_MOVE,Target cannot move for 1 turn
+ACTION_MISS_ACTION,Target cannot attack for 1 turn
+ACTION_SLOW_DOWN,Slows down target to 1 tile for 1 turn
+ACTION_CROSS_PUSH_BACK,Pushes adjacent targets by 1 tile
+LEVEL_KILL_ENEMIES,Kill enemies
+LEVEL_SURVIVE_TURNS,Survive X turns
+LEVEL_SAVE_CIVILIANS,Save civilians
+LEVEL_SAVE_TILES,Save tiles
+SIGN_TUTORIAL_1,TUTORIAL HINT #1:\nTake advantage of seeing enemy attack
+SIGN_TUTORIAL_2,TUTORIAL HINT #2:\nSome obstacles may be destructible
+SIGN_TUTORIAL_3,TUTORIAL HINT #3:\nSometimes using an action instead of shooting is necessary to save a civilian
+SIGN_TUTORIAL_4,TUTORIAL HINT #4:\nEnemies always use their actions while dealing damage

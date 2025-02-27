@@ -10,13 +10,13 @@ class_name GameStateManager
 @export var player_container_scene: PackedScene
 
 @onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
-@onready var action_first_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton'
+@onready var action_first_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
 @onready var players_grid_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer'
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
-@onready var debug_info_label = $"../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel"
+@onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel'
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
@@ -217,18 +217,22 @@ func init_ui() -> void:
 		default_player_container.queue_free()
 	
 	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
+	var index = 0
 	for player in players:
 		assert(player.id >= 0, 'Wrong player id')
-		var existing_player_container = players_grid_container.get_node('Player' + str(player.id) + 'Container')
-		if existing_player_container:
-			existing_player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
-		else:
-			var player_container = player_container_scene.instantiate() as PlayerContainer
-			player_container.init(player.id, player.texture, _on_player_texture_button_toggled, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited)
-			player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
-			var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
-			player_texture_button.modulate.a = 0.5
-			players_grid_container.add_child(player_container)
+		var player_stats = players_grid_container.get_child(index) as PlayerStats
+		player_stats.init(player)
+		index += 1
+		#var existing_player_container = players_grid_container.get_node('Player' + str(player.id) + 'Container')
+		#if existing_player_container:
+			#existing_player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
+		#else:
+			#var player_container = player_container_scene.instantiate() as PlayerContainer
+			#player_container.init(player.id, player.texture, _on_player_texture_button_toggled, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited)
+			#player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
+			#var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
+			#player_texture_button.modulate.a = 0.5
+			#players_grid_container.add_child(player_container)
 
 
 func start_turn() -> void:

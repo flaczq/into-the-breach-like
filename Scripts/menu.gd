@@ -44,7 +44,7 @@ func _ready() -> void:
 	aa_check_box.set_pressed(Global.antialiasing)
 	_on_aa_check_box_toggled(Global.antialiasing)
 	
-	next_texture_button.set_disabled(true)
+	on_button_disabled(next_texture_button, true)
 	
 	right_container.hide()
 	main_menu_container.show()
@@ -188,7 +188,7 @@ func _on_main_menu_texture_button_pressed() -> void:
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
-	next_texture_button.set_disabled(true)
+	on_button_disabled(next_texture_button, true)
 	
 	toggle_visibility(true)
 	
@@ -248,5 +248,5 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void
 	else:
 		Global.selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id != selected_player_object.id)
 	
-	next_texture_button.set_disabled(Global.selected_players.size() != 3)
+	on_button_disabled(next_texture_button, Global.selected_players.size() != 3)
 	assert(Global.selected_players.size() <= 3, 'Too many selected players')

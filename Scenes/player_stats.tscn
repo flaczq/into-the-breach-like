@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3pe6m0m8tc5y"]
+
+[ext_resource type="Script" path="res://Scripts/player_stats.gd" id="1_2rppb"]
+[ext_resource type="Texture2D" uid="uid://dfqcl3na4otxe" path="res://Assets/aaaps/player_stats.png" id="1_krct0"]
+
+[node name="PlayerStats" type="Control"]
+custom_minimum_size = Vector2(262, 132)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 262.0
+offset_bottom = 132.0
+script = ExtResource("1_2rppb")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 262.0
+offset_bottom = 132.0
+texture = ExtResource("1_krct0")
+
+[node name="LifeLabel" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 194.0
+offset_top = 35.0
+offset_right = 240.0
+offset_bottom = 66.0
+theme_type_variation = &"LabelBig"
+theme_override_colors/font_outline_color = Color(0.678431, 0.105882, 0.105882, 1)
+text = "3/3"
+horizontal_alignment = 2
+
+[node name="MovementLabel" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 215.0
+offset_top = 78.0
+offset_right = 231.0
+offset_bottom = 109.0
+theme_type_variation = &"LabelBig"
+theme_override_colors/font_outline_color = Color(0.145098, 0.352941, 0.65098, 1)
+text = "3"
+horizontal_alignment = 2

@@ -7,7 +7,6 @@ class_name GameStateManager
 @export var enemy_scenes: Array[PackedScene] = []
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
-@export var player_container_scene: PackedScene
 
 @onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
 @onready var action_first_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
@@ -213,26 +212,21 @@ func init_civilians() -> void:
 
 
 func init_ui() -> void:
-	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
-		default_player_container.queue_free()
+	for child in players_grid_container.get_children():
+		child.hide()
 	
 	assert(players.size() >= 1 and players.size() <= 3, 'Wrong players size')
 	var index = 0
-	for player in players:
-		assert(player.id >= 0, 'Wrong player id')
+	for player in players as Array[Player]:
+		assert(player.id != PlayerType.NONE, 'Wrong player id')
 		var player_stats = players_grid_container.get_child(index) as PlayerStats
-		player_stats.init(player)
+		player_stats.init(player.id, player.texture, player.health, player.max_health, player.move_distance)
+		player_stats.connect('player_stats_mouse_entered', _on_player_stats_mouse_entered)
+		player_stats.connect('player_stats_mouse_exited', _on_player_stats_mouse_exited)
+		player_stats.connect('player_stats_toggled', _on_player_stats_toggled)
+		#player_stats.texture_rect.scale = Vector2(0.75, 0.75)
+		player_stats.show()
 		index += 1
-		#var existing_player_container = players_grid_container.get_node('Player' + str(player.id) + 'Container')
-		#if existing_player_container:
-			#existing_player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
-		#else:
-			#var player_container = player_container_scene.instantiate() as PlayerContainer
-			#player_container.init(player.id, player.texture, _on_player_texture_button_toggled, _on_player_texture_button_mouse_entered, _on_player_texture_button_mouse_exited)
-			#player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
-			#var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
-			#player_texture_button.modulate.a = 0.5
-			#players_grid_container.add_child(player_container)
 
 
 func start_turn() -> void:
@@ -360,9 +354,9 @@ func next_turn() -> void:
 	
 	for player in players:
 		# hardcoded
-		var player_texture_button = get_player_texture_button_by_id(player.id)
-		on_button_disabled(player_texture_button, not player.is_alive)
-		player_texture_button.flip_v = not player.is_alive
+		var player_stats = get_player_stats_by_id(player.id)
+		on_button_disabled(player_stats.avatar_texture_button, not player.is_alive)
+		#player_texture_button.flip_v = not player.is_alive
 	
 	start_turn()
 
@@ -723,14 +717,17 @@ func recalculate_enemies_order() -> void:
 		order += 1
 
 
-func get_player_texture_button_by_id(id: PlayerType) -> TextureButton:
-	#var player_container = get_player_container_by_index(index)
-	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
-	return player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
+func get_player_stats_by_id(id: PlayerType) -> PlayerStats:
+	return players_grid_container.get_children().filter(func(child): return child.id == id).front() as PlayerStats
 
 
-func set_clicked_player_texture_button(player_texture_button: TextureButton, is_clicked: bool) -> void:
-	player_texture_button.modulate.a = (1.0) if (is_clicked) else (0.5)
+func set_player_texture_button_state(avatar_texture_button: TextureButton, is_focused: bool) -> void:
+	if is_focused:
+		avatar_texture_button.grab_focus()
+		#avatar_texture_button.grab_click_focus()
+	else:
+		avatar_texture_button.release_focus()
+	avatar_texture_button.set_pressed_no_signal(is_focused)
 
 
 func on_shoot_action_button_toggled(toggled_on: bool) -> void:
@@ -991,9 +988,9 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			on_button_disabled(action_first_texture_button, true)
 			on_button_disabled(undo_texture_button, true)
 			
-			var selected_player_texture_button = get_player_texture_button_by_id(temp_selected_player.id)
-			on_button_disabled(selected_player_texture_button, true)
-			selected_player_texture_button.flip_v = true
+			var selected_player_stats = get_player_stats_by_id(temp_selected_player.id)
+			on_button_disabled(selected_player_stats.avatar_texture_button, true)
+			#selected_player_texture_button.flip_v = true
 			
 			# maybe not needed, because it's also checked after enemy's death
 			check_for_level_end(false)
@@ -1054,6 +1051,9 @@ func _on_player_hovered(player: Player, is_hovered: bool) -> void:
 	if selected_player and selected_player != player:
 		return
 	
+	var player_stats = get_player_stats_by_id(player.id)
+	set_player_texture_button_state(player_stats.avatar_texture_button, selected_player or is_hovered)
+	
 	if is_hovered:
 		if player.can_move():
 			var tiles_for_movement = calculate_tiles_for_movement(is_hovered, player)
@@ -1079,8 +1079,8 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	if selected_player and selected_player != player and selected_player.can_be_interacted_with():
 		selected_player.reset_tiles()
 	
-	var player_texture_button = get_player_texture_button_by_id(player.id)
-	set_clicked_player_texture_button(player_texture_button, is_clicked)
+	var player_stats = get_player_stats_by_id(player.id)
+	set_player_texture_button_state(player_stats.avatar_texture_button, is_clicked)
 	
 	if is_clicked:
 		on_button_disabled(action_first_texture_button, false)
@@ -1110,9 +1110,8 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 
 
 func _on_player_health_changed(target_player: Player):
-	var player_container = players_grid_container.get_children().filter(func(child): return child.id == target_player.id).front()
-	var player_health_label = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerStatsVBoxContainer/HealthHBoxContainer/HealthLabel')
-	player_health_label.text = str(target_player.health) + '/' + str(target_player.max_health)
+	var player_stats = players_grid_container.get_children().filter(func(child): return child.id == target_player.id).front() as PlayerStats
+	player_stats.update_health(target_player.health, target_player.max_health)
 
 
 func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
@@ -1336,7 +1335,7 @@ func _on_order_texture_button_up():
 		tile.toggle_text(false)
 
 
-func _on_player_texture_button_mouse_entered(id: PlayerType) -> void:
+func _on_player_stats_mouse_entered(id: PlayerType) -> void:
 	if players.is_empty():
 		return
 	
@@ -1349,7 +1348,7 @@ func _on_player_texture_button_mouse_entered(id: PlayerType) -> void:
 	_on_player_hovered(target_player, true)
 
 
-func _on_player_texture_button_mouse_exited(id: PlayerType) -> void:
+func _on_player_stats_mouse_exited(id: PlayerType) -> void:
 	if players.is_empty():
 		return
 	
@@ -1361,7 +1360,7 @@ func _on_player_texture_button_mouse_exited(id: PlayerType) -> void:
 	_on_player_hovered(target_player, false)
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void:
+func _on_player_stats_toggled(toggled_on: bool, id: PlayerType) -> void:
 	if players.is_empty():
 		return
 	
@@ -1369,8 +1368,9 @@ func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void
 	if not target_player.is_alive or not target_player.can_be_interacted_with():
 		return
 	
-	var player_texture_button = get_player_texture_button_by_id(target_player.id)
-	set_clicked_player_texture_button(player_texture_button, toggled_on)
+	#var player_stats = get_player_stats_by_id(target_player.id)
+	#player_stats.texture_rect.scale = (Vector2(1.0, 1.0)) if (toggled_on) else (Vector2(0.75, 0.75))
+	#set_player_texture_button_state(player_stats.avatar_texture_button, toggled_on)
 	
 	_on_tile_clicked(target_player.tile)
 	#_on_player_clicked(target_player, toggled_on)

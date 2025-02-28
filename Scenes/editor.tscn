@@ -72,7 +72,6 @@ player_scenes = Array[PackedScene]([ExtResource("16_b1rcx"), ExtResource("8_wa28
 enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4"), ExtResource("7_nph1h"), ExtResource("11_kt37j"), ExtResource("17_60fhf")])
 civilian_scenes = Array[PackedScene]([ExtResource("18_v5xqc"), ExtResource("10_wdovn")])
 progress_scene = ExtResource("11_4i00g")
-player_container_scene = ExtResource("24_2o27d")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

@@ -1,6 +1,6 @@
 extends Player
 
-var player_2_texture: CompressedTexture2D = preload('res://Icons/player2.png')
+var player_2_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_2.png')
 
 
 func _ready() -> void:

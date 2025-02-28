@@ -5,7 +5,6 @@ class_name Menu
 @export var main_scene: PackedScene
 @export var editor_scene: PackedScene
 @export var cutscenes_scene: PackedScene
-@export var player_container_scene: PackedScene
 
 @onready var main_menu_container = $CanvasLayer/PanelCenterContainer/MainMenuContainer
 @onready var editor_texture_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton
@@ -102,9 +101,8 @@ func show_players_selection() -> void:
 	Global.selected_players = []
 	Global.played_maps_ids = []
 	
-	for player_container in players_grid_container.get_children():
-		# FIXME disable state
-		var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
+	for player_stats in players_grid_container.get_children():
+		var player_texture_button = player_stats.avatar_texture_button
 		player_texture_button.set_pressed_no_signal(false)
 		player_texture_button.modulate.a = 0.5
 	
@@ -129,18 +127,24 @@ func init_all_items() -> void:
 
 
 func init_ui() -> void:
-	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
-		default_player_container.queue_free()
+	for child in players_grid_container.get_children():
+		child.hide()
 	
 	assert(Global.all_players.size() >= 3, 'Wrong all players size')
+	var index = 0
 	for player in Global.all_players as Array[PlayerObject]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
-		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(player.id, player.texture, _on_player_texture_button_toggled)
-		player_container.init_stats(player.max_health, player.move_distance, player.damage, player.action_type)
-		var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
-		player_texture_button.modulate.a = 0.5
-		players_grid_container.add_child(player_container)
+		var player_stats = players_grid_container.get_child(index) as PlayerStats
+		player_stats.init(player.id, player.texture, player.max_health, player.max_health, player.move_distance)
+		player_stats.connect('player_stats_mouse_entered', _on_player_stats_mouse_entered)
+		player_stats.connect('player_stats_mouse_exited', _on_player_stats_mouse_exited)
+		player_stats.connect('player_stats_toggled', _on_player_stats_toggled)
+		player_stats.show()
+		index += 1
+
+
+func get_player_stats_by_id(id: PlayerType) -> PlayerStats:
+	return players_grid_container.get_children().filter(func(child): return child.id == id).front() as PlayerStats
 
 
 func _on_editor_texture_button_pressed() -> void:
@@ -234,10 +238,18 @@ func _on_next_texture_button_pressed() -> void:
 	show_main()
 
 
-func _on_player_texture_button_toggled(toggled_on: bool, id: PlayerType) -> void:
-	var player_container = players_grid_container.get_children().filter(func(child): return child.id == id).front()
-	var player_texture_button = player_container.get_node('PlayerVBoxContainer/PlayerIconStatsHBoxContainer/PlayerTextureButton')
-	player_texture_button.modulate.a = (1.0) if (toggled_on) else (0.5)
+func _on_player_stats_mouse_entered(id: PlayerType) -> void:
+	pass
+
+
+func _on_player_stats_mouse_exited(id: PlayerType) -> void:
+	pass
+
+
+func _on_player_stats_toggled(toggled_on: bool, id: PlayerType) -> void:
+	var player_stats = get_player_stats_by_id(id)
+	var player_stats_avatar = player_stats.avatar_texture_button
+	player_stats_avatar.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:

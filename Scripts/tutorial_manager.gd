@@ -2,7 +2,7 @@ extends Util
 
 class_name TutorialManager
 
-var player_1_texture: CompressedTexture2D = preload('res://Icons/player1.png')
+var player_1_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1.png')
 
 
 func init_player(player: Player, level: int) -> void:

@@ -18,7 +18,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 262.0
 offset_bottom = 132.0
-pivot_offset = Vector2(131, 66)
 script = ExtResource("1_2rppb")
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -34,7 +33,7 @@ offset_right = 131.0
 offset_bottom = 66.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(50, 50)
+pivot_offset = Vector2(0, 66)
 texture = ExtResource("2_1cm38")
 
 [node name="AvatarTextureButton" type="TextureButton" parent="TextureRect"]

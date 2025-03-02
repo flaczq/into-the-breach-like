@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://8bvhgfxla8ng"]
+[gd_scene load_steps=13 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="2_o0rbe"]
 [ext_resource type="PackedScene" uid="uid://csdmgetagn410" path="res://Scenes/shop.tscn" id="3_7gy5r"]
 [ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="3_nypkk"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="5_xxaj3"]
+[ext_resource type="PackedScene" uid="uid://c3pe6m0m8tc5y" path="res://Scenes/player_stats.tscn" id="6_ia247"]
 [ext_resource type="PackedScene" uid="uid://cu5nov702pv6w" path="res://Scenes/inventory.tscn" id="10_0ag24"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5j4yl"]
@@ -57,7 +58,6 @@ grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 50
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
 layout_mode = 2
@@ -140,13 +140,13 @@ horizontal_alignment = 1
 layout_mode = 2
 columns = 3
 
-[node name="HIDEPlayer1Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+[node name="PlayerStats" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_ia247")]
 layout_mode = 2
 
-[node name="HIDEPlayer2Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+[node name="PlayerStats2" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_ia247")]
 layout_mode = 2
 
-[node name="HIDEPlayer3Container" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("3_nypkk")]
+[node name="PlayerStats3" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_ia247")]
 layout_mode = 2
 
 [node name="Inventory" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer" instance=ExtResource("10_0ag24")]

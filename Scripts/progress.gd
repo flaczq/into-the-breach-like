@@ -41,32 +41,48 @@ func _ready() -> void:
 
 
 func init_ui() -> void:
-	# shop
 	shop.connect('item_hovered', _on_shop_item_hovered)
 	shop.connect('item_clicked', _on_shop_item_clicked)
 	
-	# selected players
-	for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
-		default_player_container.queue_free()
-	
-	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
-	for selected_player in Global.selected_players:
-		assert(selected_player.id != PlayerType.NONE, 'Wrong selected player id')
-		var player_container = player_container_scene.instantiate() as PlayerContainer
-		player_container.init(selected_player.id, selected_player.texture)
-		player_container.init_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
-		
-		var items = [] as Array[ItemObject]
-		for item_id in selected_player.items_ids:
-			var item = get_item(item_id)
-			items.push_back(item)
-		player_container.init_items(items)
-		player_container.connect('item_clicked', _on_player_item_clicked)
-		players_grid_container.add_child(player_container)
-	
-	# inventory
 	inventory.connect('item_hovered', _on_inventory_item_hovered)
 	inventory.connect('item_clicked', _on_inventory_item_clicked)
+	
+	for child in players_grid_container.get_children():
+		child.hide()
+	
+	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
+	var index = 0
+	for player in Global.selected_players as Array[PlayerObject]:
+		assert(player.id != PlayerType.NONE, 'Wrong selected player id')
+		var player_stats = players_grid_container.get_child(index) as PlayerStats
+		player_stats.init(player.id, player.texture, player.max_health, player.max_health, player.move_distance)
+		player_stats.connect('player_stats_mouse_entered', _on_player_stats_mouse_entered)
+		player_stats.connect('player_stats_mouse_exited', _on_player_stats_mouse_exited)
+		player_stats.connect('player_stats_toggled', _on_player_stats_toggled)
+		player_stats.texture_rect.scale = Vector2(0.75, 0.75)
+		# TODO init items - maybe create player_stats_with_items
+		player_stats.show()
+		index += 1
+	assert(players_grid_container.get_child_count() == index, 'Wrong player stats size')
+	
+	# selected players
+	#for default_player_container in players_grid_container.get_children().filter(func(child): return child.is_in_group('ALWAYS_FREE')):
+		#default_player_container.queue_free()
+	#
+	#assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
+	#for selected_player in Global.selected_players:
+		#assert(selected_player.id != PlayerType.NONE, 'Wrong selected player id')
+		#var player_container = player_container_scene.instantiate() as PlayerContainer
+		#player_container.init(selected_player.id, selected_player.texture)
+		#player_container.init_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
+		#
+		#var items = [] as Array[ItemObject]
+		#for item_id in selected_player.items_ids:
+			#var item = get_item(item_id)
+			#items.push_back(item)
+		#player_container.init_items(items)
+		#player_container.connect('item_clicked', _on_player_item_clicked)
+		#players_grid_container.add_child(player_container)
 
 
 func update_labels() -> void:
@@ -153,6 +169,21 @@ func _on_shop_buy_texture_button_pressed() -> void:
 func _on_shop_skip_texture_button_pressed() -> void:
 	upgrades_container.hide()
 	levels_container.show()
+
+
+func _on_player_stats_mouse_entered(id: PlayerType) -> void:
+	# TODO
+	pass
+
+
+func _on_player_stats_mouse_exited(id: PlayerType) -> void:
+	# TODO
+	pass
+
+
+func _on_player_stats_toggled(toggled_on: bool, id: PlayerType) -> void:
+	# TODO
+	pass
 
 
 func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: PlayerType) -> void:

@@ -227,6 +227,7 @@ func init_ui() -> void:
 		player_stats.texture_rect.scale = Vector2(0.75, 0.75)
 		player_stats.show()
 		index += 1
+	assert(players_grid_container.get_child_count() == index, 'Wrong player stats size')
 
 
 func start_turn() -> void:

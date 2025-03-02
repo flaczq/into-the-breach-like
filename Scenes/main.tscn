@@ -185,7 +185,7 @@ text = "TILE INFO"
 
 [node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
-theme_override_constants/v_separation = -10
+theme_override_constants/v_separation = -30
 
 [node name="PlayerStats" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" instance=ExtResource("24_3qie4")]
 layout_mode = 2
@@ -219,6 +219,7 @@ size_flags_horizontal = 4
 [node name="Action1TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer"]
 layout_mode = 2
 toggle_mode = true
+action_mode = 0
 texture_normal = SubResource("AtlasTexture_bunmi")
 texture_pressed = SubResource("AtlasTexture_lhvsm")
 texture_hover = SubResource("AtlasTexture_dd3r1")

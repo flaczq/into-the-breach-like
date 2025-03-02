@@ -224,7 +224,7 @@ func init_ui() -> void:
 		player_stats.connect('player_stats_mouse_entered', _on_player_stats_mouse_entered)
 		player_stats.connect('player_stats_mouse_exited', _on_player_stats_mouse_exited)
 		player_stats.connect('player_stats_toggled', _on_player_stats_toggled)
-		#player_stats.texture_rect.scale = Vector2(0.75, 0.75)
+		player_stats.texture_rect.scale = Vector2(0.75, 0.75)
 		player_stats.show()
 		index += 1
 
@@ -716,18 +716,21 @@ func recalculate_enemies_order() -> void:
 		alive_enemy.order = order
 		order += 1
 
-
+   
 func get_player_stats_by_id(id: PlayerType) -> PlayerStats:
 	return players_grid_container.get_children().filter(func(child): return child.id == id).front() as PlayerStats
 
 
 func set_player_texture_button_state(avatar_texture_button: TextureButton, is_focused: bool) -> void:
+	avatar_texture_button.set_pressed_no_signal(is_focused or selected_player)
+	var final_scale = (Vector2(1.0, 1.0)) if (selected_player) else (Vector2(0.75, 0.75))
+	var scale_tween = create_tween()
+	scale_tween.tween_property(avatar_texture_button.get_parent(), 'scale', final_scale, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
+	#await scale_tween.finished
 	if is_focused:
 		avatar_texture_button.grab_focus()
-		#avatar_texture_button.grab_click_focus()
 	else:
 		avatar_texture_button.release_focus()
-	avatar_texture_button.set_pressed_no_signal(is_focused)
 
 
 func on_shoot_action_button_toggled(toggled_on: bool) -> void:
@@ -957,6 +960,10 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 	
 	recalculate_enemies_planned_actions()
 	
+	var character = target_tile.get_character()
+	if character:
+		character.toggle_action_indicators(true)
+	
 	# highlighted tile is clicked while player is selected
 	if selected_player and selected_player.tile != target_tile and target_tile.is_player_clicked:
 		if selected_player.can_move():
@@ -1051,9 +1058,6 @@ func _on_player_hovered(player: Player, is_hovered: bool) -> void:
 	if selected_player and selected_player != player:
 		return
 	
-	var player_stats = get_player_stats_by_id(player.id)
-	set_player_texture_button_state(player_stats.avatar_texture_button, selected_player or is_hovered)
-	
 	if is_hovered:
 		if player.can_move():
 			var tiles_for_movement = calculate_tiles_for_movement(is_hovered, player)
@@ -1069,6 +1073,9 @@ func _on_player_hovered(player: Player, is_hovered: bool) -> void:
 			
 			#if not player.is_clicked:
 				#tile.toggle_player_clicked(false)
+	
+	var player_stats = get_player_stats_by_id(player.id)
+	set_player_texture_button_state(player_stats.avatar_texture_button, is_hovered)
 
 
 func _on_player_clicked(player: Player, is_clicked: bool) -> void:
@@ -1078,9 +1085,6 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	# reset tiles for selected player if new player is selected
 	if selected_player and selected_player != player and selected_player.can_be_interacted_with():
 		selected_player.reset_tiles()
-	
-	var player_stats = get_player_stats_by_id(player.id)
-	set_player_texture_button_state(player_stats.avatar_texture_button, is_clicked)
 	
 	if is_clicked:
 		on_button_disabled(action_first_texture_button, false)
@@ -1107,6 +1111,9 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 			tile.toggle_player_clicked(false)
 	
 	player.tile.on_mouse_entered()
+	
+	var player_stats = get_player_stats_by_id(player.id)
+	set_player_texture_button_state(player_stats.avatar_texture_button, false)
 
 
 func _on_player_health_changed(target_player: Player):
@@ -1368,12 +1375,11 @@ func _on_player_stats_toggled(toggled_on: bool, id: PlayerType) -> void:
 	if not target_player.is_alive or not target_player.can_be_interacted_with():
 		return
 	
-	#var player_stats = get_player_stats_by_id(target_player.id)
-	#player_stats.texture_rect.scale = (Vector2(1.0, 1.0)) if (toggled_on) else (Vector2(0.75, 0.75))
-	#set_player_texture_button_state(player_stats.avatar_texture_button, toggled_on)
-	
 	_on_tile_clicked(target_player.tile)
 	#_on_player_clicked(target_player, toggled_on)
+	
+	var player_stats = get_player_stats_by_id(target_player.id)
+	set_player_texture_button_state(player_stats.avatar_texture_button, false)
 
 
 func _on_level_end_popup_gui_input(event: InputEvent) -> void:

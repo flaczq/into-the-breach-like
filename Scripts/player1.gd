@@ -1,6 +1,8 @@
 extends Player
 
 var player_1_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1.png')
+var hook_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook.png')
+var plus_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus.png')
 
 func _ready() -> void:
 	super()
@@ -17,6 +19,8 @@ func _ready() -> void:
 	action_direction = player_data.action_direction
 	action_type = player_data.action_type
 	action_damage = player_data.action_damage
+	action_1_texture = player_data.action_1_texture
+	action_2_texture = player_data.action_2_texture
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
@@ -38,6 +42,8 @@ func get_data() -> Dictionary:
 		'action_direction': ActionDirection.HORIZONTAL_LINE,
 		'action_type': ActionType.TOWARDS_AND_PUSH_BACK,
 		'action_damage': 0,
+		'action_1_texture': hook_texture,
+		'action_2_texture': plus_texture,
 		'passive_type': PassiveType.NONE,
 		'can_fly': true,
 		'state_types': [] as Array[StateType],

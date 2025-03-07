@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="4_hyrgu"]
 [ext_resource type="PackedScene" uid="uid://1noimyb1f3xg" path="res://Scenes/cutscenes.tscn" id="4_om7ip"]
+[ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="7_5gw6c"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="7_evuth"]
-[ext_resource type="PackedScene" uid="uid://c3pe6m0m8tc5y" path="res://Scenes/player_stats.tscn" id="8_4mc6n"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2fu10"]
 atlas = ExtResource("7_evuth")
@@ -355,13 +355,13 @@ layout_mode = 2
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="PlayerStats" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("8_4mc6n")]
+[node name="Player1Inventory" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("7_5gw6c")]
 layout_mode = 2
 
-[node name="PlayerStats2" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("8_4mc6n")]
+[node name="Player2Inventory" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("7_5gw6c")]
 layout_mode = 2
 
-[node name="PlayerStats3" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("8_4mc6n")]
+[node name="Player3Inventory" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("7_5gw6c")]
 layout_mode = 2
 
 [node name="NextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer"]

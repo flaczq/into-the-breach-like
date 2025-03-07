@@ -12,6 +12,8 @@ var action_max_distance: int
 var action_direction: Util.ActionDirection
 var action_type: Util.ActionType
 var action_damage: int
+var action_1_texture: CompressedTexture2D
+var action_2_texture: CompressedTexture2D
 var passive_type: Util.PassiveType
 var can_fly: bool
 var state_types: Array[Util.StateType]
@@ -32,6 +34,8 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	action_direction = player_data.action_direction
 	action_type = player_data.action_type
 	action_damage = player_data.action_damage
+	action_1_texture = player_data.action_1_texture
+	action_2_texture = player_data.action_2_texture
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	# have to duplicate() to make them unique
@@ -51,6 +55,8 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 	action_direction = player_object.action_direction
 	action_type = player_object.action_type
 	action_damage = player_object.action_damage
+	action_1_texture = player_object.action_1_texture
+	action_2_texture = player_object.action_2_texture
 	passive_type = player_object.passive_type
 	can_fly = player_object.can_fly
 	# have to duplicate() to make them unique

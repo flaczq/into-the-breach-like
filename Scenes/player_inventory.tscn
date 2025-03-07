@@ -1,0 +1,123 @@
+[gd_scene load_steps=10 format=3 uid="uid://b0wx4peeuej0j"]
+
+[ext_resource type="Script" path="res://Scripts/player_inventory.gd" id="1_6i75d"]
+[ext_resource type="Texture2D" uid="uid://vgdjn5by6sbj" path="res://Assets/aaaps/player_inventory.png" id="2_ymhgr"]
+[ext_resource type="Texture2D" uid="uid://1ak4376mc0jx" path="res://Assets/aaaps/player_1.png" id="3_ousa2"]
+[ext_resource type="Texture2D" uid="uid://vgs4lwxudycc" path="res://Assets/aaaps/plus_active.png" id="4_qemgc"]
+[ext_resource type="Texture2D" uid="uid://bpibb4esocfvg" path="res://Assets/aaaps/plus_normal.png" id="5_gb82v"]
+[ext_resource type="Texture2D" uid="uid://cfcgj6nllnmx5" path="res://Assets/aaaps/hook_normal.png" id="6_p2fjh"]
+[ext_resource type="Texture2D" uid="uid://ddewuu14ea6yp" path="res://Assets/aaaps/hook_active.png" id="7_ono1s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_68n1k"]
+atlas = ExtResource("3_ousa2")
+region = Rect2(0, 0, 143, 122)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6uo0"]
+atlas = ExtResource("3_ousa2")
+region = Rect2(0, 122, 143, 142)
+
+[node name="PlayerXInventory" type="Control"]
+custom_minimum_size = Vector2(262, 200)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 262.0
+offset_bottom = 150.0
+script = ExtResource("1_6i75d")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -131.0
+offset_top = -100.0
+offset_right = 131.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(0, 100)
+texture = ExtResource("2_ymhgr")
+
+[node name="AvatarTextureButton" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 8.0
+offset_right = 151.0
+offset_bottom = 122.0
+toggle_mode = true
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_68n1k")
+texture_pressed = SubResource("AtlasTexture_u6uo0")
+texture_hover = SubResource("AtlasTexture_u6uo0")
+
+[node name="HealthLabel" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 194.0
+offset_top = 35.0
+offset_right = 240.0
+offset_bottom = 66.0
+tooltip_text = "HEALTH"
+mouse_filter = 0
+theme_type_variation = &"LabelBig"
+theme_override_colors/font_outline_color = Color(0.678431, 0.105882, 0.105882, 1)
+text = "3/3"
+horizontal_alignment = 2
+
+[node name="MoveDistanceLabel" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 215.0
+offset_top = 78.0
+offset_right = 231.0
+offset_bottom = 109.0
+tooltip_text = "MOVEMENT"
+mouse_filter = 0
+theme_type_variation = &"LabelBig"
+theme_override_colors/font_outline_color = Color(0.145098, 0.352941, 0.65098, 1)
+text = "2"
+horizontal_alignment = 2
+
+[node name="Item1TextureButton" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 145.0
+offset_right = 59.0
+offset_bottom = 185.0
+toggle_mode = true
+
+[node name="Item2TextureButton" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 145.0
+offset_right = 130.0
+offset_bottom = 185.0
+
+[node name="Action1TextureButton" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 155.0
+offset_top = 130.0
+offset_right = 200.0
+offset_bottom = 200.0
+toggle_mode = true
+texture_normal = ExtResource("5_gb82v")
+texture_pressed = ExtResource("4_qemgc")
+texture_hover = ExtResource("4_qemgc")
+ignore_texture_size = true
+stretch_mode = 3
+
+[node name="Action2TextureButton" type="TextureButton" parent="TextureRect"]
+layout_mode = 0
+offset_left = 202.0
+offset_top = 130.0
+offset_right = 247.0
+offset_bottom = 200.0
+toggle_mode = true
+texture_normal = ExtResource("6_p2fjh")
+texture_pressed = ExtResource("7_ono1s")
+texture_hover = ExtResource("7_ono1s")
+ignore_texture_size = true
+stretch_mode = 3
+
+[connection signal="mouse_entered" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_entered"]
+[connection signal="mouse_exited" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_exited"]
+[connection signal="toggled" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_toggled"]

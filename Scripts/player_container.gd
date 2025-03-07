@@ -1,5 +1,6 @@
 extends Node
 
+#DEPRACATED
 class_name PlayerContainer
 
 signal item_clicked(player_item_id: int, item_id: Util.ItemType, player_id: Util.PlayerType)

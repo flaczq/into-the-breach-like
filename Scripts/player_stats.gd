@@ -15,17 +15,21 @@ var id: Util.PlayerType
 
 
 func init(player_id: Util.PlayerType, player_texture: CompressedTexture2D, player_health: int, player_max_health: int, player_move_distance: int) -> void:
+	#scale = Vector2(0.25, 0.25)
+	texture_rect.scale = Vector2(0.75, 0.75)
+	
 	id = player_id
+	name = name.replace('X', str(id))
 	
 	avatar_texture_button.texture_normal = AtlasTexture.new()
 	avatar_texture_button.texture_normal.atlas = player_texture
 	avatar_texture_button.texture_normal.region = Rect2(0, 0, 143, 122)
 	
-	avatar_texture_button.texture_hover = AtlasTexture.new()
-	avatar_texture_button.texture_hover.atlas = player_texture
-	avatar_texture_button.texture_hover.region = Rect2(0, 122, 143, 142)
+	avatar_texture_button.texture_pressed = AtlasTexture.new()
+	avatar_texture_button.texture_pressed.atlas = player_texture
+	avatar_texture_button.texture_pressed.region = Rect2(0, 122, 143, 142)
 	
-	avatar_texture_button.texture_pressed = avatar_texture_button.texture_hover
+	avatar_texture_button.texture_hover = avatar_texture_button.texture_pressed
 	
 	update_health(player_health, player_max_health)
 	update_move_distance(player_move_distance)

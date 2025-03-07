@@ -12,7 +12,7 @@ region = Rect2(0, 0, 143, 122)
 atlas = ExtResource("3_jd6a3")
 region = Rect2(0, 122, 143, 142)
 
-[node name="PlayerStats" type="Control"]
+[node name="PlayerXStats" type="Control"]
 custom_minimum_size = Vector2(262, 132)
 layout_mode = 3
 anchors_preset = 0

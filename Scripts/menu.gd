@@ -101,8 +101,8 @@ func show_players_selection() -> void:
 	Global.selected_players = []
 	Global.played_maps_ids = []
 	
-	for player_stats in players_grid_container.get_children():
-		var player_texture_button = player_stats.avatar_texture_button
+	for player_inventory in players_grid_container.get_children():
+		var player_texture_button = player_inventory.avatar_texture_button
 		player_texture_button.set_pressed_no_signal(false)
 		player_texture_button.modulate.a = 0.5
 	
@@ -134,19 +134,20 @@ func init_ui() -> void:
 	var index = 0
 	for player in Global.all_players as Array[PlayerObject]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
-		var player_stats = players_grid_container.get_child(index) as PlayerStats
-		player_stats.init(player.id, player.texture, player.max_health, player.max_health, player.move_distance)
-		player_stats.connect('player_stats_mouse_entered', _on_player_stats_mouse_entered)
-		player_stats.connect('player_stats_mouse_exited', _on_player_stats_mouse_exited)
-		player_stats.connect('player_stats_toggled', _on_player_stats_toggled)
-		player_stats.texture_rect.scale = Vector2(0.75, 0.75)
-		player_stats.show()
+		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
+		# TODO utworzyc klase ActionObject i to przekazywać
+		player_inventory.init(player.id, player.texture, player.action_1_texture, player.action_2_texture, player.max_health, player.move_distance)
+		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
+		player_inventory.connect('player_inventory_mouse_exited', _on_player_inventory_mouse_exited)
+		player_inventory.connect('player_inventory_toggled', _on_player_inventory_toggled)
+		#player_inventory.texture_rect.scale = Vector2(0.75, 0.75)
+		player_inventory.show()
 		index += 1
-	assert(players_grid_container.get_child_count() == index, 'Wrong player stats size')
+	assert(players_grid_container.get_child_count() >= index, 'Wrong player inventory size')
 
 
-func get_player_stats_by_id(id: PlayerType) -> PlayerStats:
-	return players_grid_container.get_children().filter(func(child): return child.id == id).front() as PlayerStats
+func get_player_inventory_by_id(id: PlayerType) -> PlayerInventory:
+	return players_grid_container.get_children().filter(func(child): return child.id == id).front() as PlayerInventory
 
 
 func _on_editor_texture_button_pressed() -> void:
@@ -240,18 +241,18 @@ func _on_next_texture_button_pressed() -> void:
 	show_main()
 
 
-func _on_player_stats_mouse_entered(id: PlayerType) -> void:
+func _on_player_inventory_mouse_entered(id: PlayerType) -> void:
 	pass
 
 
-func _on_player_stats_mouse_exited(id: PlayerType) -> void:
+func _on_player_inventory_mouse_exited(id: PlayerType) -> void:
 	pass
 
 
-func _on_player_stats_toggled(toggled_on: bool, id: PlayerType) -> void:
-	var player_stats = get_player_stats_by_id(id)
-	var player_stats_avatar = player_stats.avatar_texture_button
-	player_stats_avatar.modulate.a = (1.0) if (toggled_on) else (0.5)
+func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
+	var player_inventory = get_player_inventory_by_id(id)
+	var player_inventory_avatar = player_inventory.avatar_texture_button
+	player_inventory_avatar.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:

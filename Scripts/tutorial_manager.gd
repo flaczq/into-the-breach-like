@@ -3,6 +3,8 @@ extends Util
 class_name TutorialManager
 
 var player_1_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1.png')
+var hook_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook.png')
+var plus_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus.png')
 
 
 func init_player(player: Player, level: int) -> void:
@@ -18,6 +20,8 @@ func init_player(player: Player, level: int) -> void:
 		player.action_direction = ActionDirection.HORIZONTAL_LINE
 		player.action_type = ActionType.PUSH_BACK
 		player.action_damage = 0
+		player.action_1_texture = hook_texture
+		player.action_2_texture = plus_texture
 		player.passive_type = PassiveType.NONE
 		player.can_fly = false
 		player.items_ids = [ItemType.NONE, ItemType.NONE] as Array[ItemType]
@@ -40,6 +44,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_LINE
 		enemy.action_type = ActionType.PUSH_BACK
 		enemy.action_damage = 0
+		enemy.action_1_texture = hook_texture
 		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 	elif level == 2:
@@ -56,6 +61,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_DOT
 		enemy.action_type = ActionType.NONE
 		enemy.action_damage = 0
+		enemy.action_1_texture = hook_texture
 		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 
@@ -73,5 +79,6 @@ func init_civilian(civilian: Civilian, level: int) -> void:
 		civilian.action_direction = ActionDirection.NONE
 		civilian.action_type = ActionType.NONE
 		civilian.action_damage = 0
+		civilian.action_1_texture = null
 		civilian.passive_type = PassiveType.NONE
 		civilian.can_fly = false

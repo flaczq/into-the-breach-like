@@ -1,11 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://8bvhgfxla8ng"]
+[gd_scene load_steps=12 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
 [ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="2_o0rbe"]
 [ext_resource type="PackedScene" uid="uid://csdmgetagn410" path="res://Scenes/shop.tscn" id="3_7gy5r"]
-[ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="3_nypkk"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="5_xxaj3"]
-[ext_resource type="PackedScene" uid="uid://c3pe6m0m8tc5y" path="res://Scenes/player_stats.tscn" id="6_ia247"]
+[ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="6_65n42"]
 [ext_resource type="PackedScene" uid="uid://cu5nov702pv6w" path="res://Scenes/inventory.tscn" id="10_0ag24"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5j4yl"]
@@ -28,7 +27,6 @@ region = Rect2(0, 234, 248, 74)
 
 [node name="Progress" type="Node3D"]
 script = ExtResource("1_2mc5y")
-player_container_scene = ExtResource("3_nypkk")
 item_container_scene = ExtResource("3_7gy5r")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -80,6 +78,7 @@ size_flags_horizontal = 4
 
 [node name="ShopBuyTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
+action_mode = 0
 texture_normal = SubResource("AtlasTexture_5j4yl")
 texture_pressed = SubResource("AtlasTexture_atmjk")
 texture_hover = SubResource("AtlasTexture_lvxsd")
@@ -105,6 +104,7 @@ uppercase = true
 
 [node name="ShopSkipTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
+action_mode = 0
 texture_normal = SubResource("AtlasTexture_5j4yl")
 texture_pressed = SubResource("AtlasTexture_atmjk")
 texture_hover = SubResource("AtlasTexture_lvxsd")
@@ -140,13 +140,13 @@ horizontal_alignment = 1
 layout_mode = 2
 columns = 3
 
-[node name="PlayerStats" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_ia247")]
+[node name="Player1Inventory" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_65n42")]
 layout_mode = 2
 
-[node name="PlayerStats2" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_ia247")]
+[node name="Player2Inventory" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_65n42")]
 layout_mode = 2
 
-[node name="PlayerStats3" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_ia247")]
+[node name="Player3Inventory" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer" instance=ExtResource("6_65n42")]
 layout_mode = 2
 
 [node name="Inventory" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer" instance=ExtResource("10_0ag24")]
@@ -239,9 +239,5 @@ text = "MAIN_MENU"
 
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [2]]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [4]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton" to="." method="_on_levels_next_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]

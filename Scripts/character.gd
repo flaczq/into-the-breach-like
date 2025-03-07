@@ -43,6 +43,8 @@ var action_max_distance: int
 var action_direction: ActionDirection
 var action_type: ActionType
 var action_damage: int
+var action_1_texture: CompressedTexture2D
+var action_2_texture: CompressedTexture2D
 var passive_type: PassiveType
 var can_fly: bool
 

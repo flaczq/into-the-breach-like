@@ -1,6 +1,8 @@
 extends Player
 
 var player_3_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_3.png')
+var hook_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook.png')
+var plus_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus.png')
 
 
 func _ready() -> void:
@@ -39,6 +41,8 @@ func get_data() -> Dictionary:
 		'action_direction': ActionDirection.HORIZONTAL_DOT,
 		'action_type': ActionType.CROSS_PUSH_BACK,
 		'action_damage': 0,
+		'action_1_texture': hook_texture,
+		'action_2_texture': plus_texture,
 		'passive_type': PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[StateType],

@@ -12,13 +12,13 @@ var action_max_distance: int
 var action_direction: Util.ActionDirection
 var action_type: Util.ActionType
 var action_damage: int
-var action_1_texture: CompressedTexture2D
-var action_2_texture: CompressedTexture2D
+var action_1_textures: Array[CompressedTexture2D]
+var action_2_textures: Array[CompressedTexture2D]
 var passive_type: Util.PassiveType
 var can_fly: bool
 var state_types: Array[Util.StateType]
 var items_ids: Array[Util.ItemType]
-var texture: CompressedTexture2D
+var textures: Array[CompressedTexture2D]
 
 
 func init_from_player_data(player_data: Dictionary) -> void:
@@ -34,14 +34,14 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	action_direction = player_data.action_direction
 	action_type = player_data.action_type
 	action_damage = player_data.action_damage
-	action_1_texture = player_data.action_1_texture
-	action_2_texture = player_data.action_2_texture
+	action_1_textures = player_data.action_1_textures
+	action_2_textures = player_data.action_2_textures
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	# have to duplicate() to make them unique
 	state_types = player_data.state_types.duplicate()
 	items_ids = player_data.items_ids.duplicate()
-	texture = player_data.texture
+	textures = player_data.textures
 
 
 func init_from_player_object(player_object: PlayerObject) -> void:
@@ -55,14 +55,14 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 	action_direction = player_object.action_direction
 	action_type = player_object.action_type
 	action_damage = player_object.action_damage
-	action_1_texture = player_object.action_1_texture
-	action_2_texture = player_object.action_2_texture
+	action_1_textures = player_object.action_1_textures
+	action_2_textures = player_object.action_2_textures
 	passive_type = player_object.passive_type
 	can_fly = player_object.can_fly
 	# have to duplicate() to make them unique
 	state_types = player_object.state_types.duplicate()
 	items_ids = player_object.items_ids.duplicate()
-	texture = player_object.texture
+	textures = player_object.textures
 
 
 func set_items(new_items_ids: Array[Util.ItemType]) -> void:

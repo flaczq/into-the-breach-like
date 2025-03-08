@@ -1,6 +1,7 @@
 extends Enemy
 
-var hook_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook.png')
+var hook_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_normal.png')
+var hook_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_active.png')
 
 
 func _ready() -> void:
@@ -20,7 +21,7 @@ func _ready() -> void:
 	action_direction = ActionDirection.HORIZONTAL_DOT
 	action_type = ActionType.PULL_FRONT
 	action_damage = 0
-	action_1_texture = hook_texture
+	action_1_textures = [hook_normal_texture, hook_active_texture]
 	passive_type = PassiveType.NONE
 	can_fly = false
 	state_types = []

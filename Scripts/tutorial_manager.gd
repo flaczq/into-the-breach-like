@@ -2,9 +2,12 @@ extends Util
 
 class_name TutorialManager
 
-var player_1_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1.png')
-var hook_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook.png')
-var plus_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus.png')
+var player_1_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_normal.png')
+var player_1_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_active.png')
+var hook_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_normal.png')
+var hook_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_active.png')
+var plus_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_normal.png')
+var plus_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_active.png')
 
 
 func init_player(player: Player, level: int) -> void:
@@ -20,12 +23,12 @@ func init_player(player: Player, level: int) -> void:
 		player.action_direction = ActionDirection.HORIZONTAL_LINE
 		player.action_type = ActionType.PUSH_BACK
 		player.action_damage = 0
-		player.action_1_texture = hook_texture
-		player.action_2_texture = plus_texture
+		player.action_1_textures = [hook_normal_texture, hook_active_texture]
+		player.action_2_textures = [plus_normal_texture, plus_active_texture]
 		player.passive_type = PassiveType.NONE
 		player.can_fly = false
 		player.items_ids = [ItemType.NONE, ItemType.NONE] as Array[ItemType]
-		player.texture = player_1_texture
+		player.textures = [player_1_normal_texture, player_1_active_texture]
 		player.items_applied = [false, false] as Array[bool]
 
 
@@ -44,7 +47,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_LINE
 		enemy.action_type = ActionType.PUSH_BACK
 		enemy.action_damage = 0
-		enemy.action_1_texture = hook_texture
+		enemy.action_1_textures = [hook_normal_texture, hook_active_texture]
 		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 	elif level == 2:
@@ -61,7 +64,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_DOT
 		enemy.action_type = ActionType.NONE
 		enemy.action_damage = 0
-		enemy.action_1_texture = hook_texture
+		enemy.action_1_textures = [hook_normal_texture, hook_active_texture]
 		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 

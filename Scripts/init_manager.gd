@@ -2,18 +2,13 @@ extends Node
 
 class_name InitManager
 
-# TODO
-const item_1_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_Award.png')
-const item_2_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_Magic.png')
-const item_3_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_Pencil.png')
-const item_4_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_Present.png')
-const item_5_texture: CompressedTexture2D = preload('res://Assets/penzilla.vector-icon-pack/Icon_Star.png')
-const items_data: Array[Dictionary] = [
-	{ 'id': Util.ItemType.HEALTH, 'item_name': 'Item 1', 'cost': 1, 'available': true, 'texture': item_1_texture, 'applied': false },
-	{ 'id': Util.ItemType.DAMAGE, 'item_name': 'Item 2', 'cost': 2, 'available': true, 'texture': item_2_texture, 'applied': false },
-	{ 'id': Util.ItemType.SHIELD, 'item_name': 'Item 3', 'cost': 3, 'available': true, 'texture': item_3_texture, 'applied': false },
-	{ 'id': Util.ItemType.MOVE_DISTANCE, 'item_name': 'Item 4', 'cost': 4, 'available': true, 'texture': item_4_texture, 'applied': false },
-	{ 'id': Util.ItemType.FLYING, 'item_name': 'Item 5', 'cost': 5, 'available': true, 'texture': item_5_texture, 'applied': false }
+const boots_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/boots_normal.png')
+const boots_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/boots_active.png')
+
+var items_data: Array[Dictionary] = [
+	{ 'id': Util.ItemType.HEALTH, 'item_name': 'Boots of health', 'cost': 1, 'available': true, 'textures': [boots_normal_texture, boots_active_texture] as Array[CompressedTexture2D], 'applied': false },
+	{ 'id': Util.ItemType.DAMAGE, 'item_name': 'Boots of damage', 'cost': 1, 'available': true, 'textures': [boots_normal_texture, boots_active_texture] as Array[CompressedTexture2D], 'applied': false },
+	{ 'id': Util.ItemType.SHIELD, 'item_name': 'Boots of shield', 'cost': 1, 'available': true, 'textures': [boots_normal_texture, boots_active_texture] as Array[CompressedTexture2D], 'applied': false }
 ]
 
 var players_scripts: Array[Player] = [

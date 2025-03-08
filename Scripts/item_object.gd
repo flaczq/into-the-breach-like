@@ -6,7 +6,7 @@ var id: Util.ItemType
 var item_name: String
 var cost: int
 var available: bool
-var texture: CompressedTexture2D
+var textures: Array[CompressedTexture2D]
 
 
 func init_from_item_data(item_data: Dictionary) -> void:
@@ -14,7 +14,7 @@ func init_from_item_data(item_data: Dictionary) -> void:
 	item_name = item_data.item_name
 	cost = item_data.cost
 	available = item_data.available
-	texture = item_data.texture
+	textures = item_data.textures
 
 
 func init_from_item_object(item_object: ItemObject) -> void:
@@ -22,7 +22,7 @@ func init_from_item_object(item_object: ItemObject) -> void:
 	item_name = item_object.item_name
 	cost = item_object.cost
 	available = item_object.available
-	texture = item_object.texture
+	textures = item_object.textures
 
 
 func apply_to_player(target_player: Player, is_applied: bool = true) -> void:

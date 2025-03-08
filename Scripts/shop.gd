@@ -47,7 +47,9 @@ func _ready() -> void:
 		texture_button.connect('mouse_entered', _on_texture_button_mouse_entered.bind(shop_item_id))
 		texture_button.connect('mouse_exited', _on_texture_button_mouse_exited.bind(shop_item_id))
 		texture_button.connect('pressed', _on_texture_button_pressed.bind(shop_item_id))
-		texture_button.texture_normal = random_item.texture
+		assert(random_item.textures.size() == 2, 'Wrong random item textures size')
+		texture_button.texture_normal = random_item.textures[0]
+		texture_button.texture_hover = random_item.textures[1]
 		texture_button.modulate.a = 0.5
 		
 		var name_label = shop_item.get_node('ShopItem' + str(shop_item_id) + 'NameLabel') as Label

@@ -10,6 +10,7 @@ class_name GameStateManager
 
 @onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
 @onready var action_1_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
+@onready var action_2_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton'
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
@@ -103,6 +104,7 @@ func init_game_state() -> void:
 	# FIXME proper disabled icons
 	on_button_disabled(end_turn_texture_button, true)
 	on_button_disabled(action_1_texture_button, true)
+	on_button_disabled(action_2_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
 	panel_full_screen_container.hide()
 	turn_end_texture_rect.hide()
@@ -220,7 +222,7 @@ func init_ui() -> void:
 	for player in players as Array[Player]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
 		var player_stats = players_grid_container.get_child(index) as PlayerStats
-		player_stats.init(player.id, player.texture, player.health, player.max_health, player.move_distance)
+		player_stats.init(player.id, player.textures, player.health, player.max_health, player.move_distance)
 		player_stats.connect('player_stats_mouse_entered', _on_player_stats_mouse_entered)
 		player_stats.connect('player_stats_mouse_exited', _on_player_stats_mouse_exited)
 		player_stats.connect('player_stats_toggled', _on_player_stats_toggled)
@@ -318,6 +320,7 @@ func end_turn() -> void:
 	on_button_disabled(end_turn_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
 	action_1_texture_button.set_pressed_no_signal(false)
+	action_2_texture_button.set_pressed_no_signal(false)
 	undo = {}
 	
 	await show_turn_end_texture_rect('ENEMY')
@@ -994,6 +997,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			# reset undo when action was executed
 			undo = {}
 			on_button_disabled(action_1_texture_button, true)
+			on_button_disabled(action_2_texture_button, true)
 			on_button_disabled(undo_texture_button, true)
 			
 			var selected_player_stats = get_player_stats_by_id(temp_selected_player.id)
@@ -1007,6 +1011,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 		target_tile.player.reset_phase()
 		target_tile.player.on_clicked()
 		action_1_texture_button.set_pressed_no_signal(false)
+		action_2_texture_button.set_pressed_no_signal(false)
 
 
 func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1089,6 +1094,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	
 	if is_clicked:
 		on_button_disabled(action_1_texture_button, false)
+		on_button_disabled(action_2_texture_button, false)
 		
 		selected_player = player
 		selected_player.toggle_health_bar(true)
@@ -1103,6 +1109,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
 		on_button_disabled(action_1_texture_button, true)
+		on_button_disabled(action_2_texture_button, true)
 		
 		selected_player.toggle_health_bar(false)
 		selected_player = null
@@ -1302,6 +1309,10 @@ func _on_end_turn_texture_button_pressed() -> void:
 
 func _on_action_1_texture_button_toggled(toggled_on: bool) -> void:
 	on_shoot_action_button_toggled(toggled_on)
+
+
+func _on_action_2_texture_button_toggled(toggled_on: bool) -> void:
+	pass # Replace with function body.
 
 
 func _on_undo_texture_button_pressed() -> void:

@@ -50,6 +50,7 @@ func _input(event: InputEvent) -> void:
 	
 		# UNCLICK PLAYER
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+			key_pressed = true
 			game_state_manager.reset_ui()
 			
 			for player in game_state_manager.players:
@@ -75,7 +76,8 @@ func _input(event: InputEvent) -> void:
 				tile.toggle_text(false)
 				tile.reset_tile_models()
 			
-			game_state_manager.action_texture_button.set_pressed_no_signal(false)
+			game_state_manager.action_1_texture_button.set_pressed_no_signal(false)
+			game_state_manager.action_2_texture_button.set_pressed_no_signal(false)
 			
 			game_state_manager.recalculate_enemies_planned_actions()
 

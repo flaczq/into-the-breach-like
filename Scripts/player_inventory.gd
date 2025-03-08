@@ -18,54 +18,41 @@ signal player_inventory_toggled(toggled_on: bool, player_id: Util.PlayerType)
 var id: Util.PlayerType
 
 
-func init(player_id: Util.PlayerType, player_texture: CompressedTexture2D, action_1_texture: CompressedTexture2D, action_2_texture: CompressedTexture2D, player_max_health: int, player_move_distance: int, item_1: ItemObject = null, item_2: ItemObject = null) -> void:
+func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], action_1_textures: Array[CompressedTexture2D], action_2_textures: Array[CompressedTexture2D], player_max_health: int, player_move_distance: int, item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 	texture_rect.scale = Vector2(0.75, 0.75)
 	
 	id = player_id
 	name = name.replace('X', str(id))
 	
-	avatar_texture_button.texture_normal = AtlasTexture.new()
-	avatar_texture_button.texture_normal.atlas = player_texture
-	avatar_texture_button.texture_normal.region = Rect2(0, 0, 143, 122)
-	
-	avatar_texture_button.texture_pressed = AtlasTexture.new()
-	avatar_texture_button.texture_pressed.atlas = player_texture
-	avatar_texture_button.texture_pressed.region = Rect2(0, 122, 143, 142)
-	
-	avatar_texture_button.texture_hover = avatar_texture_button.texture_pressed
+	assert(player_textures.size() == 2, 'Wrong player textures size')
+	avatar_texture_button.texture_normal = player_textures[0]
+	avatar_texture_button.texture_pressed = player_textures[1]
+	avatar_texture_button.texture_hover = player_textures[1]
 	
 	update_health(player_max_health)
 	update_move_distance(player_move_distance)
 	
-	action_1_texture_button.texture_normal = action_1_texture
-	action_1_texture_button.texture_pressed = action_1_texture_active
-	action_1_texture_button.texture_hover = action_1_texture_button.texture_pressed
+	assert(action_1_textures.size() == 2, 'Wrong action 1 textures size')
+	action_1_texture_button.texture_normal = action_1_textures[0]
+	#action_1_texture_button.texture_pressed = action_1_textures[1]
+	action_1_texture_button.texture_hover = action_1_textures[1]
 	
-	action_2_texture_button.texture_normal = action_2_texture
-	action_2_texture_button.texture_pressed = action_2_texture_active
-	action_2_texture_button.texture_hover = action_2_texture_button.texture_pressed
+	assert(action_2_textures.size() == 2, 'Wrong action 2 textures size')
+	action_2_texture_button.texture_normal = action_2_textures[0]
+	#action_2_texture_button.texture_pressed = action_2_textures[1]
+	action_2_texture_button.texture_hover = action_2_textures[1]
 	
 	if item_1:
-		item_1_texture_button.texture_normal = AtlasTexture.new()
-		item_1_texture_button.texture_normal.atlas = item_1.texture
-		item_1_texture_button.texture_normal.region = Rect2(0, 0, 80, 75)
-		
-		item_1_texture_button.texture_pressed = AtlasTexture.new()
-		item_1_texture_button.texture_pressed.atlas = item_1.texture
-		item_1_texture_button.texture_pressed.region = Rect2(0, 77, 80, 79)
-		
-		item_1_texture_button.texture_hover = item_1_texture_button.texture_pressed
+		assert(item_1.textures.size() == 2, 'Wrong item 1 textures size')
+		item_1_texture_button.texture_normal = item_1.textures[0]
+		item_1_texture_button.texture_pressed = item_1.textures[1]
+		item_1_texture_button.texture_hover = item_1.textures[1]
 	
 	if item_2:
-		item_2_texture_button.texture_normal = AtlasTexture.new()
-		item_2_texture_button.texture_normal.atlas = item_2.texture
-		item_2_texture_button.texture_normal.region = Rect2(0, 0, 80, 75)
-		
-		item_2_texture_button.texture_pressed = AtlasTexture.new()
-		item_2_texture_button.texture_pressed.atlas = item_2.texture
-		item_2_texture_button.texture_pressed.region = Rect2(0, 77, 80, 79)
-		
-		item_2_texture_button.texture_hover = item_2_texture_button.texture_pressed
+		assert(item_2.textures.size() == 2, 'Wrong item 2 textures size')
+		item_2_texture_button.texture_normal = item_2.textures[0]
+		item_2_texture_button.texture_pressed = item_2.textures[1]
+		item_2_texture_button.texture_hover = item_2.textures[1]
 
 
 func update_health(player_max_health: int) -> void:

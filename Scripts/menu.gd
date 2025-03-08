@@ -135,8 +135,7 @@ func init_ui() -> void:
 	for player in Global.all_players as Array[PlayerObject]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
 		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
-		# TODO utworzyc klase ActionObject i to przekazywać
-		player_inventory.init(player.id, player.texture, player.action_1_texture, player.action_2_texture, player.max_health, player.move_distance)
+		player_inventory.init(player.id, player.textures, player.action_1_textures, player.action_2_textures, player.max_health, player.move_distance)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
 		player_inventory.connect('player_inventory_mouse_exited', _on_player_inventory_mouse_exited)
 		player_inventory.connect('player_inventory_toggled', _on_player_inventory_toggled)

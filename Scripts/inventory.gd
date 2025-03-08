@@ -59,7 +59,9 @@ func add_item(item_object: ItemObject, target_inventory_item_id: int = -1) -> vo
 	var item_id: Util.ItemType = item_object.id
 	var inventory_item_id = (target_inventory_item_id) if (target_inventory_item_id >= 1) else (items_ids.find(Util.ItemType.NONE) + 1)
 	var texture_button = inventory_items_texture_buttons[inventory_item_id - 1]
-	texture_button.texture_normal = item_object.texture
+	assert(item_object.textures.size() == 2, 'Wrong item object textures size')
+	texture_button.texture_normal = item_object.textures[0]
+	texture_button.texture_hover = item_object.textures[1]
 	texture_button.modulate.a = 1.0
 	items_ids[inventory_item_id - 1] = item_id
 
@@ -68,6 +70,7 @@ func remove_item(item_id: Util.ItemType) -> void:
 	var inventory_item_id = items_ids.find(item_id) + 1
 	var texture_button = inventory_items_texture_buttons[inventory_item_id - 1]
 	texture_button.texture_normal = empty_item_texture
+	texture_button.texture_hover = empty_item_texture
 	texture_button.modulate.a = 0.5
 	items_ids[inventory_item_id - 1] = Util.ItemType.NONE
 

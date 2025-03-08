@@ -17,7 +17,7 @@ var items_ids: Array[ItemType] = []
 var items_applied: Array[bool] = []
 
 var id: PlayerType
-var texture: CompressedTexture2D
+var textures: Array[CompressedTexture2D]
 
 
 func _ready() -> void:

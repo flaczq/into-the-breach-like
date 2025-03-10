@@ -1,8 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://csdmgetagn410"]
+[gd_scene load_steps=9 format=3 uid="uid://csdmgetagn410"]
 
 [ext_resource type="Script" path="res://Scripts/shop.gd" id="1_6ijsm"]
 [ext_resource type="Texture2D" uid="uid://co4vf2e54cmuo" path="res://Assets/aaaps/player_background.png" id="1_q2j5i"]
-[ext_resource type="Texture2D" uid="uid://cvo10bsngc4f3" path="res://Assets/penzilla.vector-icon-pack/Icon_Award.png" id="2_cvbya"]
+[ext_resource type="Texture2D" uid="uid://c3xbgib1u5w7g" path="res://Assets/aaaps/gem_purple_normal.png" id="3_5oygk"]
+[ext_resource type="Texture2D" uid="uid://jn5rqajxkn1h" path="res://Assets/aaaps/gem_purple_active.png" id="4_ilgub"]
+[ext_resource type="Texture2D" uid="uid://cwxt0fsvhwj0h" path="res://Assets/aaaps/gem_red_normal.png" id="5_lse3f"]
+[ext_resource type="Texture2D" uid="uid://v37onejo5q7d" path="res://Assets/aaaps/gem_red_active.png" id="6_5k5jk"]
+[ext_resource type="Texture2D" uid="uid://dyldq71pd0gy8" path="res://Assets/aaaps/gem_green_normal.png" id="7_f1fqt"]
+[ext_resource type="Texture2D" uid="uid://doa06doosr3of" path="res://Assets/aaaps/gem_green_active.png" id="8_tbr4y"]
 
 [node name="Shop" type="TextureRect"]
 custom_minimum_size = Vector2(250, 250)
@@ -42,13 +47,15 @@ horizontal_alignment = 1
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-texture_normal = ExtResource("2_cvbya")
+texture_normal = ExtResource("3_5oygk")
+texture_pressed = ExtResource("4_ilgub")
+texture_hover = ExtResource("4_ilgub")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="ShopItem1NameLabel" type="Label" parent="ShopItemsHBoxContainer/ShopItem1VBoxContainer"]
 layout_mode = 2
-text = "ITEM"
+text = "GEM 1"
 horizontal_alignment = 1
 
 [node name="ShopItem2VBoxContainer" type="VBoxContainer" parent="ShopItemsHBoxContainer"]
@@ -64,13 +71,15 @@ horizontal_alignment = 1
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-texture_normal = ExtResource("2_cvbya")
+texture_normal = ExtResource("5_lse3f")
+texture_pressed = ExtResource("6_5k5jk")
+texture_hover = ExtResource("6_5k5jk")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="ShopItem2NameLabel" type="Label" parent="ShopItemsHBoxContainer/ShopItem2VBoxContainer"]
 layout_mode = 2
-text = "ITEM"
+text = "GEM 2"
 horizontal_alignment = 1
 
 [node name="ShopItem3VBoxContainer" type="VBoxContainer" parent="ShopItemsHBoxContainer"]
@@ -86,11 +95,13 @@ horizontal_alignment = 1
 modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-texture_normal = ExtResource("2_cvbya")
+texture_normal = ExtResource("7_f1fqt")
+texture_pressed = ExtResource("8_tbr4y")
+texture_hover = ExtResource("8_tbr4y")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="ShopItem3NameLabel" type="Label" parent="ShopItemsHBoxContainer/ShopItem3VBoxContainer"]
 layout_mode = 2
-text = "ITEM"
+text = "GEM 3"
 horizontal_alignment = 1

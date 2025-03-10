@@ -21,7 +21,7 @@ var selected_level_type: LevelType = LevelType.NONE
 
 func _ready() -> void:
 	Global.engine_mode = EngineMode.MENU
-	#Global.money = 5
+	Global.money = 5
 	
 	if Global.money > 0:
 		upgrades_container.show()
@@ -180,11 +180,10 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 			inventory_clicked_item.apply_to_player_object(selected_player)
 		
 		var player_inventory = players_grid_container.get_children().filter(func(child): return child.id == selected_player.id).front() as PlayerInventory
-		var items = [] as Array[ItemObject]
-		for selected_player_item_id in selected_player.items_ids:
-			var item = get_selected_item(selected_player_item_id)
-			items.push_back(item)
-		player_inventory.init_items(items)
+		assert(selected_player.items_ids.size() == 2, 'Wrong selected player items size')
+		var item_1 = get_selected_item(selected_player.items_ids[0])
+		var item_2 = get_selected_item(selected_player.items_ids[1])
+		player_inventory.init_items(item_1, item_2)
 		player_inventory.update_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
 	elif player_clicked_item_id != ItemType.NONE and item_id == ItemType.NONE:
 		# player X -> player Y
@@ -197,11 +196,10 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 			player_clicked_item.apply_to_player_object(origin_player, false)
 		origin_player.unset_item(player_clicked_item_id)
 		
-		#var origin_items = [] as Array[ItemObject]
-		#for origin_player_item_id in origin_player.items_ids:
-			#var origin_item = get_selected_item(origin_player_item_id)
-			#origin_items.push_back(origin_item)
-		#origin_player_inventory.init_items(origin_items)
+		#assert(origin_player.items_ids.size() == 2, 'Wrong origin player items size')
+		#var origin_item_1 = get_selected_item(origin_player.items_ids[0])
+		#var origin_item_2 = get_selected_item(origin_player.items_ids[1])
+		#origin_player_inventory.init_items(origin_item_1, origin_item_2)
 		origin_player_inventory.update_stats(origin_player.max_health, origin_player.move_distance, origin_player.damage, origin_player.action_type)
 	
 		var target_player = get_selected_player(player_id) as PlayerObject
@@ -210,11 +208,10 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 			player_clicked_item.apply_to_player_object(target_player)
 		
 		var target_player_inventory = players_grid_container.get_children().filter(func(child): return child.id == target_player.id).front() as PlayerInventory
-		var target_items = [] as Array[ItemObject]
-		for target_player_item_id in target_player.items_ids:
-			var target_item = get_selected_item(target_player_item_id)
-			target_items.push_back(target_item)
-		target_player_inventory.init_items(target_items)
+		assert(target_player.items_ids.size() == 2, 'Wrong target player items size')
+		var target_item_1 = get_selected_item(target_player.items_ids[0])
+		var target_item_2 = get_selected_item(target_player.items_ids[1])
+		target_player_inventory.init_items(target_item_1, target_item_2)
 		target_player_inventory.update_stats(target_player.max_health, target_player.move_distance, target_player.damage, target_player.action_type)
 	else:
 		# set items in single player container in case they were moved

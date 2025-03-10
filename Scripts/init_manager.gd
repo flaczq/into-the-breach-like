@@ -2,13 +2,38 @@ extends Node
 
 class_name InitManager
 
-const boots_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/boots_normal.png')
-const boots_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/boots_active.png')
+const gem_purple_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_purple_normal.png')
+const gem_purple_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_purple_active.png')
+const gem_red_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_red_normal.png')
+const gem_red_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_red_active.png')
+const gem_green_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_green_normal.png')
+const gem_green_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_green_active.png')
 
 var items_data: Array[Dictionary] = [
-	{ 'id': Util.ItemType.HEALTH, 'item_name': 'Boots of health', 'cost': 1, 'available': true, 'textures': [boots_normal_texture, boots_active_texture] as Array[CompressedTexture2D], 'applied': false },
-	{ 'id': Util.ItemType.DAMAGE, 'item_name': 'Boots of damage', 'cost': 1, 'available': true, 'textures': [boots_normal_texture, boots_active_texture] as Array[CompressedTexture2D], 'applied': false },
-	{ 'id': Util.ItemType.SHIELD, 'item_name': 'Boots of shield', 'cost': 1, 'available': true, 'textures': [boots_normal_texture, boots_active_texture] as Array[CompressedTexture2D], 'applied': false }
+	{
+		'id': Util.ItemType.HEALTH,
+		'item_name': 'Gem 1',
+		'cost': 1,
+		'available': true,
+		'textures': [gem_purple_normal_texture, gem_purple_active_texture] as Array[CompressedTexture2D],
+		'applied': false
+	},
+	{
+		'id': Util.ItemType.DAMAGE,
+		'item_name': 'Gem 2',
+		'cost': 1,
+		'available': true,
+		'textures': [gem_red_normal_texture, gem_red_active_texture] as Array[CompressedTexture2D],
+		'applied': false
+	},
+	{
+		'id': Util.ItemType.MOVE_DISTANCE,
+		'item_name': 'Gem 3',
+		'cost': 1,
+		'available': true,
+		'textures': [gem_green_normal_texture, gem_green_active_texture] as Array[CompressedTexture2D],
+		'applied': false
+	}
 ]
 
 var players_scripts: Array[Player] = [

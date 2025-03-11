@@ -101,12 +101,12 @@ func _on_menu_button_pressed() -> void:
 	menu.show_in_game_menu(self)
 
 
-func _on_shop_item_hovered(shop_item_id: int, item_id: ItemType, is_hovered: bool) -> void:
+func _on_shop_item_hovered(shop_item_index: int, item_id: ItemType, is_hovered: bool) -> void:
 	#print('_on_shop_item_hovered' + str(item_id) + str(is_hovered))
 	pass
 
 
-func _on_shop_item_clicked(shop_item_id: int, item_id: ItemType) -> void:
+func _on_shop_item_clicked(shop_item_index: int, item_id: ItemType) -> void:
 	var shop_clicked_item_id = get_shop_clicked_item_id()
 	if shop_clicked_item_id == ItemType.NONE:
 		on_button_disabled(shop_buy_texture_button, true)
@@ -157,9 +157,9 @@ func _on_inventory_item_hovered(inventory_item_index: int, item_id: ItemType, is
 	pass
 
 
-func _on_inventory_item_clicked(inventory_item_index: int, item_id: ItemType, player_id: PlayerType) -> void:
+func _on_inventory_item_clicked(inventory_item_index: int, item_id: ItemType) -> void:
 	var player_clicked_container
-	var player_clicked_item_id = get_player_clicked_item_id(player_id)
+	var player_clicked_item_id = get_player_clicked_item_id()
 	var inventory_clicked_item_id = get_inventory_clicked_item_id()
 	if player_clicked_item_id != ItemType.NONE:
 		# player -> inventory
@@ -260,7 +260,7 @@ func _on_player_inventory_item_clicked(player_inventory_item_index: int, item_id
 	var should_highlight = player_clicked_item_id != ItemType.NONE and item_id != ItemType.NONE
 	inventory.reset_items(should_highlight)
 	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
-		if player_inventory.id != player_id:
+		if player_inventory.id != player_id or not should_highlight:
 			player_inventory.reset_items()
 
 

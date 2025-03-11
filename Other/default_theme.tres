@@ -1,8 +1,16 @@
-[gd_resource type="Theme" load_steps=3 format=3 uid="uid://bl431255d3vtg"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://bl431255d3vtg"]
 
 [ext_resource type="SystemFont" uid="uid://bxw7laij0iht8" path="res://Other/luckiest_font.tres" id="1_rjfij"]
+[ext_resource type="Texture2D" uid="uid://co4vf2e54cmuo" path="res://Assets/aaaps/player_background.png" id="2_2sxxd"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vxr55"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bmtjr"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+texture = ExtResource("2_2sxxd")
 
 [resource]
 default_font_size = 18
@@ -19,3 +27,4 @@ LabelMoney/base_type = &"Label"
 LabelMoney/colors/font_color = Color(0.890196, 0.560784, 0.231373, 1)
 LabelMoney/font_sizes/font_size = 30
 PanelContainer/styles/panel = SubResource("StyleBoxEmpty_vxr55")
+TooltipPanel/styles/panel = SubResource("StyleBoxTexture_bmtjr")

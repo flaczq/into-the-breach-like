@@ -64,7 +64,7 @@ offset_left = 215.0
 offset_top = 78.0
 offset_right = 231.0
 offset_bottom = 113.0
-tooltip_text = "MOVEMENT"
+tooltip_text = "MOVE DISTANCE"
 mouse_filter = 0
 theme_type_variation = &"LabelBig"
 theme_override_colors/font_outline_color = Color(0.145098, 0.352941, 0.65098, 1)
@@ -90,6 +90,7 @@ offset_left = 5.0
 offset_top = 5.0
 offset_right = 49.0
 offset_bottom = 49.0
+tooltip_text = "NO ITEM"
 toggle_mode = true
 action_mode = 0
 ignore_texture_size = true
@@ -113,6 +114,7 @@ offset_left = 5.0
 offset_top = 5.0
 offset_right = 48.0
 offset_bottom = 48.0
+tooltip_text = "NO ITEM"
 toggle_mode = true
 action_mode = 0
 ignore_texture_size = true
@@ -124,6 +126,7 @@ offset_left = 152.0
 offset_top = 125.0
 offset_right = 262.0
 offset_bottom = 195.0
+tooltip_text = "#TODO custom toolip"
 texture_normal = ExtResource("5_klaax")
 texture_pressed = ExtResource("6_50t63")
 texture_hover = ExtResource("6_50t63")
@@ -131,6 +134,6 @@ texture_hover = ExtResource("6_50t63")
 [connection signal="mouse_entered" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_entered"]
 [connection signal="mouse_exited" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_exited"]
 [connection signal="toggled" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_toggled"]
-[connection signal="pressed" from="TextureRect/ItemSlot1TextureButton/Item1TextureButton" to="." method="_on_item_1_texture_button_pressed"]
-[connection signal="pressed" from="TextureRect/ItemSlot2TextureButton/Item2TextureButton" to="." method="_on_item_2_texture_button_pressed"]
+[connection signal="pressed" from="TextureRect/ItemSlot1TextureButton/Item1TextureButton" to="." method="_on_item_texture_button_pressed" binds= [0]]
+[connection signal="pressed" from="TextureRect/ItemSlot2TextureButton/Item2TextureButton" to="." method="_on_item_texture_button_pressed" binds= [1]]
 [connection signal="mouse_entered" from="TextureRect/ActionsTextureButton" to="." method="_on_actions_texture_button_mouse_entered"]

@@ -55,7 +55,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
@@ -151,6 +150,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -234,7 +234,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_v81p6")
 text = "MAIN_MENU"
 
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton" to="." method="_on_shop_skip_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [2]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]

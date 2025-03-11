@@ -25,6 +25,16 @@ func init_from_item_object(item_object: ItemObject) -> void:
 	textures = item_object.textures
 
 
+func get_upgrade() -> String:
+	match id:
+		Util.ItemType.HEALTH: return 'health + 1'
+		Util.ItemType.DAMAGE: return 'damage + 1'
+		Util.ItemType.SHIELD: return 'add shield'
+		Util.ItemType.MOVE_DISTANCE: return 'move_distance + 1'
+		Util.ItemType.FLYING: return 'can fly'
+		_: return 'no item'
+
+
 func apply_to_player(target_player: Player, is_applied: bool = true) -> void:
 	match id:
 		Util.ItemType.HEALTH:

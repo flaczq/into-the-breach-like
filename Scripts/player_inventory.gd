@@ -67,11 +67,13 @@ func init_items(item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 		item_1_texture_button.texture_normal = item_1.textures[0]
 		item_1_texture_button.texture_pressed = item_1.textures[1]
 		item_1_texture_button.texture_hover = item_1.textures[2]
+		item_1_texture_button.tooltip_text = item_1.get_upgrade()
 		items_ids[0] = item_1.id
 	else:
 		item_1_texture_button.texture_normal = null
 		item_1_texture_button.texture_pressed = null
 		item_1_texture_button.texture_hover = null
+		item_1_texture_button.tooltip_text = 'NO ITEM'
 		items_ids[0] = Util.ItemType.NONE
 	
 	if item_2 and item_2.id != Util.ItemType.NONE:
@@ -79,11 +81,13 @@ func init_items(item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 		item_2_texture_button.texture_normal = item_2.textures[0]
 		item_2_texture_button.texture_pressed = item_2.textures[1]
 		item_2_texture_button.texture_hover = item_2.textures[2]
+		item_2_texture_button.tooltip_text = item_2.get_upgrade()
 		items_ids[1] = item_2.id
 	else:
 		item_2_texture_button.texture_normal = null
 		item_2_texture_button.texture_pressed = null
 		item_2_texture_button.texture_hover = null
+		item_2_texture_button.tooltip_text = 'NO ITEM'
 		items_ids[1] = Util.ItemType.NONE
 
 
@@ -94,10 +98,12 @@ func remove_item(item_id: Util.ItemType) -> void:
 		item_1_texture_button.texture_normal = null
 		item_1_texture_button.texture_pressed = null
 		item_1_texture_button.texture_hover = null
+		item_1_texture_button.tooltip_text = 'NO ITEM'
 	elif item_texture_index == 1:
 		item_2_texture_button.texture_normal = null
 		item_2_texture_button.texture_pressed = null
 		item_2_texture_button.texture_hover = null
+		item_2_texture_button.tooltip_text = 'no item'
 	items_ids[item_texture_index] = Util.ItemType.NONE
 
 
@@ -135,8 +141,8 @@ func _on_avatar_texture_button_toggled(toggled_on: bool) -> void:
 	player_inventory_toggled.emit(toggled_on, id)
 
 
-func _on_item_1_texture_button_pressed():
-	var new_clicked_item_id = items_ids[0]
+func _on_item_texture_button_pressed(item_texture_index: int) -> void:
+	var new_clicked_item_id = items_ids[item_texture_index]
 	# clicked empty inventory item when nothing was clicked before
 	if clicked_item_id != Util.ItemType.NONE or new_clicked_item_id != Util.ItemType.NONE:
 		item_1_texture_button.set_pressed_no_signal(false)
@@ -153,18 +159,14 @@ func _on_item_1_texture_button_pressed():
 			clicked_item_id = Util.ItemType.NONE
 		else:
 			if new_clicked_item_id == Util.ItemType.NONE:
-				move_item(clicked_item_id, 0)
+				move_item(clicked_item_id, item_texture_index)
 				clicked_item_id = Util.ItemType.NONE
 			else:
 				item_1_texture_button.set_pressed_no_signal(true)
 				#item_1_texture_button.modulate.a = 1.0
 				clicked_item_id = new_clicked_item_id
 	
-	item_clicked.emit(0, clicked_item_id, id)
-
-
-func _on_item_2_texture_button_pressed():
-	print('add to item 2')
+	item_clicked.emit(item_texture_index, clicked_item_id, id)
 
 
 func _on_actions_texture_button_mouse_entered():

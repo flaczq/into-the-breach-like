@@ -104,7 +104,7 @@ func show_players_selection() -> void:
 	for player_inventory in players_grid_container.get_children():
 		var player_texture_button = player_inventory.avatar_texture_button
 		player_texture_button.set_pressed_no_signal(false)
-		player_texture_button.modulate.a = 0.5
+		#player_texture_button.modulate.a = 0.5
 	
 	right_container.show()
 	main_menu_container.hide()
@@ -251,7 +251,7 @@ func _on_player_inventory_mouse_exited(id: PlayerType) -> void:
 func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 	var player_inventory = get_player_inventory_by_id(id)
 	var player_inventory_avatar = player_inventory.avatar_texture_button
-	player_inventory_avatar.modulate.a = (1.0) if (toggled_on) else (0.5)
+	#player_inventory_avatar.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
 	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:

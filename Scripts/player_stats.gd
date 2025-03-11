@@ -20,10 +20,10 @@ func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D
 	id = player_id
 	name = name.replace('X', str(id))
 	
-	assert(player_textures.size() == 2, 'Wrong player textures size')
+	assert(player_textures.size() == 3, 'Wrong player textures size')
 	avatar_texture_button.texture_normal = player_textures[0]
 	avatar_texture_button.texture_pressed = player_textures[1]
-	avatar_texture_button.texture_hover = player_textures[1]
+	avatar_texture_button.texture_hover = player_textures[2]
 	
 	update_health(player_health, player_max_health)
 	update_move_distance(player_move_distance)

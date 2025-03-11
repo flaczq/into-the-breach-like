@@ -1,11 +1,13 @@
-[gd_scene load_steps=7 format=3 uid="uid://b0wx4peeuej0j"]
+[gd_scene load_steps=9 format=3 uid="uid://b0wx4peeuej0j"]
 
 [ext_resource type="Script" path="res://Scripts/player_inventory.gd" id="1_6i75d"]
 [ext_resource type="Texture2D" uid="uid://vgdjn5by6sbj" path="res://Assets/aaaps/player_inventory.png" id="2_ymhgr"]
 [ext_resource type="Texture2D" uid="uid://cqkgnh18q3vgi" path="res://Assets/aaaps/player_1_normal.png" id="3_lmim4"]
-[ext_resource type="Texture2D" uid="uid://blme1eugxjf0o" path="res://Assets/aaaps/player_1_active.png" id="4_1hguf"]
+[ext_resource type="Texture2D" uid="uid://ca3hn7kxrxnae" path="res://Assets/aaaps/player_1_pressed.png" id="4_udju1"]
+[ext_resource type="Texture2D" uid="uid://blme1eugxjf0o" path="res://Assets/aaaps/player_1_hover.png" id="5_c6vr3"]
 [ext_resource type="Texture2D" uid="uid://yv7xtk2a32yv" path="res://Assets/aaaps/actions_normal.png" id="5_klaax"]
 [ext_resource type="Texture2D" uid="uid://b55v8egp4qa5t" path="res://Assets/aaaps/actions_active.png" id="6_50t63"]
+[ext_resource type="Texture2D" uid="uid://oe83ml8ki41k" path="res://Assets/aaaps/item_slot.png" id="6_o7omb"]
 
 [node name="PlayerXInventory" type="Control"]
 custom_minimum_size = Vector2(262, 200)
@@ -39,8 +41,8 @@ offset_bottom = 122.0
 toggle_mode = true
 action_mode = 0
 texture_normal = ExtResource("3_lmim4")
-texture_pressed = ExtResource("4_1hguf")
-texture_hover = ExtResource("4_1hguf")
+texture_pressed = ExtResource("4_udju1")
+texture_hover = ExtResource("5_c6vr3")
 
 [node name="HealthLabel" type="Label" parent="TextureRect"]
 layout_mode = 0
@@ -70,20 +72,51 @@ text = "2"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="Item1TextureButton" type="TextureButton" parent="TextureRect"]
+[node name="ItemSlot1TextureButton" type="TextureButton" parent="TextureRect"]
+custom_minimum_size = Vector2(55, 55)
 layout_mode = 0
 offset_left = 33.0
-offset_top = 137.0
-offset_right = 73.0
-offset_bottom = 177.0
-toggle_mode = true
+offset_top = 130.0
+offset_right = 88.0
+offset_bottom = 185.0
+texture_normal = ExtResource("6_o7omb")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="Item2TextureButton" type="TextureButton" parent="TextureRect"]
+[node name="Item1TextureButton" type="TextureButton" parent="TextureRect/ItemSlot1TextureButton"]
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 0
-offset_left = 99.0
-offset_top = 137.0
-offset_right = 139.0
-offset_bottom = 177.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 49.0
+offset_bottom = 49.0
+toggle_mode = true
+action_mode = 0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ItemSlot2TextureButton" type="TextureButton" parent="TextureRect"]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_left = 85.0
+offset_top = 130.0
+offset_right = 140.0
+offset_bottom = 185.0
+texture_normal = ExtResource("6_o7omb")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Item2TextureButton" type="TextureButton" parent="TextureRect/ItemSlot2TextureButton"]
+custom_minimum_size = Vector2(43, 43)
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 48.0
+offset_bottom = 48.0
+toggle_mode = true
+action_mode = 0
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="ActionsTextureButton" type="TextureButton" parent="TextureRect"]
 layout_mode = 0
@@ -98,6 +131,6 @@ texture_hover = ExtResource("6_50t63")
 [connection signal="mouse_entered" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_entered"]
 [connection signal="mouse_exited" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_exited"]
 [connection signal="toggled" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_toggled"]
-[connection signal="pressed" from="TextureRect/Item1TextureButton" to="." method="_on_item_1_texture_button_pressed"]
-[connection signal="pressed" from="TextureRect/Item2TextureButton" to="." method="_on_item_2_texture_button_pressed"]
+[connection signal="pressed" from="TextureRect/ItemSlot1TextureButton/Item1TextureButton" to="." method="_on_item_1_texture_button_pressed"]
+[connection signal="pressed" from="TextureRect/ItemSlot2TextureButton/Item2TextureButton" to="." method="_on_item_2_texture_button_pressed"]
 [connection signal="mouse_entered" from="TextureRect/ActionsTextureButton" to="." method="_on_actions_texture_button_mouse_entered"]

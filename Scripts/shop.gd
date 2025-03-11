@@ -9,19 +9,11 @@ signal item_clicked(shop_item_id: int, item_id: Util.ItemType)
 @onready var shop_item_2_texture_button = $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2TextureButton
 @onready var shop_item_3_texture_button = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3TextureButton
 
-var shop_items_texture_buttons: Array[TextureButton]
-
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE, Util.ItemType.NONE]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 
 
 func _ready() -> void:
-	shop_items_texture_buttons = [
-		shop_item_1_texture_button,
-		shop_item_2_texture_button,
-		shop_item_3_texture_button
-	]
-
 	var random_items: Array[ItemObject] = []
 	var available_items: Array[ItemObject] = Global.all_items.filter(func(item): return item.available)
 	var all_items_indices = range(available_items.size())
@@ -47,10 +39,11 @@ func _ready() -> void:
 		texture_button.connect('mouse_entered', _on_texture_button_mouse_entered.bind(shop_item_id))
 		texture_button.connect('mouse_exited', _on_texture_button_mouse_exited.bind(shop_item_id))
 		texture_button.connect('pressed', _on_texture_button_pressed.bind(shop_item_id))
-		assert(random_item.textures.size() == 2, 'Wrong random item textures size')
+		assert(random_item.textures.size() == 3, 'Wrong random item textures size')
 		texture_button.texture_normal = random_item.textures[0]
-		texture_button.texture_hover = random_item.textures[1]
-		texture_button.modulate.a = 0.5
+		texture_button.texture_pressed = random_item.textures[1]
+		texture_button.texture_hover = random_item.textures[2]
+		#texture_button.modulate.a = 0.5
 		
 		var name_label = shop_item.get_node('ShopItem' + str(shop_item_id) + 'NameLabel') as Label
 		name_label.text = random_item.item_name
@@ -65,20 +58,22 @@ func item_bought(item_id: Util.ItemType) -> void:
 	var texture_button = shop_item.get_node('ShopItem' + str(shop_item_id) + 'TextureButton') as TextureButton
 	texture_button.set_disabled(true)
 	texture_button.set_pressed_no_signal(false)
-	texture_button.modulate.a = 0.2
-	#texture_button.flip_v = true
+	texture_button.modulate.a = 0.5
 	
 	var cost_label = shop_item.get_node('ShopItem' + str(shop_item_id) + 'CostLabel') as Label
-	cost_label.modulate.a = 0.2
+	cost_label.modulate.a = 0.5
 	var name_label = shop_item.get_node('ShopItem' + str(shop_item_id) + 'NameLabel') as Label
-	name_label.modulate.a = 0.2
+	name_label.modulate.a = 0.5
 
 
-func reset_items(declick_item_id: bool = true) -> void:
-	for shop_item_texture_button in shop_items_texture_buttons:
-		shop_item_texture_button.set_pressed_no_signal(false)
-		shop_item_texture_button.modulate.a = (0.2) if (shop_item_texture_button.is_disabled()) else (0.5)
-	if declick_item_id:
+func reset_items(unclick_item_id: bool = true) -> void:
+	shop_item_1_texture_button.set_pressed_no_signal(false)
+	#shop_item_1_texture_button.modulate.a = (0.2) if (shop_item_1_texture_button.is_disabled()) else (0.5)
+	shop_item_2_texture_button.set_pressed_no_signal(false)
+	#shop_item_2_texture_button.modulate.a = (0.2) if (shop_item_2_texture_button.is_disabled()) else (0.5)
+	shop_item_3_texture_button.set_pressed_no_signal(false)
+	#shop_item_3_texture_button.modulate.a = (0.2) if (shop_item_3_texture_button.is_disabled()) else (0.5)
+	if unclick_item_id:
 		clicked_item_id = Util.ItemType.NONE
 
 
@@ -107,11 +102,11 @@ func _on_texture_button_pressed(shop_item_id: int) -> void:
 		var texture_button = shop_item.get_node('ShopItem' + str(shop_item_id) + 'TextureButton') as TextureButton
 		
 		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item_id:
-			texture_button.modulate.a = 0.5
+			#texture_button.modulate.a = 0.5
 			clicked_item_id = Util.ItemType.NONE
 		else:
 			texture_button.set_pressed_no_signal(true)
-			texture_button.modulate.a = 1.0
+			#texture_button.modulate.a = 1.0
 			clicked_item_id = new_clicked_item_id
 	else:
 		clicked_item_id = Util.ItemType.NONE

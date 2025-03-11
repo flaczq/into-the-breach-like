@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://cu5nov702pv6w"]
 
 [ext_resource type="Script" path="res://Scripts/inventory.gd" id="1_hyxii"]
-[ext_resource type="Texture2D" uid="uid://bnjsn5j6wkub8" path="res://Assets/penzilla.vector-icon-pack/Icon_SquareStraight.png" id="2_5dy4y"]
 [ext_resource type="Texture2D" uid="uid://co5uqlmcfipao" path="res://Assets/penzilla.vector-icon-pack/Item3.png" id="2_b6fkc"]
+[ext_resource type="Texture2D" uid="uid://oe83ml8ki41k" path="res://Assets/aaaps/item_slot.png" id="3_x2tey"]
 
 [node name="InventoryBackgroundTextureRect" type="TextureRect"]
 self_modulate = Color(1, 0.686275, 0.415686, 1)
@@ -27,70 +27,212 @@ offset_right = 130.0
 offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/h_separation = 20
-theme_override_constants/v_separation = 20
 columns = 4
 
-[node name="InventoryItem1TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
+[node name="InventoryItemSlot1TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+texture_normal = ExtResource("3_x2tey")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem2TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+[node name="InventoryItem1TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot1TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem3TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
+[node name="InventoryItemSlot2TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+texture_normal = ExtResource("3_x2tey")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem4TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+[node name="InventoryItem2TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot2TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem5TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
+[node name="InventoryItemSlot3TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+texture_normal = ExtResource("3_x2tey")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem6TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+[node name="InventoryItem3TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot3TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem7TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
+[node name="InventoryItemSlot4TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+texture_normal = ExtResource("3_x2tey")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="InventoryItem8TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
-modulate = Color(1, 1, 1, 0.501961)
-custom_minimum_size = Vector2(60, 60)
+[node name="InventoryItem4TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot4TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItemSlot5TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(60, 80)
 layout_mode = 2
-texture_normal = ExtResource("2_5dy4y")
+texture_normal = ExtResource("3_x2tey")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItem5TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot5TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItemSlot6TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+texture_normal = ExtResource("3_x2tey")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItem6TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot6TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItemSlot7TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+texture_normal = ExtResource("3_x2tey")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItem7TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot7TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItemSlot8TextureButton" type="TextureButton" parent="InventoryItemsGridContainer"]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+texture_normal = ExtResource("3_x2tey")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InventoryItem8TextureButton" type="TextureButton" parent="InventoryItemsGridContainer/InventoryItemSlot8TextureButton"]
+custom_minimum_size = Vector2(63, 63)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 31.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+action_mode = 0
 ignore_texture_size = true
 stretch_mode = 5

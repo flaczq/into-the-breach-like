@@ -55,6 +55,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
@@ -77,7 +78,6 @@ size_flags_horizontal = 4
 
 [node name="ShopBuyTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
-action_mode = 0
 texture_normal = SubResource("AtlasTexture_5j4yl")
 texture_pressed = SubResource("AtlasTexture_atmjk")
 texture_hover = SubResource("AtlasTexture_lvxsd")
@@ -103,7 +103,6 @@ uppercase = true
 
 [node name="ShopSkipTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer"]
 layout_mode = 2
-action_mode = 0
 texture_normal = SubResource("AtlasTexture_5j4yl")
 texture_pressed = SubResource("AtlasTexture_atmjk")
 texture_hover = SubResource("AtlasTexture_lvxsd")
@@ -152,7 +151,6 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 

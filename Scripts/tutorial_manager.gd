@@ -3,7 +3,8 @@ extends Util
 class_name TutorialManager
 
 var player_1_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_normal.png')
-var player_1_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_active.png')
+var player_1_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_pressed.png')
+var player_1_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_hover.png')
 var hook_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_normal.png')
 var hook_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_active.png')
 var plus_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_normal.png')
@@ -28,7 +29,7 @@ func init_player(player: Player, level: int) -> void:
 		player.passive_type = PassiveType.NONE
 		player.can_fly = false
 		player.items_ids = [ItemType.NONE, ItemType.NONE] as Array[ItemType]
-		player.textures = [player_1_normal_texture, player_1_active_texture]
+		player.textures = [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture]
 		player.items_applied = [false, false] as Array[bool]
 
 

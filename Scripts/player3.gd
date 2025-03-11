@@ -1,7 +1,8 @@
 extends Player
 
 var player_3_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_3_normal.png')
-var player_3_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_3_active.png')
+var player_3_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_3_pressed.png')
+var player_3_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_3_hover.png')
 var hook_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_normal.png')
 var hook_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_active.png')
 var plus_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_normal.png')
@@ -29,7 +30,7 @@ func _ready() -> void:
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
 	items_ids = player_data.items_ids
-	textures = [player_3_normal_texture, player_3_active_texture]
+	textures = [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture]
 	items_applied = player_data.items_applied
 
 
@@ -52,6 +53,6 @@ func get_data() -> Dictionary:
 		'can_fly': false,
 		'state_types': [] as Array[StateType],
 		'items_ids': [ItemType.NONE, ItemType.NONE] as Array[ItemType],
-		'textures': [player_3_normal_texture, player_3_active_texture] as Array[CompressedTexture2D],
+		'textures': [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture] as Array[CompressedTexture2D],
 		'items_applied': [false, false] as Array[bool]
 	}

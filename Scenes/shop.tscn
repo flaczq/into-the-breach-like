@@ -1,13 +1,16 @@
-[gd_scene load_steps=9 format=3 uid="uid://csdmgetagn410"]
+[gd_scene load_steps=12 format=3 uid="uid://csdmgetagn410"]
 
 [ext_resource type="Script" path="res://Scripts/shop.gd" id="1_6ijsm"]
 [ext_resource type="Texture2D" uid="uid://co4vf2e54cmuo" path="res://Assets/aaaps/player_background.png" id="1_q2j5i"]
 [ext_resource type="Texture2D" uid="uid://c3xbgib1u5w7g" path="res://Assets/aaaps/gem_purple_normal.png" id="3_5oygk"]
-[ext_resource type="Texture2D" uid="uid://jn5rqajxkn1h" path="res://Assets/aaaps/gem_purple_active.png" id="4_ilgub"]
+[ext_resource type="Texture2D" uid="uid://c12pif878lgw7" path="res://Assets/aaaps/gem_purple_pressed.png" id="4_6k1n1"]
 [ext_resource type="Texture2D" uid="uid://cwxt0fsvhwj0h" path="res://Assets/aaaps/gem_red_normal.png" id="5_lse3f"]
-[ext_resource type="Texture2D" uid="uid://v37onejo5q7d" path="res://Assets/aaaps/gem_red_active.png" id="6_5k5jk"]
+[ext_resource type="Texture2D" uid="uid://b6wgqrb32y6wl" path="res://Assets/aaaps/gem_purple_hover.png" id="5_yf8vh"]
+[ext_resource type="Texture2D" uid="uid://i7ceb5s5o8rh" path="res://Assets/aaaps/gem_red_pressed.png" id="6_5dacw"]
 [ext_resource type="Texture2D" uid="uid://dyldq71pd0gy8" path="res://Assets/aaaps/gem_green_normal.png" id="7_f1fqt"]
-[ext_resource type="Texture2D" uid="uid://doa06doosr3of" path="res://Assets/aaaps/gem_green_active.png" id="8_tbr4y"]
+[ext_resource type="Texture2D" uid="uid://v37onejo5q7d" path="res://Assets/aaaps/gem_red_hover.png" id="8_icurp"]
+[ext_resource type="Texture2D" uid="uid://d4k7hwhewtlcg" path="res://Assets/aaaps/gem_green_pressed.png" id="10_4bv7g"]
+[ext_resource type="Texture2D" uid="uid://de27y3odgj0ci" path="res://Assets/aaaps/gem_green_hover.png" id="11_5s41x"]
 
 [node name="Shop" type="TextureRect"]
 custom_minimum_size = Vector2(250, 250)
@@ -44,12 +47,13 @@ text = "1$"
 horizontal_alignment = 1
 
 [node name="ShopItem1TextureButton" type="TextureButton" parent="ShopItemsHBoxContainer/ShopItem1VBoxContainer"]
-modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
+toggle_mode = true
+action_mode = 0
 texture_normal = ExtResource("3_5oygk")
-texture_pressed = ExtResource("4_ilgub")
-texture_hover = ExtResource("4_ilgub")
+texture_pressed = ExtResource("4_6k1n1")
+texture_hover = ExtResource("5_yf8vh")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -68,12 +72,13 @@ text = "1$"
 horizontal_alignment = 1
 
 [node name="ShopItem2TextureButton" type="TextureButton" parent="ShopItemsHBoxContainer/ShopItem2VBoxContainer"]
-modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
+toggle_mode = true
+action_mode = 0
 texture_normal = ExtResource("5_lse3f")
-texture_pressed = ExtResource("6_5k5jk")
-texture_hover = ExtResource("6_5k5jk")
+texture_pressed = ExtResource("6_5dacw")
+texture_hover = ExtResource("8_icurp")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -92,12 +97,13 @@ text = "1$"
 horizontal_alignment = 1
 
 [node name="ShopItem3TextureButton" type="TextureButton" parent="ShopItemsHBoxContainer/ShopItem3VBoxContainer"]
-modulate = Color(1, 1, 1, 0.501961)
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
+toggle_mode = true
+action_mode = 0
 texture_normal = ExtResource("7_f1fqt")
-texture_pressed = ExtResource("8_tbr4y")
-texture_hover = ExtResource("8_tbr4y")
+texture_pressed = ExtResource("10_4bv7g")
+texture_hover = ExtResource("11_5s41x")
 ignore_texture_size = true
 stretch_mode = 5
 

@@ -3,11 +3,14 @@ extends Node
 class_name InitManager
 
 const gem_purple_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_purple_normal.png')
-const gem_purple_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_purple_active.png')
+const gem_purple_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_purple_pressed.png')
+const gem_purple_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_purple_hover.png')
 const gem_red_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_red_normal.png')
-const gem_red_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_red_active.png')
+const gem_red_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_red_pressed.png')
+const gem_red_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_red_hover.png')
 const gem_green_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_green_normal.png')
-const gem_green_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_green_active.png')
+const gem_green_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_green_pressed.png')
+const gem_green_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/gem_green_hover.png')
 
 var items_data: Array[Dictionary] = [
 	{
@@ -15,7 +18,7 @@ var items_data: Array[Dictionary] = [
 		'item_name': 'Gem 1',
 		'cost': 1,
 		'available': true,
-		'textures': [gem_purple_normal_texture, gem_purple_active_texture] as Array[CompressedTexture2D],
+		'textures': [gem_purple_normal_texture, gem_purple_pressed_texture, gem_purple_hover_texture] as Array[CompressedTexture2D],
 		'applied': false
 	},
 	{
@@ -23,7 +26,7 @@ var items_data: Array[Dictionary] = [
 		'item_name': 'Gem 2',
 		'cost': 1,
 		'available': true,
-		'textures': [gem_red_normal_texture, gem_red_active_texture] as Array[CompressedTexture2D],
+		'textures': [gem_red_normal_texture, gem_red_pressed_texture, gem_red_hover_texture] as Array[CompressedTexture2D],
 		'applied': false
 	},
 	{
@@ -31,7 +34,7 @@ var items_data: Array[Dictionary] = [
 		'item_name': 'Gem 3',
 		'cost': 1,
 		'available': true,
-		'textures': [gem_green_normal_texture, gem_green_active_texture] as Array[CompressedTexture2D],
+		'textures': [gem_green_normal_texture, gem_green_pressed_texture, gem_green_hover_texture] as Array[CompressedTexture2D],
 		'applied': false
 	}
 ]

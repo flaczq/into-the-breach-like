@@ -71,8 +71,8 @@ func set_items(new_items_ids: Array[Util.ItemType]) -> void:
 	items_ids[1] = new_items_ids[1]
 
 
-func set_item(new_item_id: Util.ItemType, target_player_item_id: int = -1) -> void:
-	var item_index = (target_player_item_id - 1) if (target_player_item_id >= 1) else (items_ids.find(Util.ItemType.NONE))
+func set_item(new_item_id: Util.ItemType, target_player_item_index: int = -1) -> void:
+	var item_index = (target_player_item_index) if (target_player_item_index >= 0) else (items_ids.find(Util.ItemType.NONE))
 	assert(items_ids[item_index] == Util.ItemType.NONE, 'No space to add item to player')
 	items_ids[item_index] = new_item_id
 
@@ -83,9 +83,9 @@ func unset_item(item_id: Util.ItemType) -> void:
 	items_ids[item_index] = Util.ItemType.NONE
 
 
-func move_item_to_empty(item_id: Util.ItemType, target_player_item_id: int) -> void:
+func move_item_to_empty(item_id: Util.ItemType, target_player_item_index: int) -> void:
 	# switching items not available
-	assert(items_ids[target_player_item_id - 1] == Util.ItemType.NONE, 'No space to move item inside player')
+	assert(items_ids[target_player_item_index] == Util.ItemType.NONE, 'No space to move item inside player')
 	var item_index = items_ids.find(item_id)
 	items_ids[item_index] = Util.ItemType.NONE
-	items_ids[target_player_item_id - 1] = item_id
+	items_ids[target_player_item_index] = item_id

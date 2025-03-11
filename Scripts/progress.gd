@@ -58,6 +58,8 @@ func init_ui() -> void:
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
 		player_inventory.connect('player_inventory_mouse_exited', _on_player_inventory_mouse_exited)
 		player_inventory.connect('player_inventory_toggled', _on_player_inventory_toggled)
+		player_inventory.connect('item_clicked', _on_player_inventory_item_clicked)
+		player_inventory.avatar_texture_button.set_disabled(true)
 		#player_inventory.texture_rect.scale = Vector2(0.75, 0.75)
 		player_inventory.show()
 		index += 1
@@ -112,9 +114,9 @@ func _on_shop_item_clicked(shop_item_id: int, item_id: ItemType) -> void:
 		var selected_item_from_shop = get_item(shop_clicked_item_id)
 		on_button_disabled(shop_buy_texture_button, selected_item_from_shop.cost > Global.money)
 	
+	inventory.reset_items()
 	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
 		player_inventory.reset_items()
-	inventory.reset_items()
 
 
 func _on_shop_buy_texture_button_pressed() -> void:
@@ -140,14 +142,48 @@ func _on_shop_buy_texture_button_pressed() -> void:
 	shop.item_bought(shop_clicked_item_id)
 	
 	shop.reset_items()
+	inventory.reset_items()
 	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
 		player_inventory.reset_items()
-	inventory.reset_items()
 
 
 func _on_shop_skip_texture_button_pressed() -> void:
 	upgrades_container.hide()
 	levels_container.show()
+
+
+func _on_inventory_item_hovered(inventory_item_index: int, item_id: ItemType, is_hovered: bool) -> void:
+	#print('_on_inventory_item_hovered' + str(inventory_item_id) + str(is_hovered))
+	pass
+
+
+func _on_inventory_item_clicked(inventory_item_index: int, item_id: ItemType, player_id: PlayerType) -> void:
+	var player_clicked_container
+	var player_clicked_item_id = get_player_clicked_item_id(player_id)
+	var inventory_clicked_item_id = get_inventory_clicked_item_id()
+	if player_clicked_item_id != ItemType.NONE:
+		# player -> inventory
+		player_clicked_container = players_grid_container.get_children().filter(func(child): return child.items_ids.has(player_clicked_item_id)).front() as PlayerInventory
+		
+		if inventory_clicked_item_id == ItemType.NONE:
+			player_clicked_container.remove_item(player_clicked_item_id)
+			
+			var selected_player = get_selected_player(player_clicked_container.id) as PlayerObject
+			var player_clicked_item = get_selected_item(player_clicked_item_id) as ItemObject
+			if player_clicked_item and player_clicked_item.id != Util.ItemType.NONE:
+				player_clicked_item.apply_to_player_object(selected_player, false)
+			selected_player.unset_item(player_clicked_item_id)
+			
+			player_clicked_container.update_stats(selected_player.max_health, selected_player.move_distance)
+			inventory.add_item(player_clicked_item, inventory_item_index)
+			inventory.reset_items(false)
+	
+	on_button_disabled(shop_buy_texture_button, true)
+	shop.reset_items()
+	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
+		player_inventory.reset_items()
+		if player_clicked_container and player_inventory.id != player_clicked_container.id:
+			player_inventory.clicked_item_id = ItemType.NONE
 
 
 func _on_player_inventory_mouse_entered(id: PlayerType) -> void:
@@ -165,7 +201,7 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 	pass
 
 
-func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: PlayerType) -> void:
+func _on_player_inventory_item_clicked(player_inventory_item_index: int, item_id: ItemType, player_id: PlayerType) -> void:
 	# switching items not available
 	var player_clicked_item_id = get_player_clicked_item_id(player_id)
 	var inventory_clicked_item_id = get_inventory_clicked_item_id()
@@ -174,7 +210,7 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 		inventory.remove_item(inventory_clicked_item_id)
 		
 		var selected_player = get_selected_player(player_id) as PlayerObject
-		selected_player.set_item(inventory_clicked_item_id, player_item_id)
+		selected_player.set_item(inventory_clicked_item_id, player_inventory_item_index)
 		var inventory_clicked_item = get_selected_item(inventory_clicked_item_id)
 		if inventory_clicked_item and inventory_clicked_item.id != Util.ItemType.NONE:
 			inventory_clicked_item.apply_to_player_object(selected_player)
@@ -184,7 +220,7 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 		var item_1 = get_selected_item(selected_player.items_ids[0])
 		var item_2 = get_selected_item(selected_player.items_ids[1])
 		player_inventory.init_items(item_1, item_2)
-		player_inventory.update_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
+		player_inventory.update_stats(selected_player.max_health, selected_player.move_distance)
 	elif player_clicked_item_id != ItemType.NONE and item_id == ItemType.NONE:
 		# player X -> player Y
 		var origin_player_inventory = players_grid_container.get_children().filter(func(child): return child.clicked_item_id == player_clicked_item_id).front() as PlayerInventory
@@ -200,10 +236,10 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 		#var origin_item_1 = get_selected_item(origin_player.items_ids[0])
 		#var origin_item_2 = get_selected_item(origin_player.items_ids[1])
 		#origin_player_inventory.init_items(origin_item_1, origin_item_2)
-		origin_player_inventory.update_stats(origin_player.max_health, origin_player.move_distance, origin_player.damage, origin_player.action_type)
+		origin_player_inventory.update_stats(origin_player.max_health, origin_player.move_distance)
 	
 		var target_player = get_selected_player(player_id) as PlayerObject
-		target_player.set_item(player_clicked_item_id, player_item_id)
+		target_player.set_item(player_clicked_item_id, player_inventory_item_index)
 		if player_clicked_item and player_clicked_item.id != Util.ItemType.NONE:
 			player_clicked_item.apply_to_player_object(target_player)
 		
@@ -212,7 +248,7 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 		var target_item_1 = get_selected_item(target_player.items_ids[0])
 		var target_item_2 = get_selected_item(target_player.items_ids[1])
 		target_player_inventory.init_items(target_item_1, target_item_2)
-		target_player_inventory.update_stats(target_player.max_health, target_player.move_distance, target_player.damage, target_player.action_type)
+		target_player_inventory.update_stats(target_player.max_health, target_player.move_distance)
 	else:
 		# set items in single player container in case they were moved
 		var selected_player = get_selected_player(player_id) as PlayerObject
@@ -222,45 +258,10 @@ func _on_player_item_clicked(player_item_id: int, item_id: ItemType, player_id: 
 	on_button_disabled(shop_buy_texture_button, true)
 	shop.reset_items()
 	var should_highlight = player_clicked_item_id != ItemType.NONE and item_id != ItemType.NONE
-	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
-		player_inventory.reset_items(should_highlight, not should_highlight)
-		if player_inventory.id != player_id:
-			player_inventory.clicked_item_id = ItemType.NONE
 	inventory.reset_items(should_highlight)
-
-
-func _on_inventory_item_hovered(inventory_item_id: int, item_id: ItemType, is_hovered: bool) -> void:
-	#print('_on_inventory_item_hovered' + str(inventory_item_id) + str(is_hovered))
-	pass
-
-
-func _on_inventory_item_clicked(inventory_item_id: int, item_id: ItemType) -> void:
-	var player_clicked_container
-	var player_clicked_item_id = get_player_clicked_item_id()
-	var inventory_clicked_item_id = get_inventory_clicked_item_id()
-	if player_clicked_item_id != ItemType.NONE:
-		# player -> inventory
-		player_clicked_container = players_grid_container.get_children().filter(func(child): return child.items_ids.has(player_clicked_item_id)).front() as PlayerInventory
-		
-		if inventory_clicked_item_id == ItemType.NONE:
-			player_clicked_container.remove_item(player_clicked_item_id)
-			
-			var selected_player = get_selected_player(player_clicked_container.id) as PlayerObject
-			var player_clicked_item = get_selected_item(player_clicked_item_id) as ItemObject
-			if player_clicked_item and player_clicked_item.id != Util.ItemType.NONE:
-				player_clicked_item.apply_to_player_object(selected_player, false)
-			selected_player.unset_item(player_clicked_item_id)
-			
-			player_clicked_container.update_stats(selected_player.max_health, selected_player.move_distance, selected_player.damage, selected_player.action_type)
-			inventory.add_item(player_clicked_item, inventory_item_id)
-			inventory.reset_items(false)
-	
-	on_button_disabled(shop_buy_texture_button, true)
-	shop.reset_items()
 	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
-		player_inventory.reset_items(inventory_clicked_item_id != ItemType.NONE)
-		if player_clicked_container and player_inventory.id != player_clicked_container.id:
-			player_inventory.clicked_item_id = ItemType.NONE
+		if player_inventory.id != player_id:
+			player_inventory.reset_items()
 
 
 func _on_level_type_button_pressed(level_type: LevelType) -> void:

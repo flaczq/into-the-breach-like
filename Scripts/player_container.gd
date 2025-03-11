@@ -94,10 +94,10 @@ func move_item(item_id: Util.ItemType, target_player_item_id: int) -> void:
 	init_items(items)
 
 
-func reset_items(is_highlighted: bool = false, declick_item_id: bool = true) -> void:
+func reset_items(is_highlighted: bool = false, unclick_item_id: bool = true) -> void:
 	player_items_texture_buttons[0].modulate.a = (1.0) if (is_highlighted or items_ids[0] != Util.ItemType.NONE) else (0.5)
 	player_items_texture_buttons[1].modulate.a = (1.0) if (is_highlighted or items_ids[1] != Util.ItemType.NONE) else (0.5)
-	if declick_item_id:
+	if unclick_item_id:
 		clicked_item_id = Util.ItemType.NONE
 
 
@@ -142,7 +142,7 @@ func _on_item_texture_button_pressed(player_item_id: int) -> void:
 		
 		var texture_button = player_items_texture_buttons[player_item_id - 1]
 		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item_id:
-			# declick item
+			# unclick item
 			texture_button.modulate.a = 1.0
 			clicked_item_id = Util.ItemType.NONE
 		else:

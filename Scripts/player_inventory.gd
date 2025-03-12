@@ -73,7 +73,7 @@ func init_items(item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 		item_1_texture_button.texture_normal = null
 		item_1_texture_button.texture_pressed = null
 		item_1_texture_button.texture_hover = null
-		item_1_texture_button.tooltip_text = 'NO ITEM'
+		item_1_texture_button.tooltip_text = 'no item\navailable\nfor you'
 		items_ids[0] = Util.ItemType.NONE
 	
 	if item_2 and item_2.id != Util.ItemType.NONE:
@@ -87,7 +87,7 @@ func init_items(item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 		item_2_texture_button.texture_normal = null
 		item_2_texture_button.texture_pressed = null
 		item_2_texture_button.texture_hover = null
-		item_2_texture_button.tooltip_text = 'NO ITEM'
+		item_2_texture_button.tooltip_text = 'no item\navailable\nfor you'
 		items_ids[1] = Util.ItemType.NONE
 
 
@@ -98,7 +98,7 @@ func remove_item(item_id: Util.ItemType) -> void:
 		item_1_texture_button.texture_normal = null
 		item_1_texture_button.texture_pressed = null
 		item_1_texture_button.texture_hover = null
-		item_1_texture_button.tooltip_text = 'NO ITEM'
+		item_1_texture_button.tooltip_text = 'no item\navailable\nfor you'
 	elif item_texture_index == 1:
 		item_2_texture_button.texture_normal = null
 		item_2_texture_button.texture_pressed = null
@@ -147,23 +147,19 @@ func _on_item_texture_button_pressed(item_texture_index: int) -> void:
 	if clicked_item_id != Util.ItemType.NONE or new_clicked_item_id != Util.ItemType.NONE:
 		item_1_texture_button.set_pressed_no_signal(false)
 		item_2_texture_button.set_pressed_no_signal(false)
-		#if items_ids[0] == Util.ItemType.NONE:
-			## highlight empty inventory items to move clicked item to
-			#item_1_texture_button.modulate.a = (1.0) if (new_clicked_item_id != Util.ItemType.NONE and clicked_item_id != new_clicked_item_id) else (0.5)
-		#else:
-			#item_1_texture_button.modulate.a = 1.0
 		
 		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item_id:
 			# unclick item
-			#item_1_texture_button.modulate.a = 1.0
 			clicked_item_id = Util.ItemType.NONE
 		else:
 			if new_clicked_item_id == Util.ItemType.NONE:
 				move_item(clicked_item_id, item_texture_index)
 				clicked_item_id = Util.ItemType.NONE
 			else:
-				item_1_texture_button.set_pressed_no_signal(true)
-				#item_1_texture_button.modulate.a = 1.0
+				if item_texture_index == 0:
+					item_1_texture_button.set_pressed_no_signal(true)
+				elif item_texture_index == 1:
+					item_2_texture_button.set_pressed_no_signal(true)
 				clicked_item_id = new_clicked_item_id
 	
 	item_clicked.emit(item_texture_index, clicked_item_id, id)

@@ -15,7 +15,7 @@ var id: Util.PlayerType
 
 
 func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], player_health: int, player_max_health: int, player_move_distance: int) -> void:
-	texture_rect.scale = Vector2(0.75, 0.75)
+	#texture_rect.scale = Vector2(0.75, 0.75)
 	
 	id = player_id
 	name = name.replace('X', str(id))

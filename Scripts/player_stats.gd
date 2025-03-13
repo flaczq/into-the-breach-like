@@ -24,6 +24,7 @@ func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D
 	avatar_texture_button.texture_normal = player_textures[0]
 	avatar_texture_button.texture_pressed = player_textures[1]
 	avatar_texture_button.texture_hover = player_textures[2]
+	avatar_texture_button.texture_focused = player_textures[2]
 	
 	update_health(player_health, player_max_health)
 	update_move_distance(player_move_distance)

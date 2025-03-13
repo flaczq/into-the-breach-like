@@ -2,7 +2,7 @@ extends Character
 
 class_name Player
 
-signal hovered_event(target_player: Player, is_hovered: bool)
+signal hovered_event(target_player: Player, is_hovered: bool, outside: bool)
 signal clicked_event(target_player: Player, is_clicked: bool)
 
 var moves_per_turn: int = 1
@@ -252,7 +252,7 @@ func clicked() -> void:
 		#position.y = 0.0
 		toggle_outline(false)
 		
-		hovered_event.emit(self, true)
+		hovered_event.emit(self, true, false)
 
 
 func on_mouse_entered() -> void:
@@ -263,13 +263,13 @@ func on_mouse_entered() -> void:
 		if is_alive:
 			#Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
 			
-			hovered_event.emit(self, true)
+			hovered_event.emit(self, true, false)
 		else:
 			print('playe ' + str(tile.coords) + ' -> dead, cannot hover')
 
 
 func mouse_exited() -> void:
-	hovered_event.emit(self, false)
+	hovered_event.emit(self, false, false)
 
 
 func on_mouse_exited() -> void:

@@ -726,7 +726,6 @@ func get_player_stats_by_id(id: PlayerType) -> PlayerStats:
 
 
 func set_player_texture_button_state(avatar_texture_button: TextureButton, is_focused: bool) -> void:
-	avatar_texture_button.set_pressed_no_signal(is_focused or selected_player)
 	var final_scale = (Vector2(1.0, 1.0)) if (selected_player) else (Vector2(0.75, 0.75))
 	var scale_tween = create_tween()
 	scale_tween.tween_property(avatar_texture_button.get_parent(), 'scale', final_scale, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
@@ -1015,8 +1014,8 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 
 
 func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: int, origin_tile_coords: Vector2i) -> void:
+	var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 	if target_tile.is_occupied_by_asset():
-		var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 		var hit_direction = (origin_tile_coords - target_tile.coords).sign()
 		var pull_direction = hit_direction
 		var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile.coords + pull_direction).front()
@@ -1024,10 +1023,13 @@ func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: 
 		assert(not tiles_path.is_empty(), 'tiles path is empty')
 		await origin_character.move(tiles_path, true)
 	else:
-		var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 		var tiles_path = calculate_tiles_path(origin_character, target_tile, true)
 		assert(not tiles_path.is_empty(), 'tiles path is empty')
 		await origin_character.move(tiles_path, true)
+	
+	if origin_character.tile.health_type == TileHealthType.DESTROYED:
+		# pushed itself into a hole = dead
+		await origin_character.get_killed()
 
 
 func _on_tile_action_pull_together(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1039,6 +1041,10 @@ func _on_tile_action_pull_together(target_tile_coords: Vector2i, action_damage: 
 	assert(not tiles_path.is_empty(), 'tiles path is empty')
 	# pull only by one tile
 	await origin_character.move([tiles_path.front()] as Array[MapTile], true)
+	
+	if origin_character.tile.health_type == TileHealthType.DESTROYED:
+		# pushed itself into a hole = dead
+		await origin_character.get_killed()
 
 
 func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
@@ -1060,7 +1066,7 @@ func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage
 			await tile_to_be_pushed.get_shot(action_damage, ActionType.PUSH_BACK, 0, target_tile_coords)
 
 
-func _on_player_hovered(player: Player, is_hovered: bool) -> void:
+func _on_player_hovered(player: Player, is_hovered: bool, outside: bool) -> void:
 	if selected_player and selected_player != player:
 		return
 	
@@ -1080,8 +1086,9 @@ func _on_player_hovered(player: Player, is_hovered: bool) -> void:
 			#if not player.is_clicked:
 				#tile.toggle_player_clicked(false)
 	
-	var player_stats = get_player_stats_by_id(player.id)
-	set_player_texture_button_state(player_stats.avatar_texture_button, is_hovered)
+	if not outside:
+		var player_stats = get_player_stats_by_id(player.id)
+		set_player_texture_button_state(player_stats.avatar_texture_button, is_hovered)
 
 
 func _on_player_clicked(player: Player, is_clicked: bool) -> void:
@@ -1121,6 +1128,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 	player.tile.on_mouse_entered()
 	
 	var player_stats = get_player_stats_by_id(player.id)
+	player_stats.avatar_texture_button.set_pressed_no_signal(selected_player != null)
 	set_player_texture_button_state(player_stats.avatar_texture_button, false)
 
 
@@ -1364,7 +1372,7 @@ func _on_player_stats_mouse_entered(id: PlayerType) -> void:
 		return
 	
 	on_tile_hovered(target_player.tile, true)
-	_on_player_hovered(target_player, true)
+	_on_player_hovered(target_player, true, true)
 
 
 func _on_player_stats_mouse_exited(id: PlayerType) -> void:
@@ -1376,7 +1384,7 @@ func _on_player_stats_mouse_exited(id: PlayerType) -> void:
 		return
 	
 	on_tile_hovered(target_player.tile, false)
-	_on_player_hovered(target_player, false)
+	_on_player_hovered(target_player, false, true)
 
 
 func _on_player_stats_toggled(toggled_on: bool, id: PlayerType) -> void:

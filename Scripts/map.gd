@@ -9,6 +9,7 @@ const OUTLINE_SHADER: Resource = preload('res://Other/outline_shader.gdshader')
 
 var tiles: Array[MapTile] = []
 var assets: Array[Node3D] = []
+var origin_points: int = 0
 
 
 func _ready() -> void:
@@ -38,6 +39,8 @@ func spawn(level_data: Dictionary) -> void:
 		
 		tile.reset()
 		tile.init(map_tile_object)
+		origin_points += tile.points
+	assert(origin_points > 0, 'All map tiles points are zero')
 
 
 func convert_tile_type_initial_to_enum(tile_type_initial: String) -> TileType:
@@ -293,3 +296,7 @@ func get_tiles_for_events() -> Array[MapTile]:
 func get_tiles_in_cross(middle_tile: MapTile) -> Array[MapTile]:
 	return tiles.filter(func(tile): return (absi(tile.coords.x - middle_tile.coords.x) == 1 and tile.coords.y == middle_tile.coords.y) \
 		or (absi(tile.coords.y - middle_tile.coords.y) == 1 and tile.coords.x == middle_tile.coords.x))
+
+
+func get_current_points() -> int:
+	return tiles.reduce(func(sum, tile): return sum + tile.points, 0)

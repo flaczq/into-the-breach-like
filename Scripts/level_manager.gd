@@ -439,7 +439,7 @@ func check_if_level_won(game_state_manager: GameStateManager) -> bool:
 	return false
 
 
-func check_objectives(game_state_manager: GameStateManager) -> void:
+func mark_objectives(game_state_manager: GameStateManager) -> void:
 	var map = game_state_manager.map
 	var players = game_state_manager.players
 	var enemies = game_state_manager.enemies
@@ -449,9 +449,8 @@ func check_objectives(game_state_manager: GameStateManager) -> void:
 			if enemies.all(func(enemy): return not enemy.is_alive):
 				objective.done = true
 		elif objective.type == LevelObjective.LESS_THAN_HALF_TILES_DAMAGED:
-			var all_tiles = map.tiles.size()
-			var damaged_tiles = map.tiles.filter(func(tile): return tile.health_type == TileHealthType.DAMAGED or tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED).size()
-			if all_tiles / 2 > damaged_tiles:
+			var current_points = map.get_current_points()
+			if map.origin_points / 2 > current_points:
 				objective.done = true
 		elif objective.type == LevelObjective.NO_PLAYERS_DEAD:
 			if players.all(func(player): return player.is_alive):

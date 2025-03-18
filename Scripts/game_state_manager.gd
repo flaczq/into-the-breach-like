@@ -117,7 +117,7 @@ func init_game_state() -> void:
 
 func init_map() -> void:
 	assert(level_data.has('scene'), 'Set scene for level_data')
-	map = map_scenes[level_data.scene].instantiate()
+	map = map_scenes[level_data.scene].instantiate() as Map
 	add_sibling(map)
 	map.spawn(level_data)
 	
@@ -409,7 +409,7 @@ func level_won() -> void:
 	#money_for_level = floori(sqrt(points_for_level)) - 3 * dead_players_size
 	var money_for_level = 0
 	
-	level_manager_script.check_objectives(self)
+	level_manager_script.mark_objectives(self)
 	for objective in level_data.objectives:
 		if objective.done:
 			money_for_level += objective.money
@@ -441,25 +441,24 @@ func level_lost() -> void:
 
 
 func show_turn_end_texture_rect(whose_turn: String) -> void:
-	pass
 	# FIXME hardcoded
-	#turn_end_label.text = whose_turn + ' TURN'
-	#turn_end_texture_rect.show()
-	#panel_full_screen_container.show()
-	#
-	#await get_tree().create_timer(0.5).timeout
-	#
-	#var turn_end_tween = create_tween()
-	#turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
-	#await turn_end_tween.finished
-	#
-	#panel_full_screen_container.hide()
-	#turn_end_texture_rect.hide()
-	#turn_end_texture_rect.modulate.a = 1.0
-	#turn_end_label.text = ''
-	#
-	#if whose_turn == 'ENEMY':
-		#await get_tree().create_timer(0.5).timeout
+	turn_end_label.text = whose_turn + ' TURN'
+	turn_end_texture_rect.show()
+	panel_full_screen_container.show()
+	
+	await get_tree().create_timer(0.5).timeout
+	
+	var turn_end_tween = create_tween()
+	turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
+	await turn_end_tween.finished
+	
+	panel_full_screen_container.hide()
+	turn_end_texture_rect.hide()
+	turn_end_texture_rect.modulate.a = 1.0
+	turn_end_label.text = ''
+	
+	if whose_turn == 'ENEMY':
+		await get_tree().create_timer(0.5).timeout
 
 
 func reset_ui():

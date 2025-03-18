@@ -329,7 +329,6 @@ mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_0msnr")
 
 [node name="TurnEndTextureRect" type="TextureRect" parent="CanvasLayer/PanelFullScreenContainer"]
-visible = false
 custom_minimum_size = Vector2(500, 200)
 layout_mode = 2
 size_flags_horizontal = 4

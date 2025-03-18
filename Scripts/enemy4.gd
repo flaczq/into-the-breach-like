@@ -1,8 +1,5 @@
 extends Enemy
 
-var hook_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_normal.png')
-var hook_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_active.png')
-
 
 func _ready() -> void:
 	arrow_color = ENEMY_4_ARROW_COLOR
@@ -15,13 +12,13 @@ func _ready() -> void:
 	max_health = 4
 	health = 4
 	damage = 2
-	move_distance = 3
-	action_min_distance = 1
+	move_distance = 2
+	action_min_distance = 2
 	action_max_distance = 7
-	action_direction = ActionDirection.HORIZONTAL_LINE
-	action_type = ActionType.NONE
+	action_direction = ActionDirection.HORIZONTAL_DOT
+	action_type = ActionType.PULL_FRONT
 	action_damage = 0
-	action_1_textures = [hook_normal_texture, hook_active_texture]
+	action_1_textures = [null, null]
 	passive_type = PassiveType.NONE
 	can_fly = false
 	state_types = []

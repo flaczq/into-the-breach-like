@@ -22,6 +22,7 @@ func generate_data(level_type: LevelType, level: int, enemy_scenes_size: int, ci
 	add_characters(level_data, enemy_scenes_size, civilian_scenes_size)
 	add_events_details(level_data, enemy_scenes_size)
 	add_level_type_details(level_data)
+	add_objectives(level_data)
 	
 	return level_data
 
@@ -92,19 +93,6 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 			level_data.civilian_scenes.push_back(randi_range(1, civilian_scenes_size - 1))
 
 
-func add_level_type_details(level_data: Dictionary) -> void:
-	if level_data.level_type == LevelType.KILL_ENEMIES:
-		var enemies_from_below_size = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
-		var enemies_from_below_turns_size = (1 + level_data.enemies_from_below_last_turn - level_data.enemies_from_below_first_turn) if (enemies_from_below_size > 0) else (0)
-		var enemies_from_above_size = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
-		var enemies_from_above_turns_size = (1 + level_data.enemies_from_above_last_turn - level_data.enemies_from_above_first_turn) if (enemies_from_above_size > 0) else (0)
-		# FIXME hardcoded
-		level_data.max_enemies = 3 + enemies_from_below_size * enemies_from_below_turns_size + enemies_from_above_size * enemies_from_above_turns_size
-	elif level_data.level_type == LevelType.SURVIVE_TURNS:
-		# FIXME hardcoded
-		level_data.max_turns = 5
-
-
 func add_events_details(level_data: Dictionary, enemy_scenes_size: int) -> void:
 	if not level_data.has('level_events'):
 		return
@@ -131,6 +119,37 @@ func add_events_details(level_data: Dictionary, enemy_scenes_size: int) -> void:
 		elif level_event == LevelEvent.FALLING_ROCK:
 			level_data.falling_rock_first_turn = 2
 			level_data.falling_rock_last_turn = 99
+
+
+func add_level_type_details(level_data: Dictionary) -> void:
+	if level_data.level_type == LevelType.KILL_ENEMIES:
+		var enemies_from_below_size = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
+		var enemies_from_below_turns_size = (1 + level_data.enemies_from_below_last_turn - level_data.enemies_from_below_first_turn) if (enemies_from_below_size > 0) else (0)
+		var enemies_from_above_size = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_ABOVE).size()
+		var enemies_from_above_turns_size = (1 + level_data.enemies_from_above_last_turn - level_data.enemies_from_above_first_turn) if (enemies_from_above_size > 0) else (0)
+		# FIXME hardcoded
+		level_data.max_enemies = 3 + enemies_from_below_size * enemies_from_below_turns_size + enemies_from_above_size * enemies_from_above_turns_size
+	elif level_data.level_type == LevelType.SURVIVE_TURNS:
+		# FIXME hardcoded
+		level_data.max_turns = 5
+
+
+func add_objectives(level_data: Dictionary) -> void:
+	#TODO
+	if level_data.level_type == LevelType.KILL_ENEMIES:
+		level_data.objectives = [{
+			'type': LevelObjective.ALL_ENEMIES_DEAD,
+			'money': 1,
+			'done': false
+		}, {
+			'type': LevelObjective.LESS_THAN_HALF_TILES_DAMAGED,
+			'money': 2,
+			'done': false
+		}, {
+			'type': LevelObjective.NO_PLAYERS_DEAD,
+			'money': 3,
+			'done': false
+		}]
 
 
 func plan_events(game_state_manager: GameStateManager) -> void:
@@ -399,8 +418,8 @@ func check_if_level_won(game_state_manager: GameStateManager) -> bool:
 		if enemies_killed >= level_data.max_enemies:
 			return true
 		
-		# no alive enemies and no will spawn
-		if enemies.filter(func(enemy): return enemy.is_alive).is_empty():
+		# no alive enemies and none will spawn
+		if not enemies.any(func(enemy): return enemy.is_alive):
 			var enemies_from_below_event = not level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).is_empty()
 			if enemies_from_below_event:
 				var any_event_tiles = map.tiles.any(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_BELOW_INDICATORS'))
@@ -412,10 +431,28 @@ func check_if_level_won(game_state_manager: GameStateManager) -> bool:
 				var any_event_tiles = map.tiles.any(func(tile: MapTile): return tile.models.get('event_asset') and tile.models.event_asset.is_in_group('ENEMIES_FROM_ABOVE_INDICATORS'))
 				if (not level_data.enemies_from_above_last_turn or current_turn >= level_data.enemies_from_above_last_turn) and not any_event_tiles:
 					return true
-	
-	if level_data.level_type == LevelType.SURVIVE_TURNS:
+	elif level_data.level_type == LevelType.SURVIVE_TURNS:
 		# turn not increased yet
 		if current_turn >= level_data.max_turns:
 			return true
 	
 	return false
+
+
+func check_objectives(game_state_manager: GameStateManager) -> void:
+	var map = game_state_manager.map
+	var players = game_state_manager.players
+	var enemies = game_state_manager.enemies
+	var level_data = game_state_manager.level_data
+	for objective in level_data.objectives:
+		if objective.type == LevelObjective.ALL_ENEMIES_DEAD:
+			if enemies.all(func(enemy): return not enemy.is_alive):
+				objective.done = true
+		elif objective.type == LevelObjective.LESS_THAN_HALF_TILES_DAMAGED:
+			var all_tiles = map.tiles.size()
+			var damaged_tiles = map.tiles.filter(func(tile): return tile.health_type == TileHealthType.DAMAGED or tile.health_type == TileHealthType.DESTROYED or tile.health_type == TileHealthType.DESTRUCTIBLE_DAMAGED).size()
+			if all_tiles / 2 > damaged_tiles:
+				objective.done = true
+		elif objective.type == LevelObjective.NO_PLAYERS_DEAD:
+			if players.all(func(player): return player.is_alive):
+				objective.done = true

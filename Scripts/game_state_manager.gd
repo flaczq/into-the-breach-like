@@ -406,9 +406,15 @@ func level_won() -> void:
 	var points_for_level = tiles_points.reduce(func(accum, points): return accum + points, 0)
 	var dead_players_size = players.filter(func(player): return not player.is_alive).size()
 	# FIXME hardcoded, adjust algorithm
-	var money_for_level = floori(sqrt(points_for_level)) - 3 * dead_players_size
-	print('adding money for level: ' + str(money_for_level) + '(' + str(points_for_level) + ' ' + str(dead_players_size) + ')')
+	#money_for_level = floori(sqrt(points_for_level)) - 3 * dead_players_size
+	var money_for_level = 0
 	
+	level_manager_script.check_objectives(self)
+	for objective in level_data.objectives:
+		if objective.done:
+			money_for_level += objective.money
+	
+	print('adding money for level: ' + str(money_for_level) + '(' + str(points_for_level) + ' ' + str(dead_players_size) + ')')
 	if money_for_level > 0:
 		Global.money += money_for_level
 	

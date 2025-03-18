@@ -5,10 +5,8 @@ class_name TutorialManager
 var player_1_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_normal.png')
 var player_1_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_pressed.png')
 var player_1_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_1_hover.png')
-var hook_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_normal.png')
-var hook_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_active.png')
-var plus_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_normal.png')
-var plus_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_active.png')
+var hook_normal = preload('res://Assets/aaaps/weapons_hook_normal.png')
+var hook_active = preload('res://Assets/aaaps/weapons_hook_active.png')
 
 
 func init_player(player: Player, level: int) -> void:
@@ -24,8 +22,8 @@ func init_player(player: Player, level: int) -> void:
 		player.action_direction = ActionDirection.HORIZONTAL_LINE
 		player.action_type = ActionType.PUSH_BACK
 		player.action_damage = 0
-		player.action_1_textures = [hook_normal_texture, hook_active_texture]
-		player.action_2_textures = [plus_normal_texture, plus_active_texture]
+		player.action_1_textures = [hook_normal, hook_active]
+		player.action_2_textures = [null, null]
 		player.passive_type = PassiveType.NONE
 		player.can_fly = false
 		player.items_ids = [ItemType.NONE, ItemType.NONE] as Array[ItemType]
@@ -48,7 +46,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_LINE
 		enemy.action_type = ActionType.PUSH_BACK
 		enemy.action_damage = 0
-		enemy.action_1_textures = [hook_normal_texture, hook_active_texture]
+		enemy.action_1_textures = [null, null]
 		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 	elif level == 2:
@@ -65,7 +63,7 @@ func init_enemy(enemy: Enemy, level: int) -> void:
 		enemy.action_direction = ActionDirection.HORIZONTAL_DOT
 		enemy.action_type = ActionType.NONE
 		enemy.action_damage = 0
-		enemy.action_1_textures = [hook_normal_texture, hook_active_texture]
+		enemy.action_1_textures = [null, null]
 		enemy.passive_type = PassiveType.NONE
 		enemy.can_fly = false
 

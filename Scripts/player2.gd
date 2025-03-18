@@ -3,10 +3,8 @@ extends Player
 var player_2_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_2_normal.png')
 var player_2_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_2_pressed.png')
 var player_2_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_2_hover.png')
-var hook_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_normal.png')
-var hook_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/hook_active.png')
-var plus_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_normal.png')
-var plus_active_texture: CompressedTexture2D = preload('res://Assets/aaaps/plus_active.png')
+var hook_normal = preload('res://Assets/aaaps/weapons_hook_normal.png')
+var hook_active = preload('res://Assets/aaaps/weapons_hook_active.png')
 
 
 func _ready() -> void:
@@ -24,8 +22,8 @@ func _ready() -> void:
 	action_direction = player_data.action_direction
 	action_type = player_data.action_type
 	action_damage = player_data.action_damage
-	action_1_textures = [plus_normal_texture, plus_active_texture]
-	action_2_textures = [hook_normal_texture, hook_active_texture]
+	action_1_textures = [hook_normal, hook_active]
+	action_2_textures = [null, null]
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	state_types = player_data.state_types
@@ -47,8 +45,8 @@ func get_data() -> Dictionary:
 		'action_direction': ActionDirection.HORIZONTAL_LINE,
 		'action_type': ActionType.PULL_TOGETHER,
 		'action_damage': 0,
-		'action_1_textures': [plus_normal_texture, plus_active_texture] as Array[CompressedTexture2D],
-		'action_2_textures': [hook_normal_texture, hook_active_texture] as Array[CompressedTexture2D],
+		'action_1_textures': [hook_normal, hook_active] as Array[CompressedTexture2D],
+		'action_2_textures': [null, null] as Array[CompressedTexture2D],
 		'passive_type': PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[StateType],

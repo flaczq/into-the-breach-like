@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_gdtvm"]
+[ext_resource type="Texture2D" uid="uid://iu12lg4nasjg" path="res://Assets/aaaps/background_squares.png" id="2_ru1lx"]
 [ext_resource type="PackedScene" uid="uid://bysqedydgeakv" path="res://Scenes/map4x4.tscn" id="4_22mq3"]
 [ext_resource type="PackedScene" uid="uid://cxidqolshdlac" path="res://Scenes/map6x6.tscn" id="4_wpjf0"]
 [ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player1.tscn" id="6_vfyg3"]
@@ -19,7 +20,6 @@
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="16_grlly"]
 [ext_resource type="Texture2D" uid="uid://danokvk15cayv" path="res://Assets/penzilla.vector-icon-pack/Icon_Settings.png" id="17_1dry2"]
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="18_m6tce"]
-[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="18_rptsd"]
 [ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="19_mojst"]
 [ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="20_6obs3"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="21_mwtkn"]
@@ -68,7 +68,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("18_rptsd")
+texture = ExtResource("2_ru1lx")
 expand_mode = 3
 flip_v = true
 

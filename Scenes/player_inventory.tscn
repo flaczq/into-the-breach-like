@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b0wx4peeuej0j"]
+[gd_scene load_steps=10 format=3 uid="uid://b0wx4peeuej0j"]
 
 [ext_resource type="Script" path="res://Scripts/player_inventory.gd" id="1_6i75d"]
 [ext_resource type="Texture2D" uid="uid://vgdjn5by6sbj" path="res://Assets/aaaps/player_inventory.png" id="2_ymhgr"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://yv7xtk2a32yv" path="res://Assets/aaaps/actions_normal.png" id="5_klaax"]
 [ext_resource type="Texture2D" uid="uid://b55v8egp4qa5t" path="res://Assets/aaaps/actions_active.png" id="6_50t63"]
 [ext_resource type="Texture2D" uid="uid://oe83ml8ki41k" path="res://Assets/aaaps/item_slot.png" id="6_o7omb"]
+[ext_resource type="PackedScene" uid="uid://du8nd6q2jlyde" path="res://Scenes/tooltip.tscn" id="9_au3jp"]
 
 [node name="PlayerXInventory" type="Control"]
 custom_minimum_size = Vector2(262, 200)
@@ -126,10 +127,13 @@ offset_left = 152.0
 offset_top = 125.0
 offset_right = 262.0
 offset_bottom = 195.0
-tooltip_text = "#TODO custom toolip"
+toggle_mode = true
 texture_normal = ExtResource("5_klaax")
 texture_pressed = ExtResource("6_50t63")
-texture_hover = ExtResource("6_50t63")
+
+[node name="Tooltip" parent="TextureRect/ActionsTextureButton" instance=ExtResource("9_au3jp")]
+visible = false
+layout_mode = 0
 
 [connection signal="mouse_entered" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_entered"]
 [connection signal="mouse_exited" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_exited"]
@@ -137,3 +141,4 @@ texture_hover = ExtResource("6_50t63")
 [connection signal="pressed" from="TextureRect/ItemSlot1TextureButton/Item1TextureButton" to="." method="_on_item_texture_button_pressed" binds= [0]]
 [connection signal="pressed" from="TextureRect/ItemSlot2TextureButton/Item2TextureButton" to="." method="_on_item_texture_button_pressed" binds= [1]]
 [connection signal="mouse_entered" from="TextureRect/ActionsTextureButton" to="." method="_on_actions_texture_button_mouse_entered"]
+[connection signal="mouse_exited" from="TextureRect/ActionsTextureButton" to="." method="_on_actions_texture_button_mouse_exited"]

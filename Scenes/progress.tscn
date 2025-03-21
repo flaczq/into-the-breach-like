@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=3 uid="uid://8bvhgfxla8ng"]
 
 [ext_resource type="Script" path="res://Scripts/progress.gd" id="1_2mc5y"]
-[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="2_o0rbe"]
 [ext_resource type="PackedScene" uid="uid://csdmgetagn410" path="res://Scenes/shop.tscn" id="3_7gy5r"]
+[ext_resource type="Texture2D" uid="uid://iu12lg4nasjg" path="res://Assets/aaaps/background_squares.png" id="3_r8dr0"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="5_xxaj3"]
 [ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="6_65n42"]
 [ext_resource type="PackedScene" uid="uid://cu5nov702pv6w" path="res://Scenes/inventory.tscn" id="10_0ag24"]
@@ -37,7 +37,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_o0rbe")
+texture = ExtResource("3_r8dr0")
 expand_mode = 3
 flip_v = true
 
@@ -55,6 +55,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]

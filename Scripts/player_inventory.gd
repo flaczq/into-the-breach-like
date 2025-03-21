@@ -14,6 +14,7 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: 
 @onready var item_1_texture_button = $TextureRect/ItemSlot1TextureButton/Item1TextureButton
 @onready var item_2_texture_button = $TextureRect/ItemSlot2TextureButton/Item2TextureButton
 @onready var actions_texture_button = $TextureRect/ActionsTextureButton
+@onready var tooltip: Tooltip = $TextureRect/ActionsTextureButton/Tooltip
 #@onready var action_1_texture_button = $TextureRect/Action1TextureButton
 #@onready var action_2_texture_button = $TextureRect/Action2TextureButton
 
@@ -166,4 +167,10 @@ func _on_item_texture_button_pressed(item_texture_index: int) -> void:
 
 
 func _on_actions_texture_button_mouse_entered():
-	print('show popup with actions')
+	tooltip.set_text('no item\navailable\nfor you\nfor you\nfor you\nfor you\nfor you\nfor you')
+	tooltip.set_position(actions_texture_button.get_local_mouse_position() + Vector2(8, 8))
+	tooltip.show_tooltip()
+
+
+func _on_actions_texture_button_mouse_exited():
+	tooltip.hide()

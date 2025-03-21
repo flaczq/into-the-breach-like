@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3 uid="uid://du8nd6q2jlyde"]
+
+[ext_resource type="Script" path="res://Scripts/tooltip.gd" id="1_p4wxs"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_110sr"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.165274, 0.38386, 0.690155, 0.823529)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.0745098, 0.215686, 0.411765, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Tooltip" type="Control"]
+z_index = 9
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_p4wxs")
+
+[node name="TooltipPanelContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 85.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_110sr")
+
+[node name="TooltipLabel" type="Label" parent="TooltipPanelContainer"]
+layout_mode = 2
+theme_type_variation = &"TooltipLabel"
+text = "custom text"

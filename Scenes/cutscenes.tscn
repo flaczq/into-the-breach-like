@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://1noimyb1f3xg"]
 
-[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="1_pmmlt"]
 [ext_resource type="Script" path="res://Scripts/cutscenes.gd" id="1_rffcp"]
+[ext_resource type="Texture2D" uid="uid://iu12lg4nasjg" path="res://Assets/aaaps/background_squares.png" id="2_x0v5t"]
 [ext_resource type="Texture2D" uid="uid://boox7w2y51txy" path="res://Assets/penzilla.vector-icon-pack/Item2.png" id="3_tm4wa"]
 
 [node name="Cutscenes" type="CanvasLayer"]
@@ -13,7 +13,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_pmmlt")
+texture = ExtResource("2_x0v5t")
 expand_mode = 3
 flip_v = true
 

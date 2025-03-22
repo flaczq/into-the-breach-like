@@ -61,7 +61,7 @@ func add_item(item_object: ItemObject, target_item_texture_index: int = -1) -> v
 	texture_button.texture_normal = item_object.textures[0]
 	texture_button.texture_pressed = item_object.textures[1]
 	texture_button.texture_hover = item_object.textures[2]
-	texture_button.tooltip_text = item_object.get_upgrade()
+	texture_button.tooltip_text = item_object.description
 	#texture_button.modulate.a = 1.0
 	items_ids[item_texture_index] = item_id
 

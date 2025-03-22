@@ -57,6 +57,7 @@ func _ready() -> void:
 	
 	init_all_players()
 	init_all_items()
+	init_all_actions()
 	init_ui()
 
 
@@ -124,6 +125,11 @@ func init_all_items() -> void:
 	# FIXME include in save
 	var all_items = init_manager_script.init_all_items()
 	Global.all_items.append_array(all_items)
+
+
+func init_all_actions() -> void:
+	var all_actions = init_manager_script.init_all_actions()
+	Global.all_actions.append_array(all_actions)
 
 
 func init_ui() -> void:

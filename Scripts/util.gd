@@ -127,3 +127,7 @@ static func get_item(item_id: ItemType) -> ItemObject:
 
 static func get_selected_item(selected_item_id: ItemType) -> ItemObject:
 	return Global.selected_items.filter(func(selected_item): return selected_item.id == selected_item_id).front()
+
+
+static func get_action(action_id: ActionType) -> ActionObject:
+	return Global.all_actions.filter(func(action): return action.id == action_id).front()

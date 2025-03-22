@@ -53,6 +53,7 @@ func after_ready() -> void:
 
 func include_items_updates() -> void:
 	var player_object = get_selected_player(id)
+	assert(player_object, 'Player not existing in selected players')
 	if player_object:
 		# have to duplicate() to make them unique
 		items_ids = player_object.items_ids.duplicate()

@@ -41,7 +41,7 @@ func _ready() -> void:
 	shop_item_1_texture_button.texture_normal = random_item_1.textures[0]
 	shop_item_1_texture_button.texture_pressed = random_item_1.textures[1]
 	shop_item_1_texture_button.texture_hover = random_item_1.textures[2]
-	shop_item_1_texture_button.tooltip_text = random_item_1.get_upgrade()
+	shop_item_1_texture_button.tooltip_text = random_item_1.description
 	shop_item_1_name_label.text = random_item_1.item_name
 	
 	var random_item_2 = random_items[1]
@@ -54,7 +54,7 @@ func _ready() -> void:
 	shop_item_2_texture_button.texture_normal = random_item_2.textures[0]
 	shop_item_2_texture_button.texture_pressed = random_item_2.textures[1]
 	shop_item_2_texture_button.texture_hover = random_item_2.textures[2]
-	shop_item_2_texture_button.tooltip_text = random_item_2.get_upgrade()
+	shop_item_2_texture_button.tooltip_text = random_item_2.description
 	shop_item_2_name_label.text = random_item_2.item_name
 	
 	var random_item_3 = random_items[2]
@@ -67,7 +67,7 @@ func _ready() -> void:
 	shop_item_3_texture_button.texture_normal = random_item_3.textures[0]
 	shop_item_3_texture_button.texture_pressed = random_item_3.textures[1]
 	shop_item_3_texture_button.texture_hover = random_item_3.textures[2]
-	shop_item_3_texture_button.tooltip_text = random_item_3.get_upgrade()
+	shop_item_3_texture_button.tooltip_text = random_item_3.description
 	shop_item_3_name_label.text = random_item_3.item_name
 
 

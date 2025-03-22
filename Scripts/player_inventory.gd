@@ -21,6 +21,7 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: 
 var id: Util.PlayerType
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
+var is_tooltip_clicked: bool = false
 
 
 func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], action_1_textures: Array[CompressedTexture2D], action_2_textures: Array[CompressedTexture2D], player_max_health: int, player_move_distance: int, item_1: ItemObject = null, item_2: ItemObject = null) -> void:
@@ -68,7 +69,7 @@ func init_items(item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 		item_1_texture_button.texture_normal = item_1.textures[0]
 		item_1_texture_button.texture_pressed = item_1.textures[1]
 		item_1_texture_button.texture_hover = item_1.textures[2]
-		item_1_texture_button.tooltip_text = item_1.get_upgrade()
+		item_1_texture_button.tooltip_text = item_1.description
 		items_ids[0] = item_1.id
 	else:
 		item_1_texture_button.texture_normal = null
@@ -82,7 +83,7 @@ func init_items(item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 		item_2_texture_button.texture_normal = item_2.textures[0]
 		item_2_texture_button.texture_pressed = item_2.textures[1]
 		item_2_texture_button.texture_hover = item_2.textures[2]
-		item_2_texture_button.tooltip_text = item_2.get_upgrade()
+		item_2_texture_button.tooltip_text = item_2.description
 		items_ids[1] = item_2.id
 	else:
 		item_2_texture_button.texture_normal = null
@@ -169,8 +170,17 @@ func _on_item_texture_button_pressed(item_texture_index: int) -> void:
 func _on_actions_texture_button_mouse_entered():
 	tooltip.set_text('no item\navailable\nfor you\nfor you\nfor you\nfor you\nfor you\nfor you')
 	tooltip.set_position(actions_texture_button.get_local_mouse_position() + Vector2(8, 8))
-	tooltip.show_tooltip()
+	tooltip.show()
 
 
 func _on_actions_texture_button_mouse_exited():
-	tooltip.hide()
+	if not is_tooltip_clicked:
+		tooltip.hide()
+
+
+func _on_actions_texture_button_toggled(toggled_on: bool) -> void:
+	is_tooltip_clicked = toggled_on
+	if is_tooltip_clicked:
+		tooltip.show()
+	else:
+		tooltip.hide()

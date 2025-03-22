@@ -132,7 +132,7 @@ func _on_shop_buy_texture_button_pressed() -> void:
 	
 	selected_item_from_shop.available = false
 	
-	var new_selected_item_from_shop = selected_item_from_shop.duplicate()
+	var new_selected_item_from_shop = selected_item_from_shop.duplicate() as ItemObject
 	new_selected_item_from_shop.init_from_item_object(selected_item_from_shop)
 	Global.selected_items.push_back(new_selected_item_from_shop)
 	Global.money -= new_selected_item_from_shop.cost
@@ -251,7 +251,7 @@ func _on_player_inventory_item_clicked(player_inventory_item_index: int, item_id
 		target_player_inventory.update_stats(target_player.max_health, target_player.move_distance)
 	else:
 		# set items in single player container in case they were moved
-		var selected_player = get_selected_player(player_id) as PlayerObject
+		var selected_player = (player_id) as PlayerObject
 		var player_inventory = players_grid_container.get_children().filter(func(child): return child.id == selected_player.id).front() as PlayerInventory
 		selected_player.set_items(player_inventory.items_ids)
 	

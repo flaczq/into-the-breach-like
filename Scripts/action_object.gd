@@ -12,7 +12,7 @@ var description: String
 var textures: Array[CompressedTexture2D]
 
 
-func init_from_item_data(action_data: Dictionary) -> void:
+func init_from_action_data(action_data: Dictionary) -> void:
 	id = action_data.id
 	action_name = action_data.action_name
 	damage = action_data.damage

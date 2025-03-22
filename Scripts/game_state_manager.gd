@@ -136,8 +136,10 @@ func init_players() -> void:
 	
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate() as Player
+		#FIXME wywalić tutorial_manager_script, użyć init_manager
 		if Global.tutorial:
 			tutorial_manager_script.init_player(player_instance, level)
+		player_instance.before_ready(player_scene)
 		add_sibling(player_instance)
 		player_instance.after_ready()
 		

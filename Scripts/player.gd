@@ -45,6 +45,24 @@ func _ready() -> void:
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
+func before_ready(new_id: PlayerType) -> void:
+	var player_object = get_selected_player(new_id) as PlayerObject
+	id = player_object.id
+	model_name = player_object.model_name
+	max_health = player_object.max_health
+	health = player_object.health
+	damage = player_object.damage
+	move_distance = player_object.move_distance
+	action = player_object.action
+	action_direction = player_object.action_direction
+	passive_type = player_object.passive_type
+	can_fly = player_object.can_fly
+	state_types = player_object.state_types
+	items_ids = player_object.items_ids
+	textures = player_object.textures
+	items_applied = player_object.items_applied
+
+
 func after_ready() -> void:
 	super()
 	
@@ -129,9 +147,9 @@ func execute_action(target_tile: MapTile) -> void:
 	
 	reset_tiles()
 	
-	if action_type != ActionType.TOWARDS_AND_PUSH_BACK:
+	if action.id != ActionType.TOWARDS_AND_PUSH_BACK:
 		await spawn_bullet(target_tile)
-	await target_tile.get_shot(damage, action_type, action_damage, tile.coords)
+	await target_tile.get_shot(damage, action.id, action.damage, tile.coords)
 	
 	after_action()
 

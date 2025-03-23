@@ -17,7 +17,6 @@ var items_ids: Array[ItemType] = []
 var items_applied: Array[bool] = []
 
 var id: PlayerType
-var textures: Array[CompressedTexture2D]
 
 
 func _ready() -> void:
@@ -53,7 +52,8 @@ func before_ready(new_id: PlayerType) -> void:
 	health = player_object.health
 	damage = player_object.damage
 	move_distance = player_object.move_distance
-	action = player_object.action
+	action_1 = player_object.action_1
+	action_2 = player_object.action_2
 	action_direction = player_object.action_direction
 	passive_type = player_object.passive_type
 	can_fly = player_object.can_fly
@@ -141,7 +141,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			collect_if_collectable(target_tile)
 
 
-func execute_action(target_tile: MapTile) -> void:
+func execute_action(target_tile: MapTile, action: ActionObject) -> void:
 	if current_phase != PhaseType.ACTION:
 		return
 	
@@ -154,16 +154,24 @@ func execute_action(target_tile: MapTile) -> void:
 	after_action()
 
 
-func shoot(target_tile: MapTile) -> void:
-	if current_phase != PhaseType.ACTION:
-		return
-	
-	reset_tiles()
-	
-	await spawn_bullet(target_tile)
-	await target_tile.get_shot(damage)
-	
-	after_action()
+func execute_action_1(target_tile: MapTile) -> void:
+	await execute_action(target_tile, action_1)
+
+
+func execute_action_2(target_tile: MapTile) -> void:
+	await execute_action(target_tile, action_2)
+
+
+#func shoot(target_tile: MapTile) -> void:
+	#if current_phase != PhaseType.ACTION:
+		#return
+	#
+	#reset_tiles()
+	#
+	#await spawn_bullet(target_tile)
+	#await target_tile.get_shot(damage)
+	#
+	#after_action()
 
 
 func after_action() -> void:

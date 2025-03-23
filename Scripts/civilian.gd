@@ -11,6 +11,28 @@ func _ready() -> void:
 	#model = $Princess_Head
 
 
+func before_ready(new_id: CivilianType) -> void:
+	var civilian_object = get_selected_civilian(new_id) as CivilianObject
+	id = civilian_object.id
+	model_name = civilian_object.model_name
+	max_health = civilian_object.max_health
+	health = civilian_object.health
+	damage = civilian_object.damage
+	move_distance = civilian_object.move_distance
+	action_min_distance = civilian_object.action_min_distance
+	action_max_distance = civilian_object.action_max_distance
+	action_1 = civilian_object.action_1
+	action_direction = civilian_object.action_direction
+	passive_type = civilian_object.passive_type
+	can_fly = civilian_object.can_fly
+	state_types = civilian_object.state_types
+	textures = civilian_object.textures
+
+
+func after_ready() -> void:
+	super()
+
+
 func spawn(spawn_tile: MapTile) -> void:
 	tile = spawn_tile
 	tile.set_civilian(self)

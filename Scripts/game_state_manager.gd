@@ -26,7 +26,6 @@ class_name GameStateManager
 # FIXME hardcoded
 #const MAX_TUTORIAL_LEVELS: int = 6
 
-var tutorial_manager_script: TutorialManager = preload('res://Scripts/tutorial_manager.gd').new()
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
 
 var map: Map = null
@@ -136,9 +135,6 @@ func init_players() -> void:
 	
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate() as Player
-		#FIXME wywalić tutorial_manager_script, użyć init_manager
-		if Global.tutorial:
-			tutorial_manager_script.init_player(player_instance, level)
 		player_instance.before_ready(player_scene)
 		add_sibling(player_instance)
 		player_instance.after_ready()
@@ -188,8 +184,7 @@ func init_civilians() -> void:
 	
 	for civilian_scene in level_data.civilian_scenes:
 		var civilian_instance = civilian_scenes[civilian_scene].instantiate() as Civilian
-		if Global.tutorial:
-			tutorial_manager_script.init_civilian(civilian_instance, level)
+		civilian_instance.before_ready(civilian_scene)
 		add_sibling(civilian_instance)
 		civilian_instance.after_ready()
 		
@@ -743,7 +738,7 @@ func set_player_texture_button_state(avatar_texture_button: TextureButton, is_fo
 		avatar_texture_button.release_focus()
 
 
-func on_shoot_action_button_toggled(toggled_on: bool) -> void:
+func on_actions_button_toggled(toggled_on: bool) -> void:
 	if not selected_player:
 		return
 	
@@ -802,7 +797,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 		civilian.reset_health_bar()
 	
 	if is_hovered:
-		var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and action_1_texture_button.is_pressed()
+		var is_selected_player_action = selected_player and selected_player.current_phase == PhaseType.ACTION and (action_1_texture_button.is_pressed() or action_2_texture_button.is_pressed())
 		var character = target_tile.get_character()
 		# show health bar for hovered character
 		if character:
@@ -996,9 +991,9 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			# remember selected player to be able to get its id later
 			var temp_selected_player = selected_player
 			if action_1_texture_button.is_pressed():
-				await selected_player.execute_action(first_occupied_tile_in_line)
-			else:
-				await selected_player.shoot(first_occupied_tile_in_line)
+				await selected_player.execute_action_1(first_occupied_tile_in_line)
+			elif action_2_texture_button.is_pressed():
+				await selected_player.execute_action_2(first_occupied_tile_in_line)
 			
 			# reset undo when action was executed
 			undo = {}
@@ -1146,8 +1141,7 @@ func _on_player_health_changed(target_player: Player):
 
 func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	var enemy_instance = enemy_scenes[enemy_scene].instantiate() as Enemy
-	if Global.tutorial:
-		tutorial_manager_script.init_enemy(enemy_instance, level)
+	enemy_instance.before_ready(enemy_scene)
 	add_sibling(enemy_instance)
 	enemy_instance.after_ready()
 	
@@ -1323,11 +1317,11 @@ func _on_end_turn_texture_button_pressed() -> void:
 
 
 func _on_action_1_texture_button_toggled(toggled_on: bool) -> void:
-	on_shoot_action_button_toggled(toggled_on)
+	on_actions_button_toggled(toggled_on)
 
 
 func _on_action_2_texture_button_toggled(toggled_on: bool) -> void:
-	pass # Replace with function body.
+	on_actions_button_toggled(toggled_on)
 
 
 func _on_undo_texture_button_pressed() -> void:

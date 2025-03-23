@@ -46,6 +46,28 @@ func _ready() -> void:
 	#animation_player.play('idle')
 
 
+func before_ready(new_id: EnemyType) -> void:
+	var enemy_object = get_selected_enemy(new_id) as EnemyObject
+	id = enemy_object.id
+	model_name = enemy_object.model_name
+	max_health = enemy_object.max_health
+	health = enemy_object.health
+	damage = enemy_object.damage
+	move_distance = enemy_object.move_distance
+	action_1 = enemy_object.action_1
+	action_direction = enemy_object.action_direction
+	passive_type = enemy_object.passive_type
+	can_fly = enemy_object.can_fly
+	state_types = enemy_object.state_types
+	textures = enemy_object.textures
+	arrow_color = enemy_object.arrow_color
+	arrow_highlighted_color = enemy_object.arrow_highlighted_color
+
+
+func after_ready() -> void:
+	super()
+
+
 func spawn(spawn_tile: MapTile, new_order: int) -> void:
 	tile = spawn_tile
 	tile.set_enemy(self)
@@ -133,7 +155,7 @@ func execute_planned_action() -> void:
 		if target_character:
 			apply_planned_action(target_character, false)
 		
-		# remember planned tile to be able to unset it before shooting
+		# remember planned tile to be able to unset it before actions
 		temp_planned_tile = planned_tile
 		planned_tile.set_planned_enemy_action(false)
 		planned_tile = null
@@ -146,18 +168,18 @@ func execute_planned_action() -> void:
 			return
 		
 		if temp_planned_tile:
-			if action_type != ActionType.TOWARDS_AND_PUSH_BACK:
+			if action_1.id != ActionType.TOWARDS_AND_PUSH_BACK:
 				await spawn_bullet(temp_planned_tile)
-			await temp_planned_tile.get_shot(damage, action_type, action_damage, tile.coords)
+			await temp_planned_tile.get_shot(damage, action_1.id, action_1.damage, tile.coords)
 			
 			animation_player.play('idle')
 
 
 func apply_planned_action(target_character: Character, is_applied = true) -> void:
-	match action_type:
+	match action_1.id:
 		ActionType.MISS_MOVE: planned_action_miss_move.emit(target_character, is_applied)
 		ActionType.MISS_ACTION: planned_action_miss_action.emit(target_character, is_applied)
-		_: pass#print('no implementation of applied planned action: ' + ActionType.keys()[action_type] + ' for character: ' + str(self))
+		_: pass#print('no implementation of applied planned action: ' + ActionType.keys()[action_1.id] + ' for character: ' + str(self))
 
 
 func get_killed() -> void:

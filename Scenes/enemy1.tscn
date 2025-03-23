@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://d3kikj28cfn8h"]
 
-[ext_resource type="Script" path="res://Scripts/enemy1.gd" id="1_7n172"]
+[ext_resource type="Script" path="res://Scripts/enemy.gd" id="1_0yaks"]
 [ext_resource type="Material" uid="uid://coojmgwnken21" path="res://Other/outline_material_enemy.tres" id="2_fox8q"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ssjdt"]
@@ -129,7 +129,7 @@ _data = {
 }
 
 [node name="Enemy1" type="Node3D" groups=["ENEMIES"]]
-script = ExtResource("1_7n172")
+script = ExtResource("1_0yaks")
 
 [node name="Skeleton_Head" type="MeshInstance3D" parent="." groups=["MODELS", "MODEL_CONTAINERS"]]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.5, 0)

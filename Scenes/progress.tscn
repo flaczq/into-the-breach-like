@@ -236,9 +236,5 @@ text = "MAIN_MENU"
 
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton" to="." method="_on_shop_skip_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1Button" to="." method="_on_level_type_button_pressed" binds= [1]]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2Button" to="." method="_on_level_type_button_pressed" binds= [2]]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3Button" to="." method="_on_level_type_button_pressed" binds= [3]]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType4Button" to="." method="_on_level_type_button_pressed" binds= [4]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton" to="." method="_on_levels_next_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]

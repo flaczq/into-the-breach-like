@@ -22,6 +22,7 @@ var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate
 var is_alive: bool = true
 var state_types: Array[StateType] = []
 var model_outlines: Array[MeshInstance3D] = []
+var textures: Array[CompressedTexture2D] = []
 
 var model_name: String
 var model_container: Node3D
@@ -38,14 +39,10 @@ var max_health: int
 var health: int
 var damage: int
 var move_distance: int
-var action: ActionObject
-#var action_min_distance: int
-#var action_max_distance: int
-var action_direction: ActionDirection
-#var action_type: ActionType
-#var action_damage: int
-#var action_1_textures: Array[CompressedTexture2D]
-#var action_2_textures: Array[CompressedTexture2D]
+var min_distance: int
+var max_distance: int
+var action_1: ActionObject
+var action_2: ActionObject
 var passive_type: PassiveType
 var can_fly: bool
 
@@ -233,7 +230,8 @@ func toggle_arrows(is_toggled: bool) -> void:
 			child.hide()
 
 
-func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, first_origin_position: Vector3 = origin_tile.position, target_action_type: ActionType = action.id) -> void:
+#FIXME maybe not action_1?
+func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, first_origin_position: Vector3 = origin_tile.position, target_action_type: ActionType = action_1.id) -> void:
 	var position_to_target = get_vector3_on_map(origin_tile.position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()
@@ -492,7 +490,8 @@ func collect_if_collectable(target_tile: MapTile) -> void:
 
 
 # FIXME maybe too many parameters..?
-func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTile], origin_action_type: ActionType = action.id, origin_tile: MapTile = target_tile, damage_dealt: int = damage, next_call: bool = false) -> void:
+# FIXME maybe not action_1
+func show_outline_with_predicted_health(target_tile: MapTile, tiles: Array[MapTile], origin_action_type: ActionType, origin_tile: MapTile = target_tile, damage_dealt: int = damage, next_call: bool = false) -> void:
 	var target_character = target_tile.get_character()
 	if target_character:
 		target_character.toggle_outline(true)

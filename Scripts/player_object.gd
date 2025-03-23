@@ -9,11 +9,11 @@ var damage: int
 var move_distance: int
 var action_min_distance: int
 var action_max_distance: int
+var action_1_id: Util.ActionType
+var action_1: ActionObject
+var action_2_id: Util.ActionType
+var action_2: ActionObject
 var action_direction: Util.ActionDirection
-var action_type: Util.ActionType
-var action_damage: int
-var action_1_textures: Array[CompressedTexture2D]
-var action_2_textures: Array[CompressedTexture2D]
 var passive_type: Util.PassiveType
 var can_fly: bool
 var state_types: Array[Util.StateType]
@@ -31,11 +31,11 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	move_distance = player_data.move_distance
 	action_min_distance = player_data.action_min_distance
 	action_max_distance = player_data.action_max_distance
+	action_1_id = player_data.action_1_id
+	#action_1 = player_data.action_1
+	action_2_id = player_data.action_2_id
+	#action_2 = player_data.action_2
 	action_direction = player_data.action_direction
-	action_type = player_data.action_type
-	action_damage = player_data.action_damage
-	action_1_textures = player_data.action_1_textures
-	action_2_textures = player_data.action_2_textures
 	passive_type = player_data.passive_type
 	can_fly = player_data.can_fly
 	# have to duplicate() to make them unique
@@ -52,11 +52,9 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 	move_distance = player_object.move_distance
 	action_min_distance = player_object.action_min_distance
 	action_max_distance = player_object.action_max_distance
+	action_1 = player_object.action_1
+	action_2 = player_object.action_2
 	action_direction = player_object.action_direction
-	action_type = player_object.action_type
-	action_damage = player_object.action_damage
-	action_1_textures = player_object.action_1_textures
-	action_2_textures = player_object.action_2_textures
 	passive_type = player_object.passive_type
 	can_fly = player_object.can_fly
 	# have to duplicate() to make them unique

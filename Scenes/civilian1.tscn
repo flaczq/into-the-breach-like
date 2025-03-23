@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://b60h1emnunq1s"]
 
-[ext_resource type="Script" path="res://Scripts/civilian1.gd" id="1_3a1sn"]
+[ext_resource type="Script" path="res://Scripts/civilian.gd" id="1_tdy3l"]
 [ext_resource type="Material" uid="uid://ducs18hd36ghw" path="res://Other/outline_material_civilian.tres" id="2_ogcyb"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ada2h"]
@@ -185,7 +185,7 @@ _surfaces = [{
 [sub_resource type="BoxShape3D" id="BoxShape3D_6k62g"]
 
 [node name="Civilian1" type="Node3D" groups=["CIVILIANS"]]
-script = ExtResource("1_3a1sn")
+script = ExtResource("1_tdy3l")
 
 [node name="Princess_Head" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.5, 0)

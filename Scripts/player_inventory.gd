@@ -24,7 +24,7 @@ var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 var is_tooltip_clicked: bool = false
 
 
-func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], action_1_textures: Array[CompressedTexture2D], action_2_textures: Array[CompressedTexture2D], player_max_health: int, player_move_distance: int, item_1: ItemObject = null, item_2: ItemObject = null) -> void:
+func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], action_1: ActionObject, action_2: ActionObject, player_max_health: int, player_move_distance: int, item_1: ItemObject = null, item_2: ItemObject = null) -> void:
 	#texture_rect.scale = Vector2(0.75, 0.75)
 	
 	id = player_id

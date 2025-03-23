@@ -55,9 +55,11 @@ func _ready() -> void:
 	options_container.hide()
 	players_container.hide()
 	
-	init_all_players()
+	#init_all_actions()
 	init_all_items()
-	init_all_actions()
+	init_all_players()
+	init_all_enemies()
+	init_all_civilians()
 	init_ui()
 
 
@@ -114,11 +116,9 @@ func show_players_selection() -> void:
 	players_container.show()
 
 
-func init_all_players() -> void:
-	# FIXME include in save
-	var all_players = init_manager_script.init_all_players()
-	Global.all_players.append_array(all_players)
-	assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.items_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
+#func init_all_actions() -> void:
+	#var all_actions = init_manager_script.init_all_actions()
+	#Global.all_actions.append_array(all_actions)
 
 
 func init_all_items() -> void:
@@ -127,9 +127,21 @@ func init_all_items() -> void:
 	Global.all_items.append_array(all_items)
 
 
-func init_all_actions() -> void:
-	var all_actions = init_manager_script.init_all_actions()
-	Global.all_actions.append_array(all_actions)
+func init_all_players() -> void:
+	# FIXME include in save
+	var all_players = init_manager_script.init_all_players()
+	Global.all_players.append_array(all_players)
+	assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.items_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
+
+
+func init_all_enemies() -> void:
+	var all_enemies = init_manager_script.init_all_enemies()
+	Global.all_enemies.append_array(all_enemies)
+
+
+func init_all_civilians() -> void:
+	var all_civilians = init_manager_script.init_all_civilians()
+	Global.all_civilians.append_array(all_civilians)
 
 
 func init_ui() -> void:
@@ -141,7 +153,7 @@ func init_ui() -> void:
 	for player in Global.all_players as Array[PlayerObject]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
 		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
-		player_inventory.init(player.id, player.textures, player.action_1_textures, player.action_2_textures, player.max_health, player.move_distance)
+		player_inventory.init(player.id, player.textures, player.action_1, player.action_2, player.max_health, player.move_distance)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
 		player_inventory.connect('player_inventory_mouse_exited', _on_player_inventory_mouse_exited)
 		player_inventory.connect('player_inventory_toggled', _on_player_inventory_toggled)

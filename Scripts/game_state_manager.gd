@@ -555,8 +555,8 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 						
 						push_unique_to_array(tiles_for_action, first_occupied_tile_in_line)
 		elif character.action_direction == ActionDirection.VERTICAL_LINE or character.action_direction == ActionDirection.VERTICAL_DOT:
-			var min_range = maxi(1, character.action_min_distance)
-			var max_range = mini(map.get_side_dimension(), character.action_max_distance)
+			var min_range = maxi(1, character.action_1.min_distance)
+			var max_range = mini(map.get_side_dimension(), character.action_1.max_distance)
 			for i in range(min_range, max_range + 1):
 				var index = 0
 				for tile in map.tiles.filter(func(tile: MapTile): return not tiles_for_action.has(tile)) as Array[MapTile]:
@@ -602,7 +602,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 							tiles_for_action = tiles_for_action.filter(func(tile: MapTile): return tile.coords.x - tile.coords.y <= occupied_tile.coords.x - occupied_tile.coords.y)
 		
 		# exclude tiles closer than min distance and farther than max distance
-		tiles_for_action = tiles_for_action.filter(func(tile): return (absi(tile.coords.y - origin_tile.coords.y) >= character.action_min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_max_distance) or (absi(tile.coords.x - origin_tile.coords.x) >= character.action_min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_max_distance))
+		tiles_for_action = tiles_for_action.filter(func(tile): return (absi(tile.coords.y - origin_tile.coords.y) >= character.action_1.min_distance and absi(tile.coords.y - origin_tile.coords.y) <= character.action_1.max_distance) or (absi(tile.coords.x - origin_tile.coords.x) >= character.action_1.min_distance and absi(tile.coords.x - origin_tile.coords.x) <= character.action_1.max_distance))
 	else:
 		tiles_for_action = map.tiles
 	
@@ -625,13 +625,13 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[Ma
 		for tile_for_movement in tiles_for_movement:
 			if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.HORIZONTAL_DOT:
 				valid_tiles_for_movement = target_tiles.filter(func(target_tile: MapTile): return \
-					(target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) >= origin_character.action_min_distance and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_max_distance) \
-					or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) >= origin_character.action_min_distance and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_max_distance))
+					(target_tile.coords.x == tile_for_movement.coords.x and absi(target_tile.coords.y - tile_for_movement.coords.y) >= origin_character.action_1.min_distance and absi(target_tile.coords.y - tile_for_movement.coords.y) <= origin_character.action_1.max_distance) \
+					or (target_tile.coords.y == tile_for_movement.coords.y and absi(target_tile.coords.x - tile_for_movement.coords.x) >= origin_character.action_1.min_distance and absi(target_tile.coords.x - tile_for_movement.coords.x) <= origin_character.action_1.max_distance))
 				if not valid_tiles_for_movement.is_empty():
 					target_tile_for_movement = tile_for_movement
 			elif origin_character.action_direction == ActionDirection.VERTICAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_DOT:
-				var min_range = maxi(1, origin_character.action_min_distance)
-				var max_range = mini(map.get_side_dimension(), origin_character.action_max_distance)
+				var min_range = maxi(1, origin_character.action_1.min_distance)
+				var max_range = mini(map.get_side_dimension(), origin_character.action_1.max_distance)
 				for i in range(min_range, max_range + 1):
 					var valid_tiles = target_tiles.filter(func(target_tile: MapTile): return abs(target_tile.coords - tile_for_movement.coords) == Vector2i(i, i))
 					if not valid_tiles.is_empty():
@@ -685,8 +685,8 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character: C
 	
 	if origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE:
 		var tiles_in_line = []
-		var min_range = maxi(1, origin_character.action_min_distance)
-		var max_range = mini(map.get_side_dimension(), origin_character.action_max_distance)
+		var min_range = maxi(1, origin_character.action_1.min_distance)
+		var max_range = mini(map.get_side_dimension(), origin_character.action_1.max_distance)
 		for i in range(min_range, max_range + 1):
 			var current_tiles_in_line = map.tiles.filter(func(tile: MapTile): return tile.coords == origin_tile_coords - origin_to_target_sign * i)
 			if not current_tiles_in_line.is_empty():
@@ -824,7 +824,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 							#target_tile.enemy.planned_tile.toggle_text(true, str(target_tile.enemy.damage))
 					
 					# show outline with predicted health for enemy targets
-					if target_tile.enemy.action_type == ActionType.CROSS_PUSH_BACK:
+					if target_tile.enemy.action_1.id == ActionType.CROSS_PUSH_BACK:
 						# only for target tile
 						target_tile.enemy.show_outline_with_predicted_health(target_tile.enemy.planned_tile, map.tiles, ActionType.NONE)
 						
@@ -833,7 +833,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 							# show outline with predicted health for enemy cross pushed targets
 							target_tile.enemy.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, target_tile.enemy.planned_tile, target_tile.enemy.action_damage)
 					else:
-						target_tile.enemy.show_outline_with_predicted_health(target_tile.enemy.planned_tile, map.tiles, target_tile.enemy.action_type)
+						target_tile.enemy.show_outline_with_predicted_health(target_tile.enemy.planned_tile, map.tiles, target_tile.enemy.action_1.id)
 		
 		# highlight attack arrows of hovered planned target
 		if target_tile.is_planned_enemy_action:
@@ -864,6 +864,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			
 			recalculate_enemies_planned_actions()
 		elif selected_player.can_make_action():
+			# target_tile.is_player_clicked = action_1_texture_button.is_pressed() or action_2_texture_button.is_pressed()
 			if is_hovered:
 				var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
 				if first_occupied_tile_in_line and first_occupied_tile_in_line != target_tile:
@@ -875,9 +876,16 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 				else:
 					first_occupied_tile_in_line = target_tile
 				
+				assert(action_1_texture_button.is_pressed() or action_2_texture_button.is_pressed(), 'No action button is pressed')
+				var selected_player_action
+				if action_1_texture_button.is_pressed():
+					selected_player_action = selected_player.action_1
+				elif action_2_texture_button.is_pressed():
+					selected_player_action = selected_player.action_2
+				
 				selected_player.look_at_y(first_occupied_tile_in_line)
 				selected_player.spawn_arrow(first_occupied_tile_in_line)
-				selected_player.spawn_action_indicators(first_occupied_tile_in_line)
+				selected_player.spawn_action_indicators(first_occupied_tile_in_line, selected_player.tile, selected_player.tile.position, selected_player_action.id)
 				
 				# highlight tile itself if it's empty
 				#if not first_occupied_tile_in_line.is_occupied():
@@ -886,7 +894,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 						#first_occupied_tile_in_line.toggle_text(true, str(selected_player.damage))
 				
 				# show outline with predicted health for player targets
-				if selected_player.action_type == ActionType.CROSS_PUSH_BACK:
+				if selected_player_action.id == ActionType.CROSS_PUSH_BACK:
 					# only for target tile
 					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, ActionType.NONE)
 					
@@ -894,7 +902,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 					for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(first_occupied_tile_in_line.coords, tile.coords)):
 						selected_player.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, first_occupied_tile_in_line, selected_player.action_damage)
 				else:
-					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, selected_player.action_type)
+					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, selected_player_action.id)
 			else:
 				selected_player.clear_arrows()
 				selected_player.clear_action_indicators()
@@ -919,9 +927,13 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			debug_info_label.text += '\n\n' + character.model_name + '\n'
 			debug_info_label.text += tr('INFO_HEALTH') + ': ' + str(character.health) + '/' + str(character.max_health) + '\n'
 			debug_info_label.text += 'DAMAGE: ' + str(character.damage) + '\n'
-			debug_info_label.text += 'ACTION TYPE: ' + str(ActionType.keys()[character.action_type]) + '\n'
+			debug_info_label.text += 'ACTION 1 TYPE: ' + str(ActionType.keys()[character.action_1.id]) + '\n'
+			if character.action_2:
+				debug_info_label.text += 'ACTION 2 TYPE: ' + str(ActionType.keys()[character.action_2.id]) + '\n'
+			debug_info_label.text += 'ACTION 1 DISTANCE: ' + str(character.action_1.min_distance) + '-' + str(character.action_1.max_distance) + '\n'
+			if character.action_2:
+				debug_info_label.text += 'ACTION 2 DISTANCE: ' + str(character.action_2.min_distance) + '-' + str(character.action_2.max_distance) + '\n'
 			debug_info_label.text += 'ACTION DIRECTION: ' + str(ActionDirection.keys()[character.action_direction]) + '\n'
-			debug_info_label.text += 'ACTION DISTANCE: ' + str(character.action_min_distance) + '-' + str(character.action_max_distance) + '\n'
 			debug_info_label.text += 'MOVE DISTANCE: ' + str(character.move_distance) + '\n'
 			if not character.state_types.is_empty():
 				debug_info_label.text += 'STATE TYPE: ' + str(StateType.keys()[character.state_types[0]])
@@ -942,7 +954,9 @@ func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 		# TODO
 		tile_info_label.text += '[TILE ICON] ' + tr('TILE_TYPE_' + str(TileType.keys()[target_tile.tile_type])) + '\n'
 		if character:
-			tile_info_label.text += '[ACTION ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_type])) + '\n'
+			tile_info_label.text += '[ACTION 1 ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_1.id])) + '\n'
+			if character.action_2:
+				tile_info_label.text += '[ACTION 2 ICON] ' + tr('ACTION_' + str(ActionType.keys()[character.action_2.id])) + '\n'
 			if not character.is_in_group('PLAYERS'):
 				tile_info_label.text += '[MOVE ICON] ' + str(character.move_distance) + '\n'
 			if not character.state_types.is_empty():

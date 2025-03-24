@@ -17,6 +17,7 @@ var can_fly: bool
 var state_types: Array[Util.StateType]
 var items_ids: Array[Util.ItemType]
 var textures: Array[CompressedTexture2D]
+var items_applied: Array[bool]
 
 
 func init_from_player_data(player_data: Dictionary) -> void:
@@ -38,6 +39,7 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	state_types = player_data.state_types.duplicate()
 	items_ids = player_data.items_ids.duplicate()
 	textures = player_data.textures.duplicate()
+	items_applied = player_data.items_applied.duplicate()
 
 
 func init_from_player_object(player_object: PlayerObject) -> void:
@@ -54,7 +56,8 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 	# have to duplicate() to make them unique
 	state_types = player_object.state_types.duplicate()
 	items_ids = player_object.items_ids.duplicate()
-	textures = player_object.textures
+	textures = player_object.textures.duplicate()
+	items_applied = player_object.items_applied.duplicate()
 
 
 func set_items(new_items_ids: Array[Util.ItemType]) -> void:

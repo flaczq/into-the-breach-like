@@ -229,8 +229,7 @@ func toggle_arrows(is_toggled: bool) -> void:
 			child.hide()
 
 
-#FIXME maybe not action_1?
-func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile = tile, first_origin_position: Vector3 = origin_tile.position, target_action_type: ActionType = action_1.id) -> void:
+func spawn_action_indicators(target_tile: MapTile, origin_tile: MapTile, first_origin_position: Vector3, target_action_type: ActionType) -> void:
 	var position_to_target = get_vector3_on_map(origin_tile.position - target_tile.position)
 	var hit_distance = Vector2i(position_to_target.z, position_to_target.x)
 	var origin_to_target_sign = hit_distance.sign()

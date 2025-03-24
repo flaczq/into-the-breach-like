@@ -148,11 +148,12 @@ func init_ui() -> void:
 	for child in players_grid_container.get_children():
 		child.hide()
 	
-	assert(Global.all_players.size() >= 3, 'Wrong all players size')
+	var playable_players = Global.all_players.filter(func(player): return player.id != PlayerType.PLAYER_TUTORIAL)
+	assert(playable_players.size() >= 3, 'Wrong all players size')
 	var index = 0
-	for player in Global.all_players as Array[PlayerObject]:
+	for player in playable_players as Array[PlayerObject]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
-		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
+		var player_inventory = players_grid_container.get_child(index)
 		player_inventory.init(player.id, player.textures, player.action_1, player.action_2, player.max_health, player.move_distance)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
 		player_inventory.connect('player_inventory_mouse_exited', _on_player_inventory_mouse_exited)
@@ -175,6 +176,11 @@ func _on_editor_texture_button_pressed() -> void:
 
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
+		var tutorial_player_object = Global.all_players.filter(func(player): return player.id == PlayerType.PLAYER_TUTORIAL).front() as PlayerObject
+		var new_tutorial_player = tutorial_player_object.duplicate() as PlayerObject
+		new_tutorial_player.init_from_player_object(tutorial_player_object)
+		Global.selected_players.push_back(new_tutorial_player)
+		
 		show_main()
 	else:
 		show_cutscenes()

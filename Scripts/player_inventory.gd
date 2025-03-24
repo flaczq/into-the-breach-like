@@ -15,8 +15,6 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: 
 @onready var item_2_texture_button = $TextureRect/ItemSlot2TextureButton/Item2TextureButton
 @onready var actions_texture_button = $TextureRect/ActionsTextureButton
 @onready var tooltip: Tooltip = $TextureRect/ActionsTextureButton/Tooltip
-#@onready var action_1_texture_button = $TextureRect/Action1TextureButton
-#@onready var action_2_texture_button = $TextureRect/Action2TextureButton
 
 var id: Util.PlayerType
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE]

@@ -12,11 +12,11 @@ func _ready() -> void:
 
 
 func before_ready(new_id: CivilianType) -> void:
-	var civilian_object = get_selected_civilian(new_id) as CivilianObject
+	var civilian_object = get_civilian(new_id) as CivilianObject
 	id = civilian_object.id
 	model_name = civilian_object.model_name
 	max_health = civilian_object.max_health
-	health = civilian_object.health
+	health = civilian_object.max_health
 	damage = civilian_object.damage
 	move_distance = civilian_object.move_distance
 	action_1 = civilian_object.action_1

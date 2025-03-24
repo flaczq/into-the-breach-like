@@ -49,7 +49,7 @@ func before_ready(new_id: PlayerType) -> void:
 	id = player_object.id
 	model_name = player_object.model_name
 	max_health = player_object.max_health
-	health = player_object.health
+	health = player_object.max_health
 	damage = player_object.damage
 	move_distance = player_object.move_distance
 	action_1 = player_object.action_1

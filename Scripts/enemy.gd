@@ -47,11 +47,11 @@ func _ready() -> void:
 
 
 func before_ready(new_id: EnemyType) -> void:
-	var enemy_object = get_selected_enemy(new_id) as EnemyObject
+	var enemy_object = get_enemy(new_id) as EnemyObject
 	id = enemy_object.id
 	model_name = enemy_object.model_name
 	max_health = enemy_object.max_health
-	health = enemy_object.health
+	health = enemy_object.max_health
 	damage = enemy_object.damage
 	move_distance = enemy_object.move_distance
 	action_1 = enemy_object.action_1
@@ -138,7 +138,7 @@ func plan_action(target_tile: MapTile) -> void:
 				apply_planned_action(target_character)
 		
 		spawn_arrow(planned_tile)
-		spawn_action_indicators(planned_tile)
+		spawn_action_indicators(planned_tile, tile, tile.position, action_1.id)
 		toggle_action_indicators(false)
 		look_at_y(planned_tile)
 		#print('enemy ' + str(tile.coords) + ' -> planned_tile: ' + str(planned_tile.coords))

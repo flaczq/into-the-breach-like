@@ -125,12 +125,12 @@ static func get_selected_player(selected_player_id: PlayerType) -> PlayerObject:
 	return Global.selected_players.filter(func(selected_player): return selected_player.id == selected_player_id).front()
 
 
-static func get_selected_enemy(selected_enemy_id: EnemyType) -> EnemyObject:
-	return Global.selected_enemies.filter(func(selected_enemy): return selected_enemy.id == selected_enemy_id).front()
+static func get_enemy(enemy_id: EnemyType) -> EnemyObject:
+	return Global.all_enemies.filter(func(enemy): return enemy.id == enemy_id).front()
 
 
-static func get_selected_civilian(selected_civilian_id: CivilianType) -> CivilianObject:
-	return Global.selected_civilians.filter(func(selected_civilian): return selected_civilian.id == selected_civilian_id).front()
+static func get_civilian(civilian_id: CivilianType) -> CivilianObject:
+	return Global.all_civilians.filter(func(civilian): return civilian.id == civilian_id).front()
 
 
 static func get_item(item_id: ItemType) -> ItemObject:

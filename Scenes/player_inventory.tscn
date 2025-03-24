@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://yv7xtk2a32yv" path="res://Assets/aaaps/actions_normal.png" id="5_klaax"]
 [ext_resource type="Texture2D" uid="uid://b55v8egp4qa5t" path="res://Assets/aaaps/actions_active.png" id="6_50t63"]
 [ext_resource type="Texture2D" uid="uid://oe83ml8ki41k" path="res://Assets/aaaps/item_slot.png" id="6_o7omb"]
-[ext_resource type="PackedScene" uid="uid://du8nd6q2jlyde" path="res://Scenes/tooltip.tscn" id="9_au3jp"]
+[ext_resource type="PackedScene" uid="uid://du8nd6q2jlyde" path="res://Scenes/action_tooltip.tscn" id="9_r0rwr"]
 
 [node name="PlayerXInventory" type="Control"]
 custom_minimum_size = Vector2(262, 200)
@@ -133,9 +133,8 @@ texture_pressed = ExtResource("6_50t63")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Tooltip" parent="TextureRect/ActionsTextureButton" instance=ExtResource("9_au3jp")]
+[node name="ActionTooltipX" parent="TextureRect/ActionsTextureButton" instance=ExtResource("9_r0rwr")]
 visible = false
-layout_mode = 0
 
 [connection signal="mouse_entered" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_entered"]
 [connection signal="mouse_exited" from="TextureRect/AvatarTextureButton" to="." method="_on_avatar_texture_button_mouse_exited"]

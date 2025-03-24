@@ -36,6 +36,8 @@ glow_intensity = 3.56
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kjqoi"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8cild"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_bunmi"]
 atlas = ExtResource("24_k063w")
 region = Rect2(0, 0, 248, 74)
@@ -51,8 +53,6 @@ region = Rect2(0, 156, 248, 74)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ougck"]
 atlas = ExtResource("24_k063w")
 region = Rect2(0, 234, 248, 74)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8cild"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0msnr"]
 
@@ -192,15 +192,65 @@ layout_mode = 2
 [node name="Player3Stats" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" instance=ExtResource("24_3qie4")]
 layout_mode = 2
 
+[node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -125.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_8cild")
+
+[node name="RightMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelRightContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
+layout_mode = 2
+
+[node name="RightTopContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="PointsTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+tooltip_text = "INFO"
+texture_normal = ExtResource("24_w510i")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="OrderTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+tooltip_text = "INFO"
+texture_normal = ExtResource("24_w510i")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RightBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 2
+
+[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer"]
+layout_mode = 2
+text = "DEBUG INFO"
+
 [node name="PanelCenterContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -40.0
-offset_right = 20.0
+offset_left = -124.0
+offset_top = -74.0
+offset_right = 124.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -267,56 +317,6 @@ text = "ACTION 2"
 vertical_alignment = 1
 uppercase = true
 
-[node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -98.0
-grow_horizontal = 0
-grow_vertical = 2
-mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxEmpty_8cild")
-
-[node name="RightMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelRightContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
-layout_mode = 2
-
-[node name="RightTopContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
-layout_mode = 2
-alignment = 2
-
-[node name="PointsTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-tooltip_text = "INFO"
-texture_normal = ExtResource("24_w510i")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="OrderTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-tooltip_text = "INFO"
-texture_normal = ExtResource("24_w510i")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="RightBottomContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
-layout_mode = 2
-size_flags_vertical = 10
-alignment = 2
-
-[node name="DebugInfoLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer"]
-layout_mode = 2
-text = "DEBUG INFO"
-
 [node name="PanelFullScreenContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -375,10 +375,10 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" to="GameStateManager" method="_on_action_1_texture_button_toggled"]
-[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton" to="GameStateManager" method="_on_action_2_texture_button_toggled"]
 [connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/PointsTextureButton" to="GameStateManager" method="_on_points_texture_button_down"]
 [connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/PointsTextureButton" to="GameStateManager" method="_on_points_texture_button_up"]
 [connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_down"]
 [connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_up"]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" to="GameStateManager" method="_on_action_1_texture_button_toggled"]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton" to="GameStateManager" method="_on_action_2_texture_button_toggled"]
 [connection signal="gui_input" from="CanvasLayer/PanelFullScreenContainer/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

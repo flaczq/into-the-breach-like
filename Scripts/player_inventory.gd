@@ -14,12 +14,12 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: 
 @onready var item_1_texture_button = $TextureRect/ItemSlot1TextureButton/Item1TextureButton
 @onready var item_2_texture_button = $TextureRect/ItemSlot2TextureButton/Item2TextureButton
 @onready var actions_texture_button = $TextureRect/ActionsTextureButton
-@onready var tooltip: Tooltip = $TextureRect/ActionsTextureButton/Tooltip
+@onready var action_tooltip = $TextureRect/ActionsTextureButton/ActionTooltipX
 
 var id: Util.PlayerType
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
-var is_tooltip_clicked: bool = false
+var is_action_tooltip_clicked: bool = false
 
 
 func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], action_1: ActionObject, action_2: ActionObject, player_max_health: int, player_move_distance: int, item_1: ItemObject = null, item_2: ItemObject = null) -> void:
@@ -34,18 +34,9 @@ func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D
 	avatar_texture_button.texture_hover = player_textures[2]
 	
 	update_stats(player_max_health, player_move_distance)
-	
-	#assert(action_1_textures.size() == 3, 'Wrong action 1 textures size')
-	#action_1_texture_button.texture_normal = action_1_textures[0]
-	#action_1_texture_button.texture_pressed = action_1_textures[1]
-	#action_1_texture_button.texture_hover = action_1_textures[2]
-	#
-	#assert(action_2_textures.size() == 3, 'Wrong action 2 textures size')
-	#action_2_texture_button.texture_normal = action_2_textures[0]
-	#action_2_texture_button.texture_pressed = action_2_textures[1]
-	#action_2_texture_button.texture_hover = action_2_textures[2]
-	
 	init_items(item_1, item_2)
+	
+	action_tooltip.init(player_id, action_1, action_2)
 
 
 func update_health(player_max_health: int) -> void:
@@ -166,19 +157,30 @@ func _on_item_texture_button_pressed(item_texture_index: int) -> void:
 
 
 func _on_actions_texture_button_mouse_entered():
-	tooltip.set_text('no item\navailable\nfor you\nfor you\nfor you\nfor you\nfor you\nfor you')
-	tooltip.set_position(actions_texture_button.get_local_mouse_position() + Vector2(8, 8))
-	tooltip.show()
+	for other_action_tooltip in get_parent().find_children('ActionTooltip?', 'ActionTooltip').filter(func(action_tooltip): return action_tooltip.id != id):
+		other_action_tooltip.get_parent().set_pressed_no_signal(false)
+		other_action_tooltip.hide()
+	
+	is_action_tooltip_clicked = false
+	# hardcoded
+	var action_tooltip_position
+	if get_viewport().get_size().x - actions_texture_button.get_global_mouse_position().x < 450:
+		action_tooltip_position = Vector2(-300, 10)
+	else:
+		action_tooltip_position = Vector2(10, 10)
+	action_tooltip.set_position(actions_texture_button.get_global_mouse_position() + action_tooltip_position)
+	action_tooltip.show()
 
 
 func _on_actions_texture_button_mouse_exited():
-	if not is_tooltip_clicked:
-		tooltip.hide()
+	if not is_action_tooltip_clicked:
+		actions_texture_button.set_pressed_no_signal(false)
+		action_tooltip.hide()
 
 
 func _on_actions_texture_button_toggled(toggled_on: bool) -> void:
-	is_tooltip_clicked = toggled_on
-	if is_tooltip_clicked:
-		tooltip.show()
+	is_action_tooltip_clicked = toggled_on
+	if is_action_tooltip_clicked:
+		action_tooltip.show()
 	else:
-		tooltip.hide()
+		action_tooltip.hide()

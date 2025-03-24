@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="7_5gw6c"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="7_evuth"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8re6"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_2fu10"]
 atlas = ExtResource("7_evuth")
 region = Rect2(0, 0, 248, 74)
@@ -23,8 +25,6 @@ region = Rect2(0, 156, 248, 74)
 [sub_resource type="AtlasTexture" id="AtlasTexture_0cirs"]
 atlas = ExtResource("7_evuth")
 region = Rect2(0, 234, 248, 74)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8re6"]
 
 [node name="Menu" type="Node3D" groups=["NEVER_FREE"]]
 script = ExtResource("1_ybquj")
@@ -43,6 +43,40 @@ grow_vertical = 2
 texture = ExtResource("5_ken3e")
 expand_mode = 3
 flip_v = true
+
+[node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -132.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="RightMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelRightContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="MainMenuButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_e8re6")
+text = "MAIN_MENU"
+
+[node name="RightBottomContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 2
+
+[node name="VersionLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer"]
+layout_mode = 2
+text = "version: 1.0"
 
 [node name="PanelCenterContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 8
@@ -390,40 +424,7 @@ text = "NEXT"
 vertical_alignment = 1
 uppercase = true
 
-[node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -132.0
-grow_horizontal = 0
-grow_vertical = 2
-
-[node name="RightMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelRightContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="RightContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="MainMenuButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_e8re6")
-text = "MAIN_MENU"
-
-[node name="RightBottomContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-alignment = 2
-
-[node name="VersionLabel" type="Label" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer"]
-layout_mode = 2
-text = "version: 1.0"
-
+[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton" to="." method="_on_editor_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/StartTextureButton" to="." method="_on_start_texture_button_pressed"]
@@ -438,4 +439,3 @@ text = "version: 1.0"
 [connection signal="item_selected" from="CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer/CameraPositionOptionButton" to="." method="_on_camera_position_option_button_item_selected"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox" to="." method="_on_aa_check_box_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton" to="." method="_on_next_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_texture_button_pressed"]

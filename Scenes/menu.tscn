@@ -58,6 +58,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainMenuContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="EditorTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
@@ -341,7 +342,6 @@ layout_mode = 2
 button_pressed = true
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 

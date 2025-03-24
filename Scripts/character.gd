@@ -39,10 +39,9 @@ var max_health: int
 var health: int
 var damage: int
 var move_distance: int
-var min_distance: int
-var max_distance: int
 var action_1: ActionObject
 var action_2: ActionObject
+var action_direction: ActionDirection
 var passive_type: PassiveType
 var can_fly: bool
 

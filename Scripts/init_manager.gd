@@ -26,11 +26,15 @@ const player_3_normal_texture: CompressedTexture2D = preload('res://Assets/aaaps
 const player_3_pressed_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_3_pressed.png')
 const player_3_hover_texture: CompressedTexture2D = preload('res://Assets/aaaps/player_3_hover.png')
 
+#enum ActionType {PUSH_BACK, TOWARDS_AND_PUSH_BACK, PULL_FRONT, PULL_TOGETHER, MISS_MOVE, MISS_ACTION, HIT_ALLY, GIVE_SHIELD, SLOW_DOWN, CROSS_PUSH_BACK, NONE = -1}
 var actions_data: Array[Dictionary] = [
 	{
 		'id': Util.ActionType.NONE,
 		'action_name': 'NONE',
 		'damage': 0,
+		#must be set, because it's just a shoot
+		'min_distance': 1,
+		'max_distance': 7,
 		'description': 'NONE',
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -38,6 +42,8 @@ var actions_data: Array[Dictionary] = [
 		'id': Util.ActionType.PUSH_BACK,
 		'action_name': 'Pu(ni)sher',
 		'damage': 0,
+		'min_distance': 1,
+		'max_distance': 7,
 		'description': 'Push target back by one tile',
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -45,22 +51,38 @@ var actions_data: Array[Dictionary] = [
 		'id': Util.ActionType.TOWARDS_AND_PUSH_BACK,
 		'action_name': 'Captain Hook',
 		'damage': 0,
+		'min_distance': 2,
+		'max_distance': 7,
 		'description': 'Move towards target and push it back by one tile',
 		'textures': [weapons_hook_normal_texture, weapons_hook_pressed_texture, weapons_hook_hover_texture] as Array[CompressedTexture2D]
+	},
+	{
+		'id': Util.ActionType.PULL_FRONT,
+		'action_name': 'Together forever',
+		'damage': 0,
+		'min_distance': 2,
+		'max_distance': 7,
+		'description': 'Pull target towards by one tile',
+		#TODO
+		'textures': [] as Array[CompressedTexture2D]
 	},
 	{
 		'id': Util.ActionType.PULL_TOGETHER,
 		'action_name': 'Together forever',
 		'damage': 0,
+		'min_distance': 3,
+		'max_distance': 7,
 		'description': 'Pull yourself and target towards each other by one tile',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	},
 	{
-		'id': Util.ActionType.CROSS_PUSH_BACK,
-		'action_name': 'Blue cross',
+		'id': Util.ActionType.MISS_MOVE,
+		'action_name': 'Don\'t miss me',
 		'damage': 0,
-		'description': 'Pull yourself and target towards each other by one tile',
+		'min_distance': 1,
+		'max_distance': 1,
+		'description': 'Target can\'t make actions next turn',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -68,7 +90,19 @@ var actions_data: Array[Dictionary] = [
 		'id': Util.ActionType.SLOW_DOWN,
 		'action_name': 'Sloooweeer',
 		'damage': 0,
+		'min_distance': 1,
+		'max_distance': 7,
 		'description': 'Slow target to move by one tile',
+		#TODO
+		'textures': [] as Array[CompressedTexture2D]
+	},
+	{
+		'id': Util.ActionType.CROSS_PUSH_BACK,
+		'action_name': 'Blue cross',
+		'damage': 0,
+		'min_distance': 2,
+		'max_distance': 7,
+		'description': 'Push tiles in cross by one tile',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	}
@@ -112,8 +146,6 @@ var players_data: Array[Dictionary] = [
 		'health': 3,
 		'damage': 1,
 		'move_distance': 3,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.PUSH_BACK,
 		'action_2_id': Util.ActionType.NONE,
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
@@ -131,8 +163,6 @@ var players_data: Array[Dictionary] = [
 		'health': 3,
 		'damage': 1,
 		'move_distance': 3,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.TOWARDS_AND_PUSH_BACK,
 		'action_2_id': Util.ActionType.NONE,
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
@@ -150,8 +180,6 @@ var players_data: Array[Dictionary] = [
 		'health': 3,
 		'damage': 1,
 		'move_distance': 2,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.PULL_TOGETHER,
 		'action_2_id': Util.ActionType.NONE,
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
@@ -169,8 +197,6 @@ var players_data: Array[Dictionary] = [
 		'health': 3,
 		'damage': 1,
 		'move_distance': 2,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.CROSS_PUSH_BACK,
 		'action_2_id': Util.ActionType.NONE,
 		'action_direction': Util.ActionDirection.HORIZONTAL_DOT,
@@ -191,8 +217,6 @@ var enemies_data: Array[Dictionary] = [
 		'health': 3,
 		'damage': 1,
 		'move_distance': 3,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.PUSH_BACK,
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
@@ -209,8 +233,6 @@ var enemies_data: Array[Dictionary] = [
 		'health': 2,
 		'damage': 1,
 		'move_distance': 3,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.NONE,
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
@@ -227,8 +249,6 @@ var enemies_data: Array[Dictionary] = [
 		'health': 3,
 		'damage': 1,
 		'move_distance': 3,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.SLOW_DOWN,
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
@@ -245,8 +265,6 @@ var enemies_data: Array[Dictionary] = [
 		'health': 3,
 		'damage': 1,
 		'move_distance': 2,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.PUSH_BACK,
 		'action_direction': Util.ActionDirection.HORIZONTAL_DOT,
 		'passive_type': Util.PassiveType.NONE,
@@ -263,8 +281,6 @@ var enemies_data: Array[Dictionary] = [
 		'health': 4,
 		'damage': 2,
 		'move_distance': 2,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.PULL_FRONT,
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
@@ -284,8 +300,6 @@ var civilians_data: Array[Dictionary] = [
 		'health': 2,
 		'damage': 0,
 		'move_distance': 1,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.NONE,
 		'action_direction': Util.ActionDirection.NONE,
 		'passive_type': Util.PassiveType.NONE,
@@ -300,8 +314,6 @@ var civilians_data: Array[Dictionary] = [
 		'health': 2,
 		'damage': 0,
 		'move_distance': 1,
-		'min_distance': ?,
-		'max_distance': ?,
 		'action_1_id': Util.ActionType.NONE,
 		'action_direction': Util.ActionDirection.NONE,
 		'passive_type': Util.PassiveType.NONE,
@@ -322,6 +334,7 @@ var civilians_data: Array[Dictionary] = [
 
 
 func init_action(action_id: Util.ActionType) -> ActionObject:
+	# TODO check if it's unique
 	var action_object = ActionObject.new()
 	var action_data = actions_data.filter(func(action): return action.id == action_id).front()
 	action_object.init_from_action_data(action_data)
@@ -343,6 +356,8 @@ func init_all_players() -> Array[PlayerObject]:
 		var player_object = PlayerObject.new()
 		player_object.init_from_player_data(player_data)
 		player_object.action_1 = init_action(player_object.action_1_id)
+		# TODO check if it's unique
+		player_object.action_1.damage = 5
 		player_object.action_2 = init_action(player_object.action_2_id)
 		all_players.push_back(player_object)
 	return all_players

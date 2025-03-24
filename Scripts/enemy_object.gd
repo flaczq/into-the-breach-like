@@ -6,11 +6,9 @@ var id: Util.EnemyType
 var model_name: String
 var max_health: int
 var damage: int
+var move_distance: int
 var action_1_id: Util.ActionType
 var action_1: ActionObject
-var move_distance: int
-var action_min_distance: int
-var action_max_distance: int
 var action_direction: Util.ActionDirection
 var passive_type: Util.PassiveType
 var can_fly: bool
@@ -27,8 +25,6 @@ func init_from_enemy_data(enemy_data: Dictionary) -> void:
 	max_health = enemy_data.max_health
 	damage = enemy_data.damage
 	move_distance = enemy_data.move_distance
-	action_min_distance = enemy_data.action_min_distance
-	action_max_distance = enemy_data.action_max_distance
 	action_1_id = enemy_data.action_1_id
 	#action_1 = enemy_data.action_1
 	action_direction = enemy_data.action_direction
@@ -36,7 +32,7 @@ func init_from_enemy_data(enemy_data: Dictionary) -> void:
 	can_fly = enemy_data.can_fly
 	# have to duplicate() to make them unique
 	state_types = enemy_data.state_types.duplicate()
-	textures = enemy_data.textures
+	textures = enemy_data.textures.duplicate()
 	arrow_color = enemy_data.arrow_color
 	arrow_highlighted_color = enemy_data.arrow_highlighted_color
 
@@ -53,6 +49,6 @@ func init_from_enemy_data(enemy_data: Dictionary) -> void:
 	#can_fly = enemy_object.can_fly
 	## have to duplicate() to make them unique
 	#state_types = enemy_object.state_types.duplicate()
-	#textures = enemy_object.textures
+	#textures = enemy_object.textures.duplicate()
 	#arrow_color = enemy_object.arrow_color
 	#arrow_highlighted_color = enemy_object.arrow_highlighted_color

@@ -7,8 +7,6 @@ var model_name: String
 var max_health: int
 var damage: int
 var move_distance: int
-var action_min_distance: int
-var action_max_distance: int
 var action_1_id: Util.ActionType
 var action_1: ActionObject
 var action_2_id: Util.ActionType
@@ -29,8 +27,6 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	max_health = player_data.max_health
 	damage = player_data.damage
 	move_distance = player_data.move_distance
-	action_min_distance = player_data.action_min_distance
-	action_max_distance = player_data.action_max_distance
 	action_1_id = player_data.action_1_id
 	#action_1 = player_data.action_1
 	action_2_id = player_data.action_2_id
@@ -41,7 +37,7 @@ func init_from_player_data(player_data: Dictionary) -> void:
 	# have to duplicate() to make them unique
 	state_types = player_data.state_types.duplicate()
 	items_ids = player_data.items_ids.duplicate()
-	textures = player_data.textures
+	textures = player_data.textures.duplicate()
 
 
 func init_from_player_object(player_object: PlayerObject) -> void:
@@ -50,8 +46,6 @@ func init_from_player_object(player_object: PlayerObject) -> void:
 	max_health = player_object.max_health
 	damage = player_object.damage
 	move_distance = player_object.move_distance
-	action_min_distance = player_object.action_min_distance
-	action_max_distance = player_object.action_max_distance
 	action_1 = player_object.action_1
 	action_2 = player_object.action_2
 	action_direction = player_object.action_direction

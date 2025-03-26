@@ -57,10 +57,11 @@ func before_ready(new_id: PlayerType) -> void:
 	action_direction = player_object.action_direction
 	passive_type = player_object.passive_type
 	can_fly = player_object.can_fly
-	state_types = player_object.state_types
-	items_ids = player_object.items_ids
-	textures = player_object.textures
-	items_applied = player_object.items_applied
+	state_types = player_object.state_types.duplicate()
+	# TODO FIXME zamienić na item_1: ItemObject...
+	items_ids = player_object.items_ids.duplicate()
+	textures = player_object.textures.duplicate()
+	items_applied = player_object.items_applied.duplicate()
 
 
 func after_ready() -> void:

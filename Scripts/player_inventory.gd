@@ -17,6 +17,7 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: 
 @onready var action_tooltip = $TextureRect/ActionsTextureButton/ActionTooltipX
 
 var id: Util.PlayerType
+# TODO FIXME zamienić na ItemObject/PlayerObject tak jak w ActionTooltip
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 var is_action_tooltip_clicked: bool = false

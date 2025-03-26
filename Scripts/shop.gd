@@ -15,6 +15,7 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType)
 @onready var shop_item_3_texture_button = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3TextureButton
 @onready var shop_item_3_name_label = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3NameLabel
 
+# TODO FIXME zamienić na ItemObject tak jak w ActionTooltip
 var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE, Util.ItemType.NONE]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 

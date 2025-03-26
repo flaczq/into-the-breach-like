@@ -16,6 +16,7 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType)
 
 var inventory_items_texture_buttons: Array[TextureButton]
 
+# TODO FIXME zamienić na ItemObject tak jak w ActionTooltip
 var items_ids: Array[Util.ItemType] = [
 	Util.ItemType.NONE,
 	Util.ItemType.NONE,

@@ -23,8 +23,8 @@ func before_ready(new_id: CivilianType) -> void:
 	action_direction = civilian_object.action_direction
 	passive_type = civilian_object.passive_type
 	can_fly = civilian_object.can_fly
-	state_types = civilian_object.state_types
-	textures = civilian_object.textures
+	state_types = civilian_object.state_types.duplicate()
+	textures = civilian_object.textures.duplicate()
 
 
 func after_ready() -> void:

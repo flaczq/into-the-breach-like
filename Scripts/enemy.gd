@@ -58,8 +58,8 @@ func before_ready(new_id: EnemyType) -> void:
 	action_direction = enemy_object.action_direction
 	passive_type = enemy_object.passive_type
 	can_fly = enemy_object.can_fly
-	state_types = enemy_object.state_types
-	textures = enemy_object.textures
+	state_types = enemy_object.state_types.duplicate()
+	textures = enemy_object.textures.duplicate()
 	arrow_color = enemy_object.arrow_color
 	arrow_highlighted_color = enemy_object.arrow_highlighted_color
 

@@ -12,7 +12,7 @@ var default_speed: float = 1.2
 
 #var all_actions: Array[ActionObject] = []
 var all_items: Array[ItemObject] = []
-var selected_items: Array[ItemObject] = []
+#var selected_items: Array[ItemObject] = []
 var all_players: Array[PlayerObject] = []
 var selected_players: Array[PlayerObject] = []
 var all_enemies: Array[EnemyObject] = []

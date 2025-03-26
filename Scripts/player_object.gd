@@ -15,6 +15,7 @@ var action_direction: Util.ActionDirection
 var passive_type: Util.PassiveType
 var can_fly: bool
 var state_types: Array[Util.StateType]
+# TODO FIXME zamienić na ItemObject tak jak ActionObject
 var items_ids: Array[Util.ItemType]
 var textures: Array[CompressedTexture2D]
 var items_applied: Array[bool]

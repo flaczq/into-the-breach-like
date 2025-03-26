@@ -35,7 +35,9 @@ var actions_data: Array[Dictionary] = [
 		#must be set, because it's just a shoot
 		'min_distance': 1,
 		'max_distance': 7,
+		'is_upgraded': false,
 		'description': 'NONE',
+		'change_info': 'NONE',
 		'textures': [] as Array[CompressedTexture2D]
 	},
 	{
@@ -44,7 +46,9 @@ var actions_data: Array[Dictionary] = [
 		'damage': 0,
 		'min_distance': 1,
 		'max_distance': 7,
+		'is_upgraded': false,
 		'description': 'Push target back by one tile',
+		'change_info': 'DMG: 0 -> 1',
 		'textures': [] as Array[CompressedTexture2D]
 	},
 	{
@@ -53,7 +57,9 @@ var actions_data: Array[Dictionary] = [
 		'damage': 0,
 		'min_distance': 2,
 		'max_distance': 7,
+		'is_upgraded': false,
 		'description': 'Move towards target and push it back by one tile',
+		'change_info': 'DMG: 0 -> 1',
 		'textures': [weapons_hook_normal_texture, weapons_hook_pressed_texture, weapons_hook_hover_texture] as Array[CompressedTexture2D]
 	},
 	{
@@ -62,7 +68,9 @@ var actions_data: Array[Dictionary] = [
 		'damage': 0,
 		'min_distance': 2,
 		'max_distance': 7,
+		'is_upgraded': false,
 		'description': 'Pull target towards by one tile',
+		'change_info': 'DMG: 0 -> 1',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -72,7 +80,9 @@ var actions_data: Array[Dictionary] = [
 		'damage': 0,
 		'min_distance': 3,
 		'max_distance': 7,
+		'is_upgraded': false,
 		'description': 'Pull yourself and target towards each other by one tile',
+		'change_info': 'DMG: 0 -> 1',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -82,7 +92,9 @@ var actions_data: Array[Dictionary] = [
 		'damage': 0,
 		'min_distance': 1,
 		'max_distance': 1,
+		'is_upgraded': false,
 		'description': 'Target can\'t make actions next turn',
+		'change_info': 'DISTANCE: 1 -> 2',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -91,8 +103,10 @@ var actions_data: Array[Dictionary] = [
 		'action_name': 'Sloooweeer',
 		'damage': 0,
 		'min_distance': 1,
-		'max_distance': 7,
+		'max_distance': 1,
+		'is_upgraded': false,
 		'description': 'Slow target to move by one tile',
+		'change_info': 'DISTANCE: 1 -> 2',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -102,7 +116,9 @@ var actions_data: Array[Dictionary] = [
 		'damage': 0,
 		'min_distance': 2,
 		'max_distance': 7,
+		'is_upgraded': false,
 		'description': 'Push tiles in cross by one tile',
+		'change_info': 'DMG: 0 -> 1',
 		#TODO
 		'textures': [] as Array[CompressedTexture2D]
 	}
@@ -356,13 +372,13 @@ func init_all_players() -> Array[PlayerObject]:
 		var player_object = PlayerObject.new()
 		player_object.init_from_player_data(player_data)
 		player_object.action_1 = init_action(player_object.action_1_id)
-		# TODO check if it's unique
-		player_object.action_1.damage = 5
 		player_object.action_2 = init_action(player_object.action_2_id)
 		all_players.push_back(player_object)
 	return all_players
 
-
+# TODO FIXME wywalić to tworzenie w Global i zwracać na bieżąco co potrzebne, zostawić tylko selected_players
+# w before_ready ustwaić zmienne wartości
+# func init_player(target_player):
 func init_all_enemies() -> Array[EnemyObject]:
 	var all_enemies: Array[EnemyObject] = []
 	for enemy_data in enemies_data:

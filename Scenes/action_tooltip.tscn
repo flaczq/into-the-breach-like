@@ -60,6 +60,7 @@ layout_mode = 2
 [node name="Action1TextureButton" type="TextureButton" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action1HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
+tooltip_text = "Click to upgrade"
 toggle_mode = true
 texture_normal = ExtResource("2_dpdx6")
 texture_pressed = ExtResource("3_oumy7")
@@ -80,6 +81,7 @@ layout_mode = 2
 [node name="Action2TextureButton" type="TextureButton" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
+tooltip_text = "Click to upgrade"
 toggle_mode = true
 texture_normal = ExtResource("2_dpdx6")
 texture_pressed = ExtResource("3_oumy7")
@@ -94,10 +96,20 @@ theme_type_variation = &"TooltipLabel"
 text = "ACTION 2: does this and also this"
 autowrap_mode = 3
 
-[node name="UpgradeTextureButton" type="TextureButton" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer"]
-custom_minimum_size = Vector2(299, 75)
+[node name="BottomVBoxContainer" type="VBoxContainer" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 10
+
+[node name="ChangeLabel" type="Label" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"TooltipLabel"
+theme_override_colors/font_color = Color(1, 0.335514, 0.269596, 1)
+text = "DMG: 5 -> 6"
+horizontal_alignment = 1
+
+[node name="UpgradeTextureButton" type="TextureButton" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer"]
+custom_minimum_size = Vector2(299, 75)
+layout_mode = 2
 disabled = true
 texture_normal = SubResource("AtlasTexture_t4atw")
 texture_pressed = SubResource("AtlasTexture_map64")
@@ -106,7 +118,7 @@ texture_disabled = SubResource("AtlasTexture_5l111")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="UpgradeLabel" type="Label" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/UpgradeTextureButton"]
+[node name="UpgradeLabel" type="Label" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/UpgradeTextureButton"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -127,4 +139,4 @@ uppercase = true
 [connection signal="hidden" from="." to="." method="_on_hidden"]
 [connection signal="toggled" from="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action1HBoxContainer/Action1TextureButton" to="." method="_on_action_1_texture_button_toggled"]
 [connection signal="toggled" from="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer/Action2TextureButton" to="." method="_on_action_2_texture_button_toggled"]
-[connection signal="pressed" from="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/UpgradeTextureButton" to="." method="_on_upgrade_texture_button_pressed"]
+[connection signal="pressed" from="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/UpgradeTextureButton" to="." method="_on_upgrade_texture_button_pressed"]

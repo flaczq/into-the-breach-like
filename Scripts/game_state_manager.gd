@@ -27,6 +27,7 @@ class_name GameStateManager
 #const MAX_TUTORIAL_LEVELS: int = 6
 
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
+var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
 var map: Map = null
 var players: Array[Player] = []
@@ -135,7 +136,8 @@ func init_players() -> void:
 	
 	for player_scene in level_data.player_scenes:
 		var player_instance = player_scenes[player_scene].instantiate() as Player
-		player_instance.before_ready(player_scene)
+		init_manager_script.init_player(player_instance, player_scene)
+		#player_instance.before_ready(player_scene)
 		add_sibling(player_instance)
 		player_instance.after_ready()
 		
@@ -184,7 +186,8 @@ func init_civilians() -> void:
 	
 	for civilian_scene in level_data.civilian_scenes:
 		var civilian_instance = civilian_scenes[civilian_scene].instantiate() as Civilian
-		civilian_instance.before_ready(civilian_scene)
+		init_manager_script.init_civilian(civilian_instance, civilian_scene)
+		#civilian_instance.before_ready(civilian_scene)
 		add_sibling(civilian_instance)
 		civilian_instance.after_ready()
 		
@@ -1155,7 +1158,8 @@ func _on_player_health_changed(target_player: Player):
 
 func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:
 	var enemy_instance = enemy_scenes[enemy_scene].instantiate() as Enemy
-	enemy_instance.before_ready(enemy_scene)
+	init_manager_script.init_enemy(enemy_instance, enemy_scene)
+	#enemy_instance.before_ready(enemy_scene)
 	add_sibling(enemy_instance)
 	enemy_instance.after_ready()
 	

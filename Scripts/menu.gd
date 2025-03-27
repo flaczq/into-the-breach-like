@@ -22,6 +22,7 @@ class_name Menu
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
+var playable_players: Array[Player]
 var last_screen: Util
 
 
@@ -56,10 +57,10 @@ func _ready() -> void:
 	players_container.hide()
 	
 	#init_all_actions()
-	init_all_items()
-	init_all_players()
-	init_all_enemies()
-	init_all_civilians()
+	#init_all_items()
+	#init_all_players()
+	#init_all_enemies()
+	#init_all_civilians()
 	init_ui()
 
 
@@ -100,7 +101,7 @@ func show_cutscenes() -> void:
 
 
 func show_players_selection() -> void:
-	Global.selected_items = []
+	#Global.selected_items = []
 	Global.selected_players = []
 	Global.played_maps_ids = []
 	
@@ -121,40 +122,40 @@ func show_players_selection() -> void:
 	#Global.all_actions.append_array(all_actions)
 
 
-func init_all_items() -> void:
-	# FIXME include in save
-	var all_items = init_manager_script.init_all_items()
-	Global.all_items.append_array(all_items)
+#func init_all_items() -> void:
+	## FIXME include in save
+	#var all_items = init_manager_script.init_all_items()
+	#Global.all_items.append_array(all_items)
 
 
-func init_all_players() -> void:
-	# FIXME include in save
-	var all_players = init_manager_script.init_all_players()
-	Global.all_players.append_array(all_players)
-	assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.items_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
+#func init_all_players() -> void:
+	## FIXME include in save
+	#var all_players = init_manager_script.init_all_players()
+	#Global.all_players.append_array(all_players)
+	#assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.items_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
 
 
-func init_all_enemies() -> void:
-	var all_enemies = init_manager_script.init_all_enemies()
-	Global.all_enemies.append_array(all_enemies)
+#func init_all_enemies() -> void:
+	#var all_enemies = init_manager_script.init_all_enemies()
+	#Global.all_enemies.append_array(all_enemies)
 
 
-func init_all_civilians() -> void:
-	var all_civilians = init_manager_script.init_all_civilians()
-	Global.all_civilians.append_array(all_civilians)
+#func init_all_civilians() -> void:
+	#var all_civilians = init_manager_script.init_all_civilians()
+	#Global.all_civilians.append_array(all_civilians)
 
 
 func init_ui() -> void:
 	for child in players_grid_container.get_children():
 		child.hide()
 	
-	var playable_players = Global.all_players.filter(func(player): return player.id != PlayerType.PLAYER_TUTORIAL)
-	assert(playable_players.size() >= 3, 'Wrong all players size')
 	var index = 0
-	for player in playable_players as Array[PlayerObject]:
+	playable_players = init_manager_script.init_playable_players()
+	assert(playable_players.size() >= 3, 'Wrong all players size')
+	for player in playable_players as Array[Player]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
-		var player_inventory = players_grid_container.get_child(index)
-		player_inventory.init(player.id, player.textures, player.action_1, player.action_2, player.max_health, player.move_distance)
+		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
+		player_inventory.init(player)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
 		player_inventory.connect('player_inventory_mouse_exited', _on_player_inventory_mouse_exited)
 		player_inventory.connect('player_inventory_toggled', _on_player_inventory_toggled)
@@ -176,10 +177,8 @@ func _on_editor_texture_button_pressed() -> void:
 
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
-		var tutorial_player_object = Global.all_players.filter(func(player): return player.id == PlayerType.PLAYER_TUTORIAL).front() as PlayerObject
-		var new_tutorial_player = tutorial_player_object.duplicate() as PlayerObject
-		new_tutorial_player.init_from_player_object(tutorial_player_object)
-		Global.selected_players.push_back(new_tutorial_player)
+		var tutorial_player_object = init_manager_script.init_tutorial_player()
+		Global.selected_players.push_back(tutorial_player_object)
 		
 		show_main()
 	else:
@@ -273,18 +272,15 @@ func _on_player_inventory_mouse_exited(id: PlayerType) -> void:
 
 
 func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
-	var player_inventory = get_player_inventory_by_id(id)
-	var player_inventory_avatar = player_inventory.avatar_texture_button
+	#var player_inventory = get_player_inventory_by_id(id)
+	#var player_inventory_avatar = player_inventory.avatar_texture_button
 	#player_inventory_avatar.modulate.a = (1.0) if (toggled_on) else (0.5)
 	
-	var selected_player_object = Global.all_players.filter(func(player): return player.id == id).front() as PlayerObject
 	if toggled_on:
-		# FIXME maybe do it after next_texture_button_pressed and here only save ids..?
-		var new_selected_player = selected_player_object.duplicate() as PlayerObject
-		new_selected_player.init_from_player_object(selected_player_object)
-		Global.selected_players.push_back(new_selected_player)
+		var selected_player = playable_players.filter(func(playable_player): return playable_player.id == id).front()
+		Global.selected_players.push_back(selected_player)
 	else:
-		Global.selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id != selected_player_object.id)
+		Global.selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id != id)
 	
 	on_button_disabled(next_texture_button, Global.selected_players.size() != 3)
 	assert(Global.selected_players.size() <= 3, 'Too many selected players')

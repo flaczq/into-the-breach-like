@@ -14,89 +14,90 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: 
 @onready var item_1_texture_button = $TextureRect/ItemSlot1TextureButton/Item1TextureButton
 @onready var item_2_texture_button = $TextureRect/ItemSlot2TextureButton/Item2TextureButton
 @onready var actions_texture_button = $TextureRect/ActionsTextureButton
-@onready var action_tooltip = $TextureRect/ActionsTextureButton/ActionTooltipX
+@onready var action_tooltip: ActionTooltip = $TextureRect/ActionsTextureButton/ActionTooltipX
 
-var id: Util.PlayerType
-# TODO FIXME zamienić na ItemObject/PlayerObject tak jak w ActionTooltip
-var items_ids: Array[Util.ItemType] = [Util.ItemType.NONE, Util.ItemType.NONE]
+var player: Player
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 var is_action_tooltip_clicked: bool = false
 
 
-func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], action_1: ActionObject, action_2: ActionObject, player_max_health: int, player_move_distance: int, item_1: ItemObject = null, item_2: ItemObject = null) -> void:
+func init(new_player: Player) -> void:
 	#texture_rect.scale = Vector2(0.75, 0.75)
 	
-	id = player_id
-	name = name.replace('X', str(id))
+	player = new_player
+	name = name.replace('X', str(player.id))
 	
-	assert(player_textures.size() == 3, 'Wrong player textures size')
-	avatar_texture_button.texture_normal = player_textures[0]
-	avatar_texture_button.texture_pressed = player_textures[1]
-	avatar_texture_button.texture_hover = player_textures[2]
+	assert(player.textures.size() == 3, 'Wrong player textures size')
+	avatar_texture_button.texture_normal = player.textures[0]
+	avatar_texture_button.texture_pressed = player.textures[1]
+	avatar_texture_button.texture_hover = player.textures[2]
 	
-	update_stats(player_max_health, player_move_distance)
-	init_items(item_1, item_2)
+	update_stats()
 	
-	action_tooltip.init(player_id, action_1, action_2)
+	action_tooltip.init(player)
 
 
-func update_health(player_max_health: int) -> void:
-	health_label.text = str(player_max_health)
+func update_stats() -> void:
+	update_health()
+	update_move_distance()
+	update_items()
 
 
-func update_move_distance(player_move_distance: int) -> void:
-	move_distance_label.text = str(player_move_distance)
+func update_health() -> void:
+	var health = player.max_health
+	if player.item_1.id == Util.ItemType.HEALTH:
+		health += 1
+	if player.item_2.id == Util.ItemType.HEALTH:
+		health += 1
+	health_label.text = str(health)
 
 
-func update_stats(player_max_health: int, player_move_distance: int) -> void:
-	update_health(player_max_health)
-	update_move_distance(player_move_distance)
+func update_move_distance() -> void:
+	var move_distance = player.move_distance
+	if player.item_1.id == Util.ItemType.MOVE_DISTANCE:
+		move_distance += 1
+	if player.item_2.id == Util.ItemType.MOVE_DISTANCE:
+		move_distance += 1
+	move_distance_label.text = str(move_distance)
 
 
-func init_items(item_1: ItemObject = null, item_2: ItemObject = null) -> void:
-	if item_1 and item_1.id != Util.ItemType.NONE:
-		assert(item_1.textures.size() == 3, 'Wrong item 1 textures size')
-		item_1_texture_button.texture_normal = item_1.textures[0]
-		item_1_texture_button.texture_pressed = item_1.textures[1]
-		item_1_texture_button.texture_hover = item_1.textures[2]
-		item_1_texture_button.tooltip_text = item_1.description
-		items_ids[0] = item_1.id
+func update_items() -> void:
+	if player.item_1 and player.item_1.id != Util.ItemType.NONE:
+		assert(player.item_1.textures.size() == 3, 'Wrong item 1 textures size')
+		item_1_texture_button.texture_normal = player.item_1.textures[0]
+		item_1_texture_button.texture_pressed = player.item_1.textures[1]
+		item_1_texture_button.texture_hover = player.item_1.textures[2]
+		item_1_texture_button.tooltip_text = player.item_1.description
 	else:
 		item_1_texture_button.texture_normal = null
 		item_1_texture_button.texture_pressed = null
 		item_1_texture_button.texture_hover = null
 		item_1_texture_button.tooltip_text = 'no item\navailable\nfor you'
-		items_ids[0] = Util.ItemType.NONE
 	
-	if item_2 and item_2.id != Util.ItemType.NONE:
-		assert(item_2.textures.size() == 3, 'Wrong item 2 textures size')
-		item_2_texture_button.texture_normal = item_2.textures[0]
-		item_2_texture_button.texture_pressed = item_2.textures[1]
-		item_2_texture_button.texture_hover = item_2.textures[2]
-		item_2_texture_button.tooltip_text = item_2.description
-		items_ids[1] = item_2.id
+	if player.item_2 and player.item_2.id != Util.ItemType.NONE:
+		assert(player.item_2.textures.size() == 3, 'Wrong item 2 textures size')
+		item_2_texture_button.texture_normal = player.item_2.textures[0]
+		item_2_texture_button.texture_pressed = player.item_2.textures[1]
+		item_2_texture_button.texture_hover = player.item_2.textures[2]
+		item_2_texture_button.tooltip_text = player.item_2.description
 	else:
 		item_2_texture_button.texture_normal = null
 		item_2_texture_button.texture_pressed = null
 		item_2_texture_button.texture_hover = null
 		item_2_texture_button.tooltip_text = 'no item\navailable\nfor you'
-		items_ids[1] = Util.ItemType.NONE
 
 
 func remove_item(item_id: Util.ItemType) -> void:
-	var item_texture_index = items_ids.find(item_id)
-	assert(item_texture_index == 0 or item_texture_index == 1, 'Wrong item texture index')
-	if item_texture_index == 0:
+	if player.item_1.id == item_id:
 		item_1_texture_button.texture_normal = null
 		item_1_texture_button.texture_pressed = null
 		item_1_texture_button.texture_hover = null
 		item_1_texture_button.tooltip_text = 'no item\navailable\nfor you'
-	elif item_texture_index == 1:
+	elif player.item_2.id == item_id:
 		item_2_texture_button.texture_normal = null
 		item_2_texture_button.texture_pressed = null
 		item_2_texture_button.texture_hover = null
 		item_2_texture_button.tooltip_text = 'no item'
-	items_ids[item_texture_index] = Util.ItemType.NONE
 
 
 func move_item(item_id: Util.ItemType, target_item_texture_index: int) -> void:
@@ -104,14 +105,10 @@ func move_item(item_id: Util.ItemType, target_item_texture_index: int) -> void:
 	if item_id != Util.ItemType.NONE:
 		remove_item(item_id)
 	
-	assert(target_item_texture_index == 0 or target_item_texture_index == 1, 'Wrong target item texture index')
-	assert(items_ids[target_item_texture_index] == Util.ItemType.NONE, 'Target item is not empty')
-	items_ids[target_item_texture_index] = item_id
-	
-	assert(items_ids.size() == 2, 'Wrong items size')
-	var item_1 = Util.get_selected_item(items_ids[0])
-	var item_2 = Util.get_selected_item(items_ids[1])
-	init_items(item_1, item_2)
+	var temp_item_1 = player.item_1
+	player.item_1 = player.item_2
+	player.item_2 = temp_item_1
+	update_items()
 
 
 func reset_items(unclick_item_id: bool = true) -> void:
@@ -122,19 +119,24 @@ func reset_items(unclick_item_id: bool = true) -> void:
 
 
 func _on_avatar_texture_button_mouse_entered() -> void:
-	player_inventory_mouse_entered.emit(id)
+	player_inventory_mouse_entered.emit(player.id)
 
 
 func _on_avatar_texture_button_mouse_exited() -> void:
-	player_inventory_mouse_exited.emit(id)
+	player_inventory_mouse_exited.emit(player.id)
 
 
 func _on_avatar_texture_button_toggled(toggled_on: bool) -> void:
-	player_inventory_toggled.emit(toggled_on, id)
+	player_inventory_toggled.emit(toggled_on, player.id)
 
 
 func _on_item_texture_button_pressed(item_texture_index: int) -> void:
-	var new_clicked_item_id = items_ids[item_texture_index]
+	var new_clicked_item_id
+	if item_texture_index == 0:
+		new_clicked_item_id = player.item_1.id
+	elif item_texture_index == 1:
+		new_clicked_item_id = player.item_2.id
+	
 	# clicked empty inventory item when nothing was clicked before
 	if clicked_item_id != Util.ItemType.NONE or new_clicked_item_id != Util.ItemType.NONE:
 		item_1_texture_button.set_pressed_no_signal(false)
@@ -145,8 +147,9 @@ func _on_item_texture_button_pressed(item_texture_index: int) -> void:
 			clicked_item_id = Util.ItemType.NONE
 		else:
 			if new_clicked_item_id == Util.ItemType.NONE:
-				move_item(clicked_item_id, item_texture_index)
-				clicked_item_id = Util.ItemType.NONE
+				pass
+				#move_item(clicked_item_id, item_texture_index)
+				#clicked_item_id = Util.ItemType.NONE
 			else:
 				if item_texture_index == 0:
 					item_1_texture_button.set_pressed_no_signal(true)
@@ -154,11 +157,11 @@ func _on_item_texture_button_pressed(item_texture_index: int) -> void:
 					item_2_texture_button.set_pressed_no_signal(true)
 				clicked_item_id = new_clicked_item_id
 	
-	item_clicked.emit(item_texture_index, clicked_item_id, id)
+	item_clicked.emit(item_texture_index, clicked_item_id, player.id)
 
 
 func _on_actions_texture_button_mouse_entered():
-	for other_action_tooltip in get_parent().find_children('ActionTooltip?', 'ActionTooltip').filter(func(action_tooltip): return action_tooltip.id != id):
+	for other_action_tooltip in get_parent().find_children('ActionTooltip?', 'ActionTooltip').filter(func(action_tooltip): return action_tooltip.player.id != player.id):
 		other_action_tooltip.get_parent().set_pressed_no_signal(false)
 		other_action_tooltip.hide()
 	

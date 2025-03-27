@@ -6,7 +6,8 @@ var id: Util.ItemType
 var item_name: String
 var cost: int
 var description: String
-var available: bool
+var is_available: bool
+var is_applied: bool
 var textures: Array[CompressedTexture2D]
 
 
@@ -15,7 +16,8 @@ func init_from_item_data(item_data: Dictionary) -> void:
 	item_name = item_data.item_name
 	cost = item_data.cost
 	description = item_data.description
-	available = item_data.available
+	is_available = item_data.is_available
+	is_applied = item_data.is_applied
 	textures = item_data.textures
 
 
@@ -24,7 +26,8 @@ func init_from_item_object(item_object: ItemObject) -> void:
 	item_name = item_object.item_name
 	cost = item_object.cost
 	description = item_object.description
-	available = item_object.available
+	is_available = item_object.is_available
+	is_applied = item_object.is_applied
 	textures = item_object.textures
 
 
@@ -57,34 +60,4 @@ func apply_to_player(target_player: Player, is_applied: bool = true) -> void:
 				target_player.can_fly = true
 			else:
 				target_player.can_fly = false
-		_: pass
-
-
-func apply_to_player_object(target_player_object: PlayerObject, is_applied: bool = true) -> void:
-	match id:
-		Util.ItemType.HEALTH:
-			if is_applied:
-				target_player_object.max_health += 1
-			else:
-				target_player_object.max_health -= 1
-		Util.ItemType.DAMAGE:
-			if is_applied:
-				target_player_object.damage += 1
-			else:
-				target_player_object.damage -= 1
-		Util.ItemType.SHIELD:
-			if is_applied:
-				target_player_object.state_types.push_back(Util.StateType.GAVE_SHIELD)
-			else:
-				target_player_object.state_types.erase(Util.StateType.GAVE_SHIELD)
-		Util.ItemType.MOVE_DISTANCE:
-			if is_applied:
-				target_player_object.move_distance += 1
-			else:
-				target_player_object.move_distance -= 1
-		Util.ItemType.FLYING:
-			if is_applied:
-				target_player_object.can_fly = true
-			else:
-				target_player_object.can_fly = false
 		_: pass

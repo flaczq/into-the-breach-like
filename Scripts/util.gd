@@ -117,25 +117,5 @@ func get_character_color(character: Character) -> Color:
 	return Color.BLACK
 
 
-#static func get_action(action_id: ActionType) -> ActionObject:
-	#return Global.all_actions.filter(func(action): return action.id == action_id).front()
-
-
-static func get_selected_player(selected_player_id: PlayerType) -> PlayerObject:
+static func get_selected_player(selected_player_id: PlayerType) -> Player:
 	return Global.selected_players.filter(func(selected_player): return selected_player.id == selected_player_id).front()
-
-
-static func get_enemy(enemy_id: EnemyType) -> EnemyObject:
-	return Global.all_enemies.filter(func(enemy): return enemy.id == enemy_id).front()
-
-
-static func get_civilian(civilian_id: CivilianType) -> CivilianObject:
-	return Global.all_civilians.filter(func(civilian): return civilian.id == civilian_id).front()
-
-
-static func get_item(item_id: ItemType) -> ItemObject:
-	return Global.all_items.filter(func(item): return item.id == item_id).front()
-
-
-static func get_selected_item(selected_item_id: ItemType) -> ItemObject:
-	return Global.selected_items.filter(func(selected_item): return selected_item.id == selected_item_id).front()

@@ -10,13 +10,7 @@ var antialiasing: bool = true
 var move_speed: float = 0.3
 var default_speed: float = 1.2
 
-#var all_actions: Array[ActionObject] = []
-var all_items: Array[ItemObject] = []
-#var selected_items: Array[ItemObject] = []
-var all_players: Array[PlayerObject] = []
-var selected_players: Array[PlayerObject] = []
-var all_enemies: Array[EnemyObject] = []
-var all_civilians: Array[CivilianObject] = []
+var selected_players: Array[Player] = []
 var money: int = 0
 var played_maps_ids: Array[int] = []
 

@@ -49,9 +49,9 @@ func _ready() -> void:
 		inventory_item_texture_button.connect('pressed', _on_texture_button_pressed.bind(index))
 		index += 1
 	
-	for selected_item in Global.selected_items:
-		assert(selected_item.id >= 0, 'Wrong selected item id')
-		add_item(selected_item)
+	#for selected_item in Global.selected_items:
+		#assert(selected_item.id >= 0, 'Wrong selected item id')
+		#add_item(selected_item)
 
 
 func add_item(item_object: ItemObject, target_item_texture_index: int = -1) -> void:

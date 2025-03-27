@@ -126,31 +126,40 @@ var actions_data: Array[Dictionary] = [
 
 var items_data: Array[Dictionary] = [
 	{
+		'id': Util.ItemType.NONE,
+		'item_name': 'NONE',
+		'cost': 0,
+		'description': 'NONE',
+		'is_available': false,
+		'is_applied': false,
+		'textures': [] as Array[CompressedTexture2D]
+	},
+	{
 		'id': Util.ItemType.HEALTH,
 		'item_name': 'Gem 1',
 		'cost': 1,
 		'description': 'health + 1',
-		'available': true,
-		'textures': [gem_purple_normal_texture, gem_purple_pressed_texture, gem_purple_hover_texture] as Array[CompressedTexture2D],
-		'applied': false
+		'is_available': true,
+		'is_applied': false,
+		'textures': [gem_purple_normal_texture, gem_purple_pressed_texture, gem_purple_hover_texture] as Array[CompressedTexture2D]
 	},
 	{
 		'id': Util.ItemType.DAMAGE,
 		'item_name': 'Gem 2',
 		'cost': 1,
 		'description': 'damage + 1',
-		'available': true,
-		'textures': [gem_red_normal_texture, gem_red_pressed_texture, gem_red_hover_texture] as Array[CompressedTexture2D],
-		'applied': false
+		'is_available': true,
+		'is_applied': false,
+		'textures': [gem_red_normal_texture, gem_red_pressed_texture, gem_red_hover_texture] as Array[CompressedTexture2D]
 	},
 	{
 		'id': Util.ItemType.MOVE_DISTANCE,
 		'item_name': 'Gem 3',
 		'cost': 1,
 		'description': 'move_distance + 1',
-		'available': true,
-		'textures': [gem_green_normal_texture, gem_green_pressed_texture, gem_green_hover_texture] as Array[CompressedTexture2D],
-		'applied': false
+		'is_available': true,
+		'is_applied': false,
+		'textures': [gem_green_normal_texture, gem_green_pressed_texture, gem_green_hover_texture] as Array[CompressedTexture2D]
 	}
 ]
 
@@ -168,9 +177,11 @@ var players_data: Array[Dictionary] = [
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[Util.StateType],
-		'items_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
+		#'items_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
 		'textures': [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture] as Array[CompressedTexture2D],
-		'items_applied': [false, false] as Array[bool]
+		#'items_applied': [false, false] as Array[bool]
+		'item_1_id': Util.ItemType.NONE,
+		'item_2_id': Util.ItemType.NONE
 	},
 	{
 		'id': Util.PlayerType.PLAYER_1,
@@ -185,9 +196,9 @@ var players_data: Array[Dictionary] = [
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': true,
 		'state_types': [] as Array[Util.StateType],
-		'items_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
 		'textures': [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture] as Array[CompressedTexture2D],
-		'items_applied': [false, false] as Array[bool]
+		'item_1_id': Util.ItemType.NONE,
+		'item_2_id': Util.ItemType.NONE
 	},
 	{
 		'id': Util.PlayerType.PLAYER_2,
@@ -202,9 +213,9 @@ var players_data: Array[Dictionary] = [
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[Util.StateType],
-		'items_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
 		'textures': [player_2_normal_texture, player_2_pressed_texture, player_2_hover_texture] as Array[CompressedTexture2D],
-		'items_applied': [false, false] as Array[bool]
+		'item_1_id': Util.ItemType.NONE,
+		'item_2_id': Util.ItemType.NONE
 	},
 	{
 		'id': Util.PlayerType.PLAYER_3,
@@ -219,9 +230,9 @@ var players_data: Array[Dictionary] = [
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
 		'state_types': [] as Array[Util.StateType],
-		'items_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
 		'textures': [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture] as Array[CompressedTexture2D],
-		'items_applied': [false, false] as Array[bool]
+		'item_1_id': Util.ItemType.NONE,
+		'item_2_id': Util.ItemType.NONE
 	}
 ]
 
@@ -340,60 +351,121 @@ var civilians_data: Array[Dictionary] = [
 ]
 
 
-#func init_all_actions() -> Array[ActionObject]:
-	#var all_actions: Array[ActionObject] = []
-	#for action_data in actions_data:
-		#var action_object = ActionObject.new()
-		#action_object.init_from_action_data(action_data)
-		#all_actions.push_back(action_object)
-	#return all_actions
+func init_tutorial_player() -> Player:
+	var tutorial_player_data = players_data.filter(func(player_data): return player_data.id == Util.PlayerType.PLAYER_TUTORIAL).front()
+	var tutorial_player = Player.new()
+	tutorial_player.id = tutorial_player_data.id
+	tutorial_player.model_name = tutorial_player_data.model_name
+	tutorial_player.max_health = tutorial_player_data.max_health
+	tutorial_player.health = tutorial_player_data.health
+	tutorial_player.damage = tutorial_player_data.damage
+	tutorial_player.move_distance = tutorial_player_data.move_distance
+	tutorial_player.action_1 = init_action(tutorial_player_data.action_1_id)
+	tutorial_player.action_2 = init_action(tutorial_player_data.action_2_id)
+	tutorial_player.action_direction = tutorial_player_data.action_direction
+	tutorial_player.passive_type = tutorial_player_data.passive_type
+	tutorial_player.can_fly = tutorial_player_data.can_fly
+	tutorial_player.state_types = tutorial_player_data.state_types.duplicate()
+	tutorial_player.textures = tutorial_player_data.textures.duplicate()
+	tutorial_player.item_1 = init_item(tutorial_player_data.item_1_id)
+	tutorial_player.item_2 = init_item(tutorial_player_data.item_2_id)
+	return tutorial_player
+
+
+func init_playable_players() -> Array[Player]:
+	var playable_players = [] as Array[Player]
+	for player_data in players_data.filter(func(player_data): return player_data.id != Util.PlayerType.PLAYER_TUTORIAL):
+		var playable_player = Player.new()
+		playable_player.id = player_data.id
+		playable_player.model_name = player_data.model_name
+		playable_player.max_health = player_data.max_health
+		playable_player.health = player_data.health
+		playable_player.damage = player_data.damage
+		playable_player.move_distance = player_data.move_distance
+		playable_player.action_1 = init_action(player_data.action_1_id)
+		playable_player.action_2 = init_action(player_data.action_2_id)
+		playable_player.action_direction = player_data.action_direction
+		playable_player.passive_type = player_data.passive_type
+		playable_player.can_fly = player_data.can_fly
+		playable_player.state_types = player_data.state_types.duplicate()
+		playable_player.textures = player_data.textures.duplicate()
+		playable_player.item_1 = init_item(player_data.item_1_id)
+		playable_player.item_2 = init_item(player_data.item_2_id)
+		playable_players.push_back(playable_player)
+	return playable_players
+
+
+func init_player(target_player: Player, id: Util.PlayerType) -> void:
+	var player_data = Util.get_selected_player(id)
+	target_player.id = player_data.id
+	target_player.model_name = player_data.model_name
+	target_player.max_health = player_data.max_health
+	target_player.health = player_data.health
+	target_player.damage = player_data.damage
+	target_player.move_distance = player_data.move_distance
+	target_player.action_1 = player_data.action_1
+	target_player.action_2 = player_data.action_2
+	target_player.action_direction = player_data.action_direction
+	target_player.passive_type = player_data.passive_type
+	target_player.can_fly = player_data.can_fly
+	target_player.state_types = player_data.state_types.duplicate()
+	target_player.textures = player_data.textures.duplicate()
+	target_player.item_1 = player_data.item_1
+	target_player.item_2 = player_data.item_2
+
+
+func init_enemy(target_enemy: Enemy, id: Util.EnemyType) -> void:
+	var enemy_data = enemies_data.filter(func(enemy_data): return enemy_data.id == id).front()
+	target_enemy.id = enemy_data.id
+	target_enemy.model_name = enemy_data.model_name
+	target_enemy.max_health = enemy_data.max_health
+	target_enemy.health = enemy_data.health
+	target_enemy.damage = enemy_data.damage
+	target_enemy.move_distance = enemy_data.move_distance
+	target_enemy.action_1 = init_action(enemy_data.action_1_id)
+	target_enemy.action_direction = enemy_data.action_direction
+	target_enemy.passive_type = enemy_data.passive_type
+	target_enemy.can_fly = enemy_data.can_fly
+	target_enemy.state_types = enemy_data.state_types.duplicate()
+	target_enemy.textures = enemy_data.textures.duplicate()
+	target_enemy.arrow_color = enemy_data.arrow_color
+	target_enemy.arrow_highlighted_color = enemy_data.arrow_highlighted_color
+
+
+func init_civilian(target_civilian: Civilian, id: Util.CivilianType) -> void:
+	var civilian_data = civilians_data.filter(func(civilian_data): return civilian_data.id == id).front()
+	target_civilian.id = civilian_data.id
+	target_civilian.model_name = civilian_data.model_name
+	target_civilian.max_health = civilian_data.max_health
+	target_civilian.health = civilian_data.health
+	target_civilian.damage = civilian_data.damage
+	target_civilian.move_distance = civilian_data.move_distance
+	target_civilian.action_1 = init_action(civilian_data.action_1_id)
+	target_civilian.action_direction = civilian_data.action_direction
+	target_civilian.passive_type = civilian_data.passive_type
+	target_civilian.can_fly = civilian_data.can_fly
+	target_civilian.state_types = civilian_data.state_types.duplicate()
+	target_civilian.textures = civilian_data.textures.duplicate()
 
 
 func init_action(action_id: Util.ActionType) -> ActionObject:
-	# TODO check if it's unique
 	var action_object = ActionObject.new()
-	var action_data = actions_data.filter(func(action): return action.id == action_id).front()
+	var action_data = actions_data.filter(func(action_data): return action_data.id == action_id).front()
 	action_object.init_from_action_data(action_data)
 	return action_object
 
 
-func init_all_items() -> Array[ItemObject]:
-	var all_items: Array[ItemObject] = []
-	for item_data in items_data:
+func init_available_items() -> Array[ItemObject]:
+	var available_items = [] as Array[ItemObject]
+	for item_data in items_data.filter(func(item_data): return item_data.is_available):
 		var item_object = ItemObject.new()
 		item_object.init_from_item_data(item_data)
-		all_items.push_back(item_object)
-	return all_items
+		available_items.push_back(item_object)
+	return available_items
 
 
-func init_all_players() -> Array[PlayerObject]:
-	var all_players: Array[PlayerObject] = []
-	for player_data in players_data:
-		var player_object = PlayerObject.new()
-		player_object.init_from_player_data(player_data)
-		player_object.action_1 = init_action(player_object.action_1_id)
-		player_object.action_2 = init_action(player_object.action_2_id)
-		all_players.push_back(player_object)
-	return all_players
-
-# TODO FIXME wywalić to tworzenie w Global i zwracać na bieżąco co potrzebne, zostawić tylko selected_players
-# w before_ready ustwaić zmienne wartości
-# func init_player(target_player):
-func init_all_enemies() -> Array[EnemyObject]:
-	var all_enemies: Array[EnemyObject] = []
-	for enemy_data in enemies_data:
-		var enemy_object = EnemyObject.new()
-		enemy_object.init_from_enemy_data(enemy_data)
-		enemy_object.action_1 = init_action(enemy_object.action_1_id)
-		all_enemies.push_back(enemy_object)
-	return all_enemies
-
-
-func init_all_civilians() -> Array[CivilianObject]:
-	var all_civilians: Array[CivilianObject] = []
-	for civilian_data in civilians_data:
-		var civilian_object = CivilianObject.new()
-		civilian_object.init_from_civilian_data(civilian_data)
-		civilian_object.action_1 = init_action(civilian_object.action_1_id)
-		all_civilians.push_back(civilian_object)
-	return all_civilians
+func init_item(item_id: Util.ItemType) -> ItemObject:
+	var item_object = ItemObject.new()
+	var item_data = items_data.filter(func(item_data): return item_data.id == item_id).front()
+	item_object.init_from_item_data(item_data)
+	return item_object

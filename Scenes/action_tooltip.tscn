@@ -60,7 +60,6 @@ layout_mode = 2
 [node name="Action1TextureButton" type="TextureButton" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action1HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-tooltip_text = "Click to upgrade"
 toggle_mode = true
 texture_normal = ExtResource("2_dpdx6")
 texture_pressed = ExtResource("3_oumy7")
@@ -81,7 +80,6 @@ layout_mode = 2
 [node name="Action2TextureButton" type="TextureButton" parent="ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-tooltip_text = "Click to upgrade"
 toggle_mode = true
 texture_normal = ExtResource("2_dpdx6")
 texture_pressed = ExtResource("3_oumy7")

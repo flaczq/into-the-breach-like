@@ -13,10 +13,10 @@ var current_phase: PhaseType = PhaseType.WAIT
 #var is_hovered: bool = false
 var is_clicked: bool = false
 var is_ghost: bool = false
-var items_ids: Array[ItemType] = []
-var items_applied: Array[bool] = []
 
 var id: PlayerType
+var item_1: ItemObject
+var item_2: ItemObject
 
 
 func _ready() -> void:
@@ -44,26 +44,6 @@ func _ready() -> void:
 	default_forced_action_model.set_surface_override_material(0, forced_action_model_material)
 
 
-func before_ready(new_id: PlayerType) -> void:
-	var player_object = get_selected_player(new_id) as PlayerObject
-	id = player_object.id
-	model_name = player_object.model_name
-	max_health = player_object.max_health
-	health = player_object.max_health
-	damage = player_object.damage
-	move_distance = player_object.move_distance
-	action_1 = player_object.action_1
-	action_2 = player_object.action_2
-	action_direction = player_object.action_direction
-	passive_type = player_object.passive_type
-	can_fly = player_object.can_fly
-	state_types = player_object.state_types.duplicate()
-	# TODO FIXME zamienić na item_1: ItemObject...
-	items_ids = player_object.items_ids.duplicate()
-	textures = player_object.textures.duplicate()
-	items_applied = player_object.items_applied.duplicate()
-
-
 func after_ready() -> void:
 	super()
 	
@@ -71,21 +51,13 @@ func after_ready() -> void:
 
 
 func include_items_updates() -> void:
-	var player_object = get_selected_player(id)
-	assert(player_object, 'Player not existing in selected players')
-	if player_object:
-		# have to duplicate() to make them unique
-		items_ids = player_object.items_ids.duplicate()
-		
-		var index = 0
-		for item_id in items_ids:
-			if item_id != ItemType.NONE:
-				var item = get_selected_item(item_id)
-				assert(item, 'Item not existing in selected items')
-				if not items_applied[index]:
-					item.apply_to_player(self)
-					items_applied[index] = true
-				index += 1
+	if item_1 and item_1.is_applied:
+		item_1.apply_to_player(self)
+		item_1.is_applied = true
+	
+	if item_2 and item_2.is_applied:
+		item_2.apply_to_player(self)
+		item_2.is_applied = true
 
 
 func spawn(spawn_tile: MapTile) -> void:

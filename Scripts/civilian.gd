@@ -11,22 +11,6 @@ func _ready() -> void:
 	#model = $Princess_Head
 
 
-func before_ready(new_id: CivilianType) -> void:
-	var civilian_object = get_civilian(new_id) as CivilianObject
-	id = civilian_object.id
-	model_name = civilian_object.model_name
-	max_health = civilian_object.max_health
-	health = civilian_object.max_health
-	damage = civilian_object.damage
-	move_distance = civilian_object.move_distance
-	action_1 = civilian_object.action_1
-	action_direction = civilian_object.action_direction
-	passive_type = civilian_object.passive_type
-	can_fly = civilian_object.can_fly
-	state_types = civilian_object.state_types.duplicate()
-	textures = civilian_object.textures.duplicate()
-
-
 func after_ready() -> void:
 	super()
 

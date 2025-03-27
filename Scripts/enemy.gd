@@ -46,24 +46,6 @@ func _ready() -> void:
 	#animation_player.play('idle')
 
 
-func before_ready(new_id: EnemyType) -> void:
-	var enemy_object = get_enemy(new_id) as EnemyObject
-	id = enemy_object.id
-	model_name = enemy_object.model_name
-	max_health = enemy_object.max_health
-	health = enemy_object.max_health
-	damage = enemy_object.damage
-	move_distance = enemy_object.move_distance
-	action_1 = enemy_object.action_1
-	action_direction = enemy_object.action_direction
-	passive_type = enemy_object.passive_type
-	can_fly = enemy_object.can_fly
-	state_types = enemy_object.state_types.duplicate()
-	textures = enemy_object.textures.duplicate()
-	arrow_color = enemy_object.arrow_color
-	arrow_highlighted_color = enemy_object.arrow_highlighted_color
-
-
 func after_ready() -> void:
 	super()
 

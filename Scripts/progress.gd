@@ -42,19 +42,19 @@ func _ready() -> void:
 
 
 func init_ui() -> void:
-	shop.connect('item_hovered', _on_shop_item_hovered)
-	shop.connect('item_clicked', _on_shop_item_clicked)
-	
-	inventory.connect('item_hovered', _on_inventory_item_hovered)
-	inventory.connect('item_clicked', _on_inventory_item_clicked)
-	
 	for child in players_grid_container.get_children():
 		child.hide()
 	
-	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
 	var index = 0
+	var selected_items: Array[ItemObject] = []
+	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
 	for player in Global.selected_players as Array[Player]:
 		assert(player.id != PlayerType.NONE, 'Wrong selected player id')
+		if player.item_1 and player.item_1.id != ItemType.NONE:
+			selected_items.push_back(player.item_1)
+		if player.item_2 and player.item_2.id != ItemType.NONE:
+			selected_items.push_back(player.item_2)
+		
 		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
 		player_inventory.init(player)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
@@ -66,6 +66,15 @@ func init_ui() -> void:
 		player_inventory.show()
 		index += 1
 	assert(players_grid_container.get_child_count() >= index, 'Wrong player stats size')
+	
+	var available_items: Array[ItemObject] = init_manager_script.init_available_items()
+	shop.init(available_items)
+	shop.connect('item_hovered', _on_shop_item_hovered)
+	shop.connect('item_clicked', _on_shop_item_clicked)
+	
+	inventory.init(selected_items)
+	inventory.connect('item_hovered', _on_inventory_item_hovered)
+	inventory.connect('item_clicked', _on_inventory_item_clicked)
 
 
 func update_labels() -> void:
@@ -94,12 +103,12 @@ func _on_menu_button_pressed() -> void:
 	menu.show_in_game_menu(self)
 
 
-func _on_shop_item_hovered(shop_item_index: int, item_id: ItemType, is_hovered: bool) -> void:
+func _on_shop_item_hovered(shop_item_texture_index: int, item_id: ItemType, is_hovered: bool) -> void:
 	#print('_on_shop_item_hovered' + str(item_id) + str(is_hovered))
 	pass
 
 
-func _on_shop_item_clicked(shop_item_index: int, item_id: ItemType) -> void:
+func _on_shop_item_clicked(shop_item_texture_index: int, item_id: ItemType) -> void:
 	var shop_clicked_item_id = get_shop_clicked_item_id()
 	if shop_clicked_item_id == ItemType.NONE:
 		on_button_disabled(shop_buy_texture_button, true)
@@ -142,12 +151,12 @@ func _on_shop_skip_texture_button_pressed() -> void:
 	levels_container.show()
 
 
-func _on_inventory_item_hovered(inventory_item_index: int, item_id: ItemType, is_hovered: bool) -> void:
+func _on_inventory_item_hovered(inventory_item_texture_index: int, item_id: ItemType, is_hovered: bool) -> void:
 	#print('_on_inventory_item_hovered' + str(inventory_item_id) + str(is_hovered))
 	pass
 
 
-func _on_inventory_item_clicked(inventory_item_index: int, item_id: ItemType) -> void:
+func _on_inventory_item_clicked(inventory_item_texture_index: int, item_id: ItemType) -> void:
 	var player_clicked_container
 	var player_clicked_item_id = get_player_clicked_item_id()
 	var inventory_clicked_item_id = inventory.clicked_item_id
@@ -164,7 +173,7 @@ func _on_inventory_item_clicked(inventory_item_index: int, item_id: ItemType) ->
 			player_clicked_container.update_stats()
 			
 			var player_clicked_item = init_manager_script.init_item(player_clicked_item_id)
-			inventory.add_item(player_clicked_item, inventory_item_index)
+			inventory.add_item(player_clicked_item, inventory_item_texture_index)
 			inventory.reset_items(false)
 	
 	on_button_disabled(shop_buy_texture_button, true)
@@ -190,7 +199,7 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 	pass
 
 
-func _on_player_inventory_item_clicked(player_inventory_item_index: int, item_id: ItemType, player_id: PlayerType) -> void:
+func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int, item_id: ItemType, player_id: PlayerType) -> void:
 	# switching items not available
 	var player_clicked_item_id = get_player_clicked_item_id(player_id)
 	var inventory_clicked_item_id = inventory.clicked_item_id
@@ -198,11 +207,11 @@ func _on_player_inventory_item_clicked(player_inventory_item_index: int, item_id
 	var selected_player = selected_player_inventory.player
 	if player_clicked_item_id == ItemType.NONE and inventory_clicked_item_id != ItemType.NONE:
 		# inventory -> player
-		inventory.remove_item(inventory_clicked_item_id)
 		var inventory_clicked_item = init_manager_script.init_item(inventory_clicked_item_id)
-		if player_inventory_item_index == 0:
+		inventory.remove_item(inventory_clicked_item)
+		if player_inventory_item_texture_index == 0:
 			selected_player.item_1 = inventory_clicked_item
-		elif player_inventory_item_index == 1:
+		elif player_inventory_item_texture_index == 1:
 			selected_player.item_2 = inventory_clicked_item
 		selected_player_inventory.update_stats()
 	elif player_clicked_item_id != ItemType.NONE and item_id == ItemType.NONE:
@@ -216,9 +225,9 @@ func _on_player_inventory_item_clicked(player_inventory_item_index: int, item_id
 		origin_player_inventory.update_stats()
 	
 		var player_clicked_item = init_manager_script.init_item(player_clicked_item_id)
-		if player_inventory_item_index == 0:
+		if player_inventory_item_texture_index == 0:
 			selected_player.item_1 = player_clicked_item
-		elif player_inventory_item_index == 1:
+		elif player_inventory_item_texture_index == 1:
 			selected_player.item_2 = player_clicked_item
 		selected_player_inventory.update_stats()
 	else:

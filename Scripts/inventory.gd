@@ -16,21 +16,11 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType)
 
 var inventory_items_texture_buttons: Array[TextureButton]
 
-# TODO FIXME zamienić na ItemObject tak jak w ActionTooltip
-var items_ids: Array[Util.ItemType] = [
-	Util.ItemType.NONE,
-	Util.ItemType.NONE,
-	Util.ItemType.NONE,
-	Util.ItemType.NONE,
-	Util.ItemType.NONE,
-	Util.ItemType.NONE,
-	Util.ItemType.NONE,
-	Util.ItemType.NONE
-]
+var items: Array[ItemObject] = [null, null, null, null, null, null, null, null]
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 
 
-func _ready() -> void:
+func init(selected_items: Array[ItemObject]) -> void:
 	inventory_items_texture_buttons = [
 		inventory_item_1_texture_button,
 		inventory_item_2_texture_button,
@@ -49,42 +39,69 @@ func _ready() -> void:
 		inventory_item_texture_button.connect('pressed', _on_texture_button_pressed.bind(index))
 		index += 1
 	
-	#for selected_item in Global.selected_items:
-		#assert(selected_item.id >= 0, 'Wrong selected item id')
-		#add_item(selected_item)
+	for selected_item in selected_items:
+		assert(selected_item.id >= 0, 'Wrong selected item id')
+		add_item(selected_item)
 
 
-func add_item(item_object: ItemObject, target_item_texture_index: int = -1) -> void:
-	var item_id: Util.ItemType = item_object.id
-	var item_texture_index = (target_item_texture_index) if (target_item_texture_index >= 0) else (items_ids.find(Util.ItemType.NONE))
-	var texture_button = inventory_items_texture_buttons[item_texture_index]
-	assert(item_object.textures.size() == 3, 'Wrong item object textures size')
-	texture_button.texture_normal = item_object.textures[0]
-	texture_button.texture_pressed = item_object.textures[1]
-	texture_button.texture_hover = item_object.textures[2]
-	texture_button.tooltip_text = item_object.description
-	#texture_button.modulate.a = 1.0
-	items_ids[item_texture_index] = item_id
+func find_first_empty_index() -> int:
+	var index = 0
+	for item in items:
+		if item.id == Util.ItemType.NONE:
+			return index
+		index += 1
+	return -1
 
 
-func remove_item(item_id: Util.ItemType) -> void:
-	var item_texture_index = items_ids.find(item_id)
+# maybe not useful?
+func update_items() -> void:
+	var index = 0
+	for texture_button in inventory_items_texture_buttons:
+		if items.size() > index and items[index] and items[index].id != Util.ItemType.NONE:
+			assert(texture_button.textures.size() == 3, 'Wrong inventory item textures size')
+			texture_button.texture_normal = items[index].textures[0]
+			texture_button.texture_pressed = items[index].textures[1]
+			texture_button.texture_hover = items[index].textures[2]
+			texture_button.tooltip_text = items[index].description
+		else:
+			texture_button.texture_normal = null
+			texture_button.texture_pressed = null
+			texture_button.texture_hover = null
+			texture_button.tooltip_text = 'no item\navailable\nfor you'
+		index += 1
+
+
+func add_item(item: ItemObject, target_item_texture_index: int = -1) -> void:
+	if item and item.id != Util.ItemType.NONE:
+		var item_texture_index = (target_item_texture_index) if (target_item_texture_index >= 0) else (find_first_empty_index())
+		assert(item_texture_index >= 0, 'No empty space in inventory')
+		var texture_button = inventory_items_texture_buttons[item_texture_index]
+		assert(item.textures.size() == 3, 'Wrong item object textures size')
+		texture_button.texture_normal = item.textures[0]
+		texture_button.texture_pressed = item.textures[1]
+		texture_button.texture_hover = item.textures[2]
+		texture_button.tooltip_text = item.description
+		#texture_button.modulate.a = 1.0
+		items[item_texture_index] = item
+
+
+func remove_item(item: ItemObject) -> void:
+	var item_texture_index = items.find(item)
 	var texture_button = inventory_items_texture_buttons[item_texture_index]
 	texture_button.texture_normal = null
 	texture_button.texture_pressed = null
 	texture_button.texture_hover = null
 	texture_button.tooltip_text = 'NO ITEM'
 	#texture_button.modulate.a = 0.5
-	items_ids[item_texture_index] = Util.ItemType.NONE
+	items.remove_at(item_texture_index)
 
 
-func move_item(item_id: Util.ItemType, item_texture_index: int) -> void:
-	var item = Util.get_selected_item(item_id)
-	if item_id != Util.ItemType.NONE:
-		remove_item(item_id)
+func move_item(item: ItemObject, target_item_texture_index: int) -> void:
+	if item and item.id != Util.ItemType.NONE:
+		remove_item(item)
 	
-	assert(items_ids[item_texture_index] == Util.ItemType.NONE, 'Target inventory item not empty')
-	add_item(item, item_texture_index)
+	assert(not items[target_item_texture_index], 'Target inventory space not empty')
+	add_item(item, target_item_texture_index)
 
 
 func reset_items(is_highlighted: bool = false) -> void:
@@ -97,41 +114,37 @@ func reset_items(is_highlighted: bool = false) -> void:
 
 
 func _on_texture_button_mouse_entered(item_texture_index: int) -> void:
-	var hovered_item_id = items_ids[item_texture_index]
+	var hovered_item_id = items[item_texture_index]
 	item_hovered.emit(item_texture_index, hovered_item_id, true)
 
 
 func _on_texture_button_mouse_exited(item_texture_index: int) -> void:
-	var hovered_item_id = items_ids[item_texture_index]
+	var hovered_item_id = items[item_texture_index]
 	item_hovered.emit(item_texture_index, hovered_item_id, false)
 
 
 func _on_texture_button_pressed(item_texture_index: int) -> void:
-	var new_clicked_item_id = items_ids[item_texture_index]
+	var new_clicked_item = items[item_texture_index]
 	# clicked empty inventory item when nothing was clicked before
-	if clicked_item_id != Util.ItemType.NONE or new_clicked_item_id != Util.ItemType.NONE:
+	if clicked_item_id != Util.ItemType.NONE or (new_clicked_item and new_clicked_item.id != Util.ItemType.NONE):
 		var index = 0
 		for inventory_item_texture_button in inventory_items_texture_buttons:
 			inventory_item_texture_button.set_pressed_no_signal(false)
-			#if items_ids[index] == Util.ItemType.NONE:
-				## highlight empty inventory items to move clicked item to
-				#inventory_item_texture_button.modulate.a = (1.0) if (new_clicked_item_id != Util.ItemType.NONE and clicked_item_id != new_clicked_item_id) else (0.5)
-			#else:
-				#inventory_item_texture_button.modulate.a = 1.0
 			index += 1
 		
 		var texture_button = inventory_items_texture_buttons[item_texture_index]
-		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item_id:
+		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item.id:
 			# unclick item
 			#texture_button.modulate.a = 1.0
 			clicked_item_id = Util.ItemType.NONE
 		else:
-			if new_clicked_item_id == Util.ItemType.NONE:
-				move_item(clicked_item_id, item_texture_index)
+			if new_clicked_item.id == Util.ItemType.NONE:
+				var clicked_item = items.filter(func(item): return item.id == clicked_item_id).front()
+				move_item(clicked_item, item_texture_index)
 				clicked_item_id = Util.ItemType.NONE
 			else:
 				texture_button.set_pressed_no_signal(true)
 				#texture_button.modulate.a = 1.0
-				clicked_item_id = new_clicked_item_id
+				clicked_item_id = new_clicked_item.id
 	
 	item_clicked.emit(item_texture_index, clicked_item_id)

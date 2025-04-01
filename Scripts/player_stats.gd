@@ -11,40 +11,44 @@ signal player_stats_toggled(toggled_on: bool, player_id: Util.PlayerType)
 @onready var health_label = $TextureRect/HealthLabel
 @onready var move_distance_label = $TextureRect/MoveDistanceLabel
 
-var id: Util.PlayerType
+var player: Player
 
 
-func init(player_id: Util.PlayerType, player_textures: Array[CompressedTexture2D], player_health: int, player_max_health: int, player_move_distance: int) -> void:
+func init(new_player: Player) -> void:
 	#texture_rect.scale = Vector2(0.75, 0.75)
 	
-	id = player_id
-	name = name.replace('X', str(id))
+	player = new_player
+	name = name.replace('X', str(player.id))
 	
-	assert(player_textures.size() == 3, 'Wrong player textures size')
-	avatar_texture_button.texture_normal = player_textures[0]
-	avatar_texture_button.texture_pressed = player_textures[1]
-	avatar_texture_button.texture_hover = player_textures[2]
-	avatar_texture_button.texture_focused = player_textures[2]
+	assert(player.textures.size() == 3, 'Wrong player textures size')
+	avatar_texture_button.texture_normal = player.textures[0]
+	avatar_texture_button.texture_pressed = player.textures[1]
+	avatar_texture_button.texture_hover = player.textures[2]
+	avatar_texture_button.texture_focused = player.textures[2]
 	
-	update_health(player_health, player_max_health)
-	update_move_distance(player_move_distance)
+	update_stats()
 
 
-func update_health(player_health: int, player_max_health: int) -> void:
-	health_label.text = str(player_health) + '/' + str(player_max_health)
+func update_stats() -> void:
+	update_health()
+	update_move_distance()
 
 
-func update_move_distance(player_move_distance: int) -> void:
-	move_distance_label.text = str(player_move_distance)
+func update_health() -> void:
+	health_label.text = str(player.health) + '/' + str(player.max_health)
+
+
+func update_move_distance() -> void:
+	move_distance_label.text = str(player.move_distance)
 
 
 func _on_avatar_texture_button_mouse_entered() -> void:
-	player_stats_mouse_entered.emit(id)
+	player_stats_mouse_entered.emit(player.id)
 
 
 func _on_avatar_texture_button_mouse_exited() -> void:
-	player_stats_mouse_exited.emit(id)
+	player_stats_mouse_exited.emit(player.id)
 
 
 func _on_avatar_texture_button_toggled(toggled_on: bool) -> void:
-	player_stats_toggled.emit(toggled_on, id)
+	player_stats_toggled.emit(toggled_on, player.id)

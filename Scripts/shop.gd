@@ -2,8 +2,8 @@ extends Node
 
 class_name Shop
 
-signal item_hovered(item_index: int, item_id: Util.ItemType, is_hovered: bool)
-signal item_clicked(item_index: int, item_id: Util.ItemType)
+signal item_hovered(item_texture_index: int, item_id: Util.ItemType, is_hovered: bool)
+signal item_clicked(item_texture_index: int, item_id: Util.ItemType)
 
 @onready var shop_item_1_cost_label = $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1CostLabel
 @onready var shop_item_1_texture_button = $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1TextureButton
@@ -15,14 +15,12 @@ signal item_clicked(item_index: int, item_id: Util.ItemType)
 @onready var shop_item_3_texture_button = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3TextureButton
 @onready var shop_item_3_name_label = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3NameLabel
 
-var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
-
 var items: Array[ItemObject] = []
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 
 
-func _ready() -> void:
-	var available_items: Array[ItemObject] = init_manager_script.init_available_items()
+func init(available_items: Array[ItemObject]) -> void:
+	assert(available_items.size() >= 3, 'Wrong available items size in shop')
 	var all_items_indices = range(available_items.size())
 	var min_range = mini(available_items.size(), 3)
 	# hardcoded random max 3 items in shop
@@ -67,20 +65,20 @@ func _ready() -> void:
 
 
 func item_bought(item_id: Util.ItemType) -> void:
-	var item_index = items.find(func(item): return item.id == item_id)
-	if item_index == 0:
+	var item_texture_index = items.find(func(item): return item.id == item_id)
+	if item_texture_index == 0:
 		shop_item_1_cost_label.modulate.a = 0.5
 		shop_item_1_texture_button.set_disabled(true)
 		shop_item_1_texture_button.set_pressed_no_signal(false)
 		shop_item_1_texture_button.modulate.a = 0.5
 		shop_item_1_name_label.modulate.a = 0.5
-	elif item_index == 1:
+	elif item_texture_index == 1:
 		shop_item_2_cost_label.modulate.a = 0.5
 		shop_item_2_texture_button.set_disabled(true)
 		shop_item_2_texture_button.set_pressed_no_signal(false)
 		shop_item_2_texture_button.modulate.a = 0.5
 		shop_item_2_name_label.modulate.a = 0.5
-	elif item_index == 2:
+	elif item_texture_index == 2:
 		shop_item_3_cost_label.modulate.a = 0.5
 		shop_item_3_texture_button.set_disabled(true)
 		shop_item_3_texture_button.set_pressed_no_signal(false)
@@ -99,38 +97,38 @@ func reset_items(unclick_item_id: bool = true) -> void:
 		clicked_item_id = Util.ItemType.NONE
 
 
-func _on_texture_button_mouse_entered(item_index: int) -> void:
-	var hovered_item = items[item_index]
+func _on_texture_button_mouse_entered(item_texture_index: int) -> void:
+	var hovered_item = items[item_texture_index]
 	if Global.money >= hovered_item.cost:
-		item_hovered.emit(item_index, hovered_item.id, true)
+		item_hovered.emit(item_texture_index, hovered_item.id, true)
 
 
-func _on_texture_button_mouse_exited(item_index: int) -> void:
-	var hovered_item = items[item_index]
+func _on_texture_button_mouse_exited(item_texture_index: int) -> void:
+	var hovered_item = items[item_texture_index]
 	if Global.money >= hovered_item.cost:
-		item_hovered.emit(item_index, hovered_item.id, false)
+		item_hovered.emit(item_texture_index, hovered_item.id, false)
 
 
-func _on_texture_button_pressed(item_index: int) -> void:
+func _on_texture_button_pressed(item_texture_index: int) -> void:
 	reset_items(false)
 	
-	var new_clicked_item = items[item_index]
+	var new_clicked_item = items[item_texture_index]
 	if Global.money >= new_clicked_item.cost:
 		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item.id:
 			#texture_button.modulate.a = 0.5
 			clicked_item_id = Util.ItemType.NONE
 		else:
-			if item_index == 0:
+			if item_texture_index == 0:
 				shop_item_1_texture_button.set_pressed_no_signal(true)
 				#shop_item_1_texture_button.modulate.a = 1.0
-			elif item_index == 1:
+			elif item_texture_index == 1:
 				shop_item_2_texture_button.set_pressed_no_signal(true)
 				#shop_item_2_texture_button.modulate.a = 1.0
-			elif item_index == 2:
+			elif item_texture_index == 2:
 				shop_item_3_texture_button.set_pressed_no_signal(true)
 				#shop_item_3_texture_button.modulate.a = 1.0
 			clicked_item_id = new_clicked_item.id
 	else:
 		clicked_item_id = Util.ItemType.NONE
 	
-	item_clicked.emit(item_index, clicked_item_id)
+	item_clicked.emit(item_texture_index, clicked_item_id)

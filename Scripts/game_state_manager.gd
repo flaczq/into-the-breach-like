@@ -222,7 +222,7 @@ func init_ui() -> void:
 	for player in players as Array[Player]:
 		assert(player.id != PlayerType.NONE, 'Wrong player id')
 		var player_stats = players_grid_container.get_child(index) as PlayerStats
-		player_stats.init(player.id, player.textures, player.health, player.max_health, player.move_distance)
+		player_stats.init(player)
 		player_stats.connect('player_stats_mouse_entered', _on_player_stats_mouse_entered)
 		player_stats.connect('player_stats_mouse_exited', _on_player_stats_mouse_exited)
 		player_stats.connect('player_stats_toggled', _on_player_stats_toggled)
@@ -1153,7 +1153,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 
 func _on_player_health_changed(target_player: Player):
 	var player_stats = players_grid_container.get_children().filter(func(child): return child.id == target_player.id).front() as PlayerStats
-	player_stats.update_health(target_player.health, target_player.max_health)
+	player_stats.update_health()
 
 
 func _on_init_enemy(enemy_scene: int, spawn_tile: MapTile) -> void:

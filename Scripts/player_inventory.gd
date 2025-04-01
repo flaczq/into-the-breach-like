@@ -17,6 +17,7 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: 
 @onready var action_tooltip: ActionTooltip = $TextureRect/ActionsTextureButton/ActionTooltipX
 
 var player: Player
+
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 var is_action_tooltip_clicked: bool = false
 
@@ -87,24 +88,8 @@ func update_items() -> void:
 		item_2_texture_button.tooltip_text = 'no item\navailable\nfor you'
 
 
-func remove_item(item_id: Util.ItemType) -> void:
-	if player.item_1.id == item_id:
-		item_1_texture_button.texture_normal = null
-		item_1_texture_button.texture_pressed = null
-		item_1_texture_button.texture_hover = null
-		item_1_texture_button.tooltip_text = 'no item\navailable\nfor you'
-	elif player.item_2.id == item_id:
-		item_2_texture_button.texture_normal = null
-		item_2_texture_button.texture_pressed = null
-		item_2_texture_button.texture_hover = null
-		item_2_texture_button.tooltip_text = 'no item'
-
-
-func move_item(item_id: Util.ItemType, target_item_texture_index: int) -> void:
-	#var item = Util.get_selected_item(item_id)
-	if item_id != Util.ItemType.NONE:
-		remove_item(item_id)
-	
+func move_item(item: ItemObject, target_item_texture_index: int) -> void:
+	# move item = switch items because there are only two
 	var temp_item_1 = player.item_1
 	player.item_1 = player.item_2
 	player.item_2 = temp_item_1

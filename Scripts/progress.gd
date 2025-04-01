@@ -46,15 +46,9 @@ func init_ui() -> void:
 		child.hide()
 	
 	var index = 0
-	var selected_items: Array[ItemObject] = []
 	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
 	for player in Global.selected_players as Array[Player]:
 		assert(player.id != PlayerType.NONE, 'Wrong selected player id')
-		if player.item_1 and player.item_1.id != ItemType.NONE:
-			selected_items.push_back(player.item_1)
-		if player.item_2 and player.item_2.id != ItemType.NONE:
-			selected_items.push_back(player.item_2)
-		
 		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
 		player_inventory.init(player)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
@@ -72,7 +66,8 @@ func init_ui() -> void:
 	shop.connect('item_hovered', _on_shop_item_hovered)
 	shop.connect('item_clicked', _on_shop_item_clicked)
 	
-	inventory.init(selected_items)
+	var empty_item: ItemObject = init_manager_script.init_item(ItemType.NONE)
+	inventory.init(Global.selected_items, empty_item)
 	inventory.connect('item_hovered', _on_inventory_item_hovered)
 	inventory.connect('item_clicked', _on_inventory_item_clicked)
 
@@ -84,10 +79,6 @@ func update_labels() -> void:
 func show_back() -> void:
 	Global.engine_mode = EngineMode.MENU
 	toggle_visibility(true)
-
-
-func get_shop_clicked_item_id() -> ItemType:
-	return shop.clicked_item_id
 
 
 func get_player_clicked_item_id(player_id: PlayerType = PlayerType.NONE) -> ItemType:
@@ -109,7 +100,7 @@ func _on_shop_item_hovered(shop_item_texture_index: int, item_id: ItemType, is_h
 
 
 func _on_shop_item_clicked(shop_item_texture_index: int, item_id: ItemType) -> void:
-	var shop_clicked_item_id = get_shop_clicked_item_id()
+	var shop_clicked_item_id = shop.clicked_item_id
 	if shop_clicked_item_id == ItemType.NONE:
 		on_button_disabled(shop_buy_texture_button, true)
 	else:
@@ -124,7 +115,7 @@ func _on_shop_item_clicked(shop_item_texture_index: int, item_id: ItemType) -> v
 func _on_shop_buy_texture_button_pressed() -> void:
 	on_button_disabled(shop_buy_texture_button, true)
 	
-	var shop_clicked_item_id = get_shop_clicked_item_id()
+	var shop_clicked_item_id = shop.clicked_item_id
 	if shop_clicked_item_id == ItemType.NONE:
 		return
 	
@@ -132,13 +123,14 @@ func _on_shop_buy_texture_button_pressed() -> void:
 	if shop_clicked_item.cost > Global.money:
 		return
 	
-	# FIXME this does nothing
 	shop_clicked_item.is_available = false
+	Global.selected_items.push_back(shop_clicked_item)
+	
 	Global.money -= shop_clicked_item.cost
 	update_labels()
 	
+	shop.buy_item(shop_clicked_item_id)
 	inventory.add_item(shop_clicked_item)
-	shop.item_bought(shop_clicked_item_id)
 	
 	shop.reset_items()
 	inventory.reset_items()
@@ -162,7 +154,7 @@ func _on_inventory_item_clicked(inventory_item_texture_index: int, item_id: Item
 	var inventory_clicked_item_id = inventory.clicked_item_id
 	if player_clicked_item_id != ItemType.NONE:
 		# player -> inventory
-		player_clicked_container = players_grid_container.get_children().filter(func(child): return child.items_ids.has(player_clicked_item_id)).front() as PlayerInventory
+		player_clicked_container = players_grid_container.get_children().filter(func(child): return child.player.item_1.id == player_clicked_item_id or child.player.item_2.id == player_clicked_item_id).front() as PlayerInventory
 		if inventory_clicked_item_id == ItemType.NONE:
 			var selected_player = player_clicked_container.player
 			assert(selected_player.item_1.id == player_clicked_item_id or selected_player.item_2.id == player_clicked_item_id, 'Player does not have item')
@@ -207,8 +199,8 @@ func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int,
 	var selected_player = selected_player_inventory.player
 	if player_clicked_item_id == ItemType.NONE and inventory_clicked_item_id != ItemType.NONE:
 		# inventory -> player
+		inventory.remove_item(inventory_clicked_item_id)
 		var inventory_clicked_item = init_manager_script.init_item(inventory_clicked_item_id)
-		inventory.remove_item(inventory_clicked_item)
 		if player_inventory_item_texture_index == 0:
 			selected_player.item_1 = inventory_clicked_item
 		elif player_inventory_item_texture_index == 1:

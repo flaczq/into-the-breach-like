@@ -25,10 +25,13 @@ extends Util
 @onready var enemies_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/EnemiesMenuButton
 @onready var civilians_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CiviliansMenuButton
 @onready var selected_tile_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SelectedTileMenuButton
+@onready var action_1_texture_button = $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton
+@onready var action_2_texture_button = $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton
 
 const SAVED_LEVELS_FILE_PATH = 'res://Other/saved_levels.txt'
 
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
+var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
 var assets: Array[Node3D] = []
 var key_pressed: bool = false
@@ -131,6 +134,8 @@ func init() -> void:
 	
 	on_button_disabled(end_turn_texture_button, true)
 	on_button_disabled(action_first_texture_button, true)
+	on_button_disabled(action_1_texture_button, true)
+	on_button_disabled(action_2_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
 	play_button.set_disabled(true)
 	reset_button.set_disabled(true)
@@ -174,6 +179,7 @@ func calculate_level_data() -> void:
 	level_data.level_events = [LevelEvent.ENEMIES_FROM_BELOW, LevelEvent.ENEMIES_FROM_BELOW]
 	level_manager_script.add_events_details(level_data, enemy_scenes.size())
 	level_manager_script.add_level_type_details(level_data)
+	level_manager_script.add_objectives(level_data)
 	level_data.tiles = ''
 	level_data.tiles_assets = ''
 	level_data.player_scenes = []
@@ -198,6 +204,11 @@ func calculate_level_data() -> void:
 				level_data.enemy_scenes.push_back(child.id)
 			elif child.is_in_group('CIVILIANS'):
 				level_data.civilian_scenes.push_back(child.id)
+	
+	var playable_players = init_manager_script.init_playable_players()
+	for player_scene_id in level_data.player_scenes:
+		var selected_player = playable_players.filter(func(playable_player): return playable_player.id == player_scene_id).front()
+		Global.selected_players.push_back(selected_player)
 
 
 func _on_settings_texture_button_pressed() -> void:
@@ -211,6 +222,8 @@ func _on_play_button_toggled(toggled_on: bool) -> void:
 	
 	on_button_disabled(end_turn_texture_button, not toggled_on)
 	on_button_disabled(action_first_texture_button, not toggled_on)
+	on_button_disabled(action_1_texture_button, not toggled_on)
+	on_button_disabled(action_2_texture_button, not toggled_on)
 	on_button_disabled(undo_texture_button, not toggled_on)
 	reset_button.set_disabled(toggled_on)
 	delete_button.set_disabled(toggled_on)

@@ -457,7 +457,7 @@ func init_action(action_id: Util.ActionType) -> ActionObject:
 
 func init_available_items() -> Array[ItemObject]:
 	var available_items = [] as Array[ItemObject]
-	for item_data in items_data.filter(func(item_data): return item_data.is_available):
+	for item_data in items_data.filter(func(item_data): return item_data.is_available and Global.selected_items.all(func(selected_item): return selected_item.id != item_data.id)):
 		var item_object = ItemObject.new()
 		item_object.init_from_item_data(item_data)
 		available_items.push_back(item_object)

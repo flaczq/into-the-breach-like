@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://ul8a33rsc5o4"]
+[gd_scene load_steps=33 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
 [ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
@@ -17,15 +17,16 @@
 [ext_resource type="PackedScene" uid="uid://djb7hjxihkin0" path="res://Scenes/tutorial_player.tscn" id="16_b1rcx"]
 [ext_resource type="PackedScene" uid="uid://bj8bk338r75sx" path="res://Scenes/enemy4.tscn" id="17_60fhf"]
 [ext_resource type="PackedScene" uid="uid://cyk5jmmvp3sag" path="res://Scenes/tutorial_enemy.tscn" id="17_hdgpr"]
-[ext_resource type="Texture2D" uid="uid://3x1rf3bum6nd" path="res://Assets/lisadikaprio.4-expression-backgrounds/badend.png" id="17_p3af1"]
+[ext_resource type="Texture2D" uid="uid://iu12lg4nasjg" path="res://Assets/aaaps/background_squares.png" id="17_jpkl4"]
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="18_v5xqc"]
 [ext_resource type="Texture2D" uid="uid://danokvk15cayv" path="res://Assets/penzilla.vector-icon-pack/Icon_Settings.png" id="19_rhlap"]
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="19_yyv2y"]
 [ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="20_qtn6l"]
 [ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="21_cb0vv"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="22_nxh73"]
-[ext_resource type="PackedScene" uid="uid://1lyf22v5j5cf" path="res://Scenes/player_container.tscn" id="24_2o27d"]
+[ext_resource type="PackedScene" uid="uid://c3pe6m0m8tc5y" path="res://Scenes/player_stats.tscn" id="24_3qie4"]
 [ext_resource type="Texture2D" uid="uid://c1j8oguuv8xfv" path="res://Assets/penzilla.vector-icon-pack/Icon_Question.png" id="25_rkgt4"]
+[ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="26_q4oor"]
 
 [sub_resource type="Environment" id="Environment_5lqdt"]
 background_mode = 3
@@ -33,6 +34,22 @@ ambient_light_source = 2
 ambient_light_color = Color(0.259294, 0.259294, 0.259294, 1)
 ssil_radius = 2.83
 glow_intensity = 3.56
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0n3a7"]
+atlas = ExtResource("26_q4oor")
+region = Rect2(0, 0, 248, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m0wnt"]
+atlas = ExtResource("26_q4oor")
+region = Rect2(0, 78, 248, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_otyon"]
+atlas = ExtResource("26_q4oor")
+region = Rect2(0, 156, 248, 74)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20ma0"]
+atlas = ExtResource("26_q4oor")
+region = Rect2(0, 234, 248, 74)
 
 [node name="Editor" type="Node3D"]
 script = ExtResource("4_nvvvx")
@@ -51,7 +68,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("17_p3af1")
+texture = ExtResource("17_jpkl4")
 expand_mode = 3
 flip_v = true
 
@@ -123,6 +140,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
+visible = false
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 disabled = true
@@ -166,15 +184,15 @@ text = "TILE INFO"
 
 [node name="PlayersGridContainer" type="GridContainer" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer"]
 layout_mode = 2
-columns = 3
+theme_override_constants/v_separation = -30
 
-[node name="HIDEPlayer1Container" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("24_2o27d")]
+[node name="Player1Stats" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" instance=ExtResource("24_3qie4")]
 layout_mode = 2
 
-[node name="HIDEPlayer2Container" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("24_2o27d")]
+[node name="Player2Stats" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" instance=ExtResource("24_3qie4")]
 layout_mode = 2
 
-[node name="HIDEPlayer3Container" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" groups=["ALWAYS_FREE"] instance=ExtResource("24_2o27d")]
+[node name="Player3Stats" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer" instance=ExtResource("24_3qie4")]
 layout_mode = 2
 
 [node name="PanelRightContainer" type="PanelContainer" parent="CanvasLayer"]
@@ -394,6 +412,81 @@ popup/item_2/text = "CAN SPAWN CIVILIAN"
 popup/item_2/checkable = 1
 popup/item_2/id = 2
 
+[node name="PanelCenterContainer" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -124.0
+offset_top = -74.0
+offset_right = 124.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="CenterMarginContainer" type="MarginContainer" parent="CanvasLayer/PanelCenterContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 0
+
+[node name="ActionsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Action1TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_0n3a7")
+texture_pressed = SubResource("AtlasTexture_m0wnt")
+texture_hover = SubResource("AtlasTexture_otyon")
+texture_disabled = SubResource("AtlasTexture_20ma0")
+
+[node name="Action1Label" type="Label" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -49.0
+offset_top = -15.5
+offset_right = 49.0
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
+text = "ACTION 1"
+vertical_alignment = 1
+uppercase = true
+
+[node name="Action2TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer"]
+visible = false
+layout_mode = 2
+toggle_mode = true
+action_mode = 0
+texture_normal = SubResource("AtlasTexture_0n3a7")
+texture_pressed = SubResource("AtlasTexture_m0wnt")
+texture_hover = SubResource("AtlasTexture_otyon")
+texture_disabled = SubResource("AtlasTexture_20ma0")
+
+[node name="Action2Label" type="Label" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -49.0
+offset_top = -15.5
+offset_right = 49.0
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
+text = "ACTION 2"
+vertical_alignment = 1
+uppercase = true
+
 [node name="PanelFullScreenContainer" type="PanelContainer" parent="CanvasLayer"]
 visible = false
 anchors_preset = 15
@@ -456,3 +549,5 @@ vertical_alignment = 1
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="about_to_popup" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/LoadMenuButton" to="." method="_on_load_menu_button_about_to_popup"]
 [connection signal="color_changed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/TilesContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" to="GameStateManager" method="_on_action_1_texture_button_toggled"]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton" to="GameStateManager" method="_on_action_2_texture_button_toggled"]

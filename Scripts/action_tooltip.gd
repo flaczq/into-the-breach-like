@@ -31,6 +31,7 @@ func init(new_player: Player) -> void:
 	if player.action_2.id == Util.ActionType.NONE:
 		action_2h_box_container.hide()
 	
+	# player selection screen
 	# FIXME ładniej
 	if Global.selected_players.size() < 3:
 		action_1_texture_button.set_disabled(true)

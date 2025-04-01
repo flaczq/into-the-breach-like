@@ -63,7 +63,7 @@ func update_move_distance() -> void:
 
 
 func update_items() -> void:
-	if player.item_1 and player.item_1.id != Util.ItemType.NONE:
+	if player.item_1.id != Util.ItemType.NONE:
 		assert(player.item_1.textures.size() == 3, 'Wrong item 1 textures size')
 		item_1_texture_button.texture_normal = player.item_1.textures[0]
 		item_1_texture_button.texture_pressed = player.item_1.textures[1]
@@ -75,7 +75,7 @@ func update_items() -> void:
 		item_1_texture_button.texture_hover = null
 		item_1_texture_button.tooltip_text = 'no item\navailable\nfor you'
 	
-	if player.item_2 and player.item_2.id != Util.ItemType.NONE:
+	if player.item_2.id != Util.ItemType.NONE:
 		assert(player.item_2.textures.size() == 3, 'Wrong item 2 textures size')
 		item_2_texture_button.texture_normal = player.item_2.textures[0]
 		item_2_texture_button.texture_pressed = player.item_2.textures[1]
@@ -88,8 +88,7 @@ func update_items() -> void:
 		item_2_texture_button.tooltip_text = 'no item\navailable\nfor you'
 
 
-func move_item(item: ItemObject, target_item_texture_index: int) -> void:
-	# move item = switch items because there are only two
+func switch_items() -> void:
 	var temp_item_1 = player.item_1
 	player.item_1 = player.item_2
 	player.item_2 = temp_item_1
@@ -132,9 +131,8 @@ func _on_item_texture_button_pressed(item_texture_index: int) -> void:
 			clicked_item_id = Util.ItemType.NONE
 		else:
 			if new_clicked_item_id == Util.ItemType.NONE:
-				pass
-				#move_item(clicked_item_id, item_texture_index)
-				#clicked_item_id = Util.ItemType.NONE
+				switch_items()
+				clicked_item_id = Util.ItemType.NONE
 			else:
 				if item_texture_index == 0:
 					item_1_texture_button.set_pressed_no_signal(true)

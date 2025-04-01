@@ -11,6 +11,7 @@ var move_speed: float = 0.3
 var default_speed: float = 1.2
 
 var selected_players: Array[Player] = []
+var selected_items: Array[ItemObject] = []
 var money: int = 0
 var played_maps_ids: Array[int] = []
 

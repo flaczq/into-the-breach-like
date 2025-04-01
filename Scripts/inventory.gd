@@ -15,12 +15,13 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType)
 @onready var inventory_item_8_texture_button = $InventoryItemsGridContainer/InventoryItemSlot8TextureButton/InventoryItem8TextureButton
 
 var inventory_items_texture_buttons: Array[TextureButton]
+var empty_item: ItemObject
 
-var items: Array[ItemObject] = [null, null, null, null, null, null, null, null]
+var items: Array[ItemObject] = []
 var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 
 
-func init(selected_items: Array[ItemObject]) -> void:
+func init(selected_items: Array[ItemObject], new_empty_item: ItemObject) -> void:
 	inventory_items_texture_buttons = [
 		inventory_item_1_texture_button,
 		inventory_item_2_texture_button,
@@ -31,7 +32,10 @@ func init(selected_items: Array[ItemObject]) -> void:
 		inventory_item_7_texture_button,
 		inventory_item_8_texture_button
 	]
-
+	empty_item = new_empty_item
+	items.resize(8)
+	items.fill(empty_item)
+	
 	var index = 0
 	for inventory_item_texture_button in inventory_items_texture_buttons:
 		inventory_item_texture_button.connect('mouse_entered', _on_texture_button_mouse_entered.bind(index))
@@ -57,7 +61,7 @@ func find_first_empty_index() -> int:
 func update_items() -> void:
 	var index = 0
 	for texture_button in inventory_items_texture_buttons:
-		if items.size() > index and items[index] and items[index].id != Util.ItemType.NONE:
+		if items[index].id != Util.ItemType.NONE:
 			assert(texture_button.textures.size() == 3, 'Wrong inventory item textures size')
 			texture_button.texture_normal = items[index].textures[0]
 			texture_button.texture_pressed = items[index].textures[1]
@@ -72,7 +76,7 @@ func update_items() -> void:
 
 
 func add_item(item: ItemObject, target_item_texture_index: int = -1) -> void:
-	if item and item.id != Util.ItemType.NONE:
+	if item.id != Util.ItemType.NONE:
 		var item_texture_index = (target_item_texture_index) if (target_item_texture_index >= 0) else (find_first_empty_index())
 		assert(item_texture_index >= 0, 'No empty space in inventory')
 		var texture_button = inventory_items_texture_buttons[item_texture_index]
@@ -85,22 +89,24 @@ func add_item(item: ItemObject, target_item_texture_index: int = -1) -> void:
 		items[item_texture_index] = item
 
 
-func remove_item(item: ItemObject) -> void:
-	var item_texture_index = items.find(item)
+func remove_item(item_id: Util.ItemType) -> void:
+	var removed_item = items.filter(func(item): return item.id == item_id).front()
+	assert(removed_item, 'Removed item not in inventory')
+	var item_texture_index = items.find(removed_item)
 	var texture_button = inventory_items_texture_buttons[item_texture_index]
 	texture_button.texture_normal = null
 	texture_button.texture_pressed = null
 	texture_button.texture_hover = null
 	texture_button.tooltip_text = 'NO ITEM'
 	#texture_button.modulate.a = 0.5
-	items.remove_at(item_texture_index)
+	items[item_texture_index] = empty_item
 
 
 func move_item(item: ItemObject, target_item_texture_index: int) -> void:
-	if item and item.id != Util.ItemType.NONE:
-		remove_item(item)
+	if item.id != Util.ItemType.NONE:
+		remove_item(item.id)
 	
-	assert(not items[target_item_texture_index], 'Target inventory space not empty')
+	assert(items[target_item_texture_index].id == Util.ItemType.NONE, 'Target inventory space not empty')
 	add_item(item, target_item_texture_index)
 
 
@@ -114,19 +120,19 @@ func reset_items(is_highlighted: bool = false) -> void:
 
 
 func _on_texture_button_mouse_entered(item_texture_index: int) -> void:
-	var hovered_item_id = items[item_texture_index]
-	item_hovered.emit(item_texture_index, hovered_item_id, true)
+	var hovered_item = items[item_texture_index]
+	item_hovered.emit(item_texture_index, hovered_item.id, true)
 
 
 func _on_texture_button_mouse_exited(item_texture_index: int) -> void:
-	var hovered_item_id = items[item_texture_index]
-	item_hovered.emit(item_texture_index, hovered_item_id, false)
+	var hovered_item = items[item_texture_index]
+	item_hovered.emit(item_texture_index, hovered_item.id, false)
 
 
 func _on_texture_button_pressed(item_texture_index: int) -> void:
 	var new_clicked_item = items[item_texture_index]
 	# clicked empty inventory item when nothing was clicked before
-	if clicked_item_id != Util.ItemType.NONE or (new_clicked_item and new_clicked_item.id != Util.ItemType.NONE):
+	if clicked_item_id != Util.ItemType.NONE or new_clicked_item.id != Util.ItemType.NONE:
 		var index = 0
 		for inventory_item_texture_button in inventory_items_texture_buttons:
 			inventory_item_texture_button.set_pressed_no_signal(false)

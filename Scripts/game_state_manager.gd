@@ -9,14 +9,14 @@ class_name GameStateManager
 @export var progress_scene: PackedScene
 
 @onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
-@onready var action_1_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
-@onready var action_2_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton'
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
 @onready var players_grid_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer'
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel'
+@onready var action_1_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
+@onready var action_2_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton'
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
@@ -727,7 +727,7 @@ func recalculate_enemies_order() -> void:
 
    
 func get_player_stats_by_id(id: PlayerType) -> PlayerStats:
-	return players_grid_container.get_children().filter(func(child): return child.id == id).front() as PlayerStats
+	return players_grid_container.get_children().filter(func(child): return child.player.id == id).front() as PlayerStats
 
 
 func set_player_texture_button_state(avatar_texture_button: TextureButton, is_focused: bool) -> void:
@@ -1152,7 +1152,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 
 
 func _on_player_health_changed(target_player: Player):
-	var player_stats = players_grid_container.get_children().filter(func(child): return child.id == target_player.id).front() as PlayerStats
+	var player_stats = players_grid_container.get_children().filter(func(child): return child.player.id == target_player.id).front() as PlayerStats
 	player_stats.update_health()
 
 

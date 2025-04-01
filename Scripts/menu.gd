@@ -103,6 +103,7 @@ func show_cutscenes() -> void:
 func show_players_selection() -> void:
 	#Global.selected_items = []
 	Global.selected_players = []
+	Global.selected_items = []
 	Global.played_maps_ids = []
 	
 	for player_inventory in players_grid_container.get_children():
@@ -166,7 +167,7 @@ func init_ui() -> void:
 
 
 func get_player_inventory_by_id(id: PlayerType) -> PlayerInventory:
-	return players_grid_container.get_children().filter(func(child): return child.id == id).front() as PlayerInventory
+	return players_grid_container.get_children().filter(func(child): return child.player.id == id).front() as PlayerInventory
 
 
 func _on_editor_texture_button_pressed() -> void:

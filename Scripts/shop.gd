@@ -64,25 +64,27 @@ func init(available_items: Array[ItemObject]) -> void:
 	shop_item_3_name_label.text = items[2].item_name
 
 
-func item_bought(item_id: Util.ItemType) -> void:
-	var item_texture_index = items.find(func(item): return item.id == item_id)
-	if item_texture_index == 0:
+func buy_item(item_id: Util.ItemType) -> void:
+	if items[0].id == item_id:
 		shop_item_1_cost_label.modulate.a = 0.5
 		shop_item_1_texture_button.set_disabled(true)
 		shop_item_1_texture_button.set_pressed_no_signal(false)
 		shop_item_1_texture_button.modulate.a = 0.5
+		shop_item_1_texture_button.tooltip_text = ''
 		shop_item_1_name_label.modulate.a = 0.5
-	elif item_texture_index == 1:
+	elif items[1].id == item_id:
 		shop_item_2_cost_label.modulate.a = 0.5
 		shop_item_2_texture_button.set_disabled(true)
 		shop_item_2_texture_button.set_pressed_no_signal(false)
 		shop_item_2_texture_button.modulate.a = 0.5
+		shop_item_2_texture_button.tooltip_text = ''
 		shop_item_2_name_label.modulate.a = 0.5
-	elif item_texture_index == 2:
+	elif items[2].id == item_id:
 		shop_item_3_cost_label.modulate.a = 0.5
 		shop_item_3_texture_button.set_disabled(true)
 		shop_item_3_texture_button.set_pressed_no_signal(false)
 		shop_item_3_texture_button.modulate.a = 0.5
+		shop_item_3_texture_button.tooltip_text = ''
 		shop_item_3_name_label.modulate.a = 0.5
 
 

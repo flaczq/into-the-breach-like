@@ -24,6 +24,7 @@ func init(new_player: Player) -> void:
 	avatar_texture_button.texture_normal = player.textures[0]
 	avatar_texture_button.texture_pressed = player.textures[1]
 	avatar_texture_button.texture_hover = player.textures[2]
+	avatar_texture_button.texture_disabled = player.textures[0]
 	avatar_texture_button.texture_focused = player.textures[2]
 	
 	update_stats()

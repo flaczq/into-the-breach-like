@@ -235,10 +235,13 @@ func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int,
 			player_inventory.reset_items()
 
 
-func _on_level_type_button_pressed(level_type: LevelType) -> void:
-	selected_level_type = level_type
+func _on_level_type_texture_button_toggled(toggled_on: bool, level_type: LevelType) -> void:
+	if toggled_on:
+		selected_level_type = level_type
+	else:
+		selected_level_type = LevelType.NONE
 	
-	on_button_disabled(levels_next_texture_button, not selected_level_type)
+	on_button_disabled(levels_next_texture_button, selected_level_type == LevelType.NONE)
 
 
 func _on_levels_next_texture_button_pressed() -> void:

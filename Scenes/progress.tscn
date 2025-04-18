@@ -79,6 +79,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]
@@ -174,7 +175,6 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -185,27 +185,117 @@ horizontal_alignment = 1
 
 [node name="LevelsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/LevelsContainer"]
 layout_mode = 2
-theme_override_constants/separation = 50
 alignment = 1
 
-[node name="LevelType1Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
+[node name="LevelType1TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
 layout_mode = 2
-text = "LEVEL_KILL_ENEMIES"
+size_flags_horizontal = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+texture_disabled = SubResource("AtlasTexture_0cirs")
 
-[node name="LevelType2Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
-layout_mode = 2
-disabled = true
-text = "LEVEL_SURVIVE_TURNS"
+[node name="LevelType1Label" type="Label" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1TextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.5
+offset_top = -15.5
+offset_right = 34.5
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "KILL ALL ENEMIES"
+vertical_alignment = 1
+uppercase = true
 
-[node name="LevelType3Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
+[node name="LevelType2TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
+size_flags_horizontal = 4
 disabled = true
-text = "LEVEL_SAVE_CIVILIANS"
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+texture_disabled = SubResource("AtlasTexture_0cirs")
 
-[node name="LevelType4Button" type="Button" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
+[node name="LevelType2Label" type="Label" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2TextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.5
+offset_top = -15.5
+offset_right = 34.5
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "SURVIVE TURNS"
+vertical_alignment = 1
+uppercase = true
+
+[node name="LevelType3TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
+size_flags_horizontal = 4
 disabled = true
-text = "LEVEL_SAVE_TILES"
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+texture_disabled = SubResource("AtlasTexture_0cirs")
+
+[node name="LevelType3Label" type="Label" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3TextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.5
+offset_top = -15.5
+offset_right = 34.5
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "SAVE CIVILIANS"
+vertical_alignment = 1
+uppercase = true
+
+[node name="LevelType4TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer"]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 2
+size_flags_horizontal = 4
+disabled = true
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+texture_disabled = SubResource("AtlasTexture_0cirs")
+
+[node name="LevelType4Label" type="Label" parent="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType4TextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.5
+offset_top = -15.5
+offset_right = 34.5
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "SAVE TILES"
+vertical_alignment = 1
+uppercase = true
 
 [node name="LevelsNextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/LevelsContainer"]
 layout_mode = 2
@@ -236,4 +326,8 @@ uppercase = true
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton" to="." method="_on_shop_skip_texture_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType1TextureButton" to="." method="_on_level_type_texture_button_toggled" binds= [1]]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType2TextureButton" to="." method="_on_level_type_texture_button_toggled" binds= [2]]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType3TextureButton" to="." method="_on_level_type_texture_button_toggled" binds= [3]]
+[connection signal="toggled" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsHBoxContainer/LevelType4TextureButton" to="." method="_on_level_type_texture_button_toggled" binds= [4]]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton" to="." method="_on_levels_next_texture_button_pressed"]

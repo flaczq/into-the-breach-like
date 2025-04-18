@@ -834,7 +834,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 						# only for tiles to be cross pushed back
 						for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(target_tile.enemy.planned_tile.coords, tile.coords)):
 							# show outline with predicted health for enemy cross pushed targets
-							target_tile.enemy.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, target_tile.enemy.planned_tile, target_tile.enemy.action_damage)
+							target_tile.enemy.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, target_tile.enemy.planned_tile, target_tile.enemy.action_1.damage)
 					else:
 						target_tile.enemy.show_outline_with_predicted_health(target_tile.enemy.planned_tile, map.tiles, target_tile.enemy.action_1.id)
 		
@@ -880,7 +880,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 					first_occupied_tile_in_line = target_tile
 				
 				assert(action_1_texture_button.is_pressed() or action_2_texture_button.is_pressed(), 'No action button is pressed')
-				var selected_player_action
+				var selected_player_action: ActionObject
 				if action_1_texture_button.is_pressed():
 					selected_player_action = selected_player.action_1
 				elif action_2_texture_button.is_pressed():
@@ -903,7 +903,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 					
 					# only for tiles to be cross pushed back
 					for tile in map.tiles.filter(func(tile: MapTile): return is_tile_adjacent_by_coords(first_occupied_tile_in_line.coords, tile.coords)):
-						selected_player.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, first_occupied_tile_in_line, selected_player.action_damage)
+						selected_player.show_outline_with_predicted_health(tile, map.tiles, ActionType.CROSS_PUSH_BACK, first_occupied_tile_in_line, selected_player_action.damage)
 				else:
 					selected_player.show_outline_with_predicted_health(first_occupied_tile_in_line, map.tiles, selected_player_action.id)
 			else:

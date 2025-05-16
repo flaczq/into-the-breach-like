@@ -13,7 +13,7 @@ config_version=5
 config/name="Save the Tiles"
 config/version="0.1"
 run/main_scene="res://Scenes/menu.tscn"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://Icons/tank.png"
 
 [autoload]
@@ -27,8 +27,8 @@ window/size/viewport_height=720
 
 [gui]
 
-theme/custom="res://Other/default_theme.tres"
 timers/tooltip_delay_sec=0.0
+theme/custom="res://Other/default_theme.tres"
 
 [internationalization]
 

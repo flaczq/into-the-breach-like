@@ -1,8 +1,8 @@
 [gd_scene load_steps=33 format=3 uid="uid://ul8a33rsc5o4"]
 
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_u2oq0"]
-[ext_resource type="Script" path="res://Scripts/editor.gd" id="4_nvvvx"]
-[ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="5_phmd4"]
+[ext_resource type="Script" uid="uid://b55bnh7618m71" path="res://Scripts/editor.gd" id="4_nvvvx"]
+[ext_resource type="Script" uid="uid://cyydhyrfheu45" path="res://Scripts/game_state_manager.gd" id="5_phmd4"]
 [ext_resource type="PackedScene" uid="uid://bysqedydgeakv" path="res://Scenes/map4x4.tscn" id="6_f5ijx"]
 [ext_resource type="PackedScene" uid="uid://cxidqolshdlac" path="res://Scenes/map6x6.tscn" id="7_6jo0a"]
 [ext_resource type="PackedScene" uid="uid://bo5rbatygsore" path="res://Scenes/player2.tscn" id="7_j7ymc"]

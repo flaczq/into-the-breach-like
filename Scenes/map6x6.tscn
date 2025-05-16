@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://cxidqolshdlac"]
 
-[ext_resource type="Script" path="res://Scripts/map.gd" id="1_5a60p"]
+[ext_resource type="Script" uid="uid://fqpdweyulgx4" path="res://Scripts/map.gd" id="1_5a60p"]
 [ext_resource type="PackedScene" uid="uid://d0dm54nlu3hbr" path="res://Scenes/assets.tscn" id="2_rn047"]
 [ext_resource type="PackedScene" uid="uid://bs4m8lgrabovn" path="res://Assets/floor.glb" id="2_tavuh"]
-[ext_resource type="Script" path="res://Scripts/map_tile.gd" id="3_s2wdd"]
+[ext_resource type="Script" uid="uid://yclnjwh2wc8m" path="res://Scripts/map_tile.gd" id="3_s2wdd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_csxew"]
 size = Vector3(1, 0.2, 1)

@@ -62,6 +62,8 @@ func _ready() -> void:
 	#init_all_enemies()
 	#init_all_civilians()
 	init_ui()
+	
+	open_steam_page()
 
 
 func _input(event: InputEvent) -> void:
@@ -164,6 +166,14 @@ func init_ui() -> void:
 		player_inventory.show()
 		index += 1
 	assert(players_grid_container.get_child_count() >= index, 'Wrong player inventory size')
+
+
+func open_steam_page() -> void:
+	Steam.steamInitEx(1903340)
+	Steam.activateGameOverlayToStore(1903340)
+	#var res = OS.shell_open('steam://advertise/1903340');
+	#if res != OK:
+		#OS.shell_open('https://store.steampowered.com/app/1903340/Clair_Obscur_Expedition_33/')
 
 
 func get_player_inventory_by_id(id: PlayerType) -> PlayerInventory:

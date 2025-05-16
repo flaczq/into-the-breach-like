@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://du8nd6q2jlyde"]
 
-[ext_resource type="Script" path="res://Scripts/action_tooltip.gd" id="1_fqnfv"]
+[ext_resource type="Script" uid="uid://khkdtk4bcqs1" path="res://Scripts/action_tooltip.gd" id="1_fqnfv"]
 [ext_resource type="Texture2D" uid="uid://cijyicf1fbewn" path="res://Assets/aaaps/weapons_hook_normal.png" id="2_dpdx6"]
 [ext_resource type="Texture2D" uid="uid://cnqrp2in5uqq5" path="res://Assets/aaaps/weapons_hook_pressed.png" id="3_oumy7"]
 [ext_resource type="Texture2D" uid="uid://7nscq1hyfknr" path="res://Assets/aaaps/weapons_hook_hover.png" id="4_lyobs"]

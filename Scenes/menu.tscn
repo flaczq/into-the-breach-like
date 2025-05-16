@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://dfwqyoo6wacnd"]
 
-[ext_resource type="Script" path="res://Scripts/menu.gd" id="1_ybquj"]
+[ext_resource type="Script" uid="uid://dl7a25jomg7lo" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
 [ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
 [ext_resource type="PackedScene" uid="uid://1noimyb1f3xg" path="res://Scenes/cutscenes.tscn" id="4_om7ip"]
@@ -334,8 +334,8 @@ text = "LANGUAGE:"
 [node name="LanguageOptionButton" type="OptionButton" parent="CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-item_count = 2
 selected = 0
+item_count = 2
 popup/item_0/text = "ENGLISH"
 popup/item_0/id = 0
 popup/item_1/text = "POLISH"
@@ -353,8 +353,8 @@ text = "CAMERA POSITION:"
 [node name="CameraPositionOptionButton" type="OptionButton" parent="CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-item_count = 3
 selected = 1
+item_count = 3
 popup/item_0/text = "HIGH"
 popup/item_0/id = 0
 popup/item_1/text = "MIDDLE"

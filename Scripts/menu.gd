@@ -20,6 +20,8 @@ class_name Menu
 @onready var right_container = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
+const STEAM_APP_ID = 1903340; # Clair_Obscur_Expedition_33
+
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
 var playable_players: Array[Player]
@@ -56,14 +58,13 @@ func _ready() -> void:
 	options_container.hide()
 	players_container.hide()
 	
+	init_steam()
 	#init_all_actions()
 	#init_all_items()
 	#init_all_players()
 	#init_all_enemies()
 	#init_all_civilians()
 	init_ui()
-	
-	open_steam_page()
 
 
 func _input(event: InputEvent) -> void:
@@ -120,6 +121,26 @@ func show_players_selection() -> void:
 	players_container.show()
 
 
+func init_steam() -> void:
+	Steam.steamInit()
+	var app_id = (Steam.getAppID()) if (Steam.getAppID() > 0) else (STEAM_APP_ID)
+	#OS.set_environment('SteamAppID', app_id)
+	#OS.set_environment('SteamGameID', app_id)
+	print(str(Steam.getAppID()) + '/' + str(app_id))
+	if Steam.isSteamRunning():
+		print('Steam is running')
+		print('Hello ' + Steam.getPersonaName())
+		#Steam.activateGameOverlayToStore(app_id)
+	else:
+		print('Steam is NOT running')
+		var steam_open = OS.shell_open('steam://advertise/' + str(app_id));
+		if steam_open == OK:
+			print('connected to steam via client')
+		else:
+			print('connected to steam via browser')
+			OS.shell_open('https://store.steampowered.com/app/' + str(app_id))
+
+
 #func init_all_actions() -> void:
 	#var all_actions = init_manager_script.init_all_actions()
 	#Global.all_actions.append_array(all_actions)
@@ -166,14 +187,6 @@ func init_ui() -> void:
 		player_inventory.show()
 		index += 1
 	assert(players_grid_container.get_child_count() >= index, 'Wrong player inventory size')
-
-
-func open_steam_page() -> void:
-	Steam.steamInitEx(1903340)
-	Steam.activateGameOverlayToStore(1903340)
-	#var res = OS.shell_open('steam://advertise/1903340');
-	#if res != OK:
-		#OS.shell_open('https://store.steampowered.com/app/1903340/Clair_Obscur_Expedition_33/')
 
 
 func get_player_inventory_by_id(id: PlayerType) -> PlayerInventory:

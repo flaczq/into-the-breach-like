@@ -33,3 +33,8 @@ theme/custom="res://Other/default_theme.tres"
 [internationalization]
 
 locale/translations=PackedStringArray("res://I18n/text.en.translation")
+
+[steam]
+
+initialization/app_id=1903340
+initialization/embed_callbacks=true

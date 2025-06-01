@@ -20,6 +20,7 @@ class_name Menu
 @onready var right_container = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
+# FIXME change when steam page is up
 const STEAM_APP_ID = 1903340; # Clair_Obscur_Expedition_33
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
@@ -59,11 +60,7 @@ func _ready() -> void:
 	players_container.hide()
 	
 	init_steam()
-	#init_all_actions()
-	#init_all_items()
-	#init_all_players()
-	#init_all_enemies()
-	#init_all_civilians()
+	#init_all_things()
 	init_ui()
 
 
@@ -122,49 +119,34 @@ func show_players_selection() -> void:
 
 
 func init_steam() -> void:
-	Steam.steamInit()
-	var app_id = (Steam.getAppID()) if (Steam.getAppID() > 0) else (STEAM_APP_ID)
-	#OS.set_environment('SteamAppID', app_id)
-	#OS.set_environment('SteamGameID', app_id)
-	print(str(Steam.getAppID()) + '/' + str(app_id))
+	Steam.steamInitEx()
 	if Steam.isSteamRunning():
-		print('Steam is running')
-		print('Hello ' + Steam.getPersonaName())
-		#Steam.activateGameOverlayToStore(app_id)
+		print('Steam is running for username: ' + Steam.getPersonaName())
 	else:
-		print('Steam is NOT running')
-		var steam_open = OS.shell_open('steam://advertise/' + str(app_id));
-		if steam_open == OK:
-			print('connected to steam via client')
-		else:
-			print('connected to steam via browser')
-			OS.shell_open('https://store.steampowered.com/app/' + str(app_id))
+		print('Steam is not running')
 
 
-#func init_all_actions() -> void:
+#func init_all_things() -> void:
+	#ACTIONS
 	#var all_actions = init_manager_script.init_all_actions()
 	#Global.all_actions.append_array(all_actions)
-
-
-#func init_all_items() -> void:
-	## FIXME include in save
+	
+	#ITEMS
+	## TODO include in save
 	#var all_items = init_manager_script.init_all_items()
 	#Global.all_items.append_array(all_items)
-
-
-#func init_all_players() -> void:
-	## FIXME include in save
+	
+	#PLAYERS
+	## TODO include in save
 	#var all_players = init_manager_script.init_all_players()
 	#Global.all_players.append_array(all_players)
 	#assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.items_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
-
-
-#func init_all_enemies() -> void:
+	
+	#ENEMIES
 	#var all_enemies = init_manager_script.init_all_enemies()
 	#Global.all_enemies.append_array(all_enemies)
-
-
-#func init_all_civilians() -> void:
+	
+	#CIVILIANS
 	#var all_civilians = init_manager_script.init_all_civilians()
 	#Global.all_civilians.append_array(all_civilians)
 
@@ -219,6 +201,24 @@ func _on_options_texture_button_pressed() -> void:
 	in_game_menu_container.hide()
 	options_container.show()
 	players_container.hide()
+
+
+func _on_wishlist_texture_button_pressed() -> void:
+	var app_id = (Steam.getAppID()) if (Steam.getAppID() > 0) else (STEAM_APP_ID)
+	#Not necessary if configuration is in project settings
+	#OS.set_environment('SteamAppID', str(app_id))
+	#OS.set_environment('SteamGameID', str(app_id))
+	print('Using ' + (('steam running game id') if (Steam.getAppID() > 0) else ('STEAM_APP_ID')) + ': ' + str(app_id))
+	if Steam.isSteamRunning():
+		Steam.activateGameOverlayToStore(app_id)
+		print('Opened game page via steam overlay')
+	else:
+		var steam_open = OS.shell_open('steam://advertise/' + str(app_id));
+		if steam_open == OK:
+			print('Opened game page via shell command, which should open steam anyway...')
+		else:
+			print('Opened game page via browser')
+			OS.shell_open('https://store.steampowered.com/app/' + str(app_id))
 
 
 func _on_exit_texture_button_pressed() -> void:

@@ -171,6 +171,31 @@ text = "OPTIONS"
 vertical_alignment = 1
 uppercase = true
 
+[node name="WishlistTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
+layout_mode = 2
+tooltip_text = "Visit game Steam page and WISHLIST it!"
+texture_normal = SubResource("AtlasTexture_8oi4x")
+texture_pressed = SubResource("AtlasTexture_iekyi")
+texture_hover = SubResource("AtlasTexture_2fu10")
+
+[node name="WishlistLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer/WishlistTextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -59.0
+offset_top = -15.5
+offset_right = 59.0
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
+text = "WISHLIST"
+vertical_alignment = 1
+uppercase = true
+
 [node name="ExitTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
 layout_mode = 2
 texture_normal = SubResource("AtlasTexture_2fu10")
@@ -429,6 +454,7 @@ uppercase = true
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/StartTextureButton" to="." method="_on_start_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/OptionsTextureButton" to="." method="_on_options_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/WishlistTextureButton" to="." method="_on_wishlist_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/ExitTextureButton" to="." method="_on_exit_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/InGameMenuContainer/ResumeTextureButton" to="." method="_on_resume_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/InGameMenuContainer/MainMenuTextureButton" to="." method="_on_main_menu_texture_button_pressed"]

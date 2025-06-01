@@ -307,25 +307,36 @@ func _on_save_button_pressed() -> void:
 	
 	# level_manager will add characters and events
 	#level_data.erase('level_events')
-	level_data.erase('players')
-	level_data.erase('player_scenes')
-	level_data.erase('enemies')
-	level_data.erase('enemy_scenes')
-	level_data.erase('civilians')
-	level_data.erase('civilian_scenes')
-	level_data.erase('max_enemies')
-	level_data.erase('enemies_from_below')
-	level_data.erase('enemies_from_below_first_turn')
-	level_data.erase('enemies_from_below_last_turn')
-	level_data.erase('enemies_from_above')
-	level_data.erase('enemies_from_above_first_turn')
-	level_data.erase('enemies_from_above_last_turn')
+	#level_data.erase('players')
+	#level_data.erase('player_scenes')
+	#level_data.erase('enemies')
+	#level_data.erase('enemy_scenes')
+	#level_data.erase('civilians')
+	#level_data.erase('civilian_scenes')
+	#level_data.erase('max_enemies')
+	#level_data.erase('enemies_from_below')
+	#level_data.erase('enemies_from_below_first_turn')
+	#level_data.erase('enemies_from_below_last_turn')
+	#level_data.erase('enemies_from_above')
+	#level_data.erase('enemies_from_above_first_turn')
+	#level_data.erase('enemies_from_above_last_turn')
+	var proper_level_data = {
+		'scene': level_data.scene,
+		'level': level_data.level,
+		'level_type': level_data.level_type,
+		'level_events': level_data.level_events,
+		'tiles': level_data.tiles,
+		'tiles_assets': level_data.tiles_assets,
+		'spawn_player_coords': level_data.spawn_player_coords,
+		'spawn_enemy_coords': level_data.spawn_enemy_coords,
+		'spawn_civilian_coords': level_data.spawn_civilian_coords
+	}
 	
-	var prefix = '-' + str(level_data.level) + '-' + str(level_data.level_type) + '->'
+	var prefix = '-' + str(proper_level_data.level) + '-' + str(proper_level_data.level_type) + '->'
 	content += '\n' + str(index) + prefix + 'START\n'
 	# make it pretty
-	#content += JSON.stringify(level_data, '\t')
-	content += str(level_data)
+	#content += JSON.stringify(proper_level_data, '\t')
+	content += str(proper_level_data)
 	content += '\n' + str(index) + prefix + 'STOP\n'
 	
 	file.store_string(content)

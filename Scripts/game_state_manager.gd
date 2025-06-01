@@ -727,7 +727,7 @@ func recalculate_enemies_order() -> void:
 
    
 func get_player_stats_by_id(id: PlayerType) -> PlayerStats:
-	return players_grid_container.get_children().filter(func(child): return child.player.id == id).front() as PlayerStats
+	return players_grid_container.get_children().filter(func(child): return child.player and child.player.id == id).front() as PlayerStats
 
 
 func set_player_texture_button_state(avatar_texture_button: TextureButton, is_focused: bool) -> void:
@@ -1152,7 +1152,7 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 
 
 func _on_player_health_changed(target_player: Player):
-	var player_stats = players_grid_container.get_children().filter(func(child): return child.player.id == target_player.id).front() as PlayerStats
+	var player_stats = get_player_stats_by_id(target_player.id)
 	player_stats.update_health()
 
 

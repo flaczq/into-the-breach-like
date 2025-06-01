@@ -15,3 +15,7 @@
 4-1-1->START
 { "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0], "tiles": "GGGGGMMMGGPPPPPMWPPHHPPWWPPPPPPWWPPPPPGGMPHHPPGGMPPPPPPGMMMPPPPG", "tiles_assets": "TTTT00MM000000000000000000000000000000000000000TM000000TMM00000T", "spawn_player_coords": [{ "x": 4, "y": 2 }, { "x": 5, "y": 2 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }], "spawn_enemy_coords": [{ "x": 4, "y": 7 }, { "x": 5, "y": 7 }, { "x": 6, "y": 7 }], "spawn_civilian_coords": [] }
 4-1-1->STOP
+
+5-1-1->START
+{ "scene": 2, "level": 1, "level_type": 1, "level_events": [0, 0], "tiles": "MGGPPGMMMTPPPTTMMTPPPPTTWPPPPPPGWPPPPPPPWPPPPPPPMTPPPPPGMGGPPPGG", "tiles_assets": "MT000TMMMT000TTMM00000TT000000000000000000000000M000000TMTT000TT", "spawn_player_coords": [], "spawn_enemy_coords": [], "spawn_civilian_coords": [] }
+5-1-1->STOP

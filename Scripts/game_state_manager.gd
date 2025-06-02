@@ -16,7 +16,9 @@ class_name GameStateManager
 @onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel'
 @onready var action_1_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
+@onready var action_1_label = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton/Action1Label'
 @onready var action_2_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton'
+@onready var action_2_label = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Label'
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
@@ -106,6 +108,8 @@ func init_game_state() -> void:
 	on_button_disabled(action_1_texture_button, true)
 	on_button_disabled(action_2_texture_button, true)
 	on_button_disabled(undo_texture_button, true)
+	action_1_texture_button.hide()
+	action_2_texture_button.hide()
 	panel_full_screen_container.hide()
 	turn_end_texture_rect.hide()
 	turn_end_label.text = ''
@@ -1014,6 +1018,8 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			
 			# reset undo when action was executed
 			undo = {}
+			action_1_texture_button.hide()
+			action_2_texture_button.hide()
 			on_button_disabled(action_1_texture_button, true)
 			on_button_disabled(action_2_texture_button, true)
 			on_button_disabled(undo_texture_button, true)
@@ -1119,8 +1125,13 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 		selected_player.reset_tiles()
 	
 	if is_clicked:
+		action_1_texture_button.show()
+		if player.action_2.id != Util.ActionType.NONE:
+			action_2_texture_button.show()
 		on_button_disabled(action_1_texture_button, false)
 		on_button_disabled(action_2_texture_button, false)
+		action_1_label.text = player.action_1.action_name
+		action_2_label.text = player.action_2.action_name
 		
 		selected_player = player
 		selected_player.toggle_health_bar(true)
@@ -1134,8 +1145,12 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 			#for tile_for_action in tiles_for_action:
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
+		action_1_texture_button.hide()
+		action_2_texture_button.hide()
 		on_button_disabled(action_1_texture_button, true)
 		on_button_disabled(action_2_texture_button, true)
+		action_1_label.text = 'Action 1'
+		action_2_label.text = 'Action 2'
 		
 		selected_player.toggle_health_bar(false)
 		selected_player = null

@@ -21,7 +21,7 @@ class_name Menu
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
 # FIXME change when steam page is up
-const STEAM_APP_ID = 1903340; # Clair_Obscur_Expedition_33
+const STEAM_APP_ID = 480; # deprecated
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 

@@ -36,5 +36,5 @@ locale/translations=PackedStringArray("res://I18n/text.en.translation")
 
 [steam]
 
-initialization/app_id=1903340
+initialization/app_id=480
 initialization/embed_callbacks=true

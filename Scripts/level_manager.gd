@@ -59,7 +59,7 @@ func select_random_level_data(file_content: String, level: int, level_type: Leve
 	
 	var random_index = indices_range.pick_random()
 	Global.played_maps_ids.push_back(random_index)
-	print('selected level: ' + str(random_index) + prefix)
+	print('selected level: ' + str(random_index) + prefix.substr(0, prefix.length() - 2))
 	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()
 
 

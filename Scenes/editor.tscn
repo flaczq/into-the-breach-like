@@ -272,6 +272,16 @@ disabled = true
 text = "LOAD"
 flat = false
 
+[node name="CheckMapButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer"]
+layout_mode = 2
+disabled = true
+text = "CHECK MAP"
+
+[node name="CheckAssetsButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer"]
+layout_mode = 2
+disabled = true
+text = "CHECK ASSETS"
+
 [node name="HSeparator" type="HSeparator" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer"]
 layout_mode = 2
 
@@ -548,6 +558,8 @@ vertical_alignment = 1
 [connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DeleteButton" to="." method="_on_delete_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="about_to_popup" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/LoadMenuButton" to="." method="_on_load_menu_button_about_to_popup"]
+[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckMapButton" to="." method="_on_check_map_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckAssetsButton" to="." method="_on_check_assets_button_pressed"]
 [connection signal="color_changed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/TilesContainer/ColorPickerButton" to="." method="_on_color_picker_button_color_changed"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" to="GameStateManager" method="_on_action_1_texture_button_toggled"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton" to="GameStateManager" method="_on_action_2_texture_button_toggled"]

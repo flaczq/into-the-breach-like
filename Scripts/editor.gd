@@ -18,6 +18,8 @@ extends Util
 @onready var delete_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DeleteButton
 @onready var save_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SaveButton
 @onready var load_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/LoadMenuButton
+@onready var check_map_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckMapButton
+@onready var check_assets_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckAssetsButton
 @onready var maps_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/MapsMenuButton
 @onready var tiles_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/TilesContainer/TilesMenuButton
 @onready var assets_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/AssetsMenuButton
@@ -142,6 +144,8 @@ func init() -> void:
 	delete_button.set_disabled(true)
 	save_button.set_disabled(true)
 	load_menu_button.set_disabled(false)
+	check_map_button.set_disabled(false)
+	check_assets_button.set_disabled(true)
 	maps_menu_button.set_disabled(false)
 	tiles_menu_button.set_disabled(true)
 	assets_menu_button.set_disabled(true)
@@ -229,6 +233,8 @@ func _on_play_button_toggled(toggled_on: bool) -> void:
 	delete_button.set_disabled(toggled_on)
 	save_button.set_disabled(toggled_on)
 	load_menu_button.set_disabled(toggled_on)
+	check_map_button.set_disabled(toggled_on)
+	check_assets_button.set_disabled(toggled_on)
 	tiles_menu_button.set_disabled(toggled_on)
 	assets_menu_button.set_disabled(toggled_on)
 	players_menu_button.set_disabled(toggled_on)
@@ -389,6 +395,37 @@ func _on_load_id_pressed(id: int) -> void:
 			var spawn_indicator = assets.filter(func(asset): return asset.is_in_group('INDICATORS')).front().duplicate()
 			spawn_indicator.show()
 			tile.add_child(spawn_indicator)
+
+
+func _on_check_map_button_pressed() -> void:
+	var clipboard_text = DisplayServer.clipboard_get()
+	if clipboard_text and clipboard_text.length() == 64:
+		_on_reset_button_pressed()
+		check_assets_button.set_disabled(false)
+		
+		# hardcoded only 8x8 map
+		_on_maps_id_pressed(2)
+		
+		for tile in map.tiles:
+			var index = map.get_side_dimension() * (tile.coords.x - 1) + (tile.coords.y - 1)
+			var tile_type = map.convert_tile_type_initial_to_enum(clipboard_text[index])
+			var color = map.get_color_by_tile_type(tile_type)
+			tile.tile_type = tile_type
+			tile.model_material.albedo_color = color
+
+
+func _on_check_assets_button_pressed() -> void:
+	var clipboard_text = DisplayServer.clipboard_get()
+	if clipboard_text and clipboard_text.length() == 64:
+		for tile in map.tiles:
+			var index = map.get_side_dimension() * (tile.coords.x - 1) + (tile.coords.y - 1)
+			var asset_filename = map.convert_asset_initial_to_filename(clipboard_text[index])
+			if asset_filename:
+				var asset = assets.filter(func(asset): return asset.name == asset_filename).front().duplicate()
+				asset.set_meta('tile', tile)
+				asset.show()
+				tile.add_child(asset)
+				tile.models.asset = asset
 
 
 func _on_maps_id_pressed(id: int) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://cygwqk0c02vjo"]
+[gd_scene load_steps=36 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" uid="uid://dlenupugd1h7n" path="res://Scripts/main.gd" id="1_h8ron"]
 [ext_resource type="Script" uid="uid://cyydhyrfheu45" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://c3pe6m0m8tc5y" path="res://Scenes/player_stats.tscn" id="24_3qie4"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="24_k063w"]
 [ext_resource type="Texture2D" uid="uid://c1j8oguuv8xfv" path="res://Assets/penzilla.vector-icon-pack/Icon_Question.png" id="24_w510i"]
+[ext_resource type="PackedScene" uid="uid://du8nd6q2jlyde" path="res://Scenes/action_tooltip.tscn" id="26_1w6v2"]
 
 [sub_resource type="Environment" id="Environment_54ekw"]
 background_mode = 3
@@ -289,6 +290,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
+[node name="Action1Tooltip" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" instance=ExtResource("26_1w6v2")]
+visible = false
+
 [node name="Action2TextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer"]
 visible = false
 layout_mode = 2
@@ -316,6 +320,8 @@ text = "ACTION 2"
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
+
+[node name="Action2Tooltip" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton" instance=ExtResource("26_1w6v2")]
 
 [node name="PanelFullScreenContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 15
@@ -379,6 +385,8 @@ vertical_alignment = 1
 [connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/PointsTextureButton" to="GameStateManager" method="_on_points_texture_button_up"]
 [connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_down"]
 [connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/OrderTextureButton" to="GameStateManager" method="_on_order_texture_button_up"]
+[connection signal="mouse_entered" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" to="GameStateManager" method="_on_action_1_texture_button_mouse_entered"]
+[connection signal="mouse_exited" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" to="GameStateManager" method="_on_action_1_texture_button_mouse_exited"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton" to="GameStateManager" method="_on_action_1_texture_button_toggled"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton" to="GameStateManager" method="_on_action_2_texture_button_toggled"]
 [connection signal="gui_input" from="CanvasLayer/PanelFullScreenContainer/LevelEndPopup" to="GameStateManager" method="_on_level_end_popup_gui_input"]

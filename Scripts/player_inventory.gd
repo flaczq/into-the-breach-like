@@ -22,7 +22,7 @@ var clicked_item_id: Util.ItemType = Util.ItemType.NONE
 var is_action_tooltip_clicked: bool = false
 
 
-func init(new_player: Player) -> void:
+func init(new_player: Player, show_actions: bool = false) -> void:
 	#texture_rect.scale = Vector2(0.75, 0.75)
 	
 	player = new_player
@@ -35,7 +35,7 @@ func init(new_player: Player) -> void:
 	
 	update_stats()
 	
-	action_tooltip.init(player)
+	action_tooltip.init(player, show_actions)
 
 
 func update_stats() -> void:
@@ -150,12 +150,7 @@ func _on_actions_texture_button_mouse_entered():
 	
 	is_action_tooltip_clicked = false
 	# hardcoded
-	var action_tooltip_position
-	if get_viewport().get_size().x - actions_texture_button.get_global_mouse_position().x < 450:
-		action_tooltip_position = Vector2(-300, 10)
-	else:
-		action_tooltip_position = Vector2(10, 10)
-	action_tooltip.set_position(actions_texture_button.get_global_mouse_position() + action_tooltip_position)
+	action_tooltip.set_position(actions_texture_button.get_global_position() + Vector2(-140, 65))
 	action_tooltip.show()
 
 

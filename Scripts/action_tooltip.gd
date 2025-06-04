@@ -18,7 +18,7 @@ var clicked_action_id: Util.ActionType = Util.ActionType.NONE
 var player: Player
 
 
-func init(new_player: Player) -> void:
+func init(new_player: Player, show_actions: bool = false) -> void:
 	hide()
 	change_label.hide()
 	
@@ -31,9 +31,8 @@ func init(new_player: Player) -> void:
 	if player.action_2.id == Util.ActionType.NONE:
 		action_2h_box_container.hide()
 	
-	# player selection screen
-	# FIXME ładniej
-	if Global.selected_players.size() < 3:
+	# player selection screen and main
+	if not show_actions:
 		action_1_texture_button.set_disabled(true)
 		action_2_texture_button.set_disabled(true)
 		bottom_v_box_container.hide()

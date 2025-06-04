@@ -17,8 +17,10 @@ class_name GameStateManager
 @onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel'
 @onready var action_1_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
 @onready var action_1_label = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton/Action1Label'
+@onready var action_1_tooltip: ActionTooltip = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton/Action1Tooltip'
 @onready var action_2_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton'
 @onready var action_2_label = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Label'
+@onready var action_2_tooltip: ActionTooltip = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Tooltip'
 @onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
 @onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
 @onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
@@ -1125,23 +1127,24 @@ func _on_player_clicked(player: Player, is_clicked: bool) -> void:
 		selected_player.reset_tiles()
 	
 	if is_clicked:
-		action_1_texture_button.show()
-		if player.action_2.id != Util.ActionType.NONE:
-			action_2_texture_button.show()
-		on_button_disabled(action_1_texture_button, false)
-		on_button_disabled(action_2_texture_button, false)
-		action_1_label.text = player.action_1.action_name
-		action_2_label.text = player.action_2.action_name
-		
 		selected_player = player
 		selected_player.toggle_health_bar(true)
 		
-		if player.can_move():
-			var tiles_for_movement = calculate_tiles_for_movement(is_clicked, player)
+		action_1_tooltip.init(selected_player)
+		action_1_texture_button.show()
+		if selected_player.action_2.id != Util.ActionType.NONE:
+			action_2_texture_button.show()
+		on_button_disabled(action_1_texture_button, false)
+		on_button_disabled(action_2_texture_button, false)
+		action_1_label.text = selected_player.action_1.action_name
+		action_2_label.text = selected_player.action_2.action_name
+		
+		if selected_player.can_move():
+			var tiles_for_movement = calculate_tiles_for_movement(is_clicked, selected_player)
 			for tile_for_movement in tiles_for_movement:
 				tile_for_movement.toggle_player_clicked(is_clicked)
-		#elif player.current_phase == PhaseType.ACTION:
-			#var tiles_for_action = calculate_tiles_for_action(is_clicked, player)
+		#elif selected_player.current_phase == PhaseType.ACTION:
+			#var tiles_for_action = calculate_tiles_for_action(is_clicked, selected_player)
 			#for tile_for_action in tiles_for_action:
 				#tile_for_action.toggle_player_clicked(is_clicked)
 	else:
@@ -1349,12 +1352,40 @@ func _on_end_turn_texture_button_pressed() -> void:
 	end_turn()
 
 
+func _on_action_1_texture_button_mouse_entered() -> void:
+	action_2_tooltip.hide()
+
+	# hardcoded
+	action_1_tooltip.set_position(action_1_texture_button.get_global_position() + Vector2(-80, -90))
+	action_1_tooltip.show()
+
+
+func _on_action_1_texture_button_mouse_exited() -> void:
+	action_1_tooltip.hide()
+
+
 func _on_action_1_texture_button_toggled(toggled_on: bool) -> void:
 	on_actions_button_toggled(toggled_on)
+	action_1_tooltip.hide()
+	action_2_texture_button.set_pressed_no_signal(false)
+
+
+func _on_action_2_texture_button_mouse_entered() -> void:
+	action_1_tooltip.hide()
+
+	# hardcoded
+	action_2_tooltip.set_position(action_2_texture_button.get_global_mouse_position() + Vector2(-300, -100))
+	action_2_tooltip.show()
+
+
+func _on_action_2_texture_button_mouse_exited() -> void:
+	action_2_tooltip.hide()
 
 
 func _on_action_2_texture_button_toggled(toggled_on: bool) -> void:
 	on_actions_button_toggled(toggled_on)
+	action_2_tooltip.hide()
+	action_1_texture_button.set_pressed_no_signal(false)
 
 
 func _on_undo_texture_button_pressed() -> void:

@@ -1,8 +1,11 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://bl431255d3vtg"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://bl431255d3vtg"]
 
 [ext_resource type="SystemFont" uid="uid://bxw7laij0iht8" path="res://Other/luckiest_font.tres" id="1_rjfij"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vxr55"]
+
+[sub_resource type="SystemFont" id="SystemFont_eltm6"]
+font_names = PackedStringArray("Acme")
 
 [sub_resource type="SystemFont" id="SystemFont_d183x"]
 font_names = PackedStringArray("Acme")
@@ -44,6 +47,10 @@ LabelMoney/base_type = &"Label"
 LabelMoney/colors/font_color = Color(0.890196, 0.560784, 0.231373, 1)
 LabelMoney/font_sizes/font_size = 30
 PanelContainer/styles/panel = SubResource("StyleBoxEmpty_vxr55")
+TextEdit/colors/font_color = Color(1, 1, 1, 1)
+TextEdit/colors/font_outline_color = Color(0.180392, 0.180392, 0.180392, 1)
+TextEdit/constants/outline_size = 6
+TextEdit/fonts/font = SubResource("SystemFont_eltm6")
 TooltipLabel/colors/font_color = Color(1, 1, 1, 1)
 TooltipLabel/colors/font_outline_color = Color(0.180392, 0.180392, 0.180392, 1)
 TooltipLabel/constants/outline_size = 6

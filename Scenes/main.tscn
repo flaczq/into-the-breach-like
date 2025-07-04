@@ -322,6 +322,7 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="Action2Tooltip" parent="CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton" instance=ExtResource("26_1w6v2")]
+visible = false
 
 [node name="PanelFullScreenContainer" type="PanelContainer" parent="CanvasLayer"]
 anchors_preset = 15

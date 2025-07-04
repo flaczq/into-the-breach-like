@@ -50,7 +50,7 @@ func init_ui() -> void:
 	for player in Global.selected_players as Array[Player]:
 		assert(player.id != PlayerType.NONE, 'Wrong selected player id')
 		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
-		player_inventory.init(player)
+		player_inventory.init(player, true)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
 		player_inventory.connect('player_inventory_mouse_exited', _on_player_inventory_mouse_exited)
 		player_inventory.connect('player_inventory_toggled', _on_player_inventory_toggled)

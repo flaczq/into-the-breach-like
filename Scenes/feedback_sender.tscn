@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://chxcncbco57vg"]
+
+[ext_resource type="Script" uid="uid://pywhwr515yto" path="res://Scripts/feedback_sender.gd" id="1_bhfpm"]
+
+[node name="FeedbackSender" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_bhfpm")
+
+[node name="FeedbackVBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 181.0
+
+[node name="FeedbackTextEdit" type="TextEdit" parent="FeedbackVBoxContainer"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+placeholder_text = "Please, give Your honest
+(especially negative!) feedback.
+Thanks!"
+wrap_mode = 1
+
+[node name="SendFeedbackButton" type="Button" parent="FeedbackVBoxContainer"]
+layout_mode = 2
+tooltip_text = "Send feedback through Google Forms, no other data is collected"
+disabled = true
+text = "SEND FEEDBACK"

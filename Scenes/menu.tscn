@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=14 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" uid="uid://dl7a25jomg7lo" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
 [ext_resource type="PackedScene" uid="uid://ul8a33rsc5o4" path="res://Scenes/editor.tscn" id="3_kwi8q"]
 [ext_resource type="PackedScene" uid="uid://1noimyb1f3xg" path="res://Scenes/cutscenes.tscn" id="4_om7ip"]
 [ext_resource type="Texture2D" uid="uid://iu12lg4nasjg" path="res://Assets/aaaps/background_squares.png" id="5_ken3e"]
+[ext_resource type="PackedScene" uid="uid://chxcncbco57vg" path="res://Scenes/feedback_sender.tscn" id="6_q3rjx"]
 [ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="7_5gw6c"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="7_evuth"]
 
@@ -69,21 +70,9 @@ layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_e8re6")
 text = "MAIN_MENU"
 
-[node name="RightTopContainer" type="VBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+[node name="FeedbackSender" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer" instance=ExtResource("6_q3rjx")]
+custom_minimum_size = Vector2(300, 181)
 layout_mode = 2
-
-[node name="FeedbackTextEdit" type="TextEdit" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
-custom_minimum_size = Vector2(300, 150)
-layout_mode = 2
-placeholder_text = "Please, give Your honest
-(especially negative!) feedback.
-Thanks!"
-wrap_mode = 1
-
-[node name="SendFeedbackButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
-layout_mode = 2
-disabled = true
-text = "SEND FEEDBACK"
 
 [node name="RightBottomContainer" type="HBoxContainer" parent="CanvasLayer/PanelRightContainer/RightMarginContainer"]
 layout_mode = 2
@@ -466,8 +455,6 @@ vertical_alignment = 1
 uppercase = true
 
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_texture_button_pressed"]
-[connection signal="text_changed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/FeedbackTextEdit" to="." method="_on_feedback_text_edit_text_changed"]
-[connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/SendFeedbackButton" to="." method="_on_send_feedback_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton" to="." method="_on_editor_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton" to="." method="_on_tutorial_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/StartTextureButton" to="." method="_on_start_texture_button_pressed"]

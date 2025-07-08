@@ -18,9 +18,7 @@ class_name Menu
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
 @onready var next_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton
 @onready var main_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton
-@onready var right_top_container = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer
-@onready var feedback_text_edit = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/FeedbackTextEdit
-@onready var send_feedback_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/SendFeedbackButton
+@onready var feedback_sender: FeedbackSender = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/FeedbackSender
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
 # FIXME change when steam page is up
@@ -50,11 +48,10 @@ func _ready() -> void:
 	aa_check_box.set_pressed(Global.antialiasing)
 	_on_aa_check_box_toggled(Global.antialiasing)
 	
-	on_button_disabled(send_feedback_button, true)
 	on_button_disabled(next_texture_button, true)
 	
 	main_menu_button.hide()
-	right_top_container.show()
+	feedback_sender.show()
 	main_menu_container.show()
 	if Global.build_mode == BuildMode.DEBUG:
 		editor_texture_button.show()
@@ -80,7 +77,7 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	last_screen = new_last_screen
 	
 	main_menu_button.hide()
-	right_top_container.hide()
+	feedback_sender.hide()
 	main_menu_container.hide()
 	in_game_menu_container.show()
 	options_container.hide()
@@ -118,7 +115,7 @@ func show_players_selection() -> void:
 		#player_texture_button.modulate.a = 0.5
 	
 	main_menu_button.show()
-	right_top_container.hide()
+	feedback_sender.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.hide()
@@ -204,7 +201,7 @@ func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
 
 func _on_options_texture_button_pressed() -> void:
 	main_menu_button.hide()
-	right_top_container.hide()
+	feedback_sender.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.show()
@@ -245,13 +242,12 @@ func _on_main_menu_texture_button_pressed() -> void:
 	Global.engine_mode = EngineMode.MENU
 	
 	main_menu_button.hide()
-	right_top_container.show()
+	feedback_sender.show()
 	main_menu_container.show()
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
 	
-	on_button_disabled(send_feedback_button, true)
 	on_button_disabled(next_texture_button, true)
 	
 	toggle_visibility(true)
@@ -260,26 +256,16 @@ func _on_main_menu_texture_button_pressed() -> void:
 		child_to_queue.queue_free()
 
 
-func _on_feedback_text_edit_text_changed() -> void:
-	on_button_disabled(send_feedback_button, not feedback_text_edit.text)
-
-
-func _on_send_feedback_button_pressed() -> void:
-	print('Sending feedback: ' + feedback_text_edit.text)
-	feedback_text_edit.clear()
-	on_button_disabled(send_feedback_button, true)
-
-
 func _on_back_texture_button_pressed() -> void:
 	main_menu_button.hide()
 	
 	if get_node_or_null('/root/Main'):
 		# in game
-		right_top_container.hide()
+		feedback_sender.hide()
 		main_menu_container.hide()
 		in_game_menu_container.show()
 	else:
-		right_top_container.show()
+		feedback_sender.show()
 		main_menu_container.show()
 		in_game_menu_container.hide()
 	

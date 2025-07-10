@@ -8,6 +8,7 @@ class_name GameStateManager
 @export var civilian_scenes: Array[PackedScene] = []
 @export var progress_scene: PackedScene
 
+@onready var level_timer = $'../LevelTimer'
 @onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
 @onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
@@ -46,6 +47,7 @@ var current_turn: int
 var enemies_killed: int
 var selected_player: Player
 var undo: Dictionary
+var level_time_start: int
 
 
 func _ready() -> void:
@@ -54,6 +56,7 @@ func _ready() -> void:
 	max_levels = 9
 	
 	level_manager_script.connect('init_enemy_event', _on_init_enemy)
+	level_timer.connect('timeout', _on_level_timer_timeout)
 	
 	if Global.build_mode == BuildMode.DEBUG:
 		debug_info_label.show()
@@ -102,9 +105,10 @@ func init_game_state() -> void:
 	enemies_killed = 0
 	selected_player = null
 	undo = {}
+	level_time_start = 0
 	
 	# UI
-	reset_ui()
+	update_ui()
 	# FIXME proper disabled icons
 	on_button_disabled(end_turn_texture_button, true)
 	on_button_disabled(action_1_texture_button, true)
@@ -358,9 +362,7 @@ func end_turn() -> void:
 func next_turn() -> void:
 	current_turn += 1
 	
-	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
-	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info_label.text += 'MONEY: ' + str(Global.money)
+	update_ui()
 	
 	for player in players:
 		# hardcoded
@@ -415,7 +417,7 @@ func level_won() -> void:
 	#money_for_level = floori(sqrt(points_for_level)) - 3 * dead_players_size
 	var money_for_level = 0
 	
-	level_manager_script.mark_objectives(self)
+	level_manager_script.check_objectives(self)
 	for objective in level_data.objectives:
 		if objective.done:
 			money_for_level += objective.money
@@ -426,6 +428,7 @@ func level_won() -> void:
 	
 	# TODO
 	if level < max_levels and not Global.editor:
+		Global.level_time = level_time_start
 		level_end_label.text = 'LEVEL WON'
 		level_end_popup.show()
 		panel_full_screen_container.show()
@@ -467,8 +470,11 @@ func show_turn_end_texture_rect(whose_turn: String) -> void:
 		await get_tree().create_timer(0.5).timeout
 
 
-func reset_ui():
-	game_info_label.text = 'LEVEL: ' + str(level) + '\n'
+func update_ui():
+	var seconds = level_time_start % 60
+	var minutes = (level_time_start / 60) % 60
+	game_info_label.text = 'TIME: ' + ('%02d:%02d' % [minutes, seconds]) + '\n'
+	game_info_label.text += 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
 	game_info_label.text += 'MONEY: ' + str(Global.money)
 	tile_info_label.text = ''
@@ -915,6 +921,12 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 			else:
 				selected_player.clear_arrows()
 				selected_player.clear_action_indicators()
+
+
+func _on_level_timer_timeout() -> void:
+	level_time_start += 1
+	
+	update_ui()
 
 
 func _on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
@@ -1478,7 +1490,7 @@ func _on_level_end_popup_gui_input(event: InputEvent) -> void:
 			var flying_tile_tween = create_tween()
 			flying_tile_tween.tween_property(alive_player, 'position:y', 9, 0.5)
 			await flying_tile_tween.finished
-	
+		
 		for alive_enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive):
 			var flying_tile_tween = create_tween()
 			flying_tile_tween.tween_property(alive_enemy, 'position:y', 9, 0.5)

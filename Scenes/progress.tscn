@@ -71,9 +71,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -363.5
+offset_left = -161.0
 offset_top = -155.5
-offset_right = 363.5
+offset_right = 161.0
 offset_bottom = 155.5
 grow_horizontal = 2
 grow_vertical = 2
@@ -175,6 +175,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -322,6 +323,46 @@ theme_type_variation = &"LabelBig"
 text = "NEXT"
 vertical_alignment = 1
 uppercase = true
+
+[node name="SummaryContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="SummaryLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SummaryContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+theme_type_variation = &"LabelBig"
+text = "LEVEL SUMMARY"
+
+[node name="SummaryTimeContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/SummaryContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="SummaryTimeLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryTimeContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "TIME:"
+
+[node name="SummaryTimeValueLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryTimeContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "0:00"
+
+[node name="SummaryMoneyContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/SummaryContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="SummaryMoneyLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryMoneyContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "MONEY:"
+
+[node name="SummaryMoneyValueLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryMoneyContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_type_variation = &"LabelMoney"
+text = "0$"
 
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]

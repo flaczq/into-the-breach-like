@@ -15,6 +15,8 @@ extends Util
 @onready var inventory: Inventory = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_texture_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
+@onready var summary_time_value_label = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryTimeContainer/SummaryTimeValueLabel
+@onready var summary_money_value_label = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryMoneyContainer/SummaryMoneyValueLabel
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
@@ -37,8 +39,8 @@ func _ready() -> void:
 	on_button_disabled(levels_next_texture_button, true)
 	inventory_label.text = 'INVENTORY'
 	
-	update_labels()
 	init_ui()
+	update_ui()
 
 
 func init_ui() -> void:
@@ -72,8 +74,10 @@ func init_ui() -> void:
 	inventory.connect('item_clicked', _on_inventory_item_clicked)
 
 
-func update_labels() -> void:
+func update_ui() -> void:
 	shop_label.text = 'Welcome to the SHOP\nMoney: ' + str(Global.money)
+	summary_time_value_label.text = str(Global.money)
+	summary_money_value_label.text = str(Global.level_time)
 
 
 func show_back() -> void:
@@ -127,7 +131,7 @@ func _on_shop_buy_texture_button_pressed() -> void:
 	Global.selected_items.push_back(shop_clicked_item)
 	
 	Global.money -= shop_clicked_item.cost
-	update_labels()
+	update_ui()
 	
 	shop.buy_item(shop_clicked_item_id)
 	inventory.add_item(shop_clicked_item)

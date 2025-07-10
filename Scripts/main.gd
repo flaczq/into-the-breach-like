@@ -51,7 +51,7 @@ func _input(event: InputEvent) -> void:
 		# UNCLICK PLAYER
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 			key_pressed = true
-			game_state_manager.reset_ui()
+			game_state_manager.update_ui()
 			
 			for player in game_state_manager.players:
 				#player.is_clicked = false
@@ -84,6 +84,8 @@ func _input(event: InputEvent) -> void:
 
 func show_back() -> void:
 	Global.engine_mode = EngineMode.GAME
+
+	game_state_manager.level_timer.start()
 	
 	adjust_camera_position()
 	toggle_visibility(true)
@@ -103,5 +105,7 @@ func adjust_camera_position():
 
 func _on_settings_texture_button_pressed() -> void:
 	toggle_visibility(false)
+	
+	game_state_manager.level_timer.stop()
 	
 	menu.show_in_game_menu(self)

@@ -90,6 +90,9 @@ enemy_scenes = Array[PackedScene]([ExtResource("17_hdgpr"), ExtResource("9_aubv4
 civilian_scenes = Array[PackedScene]([ExtResource("18_v5xqc"), ExtResource("10_wdovn")])
 progress_scene = ExtResource("11_4i00g")
 
+[node name="LevelTimer" type="Timer" parent="."]
+autostart = true
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="EditorLabel" type="Label" parent="CanvasLayer"]
@@ -163,9 +166,10 @@ theme_override_constants/separation = 20
 
 [node name="GameInfoLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2
-text = "LEVEL: 0
+text = "TIME: 0:00
+LEVEL: 0
 TURN: 0
-POINTS: 0"
+MONEY: 0"
 
 [node name="ObjectivesLabel" type="Label" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer"]
 layout_mode = 2

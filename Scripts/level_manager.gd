@@ -439,7 +439,7 @@ func check_if_level_won(game_state_manager: GameStateManager) -> bool:
 	return false
 
 
-func mark_objectives(game_state_manager: GameStateManager) -> void:
+func check_objectives(game_state_manager: GameStateManager) -> void:
 	var map = game_state_manager.map
 	var players = game_state_manager.players
 	var enemies = game_state_manager.enemies

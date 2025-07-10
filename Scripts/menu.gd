@@ -18,7 +18,6 @@ class_name Menu
 @onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
 @onready var next_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton
 @onready var main_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton
-@onready var feedback_sender: FeedbackSender = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/FeedbackSender
 @onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
 # FIXME change when steam page is up
@@ -51,7 +50,6 @@ func _ready() -> void:
 	on_button_disabled(next_texture_button, true)
 	
 	main_menu_button.hide()
-	feedback_sender.show()
 	main_menu_container.show()
 	if Global.build_mode == BuildMode.DEBUG:
 		editor_texture_button.show()
@@ -77,7 +75,6 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	last_screen = new_last_screen
 	
 	main_menu_button.hide()
-	feedback_sender.hide()
 	main_menu_container.hide()
 	in_game_menu_container.show()
 	options_container.hide()
@@ -115,7 +112,6 @@ func show_players_selection() -> void:
 		#player_texture_button.modulate.a = 0.5
 	
 	main_menu_button.show()
-	feedback_sender.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.hide()
@@ -201,7 +197,6 @@ func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
 
 func _on_options_texture_button_pressed() -> void:
 	main_menu_button.hide()
-	feedback_sender.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.show()
@@ -242,7 +237,6 @@ func _on_main_menu_texture_button_pressed() -> void:
 	Global.engine_mode = EngineMode.MENU
 	
 	main_menu_button.hide()
-	feedback_sender.show()
 	main_menu_container.show()
 	in_game_menu_container.hide()
 	options_container.hide()
@@ -261,11 +255,9 @@ func _on_back_texture_button_pressed() -> void:
 	
 	if get_node_or_null('/root/Main'):
 		# in game
-		feedback_sender.hide()
 		main_menu_container.hide()
 		in_game_menu_container.show()
 	else:
-		feedback_sender.show()
 		main_menu_container.show()
 		in_game_menu_container.hide()
 	

@@ -41,7 +41,7 @@ func toggle_visibility(is_toggled: bool) -> void:
 		else:
 			hide()
 	
-	for child in get_children():
+	for child in get_children().filter(func (child): return child is not Timer):
 		if not child.is_in_group('WORLD_ENV'):
 			if is_toggled:
 				child.show()

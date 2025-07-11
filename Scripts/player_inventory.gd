@@ -103,15 +103,18 @@ func reset_items(unclick_item_id: bool = true) -> void:
 
 
 func _on_avatar_texture_button_mouse_entered() -> void:
-	player_inventory_mouse_entered.emit(player.id)
+	if player:
+		player_inventory_mouse_entered.emit(player.id)
 
 
 func _on_avatar_texture_button_mouse_exited() -> void:
-	player_inventory_mouse_exited.emit(player.id)
+	if player:
+		player_inventory_mouse_exited.emit(player.id)
 
 
 func _on_avatar_texture_button_toggled(toggled_on: bool) -> void:
-	player_inventory_toggled.emit(toggled_on, player.id)
+	if player:
+		player_inventory_toggled.emit(toggled_on, player.id)
 
 
 func _on_item_texture_button_pressed(item_texture_index: int) -> void:

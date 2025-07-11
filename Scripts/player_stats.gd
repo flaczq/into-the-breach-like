@@ -44,12 +44,15 @@ func update_move_distance() -> void:
 
 
 func _on_avatar_texture_button_mouse_entered() -> void:
-	player_stats_mouse_entered.emit(player.id)
+	if player:
+		player_stats_mouse_entered.emit(player.id)
 
 
 func _on_avatar_texture_button_mouse_exited() -> void:
-	player_stats_mouse_exited.emit(player.id)
+	if player:
+		player_stats_mouse_exited.emit(player.id)
 
 
 func _on_avatar_texture_button_toggled(toggled_on: bool) -> void:
-	player_stats_toggled.emit(toggled_on, player.id)
+	if player:
+		player_stats_toggled.emit(toggled_on, player.id)

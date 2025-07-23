@@ -60,4 +60,9 @@ func apply_to_player(target_player: Player, is_applied: bool = true) -> void:
 				target_player.can_fly = true
 			else:
 				target_player.can_fly = false
+		Util.ItemType.SWIMMING:
+			if is_applied:
+				target_player.can_swim = true
+			else:
+				target_player.can_swim = false
 		_: pass

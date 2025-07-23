@@ -364,6 +364,32 @@ size_flags_horizontal = 6
 theme_type_variation = &"LabelMoney"
 text = "0$"
 
+[node name="SummaryNextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/SummaryContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = SubResource("AtlasTexture_5j4yl")
+texture_pressed = SubResource("AtlasTexture_atmjk")
+texture_hover = SubResource("AtlasTexture_lvxsd")
+texture_disabled = SubResource("AtlasTexture_0cirs")
+
+[node name="SummaryNextLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryNextTextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.5
+offset_top = -15.5
+offset_right = 34.5
+offset_bottom = 19.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
+text = "NEXT"
+vertical_alignment = 1
+uppercase = true
+
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton" to="." method="_on_shop_buy_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton" to="." method="_on_shop_skip_texture_button_pressed"]

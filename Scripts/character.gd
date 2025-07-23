@@ -44,6 +44,7 @@ var action_2: ActionObject
 var action_direction: ActionDirection
 var passive_type: PassiveType
 var can_fly: bool
+var can_swim: bool
 
 
 func _ready() -> void:

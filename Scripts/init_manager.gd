@@ -176,6 +176,7 @@ var players_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': true,
 		'state_types': [] as Array[Util.StateType],
 		#'items_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
 		'textures': [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture] as Array[CompressedTexture2D],
@@ -195,6 +196,7 @@ var players_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': true,
+		'can_swim': true,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
@@ -212,6 +214,7 @@ var players_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': true,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [player_2_normal_texture, player_2_pressed_texture, player_2_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
@@ -229,6 +232,7 @@ var players_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_DOT,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': true,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
@@ -248,6 +252,7 @@ var enemies_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': false,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [] as Array[CompressedTexture2D],
 		'arrow_color': Util.ENEMY_TUTORIAL_ARROW_COLOR,
@@ -264,6 +269,7 @@ var enemies_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': false,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [] as Array[CompressedTexture2D],
 		'arrow_color': Util.ENEMY_1_ARROW_COLOR,
@@ -280,6 +286,7 @@ var enemies_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': false,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [] as Array[CompressedTexture2D],
 		'arrow_color': Util.ENEMY_2_ARROW_COLOR,
@@ -296,6 +303,7 @@ var enemies_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_DOT,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': false,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [] as Array[CompressedTexture2D],
 		'arrow_color': Util.ENEMY_3_ARROW_COLOR,
@@ -312,6 +320,7 @@ var enemies_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': false,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [] as Array[CompressedTexture2D],
 		'arrow_color': Util.ENEMY_4_ARROW_COLOR,
@@ -331,6 +340,7 @@ var civilians_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.NONE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': false,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [] as Array[CompressedTexture2D]
 	},
@@ -345,6 +355,7 @@ var civilians_data: Array[Dictionary] = [
 		'action_direction': Util.ActionDirection.NONE,
 		'passive_type': Util.PassiveType.NONE,
 		'can_fly': false,
+		'can_swim': false,
 		'state_types': [] as Array[Util.StateType],
 		'textures': [] as Array[CompressedTexture2D]
 	}
@@ -365,6 +376,7 @@ func init_tutorial_player() -> Player:
 	tutorial_player.action_direction = tutorial_player_data.action_direction
 	tutorial_player.passive_type = tutorial_player_data.passive_type
 	tutorial_player.can_fly = tutorial_player_data.can_fly
+	tutorial_player.can_swim = tutorial_player_data.can_swim
 	tutorial_player.state_types = tutorial_player_data.state_types.duplicate()
 	tutorial_player.textures = tutorial_player_data.textures.duplicate()
 	tutorial_player.item_1 = init_item(tutorial_player_data.item_1_id)
@@ -387,6 +399,7 @@ func init_playable_players() -> Array[Player]:
 		playable_player.action_direction = player_data.action_direction
 		playable_player.passive_type = player_data.passive_type
 		playable_player.can_fly = player_data.can_fly
+		playable_player.can_swim = player_data.can_swim
 		playable_player.state_types = player_data.state_types.duplicate()
 		playable_player.textures = player_data.textures.duplicate()
 		playable_player.item_1 = init_item(player_data.item_1_id)
@@ -408,6 +421,7 @@ func init_player(target_player: Player, id: Util.PlayerType) -> void:
 	target_player.action_direction = player_data.action_direction
 	target_player.passive_type = player_data.passive_type
 	target_player.can_fly = player_data.can_fly
+	target_player.can_swim = player_data.can_swim
 	target_player.state_types = player_data.state_types.duplicate()
 	target_player.textures = player_data.textures.duplicate()
 	target_player.item_1 = player_data.item_1
@@ -426,6 +440,7 @@ func init_enemy(target_enemy: Enemy, id: Util.EnemyType) -> void:
 	target_enemy.action_direction = enemy_data.action_direction
 	target_enemy.passive_type = enemy_data.passive_type
 	target_enemy.can_fly = enemy_data.can_fly
+	target_enemy.can_swim = enemy_data.can_swim
 	target_enemy.state_types = enemy_data.state_types.duplicate()
 	target_enemy.textures = enemy_data.textures.duplicate()
 	target_enemy.arrow_color = enemy_data.arrow_color
@@ -444,6 +459,7 @@ func init_civilian(target_civilian: Civilian, id: Util.CivilianType) -> void:
 	target_civilian.action_direction = civilian_data.action_direction
 	target_civilian.passive_type = civilian_data.passive_type
 	target_civilian.can_fly = civilian_data.can_fly
+	target_civilian.can_swim = civilian_data.can_swim
 	target_civilian.state_types = civilian_data.state_types.duplicate()
 	target_civilian.textures = civilian_data.textures.duplicate()
 

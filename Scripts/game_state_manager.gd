@@ -1260,8 +1260,13 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 				await target_character.get_killed()
 			else:
 				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-					target_character.state_types.push_back(StateType.MISSED_ACTION)
-					target_character.state_types.push_back(StateType.SLOWED_DOWN)
+					if not target_character.can_swim:
+						# pushed into a water and cannot swim = dead
+						await target_character.get_killed()
+					elif not target_character.can_fly:
+						# if in water, you cannot make action and can only move out of it by 1 tile
+						target_character.state_types.push_back(StateType.MISSED_ACTION)
+						target_character.state_types.push_back(StateType.SLOWED_DOWN)
 				
 				if target_character.tile == pushed_into_tile and target_character.is_in_group('ENEMIES'):
 					# enemy actually moved
@@ -1309,8 +1314,13 @@ func _on_character_action_pull_front(target_character: Character, action_damage:
 				await target_character.get_killed()
 			else:
 				if target_character.tile.health_type == TileHealthType.INDESTRUCTIBLE_WALKABLE:
-					target_character.state_types.push_back(StateType.MISSED_ACTION)
-					target_character.state_types.push_back(StateType.SLOWED_DOWN)
+					if not target_character.can_swim:
+						# pulled into a water and cannot swim = dead
+						await target_character.get_killed()
+					elif not target_character.can_fly:
+						# if in water, you cannot make action and can only move out of it by 1 tile
+						target_character.state_types.push_back(StateType.MISSED_ACTION)
+						target_character.state_types.push_back(StateType.SLOWED_DOWN)
 				
 				if target_character.tile == pulled_into_tile and target_character.is_in_group('ENEMIES'):
 					# enemy actually moved
@@ -1422,11 +1432,17 @@ func _on_undo_texture_button_pressed() -> void:
 func _on_points_texture_button_down() -> void:
 	for tile in map.tiles:
 		tile.toggle_text(true, str(tile.points))
+	
+	for alive_player in players.filter(func(player: Player): return player.is_alive):
+		_on_player_stats_mouse_entered(alive_player.id)
 
 
 func _on_points_texture_button_up() -> void:
 	for tile in map.tiles:
 		tile.toggle_text(false)
+	
+	for alive_player in players.filter(func(player: Player): return player.is_alive):
+		_on_player_stats_mouse_exited(alive_player.id)
 
 
 func _on_order_texture_button_down():

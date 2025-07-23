@@ -15,8 +15,10 @@ extends Util
 @onready var inventory: Inventory = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
 @onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_texture_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
+@onready var summary_container = $CanvasLayer/PanelCenterContainer/SummaryContainer
 @onready var summary_time_value_label = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryTimeContainer/SummaryTimeValueLabel
 @onready var summary_money_value_label = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryMoneyContainer/SummaryMoneyValueLabel
+@onready var summary_next_texture_button = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryNextTextureButton
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
@@ -25,14 +27,24 @@ var selected_level_type: LevelType = LevelType.NONE
 
 func _ready() -> void:
 	Global.engine_mode = EngineMode.MENU
-	Global.money = 5
+	Global.money = 0 # DEBUG
 	
-	if Global.money > 0:
-		upgrades_container.show()
-		levels_container.hide()
+	summary_next_texture_button.connect('pressed', _on_summary_next_texture_button_pressed)
+	
+	# after level end
+	if Global.played_maps_ids.is_empty():
+		if Global.money > 0:
+			upgrades_container.show()
+			levels_container.hide()
+			summary_container.hide()
+		else:
+			upgrades_container.hide()
+			levels_container.show()
+			summary_container.hide()
 	else:
 		upgrades_container.hide()
-		levels_container.show()
+		levels_container.hide()
+		summary_container.show()
 	
 	on_button_disabled(shop_buy_texture_button, true)
 	on_button_disabled(shop_skip_texture_button, false)
@@ -145,6 +157,7 @@ func _on_shop_buy_texture_button_pressed() -> void:
 func _on_shop_skip_texture_button_pressed() -> void:
 	upgrades_container.hide()
 	levels_container.show()
+	summary_container.hide()
 
 
 func _on_inventory_item_hovered(inventory_item_texture_index: int, item_id: ItemType, is_hovered: bool) -> void:
@@ -253,3 +266,9 @@ func _on_levels_next_texture_button_pressed() -> void:
 	game_state_manager.init_by_level_type(selected_level_type)
 	
 	queue_free()
+
+
+func _on_summary_next_texture_button_pressed() -> void:
+	upgrades_container.show()
+	levels_container.hide()
+	summary_container.hide()

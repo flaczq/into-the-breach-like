@@ -2,23 +2,23 @@ extends Util
 
 @export var item_container_scene: PackedScene
 
-@onready var menu: Menu = $/root/Menu
-@onready var game_state_manager: GameStateManager = $/root/Main/GameStateManager
-@onready var canvas_layer = $CanvasLayer
-@onready var upgrades_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer
-@onready var shop_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopLabel
-@onready var shop: Shop = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/Shop
-@onready var shop_buy_texture_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton
-@onready var shop_skip_texture_button = $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton
-@onready var inventory_label = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/InventoryLabel
-@onready var players_grid_container = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer
-@onready var inventory: Inventory = $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
-@onready var levels_container = $CanvasLayer/PanelCenterContainer/LevelsContainer
-@onready var levels_next_texture_button = $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
-@onready var summary_container = $CanvasLayer/PanelCenterContainer/SummaryContainer
-@onready var summary_time_value_label = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryTimeContainer/SummaryTimeValueLabel
-@onready var summary_money_value_label = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryMoneyContainer/SummaryMoneyValueLabel
-@onready var summary_next_texture_button = $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryNextTextureButton
+@onready var menu: Menu								= $/root/Menu
+@onready var game_state_manager: GameStateManager	= $/root/Main/GameStateManager
+@onready var canvas_layer							= $CanvasLayer
+@onready var upgrades_container						= $CanvasLayer/PanelCenterContainer/UpgradesContainer
+@onready var shop_label								= $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopLabel
+@onready var shop: Shop								= $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/Shop
+@onready var shop_buy_texture_button				= $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopBuyTextureButton
+@onready var shop_skip_texture_button				= $CanvasLayer/PanelCenterContainer/UpgradesContainer/ShopContainer/ShopButtonsHBoxContainer/ShopSkipTextureButton
+@onready var inventory_label						= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/InventoryLabel
+@onready var players_grid_container					= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer
+@onready var inventory: Inventory					= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
+@onready var levels_container						= $CanvasLayer/PanelCenterContainer/LevelsContainer
+@onready var levels_next_texture_button				= $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
+@onready var summary_container						= $CanvasLayer/PanelCenterContainer/SummaryContainer
+@onready var summary_time_value_label				= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryTimeContainer/SummaryTimeValueLabel
+@onready var summary_money_value_label				= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryMoneyContainer/SummaryMoneyValueLabel
+@onready var summary_next_texture_button			= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryNextTextureButton
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 

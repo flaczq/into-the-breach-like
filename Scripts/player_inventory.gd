@@ -7,19 +7,19 @@ signal player_inventory_mouse_exited(player_id: Util.PlayerType)
 signal player_inventory_toggled(toggled_on: bool, player_id: Util.PlayerType)
 signal item_clicked(item_texture_index: int, item_id: Util.ItemType, player_id: Util.PlayerType)
 
-@onready var texture_rect = $TextureRect
-@onready var avatar_texture_button = $TextureRect/AvatarTextureButton
-@onready var health_label = $TextureRect/HealthLabel
-@onready var move_distance_label = $TextureRect/MoveDistanceLabel
-@onready var item_1_texture_button = $TextureRect/ItemSlot1TextureButton/Item1TextureButton
-@onready var item_2_texture_button = $TextureRect/ItemSlot2TextureButton/Item2TextureButton
-@onready var actions_texture_button = $TextureRect/ActionsTextureButton
-@onready var action_tooltip: ActionTooltip = $TextureRect/ActionsTextureButton/ActionTooltipX
+@onready var texture_rect					= $TextureRect
+@onready var avatar_texture_button			= $TextureRect/AvatarTextureButton
+@onready var health_label					= $TextureRect/HealthLabel
+@onready var move_distance_label			= $TextureRect/MoveDistanceLabel
+@onready var item_1_texture_button			= $TextureRect/ItemSlot1TextureButton/Item1TextureButton
+@onready var item_2_texture_button			= $TextureRect/ItemSlot2TextureButton/Item2TextureButton
+@onready var actions_texture_button			= $TextureRect/ActionsTextureButton
+@onready var action_tooltip: ActionTooltip	= $TextureRect/ActionsTextureButton/ActionTooltipX
 
 var player: Player
 
-var clicked_item_id: Util.ItemType = Util.ItemType.NONE
-var is_action_tooltip_clicked: bool = false
+var clicked_item_id: Util.ItemType	= Util.ItemType.NONE
+var is_action_tooltip_clicked: bool	= false
 
 
 func init(new_player: Player, show_actions: bool = false) -> void:

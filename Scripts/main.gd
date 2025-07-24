@@ -1,8 +1,8 @@
 extends Util
 
-@onready var menu: Menu = $/root/Menu
-@onready var camera_3d: Camera3D = $Camera3D
-@onready var game_state_manager: GameStateManager = $GameStateManager
+@onready var menu: Menu 							= $/root/Menu
+@onready var camera_3d: Camera3D 					= $Camera3D
+@onready var game_state_manager: GameStateManager	= $GameStateManager
 
 var key_pressed: bool = false
 

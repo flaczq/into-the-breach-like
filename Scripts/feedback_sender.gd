@@ -2,8 +2,8 @@ extends Control
 
 class_name FeedbackSender
 
-@onready var feedback_text_edit = $FeedbackVBoxContainer/FeedbackTextEdit
-@onready var send_feedback_button = $FeedbackVBoxContainer/SendFeedbackButton
+@onready var feedback_text_edit		= $FeedbackVBoxContainer/FeedbackTextEdit
+@onready var send_feedback_button	= $FeedbackVBoxContainer/SendFeedbackButton
 
 var http_request: HTTPRequest = HTTPRequest.new()
 

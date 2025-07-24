@@ -1,44 +1,44 @@
 extends Util
 
-@export var assets_scene: PackedScene
-@export var map_scenes: Array[PackedScene] = []
-@export var player_scenes: Array[PackedScene] = []
-@export var enemy_scenes: Array[PackedScene] = []
-@export var civilian_scenes: Array[PackedScene] = []
+@export var map_scenes: Array[PackedScene]		= []
+@export var player_scenes: Array[PackedScene]	= []
+@export var enemy_scenes: Array[PackedScene]	= []
+@export var civilian_scenes: Array[PackedScene]	= []
+@export var assets_scene: PackedScene			= null
 
-@onready var menu: Menu = $/root/Menu
-@onready var camera_3d: Camera3D = $Camera3D
-@onready var game_state_manager: GameStateManager = $GameStateManager
-@onready var editor_label = $CanvasLayer/EditorLabel
-@onready var end_turn_texture_button = $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton
-@onready var action_first_texture_button = $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton
-@onready var undo_texture_button = $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton
-@onready var play_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayButton
-@onready var reset_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/ResetButton
-@onready var delete_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DeleteButton
-@onready var save_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SaveButton
-@onready var load_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/LoadMenuButton
-@onready var check_map_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckMapButton
-@onready var check_assets_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckAssetsButton
-@onready var maps_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/MapsMenuButton
-@onready var tiles_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/TilesContainer/TilesMenuButton
-@onready var assets_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/AssetsMenuButton
-@onready var players_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayersMenuButton
-@onready var enemies_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/EnemiesMenuButton
-@onready var civilians_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CiviliansMenuButton
-@onready var selected_tile_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SelectedTileMenuButton
-@onready var action_1_texture_button = $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton
-@onready var action_2_texture_button = $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton
+@onready var menu: Menu								= $/root/Menu
+@onready var camera_3d: Camera3D					= $Camera3D
+@onready var game_state_manager: GameStateManager	= $GameStateManager
+@onready var editor_label							= $CanvasLayer/EditorLabel
+@onready var end_turn_texture_button				= $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton
+@onready var action_first_texture_button			= $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton
+@onready var undo_texture_button					= $CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton
+@onready var play_button							= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayButton
+@onready var reset_button							= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/ResetButton
+@onready var delete_button 							= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DeleteButton
+@onready var save_button 							= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SaveButton
+@onready var load_menu_button						= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/LoadMenuButton
+@onready var check_map_button 						= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckMapButton
+@onready var check_assets_button					= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CheckAssetsButton
+@onready var maps_menu_button 						= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/MapsMenuButton
+@onready var tiles_menu_button						= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/TilesContainer/TilesMenuButton
+@onready var assets_menu_button						= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/AssetsMenuButton
+@onready var players_menu_button					= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayersMenuButton
+@onready var enemies_menu_button					= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/EnemiesMenuButton
+@onready var civilians_menu_button					= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/CiviliansMenuButton
+@onready var selected_tile_menu_button				= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/SelectedTileMenuButton
+@onready var action_1_texture_button				= $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton
+@onready var action_2_texture_button				= $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton
 
 const SAVED_LEVELS_FILE_PATH = 'res://Other/saved_levels.txt'
 
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
-var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
+var init_manager_script: InitManager   = preload('res://Scripts/init_manager.gd').new()
 
 var assets: Array[Node3D] = []
-var key_pressed: bool = false
-var is_deleting: bool = false
-var new_selected: bool = false
+var key_pressed: bool	  = false
+var is_deleting: bool	  = false
+var new_selected: bool	  = false
 
 var level_data: Dictionary
 var map: Map

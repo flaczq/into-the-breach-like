@@ -2,44 +2,44 @@ extends Util
 
 class_name GameStateManager
 
-@export var map_scenes: Array[PackedScene] = []
-@export var player_scenes: Array[PackedScene] = []
-@export var enemy_scenes: Array[PackedScene] = []
-@export var civilian_scenes: Array[PackedScene] = []
-@export var progress_scene: PackedScene
+@export var map_scenes: Array[PackedScene]		= []
+@export var player_scenes: Array[PackedScene]	= []
+@export var enemy_scenes: Array[PackedScene]	= []
+@export var civilian_scenes: Array[PackedScene]	= []
+@export var progress_scene: PackedScene			= null
 
-@onready var level_timer = $'../LevelTimer'
-@onready var end_turn_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
-@onready var undo_texture_button = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
-@onready var game_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
-@onready var objectives_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
-@onready var players_grid_container = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer'
-@onready var tile_info_label = $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
-@onready var debug_info_label = $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel'
-@onready var action_1_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
-@onready var action_1_label = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton/Action1Label'
-@onready var action_1_tooltip: ActionTooltip = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton/Action1Tooltip'
-@onready var action_2_texture_button = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton'
-@onready var action_2_label = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Label'
-@onready var action_2_tooltip: ActionTooltip = $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Tooltip'
-@onready var panel_full_screen_container = $'../CanvasLayer/PanelFullScreenContainer'
-@onready var turn_end_texture_rect = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
-@onready var turn_end_label = $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
-@onready var level_end_popup = $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup'
-@onready var level_end_label = $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup/LevelEndLabel'
+@onready var level_timer						= $'../LevelTimer'
+@onready var end_turn_texture_button			= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
+@onready var undo_texture_button				= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
+@onready var game_info_label					= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
+@onready var objectives_label					= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
+@onready var players_grid_container				= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/PlayersGridContainer'
+@onready var tile_info_label					= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftBottomContainer/TileInfoLabel'
+@onready var debug_info_label					= $'../CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/DebugInfoLabel'
+@onready var action_1_texture_button			= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton'
+@onready var action_1_label 					= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton/Action1Label'
+@onready var action_1_tooltip: ActionTooltip	= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton/Action1Tooltip'
+@onready var action_2_texture_button			= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton'
+@onready var action_2_label						= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Label'
+@onready var action_2_tooltip: ActionTooltip	= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Tooltip'
+@onready var panel_full_screen_container		= $'../CanvasLayer/PanelFullScreenContainer'
+@onready var turn_end_texture_rect				= $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
+@onready var turn_end_label						= $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
+@onready var level_end_popup					= $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup'
+@onready var level_end_label 					= $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup/LevelEndLabel'
 
 # FIXME hardcoded
 #const MAX_TUTORIAL_LEVELS: int = 6
 
-var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
-var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
+var level_manager_script: LevelManager	= preload('res://Scripts/level_manager.gd').new()
+var init_manager_script: InitManager	= preload('res://Scripts/init_manager.gd').new()
 
-var map: Map = null
-var players: Array[Player] = []
-var enemies: Array[Enemy] = []
-var civilians: Array[Civilian] = []
-var level_data: Dictionary = {}
-var level_end_clicked: bool = false
+var map: Map					= null
+var players: Array[Player]		= []
+var enemies: Array[Enemy]		= []
+var civilians: Array[Civilian]	= []
+var level_data: Dictionary		= {}
+var level_end_clicked: bool		= false
 
 var level: int
 var max_levels: int

@@ -10,13 +10,13 @@ signal action_cross_push_back(target_tile_coords: Vector2i, action_damage: int, 
 
 @onready var area_3d = $Area3D
 
-var is_hovered: bool = false
-var is_player_clicked: bool = false
-var is_player_hovered: bool = false
-var is_planned_enemy_action: bool = false
-var can_spawn_player: bool = false
-var can_spawn_enemy: bool = false
-var can_spawn_civilian: bool = false
+var is_hovered: bool 				= false
+var is_player_clicked: bool 		= false
+var is_player_hovered: bool 		= false
+var is_planned_enemy_action: bool	= false
+var can_spawn_player: bool			= false
+var can_spawn_enemy: bool 			= false
+var can_spawn_civilian: bool 		= false
 
 var models: Dictionary
 var model_material: StandardMaterial3D

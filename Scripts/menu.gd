@@ -6,19 +6,19 @@ class_name Menu
 @export var editor_scene: PackedScene
 @export var cutscenes_scene: PackedScene
 
-@onready var main_menu_container = $CanvasLayer/PanelCenterContainer/MainMenuContainer
-@onready var editor_texture_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton
-@onready var tutorial_check_button = $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
-@onready var in_game_menu_container = $CanvasLayer/PanelCenterContainer/InGameMenuContainer
-@onready var options_container = $CanvasLayer/PanelCenterContainer/OptionsContainer
-@onready var language_option_button = $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer/LanguageOptionButton
-@onready var camera_position_option_button = $CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer/CameraPositionOptionButton
-@onready var aa_check_box = $CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox
-@onready var players_container = $CanvasLayer/PanelCenterContainer/PlayersContainer
-@onready var players_grid_container = $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
-@onready var next_texture_button = $CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton
-@onready var main_menu_button = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton
-@onready var version_label = $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
+@onready var main_menu_container			= $CanvasLayer/PanelCenterContainer/MainMenuContainer
+@onready var editor_texture_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton
+@onready var tutorial_check_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
+@onready var in_game_menu_container			= $CanvasLayer/PanelCenterContainer/InGameMenuContainer
+@onready var options_container				= $CanvasLayer/PanelCenterContainer/OptionsContainer
+@onready var language_option_button			= $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer/LanguageOptionButton
+@onready var camera_position_option_button	= $CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer/CameraPositionOptionButton
+@onready var aa_check_box					= $CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox
+@onready var players_container				= $CanvasLayer/PanelCenterContainer/PlayersContainer
+@onready var players_grid_container 		= $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
+@onready var next_texture_button 			= $CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton
+@onready var main_menu_button 				= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton
+@onready var version_label 					= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 
 # FIXME change when steam page is up
 const STEAM_APP_ID = 480; # Spacewar (deprecated)

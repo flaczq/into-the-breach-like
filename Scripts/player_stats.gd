@@ -6,10 +6,10 @@ signal player_stats_mouse_entered(player_id: Util.PlayerType)
 signal player_stats_mouse_exited(player_id: Util.PlayerType)
 signal player_stats_toggled(toggled_on: bool, player_id: Util.PlayerType)
 
-@onready var texture_rect = $TextureRect
-@onready var avatar_texture_button = $TextureRect/AvatarTextureButton
-@onready var health_label = $TextureRect/HealthLabel
-@onready var move_distance_label = $TextureRect/MoveDistanceLabel
+@onready var texture_rect			= $TextureRect
+@onready var avatar_texture_button	= $TextureRect/AvatarTextureButton
+@onready var health_label			= $TextureRect/HealthLabel
+@onready var move_distance_label	= $TextureRect/MoveDistanceLabel
 
 var player: Player
 

@@ -22,16 +22,16 @@ enum LevelType {TUTORIAL, KILL_ENEMIES, SURVIVE_TURNS, SAVE_CIVILIANS, SAVE_TILE
 enum LevelEvent {ENEMIES_FROM_BELOW, ENEMIES_FROM_ABOVE, FALLING_MISSLE, FALLING_ROCK, MINE, FLOOD, MOVING_PLATFORMS, NONE = -1}
 enum LevelObjective {ALL_ENEMIES_DEAD, LESS_THAN_HALF_TILES_DAMAGED, NO_PLAYERS_DEAD}
 
-const TILE_HIGHLIGHTED_COLOR = Color('91c3ff')
-const PLAYER_ARROW_COLOR: Color = Color('005fcd')
-const ENEMY_TUTORIAL_ARROW_COLOR: Color = Color('cb003c')
-const ENEMY_TUTORIAL_ARROW_HIGHLIGHTED_COLOR: Color = Color('ffa3ac')
-const ENEMY_1_ARROW_COLOR: Color = Color('cb003c')
-const ENEMY_2_ARROW_COLOR: Color = Color('930029')
-const ENEMY_3_ARROW_COLOR: Color = Color('74001e')
-const ENEMY_4_ARROW_COLOR: Color = Color('593b1d')
-const ENEMY_ARROW_HIGHLIGHTED_COLOR: Color = Color('ffa3ac')#ffa3ac
-const CIVILIAN_ARROW_COLOR: Color = Color('fff700')
+const TILE_HIGHLIGHTED_COLOR					= Color('91c3ff')
+const PLAYER_ARROW_COLOR						= Color('005fcd')
+const ENEMY_TUTORIAL_ARROW_COLOR				= Color('cb003c')
+const ENEMY_TUTORIAL_ARROW_HIGHLIGHTED_COLOR	= Color('ffa3ac')
+const ENEMY_1_ARROW_COLOR						= Color('cb003c')
+const ENEMY_2_ARROW_COLOR						= Color('930029')
+const ENEMY_3_ARROW_COLOR						= Color('74001e')
+const ENEMY_4_ARROW_COLOR						= Color('593b1d')
+const ENEMY_ARROW_HIGHLIGHTED_COLOR				= Color('ffa3ac')#ffa3ac
+const CIVILIAN_ARROW_COLOR						= Color('fff700')
 
 
 func toggle_visibility(is_toggled: bool) -> void:

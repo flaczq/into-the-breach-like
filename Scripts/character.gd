@@ -16,13 +16,13 @@ signal action_indicators_cross_push_back(target_character: Character, origin_til
 signal collectable_picked_event(target_character: Character)
 signal health_changed_event(target_player: Player)
 
-var assets_scene: Node = preload('res://Scenes/assets.tscn').instantiate()
-var health_bar_scene: Node = preload('res://Scenes/health_bar.tscn').instantiate()
+var assets_scene: Node		= preload('res://Scenes/assets.tscn').instantiate()
+var health_bar_scene: Node	= preload('res://Scenes/health_bar.tscn').instantiate()
 
-var is_alive: bool = true
-var state_types: Array[StateType] = []
-var model_outlines: Array[MeshInstance3D] = []
-var textures: Array[CompressedTexture2D] = []
+var is_alive: bool							= true
+var state_types: Array[StateType]			= []
+var model_outlines: Array[MeshInstance3D]	= []
+var textures: Array[CompressedTexture2D]	= []
 
 var model_name: String
 var model_container: Node3D

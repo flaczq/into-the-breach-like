@@ -17,8 +17,8 @@ signal item_clicked(item_texture_index: int, item_id: Util.ItemType)
 var inventory_items_texture_buttons: Array[TextureButton]
 var empty_item: ItemObject
 
-var items: Array[ItemObject] = []
-var clicked_item_id: Util.ItemType = Util.ItemType.NONE
+var items: Array[ItemObject]		= []
+var clicked_item_id: Util.ItemType	= Util.ItemType.NONE
 
 
 func init(selected_items: Array[ItemObject], new_empty_item: ItemObject) -> void:

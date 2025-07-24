@@ -2,8 +2,8 @@ extends Node
 
 class_name Cutscenes
 
-@onready var menu: Menu = $/root/Menu
-@onready var cutscene_label = $PanelBottomContainer/BottomMarginContainer/CutsceneTextureRect/CutsceneMarginContainer/CutsceneLabel
+@onready var menu: Menu		= $/root/Menu
+@onready var cutscene_label	= $PanelBottomContainer/BottomMarginContainer/CutsceneTextureRect/CutsceneMarginContainer/CutsceneLabel
 
 var id: int
 

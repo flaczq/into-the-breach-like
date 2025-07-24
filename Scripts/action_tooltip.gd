@@ -2,16 +2,16 @@ extends Control
 
 class_name ActionTooltip
 
-@onready var action_tooltip_panel_container = $ActionTooltipPanelContainer
-@onready var action_1_texture_button = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action1HBoxContainer/Action1TextureButton
-@onready var action_1_label = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action1HBoxContainer/Action1Label
-@onready var action_2h_box_container = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer
-@onready var action_2_texture_button = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer/Action2TextureButton
-@onready var action_2_label = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer/Action2Label
-@onready var bottom_v_box_container = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer
-@onready var change_label = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/ChangeLabel
-@onready var upgrade_texture_button = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/UpgradeTextureButton
-@onready var upgrade_label = $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/UpgradeTextureButton/UpgradeLabel
+@onready var action_tooltip_panel_container	= $ActionTooltipPanelContainer
+@onready var action_1_texture_button		= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action1HBoxContainer/Action1TextureButton
+@onready var action_1_label					= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action1HBoxContainer/Action1Label
+@onready var action_2h_box_container 		= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer
+@onready var action_2_texture_button 		= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer/Action2TextureButton
+@onready var action_2_label 				= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/Action2HBoxContainer/Action2Label
+@onready var bottom_v_box_container 		= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer
+@onready var change_label 					= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/ChangeLabel
+@onready var upgrade_texture_button 		= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/UpgradeTextureButton
+@onready var upgrade_label 					= $ActionTooltipPanelContainer/ActionTooltipVBoxContainer/BottomVBoxContainer/UpgradeTextureButton/UpgradeLabel
 
 var clicked_action_id: Util.ActionType = Util.ActionType.NONE
 

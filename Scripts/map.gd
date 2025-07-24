@@ -4,12 +4,12 @@ class_name Map
 
 @export var assets_scene: PackedScene
 
-const FLASHING_SHADER: Resource = preload('res://Other/flashing_shader.gdshader')
-const OUTLINE_SHADER: Resource = preload('res://Other/outline_shader.gdshader')
+const FLASHING_SHADER: Resource	= preload('res://Other/flashing_shader.gdshader')
+const OUTLINE_SHADER: Resource	= preload('res://Other/outline_shader.gdshader')
 
 var tiles: Array[MapTile] = []
 var assets: Array[Node3D] = []
-var origin_points: int = 0
+var origin_points: int 	  = 0
 
 
 func _ready() -> void:

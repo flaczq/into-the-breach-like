@@ -5,18 +5,18 @@ class_name Shop
 signal item_hovered(item_texture_index: int, item_id: Util.ItemType, is_hovered: bool)
 signal item_clicked(item_texture_index: int, item_id: Util.ItemType)
 
-@onready var shop_item_1_cost_label = $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1CostLabel
-@onready var shop_item_1_texture_button = $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1TextureButton
-@onready var shop_item_1_name_label = $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1NameLabel
-@onready var shop_item_2_cost_label = $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2CostLabel
-@onready var shop_item_2_texture_button = $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2TextureButton
-@onready var shop_item_2_name_label = $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2NameLabel
-@onready var shop_item_3_cost_label = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3CostLabel
-@onready var shop_item_3_texture_button = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3TextureButton
-@onready var shop_item_3_name_label = $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3NameLabel
+@onready var shop_item_1_cost_label		= $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1CostLabel
+@onready var shop_item_1_texture_button	= $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1TextureButton
+@onready var shop_item_1_name_label		= $ShopItemsHBoxContainer/ShopItem1VBoxContainer/ShopItem1NameLabel
+@onready var shop_item_2_cost_label		= $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2CostLabel
+@onready var shop_item_2_texture_button	= $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2TextureButton
+@onready var shop_item_2_name_label		= $ShopItemsHBoxContainer/ShopItem2VBoxContainer/ShopItem2NameLabel
+@onready var shop_item_3_cost_label		= $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3CostLabel
+@onready var shop_item_3_texture_button	= $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3TextureButton
+@onready var shop_item_3_name_label		= $ShopItemsHBoxContainer/ShopItem3VBoxContainer/ShopItem3NameLabel
 
-var items: Array[ItemObject] = []
-var clicked_item_id: Util.ItemType = Util.ItemType.NONE
+var items: Array[ItemObject]		= []
+var clicked_item_id: Util.ItemType	= Util.ItemType.NONE
 
 
 func init(available_items: Array[ItemObject]) -> void:

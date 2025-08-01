@@ -1053,7 +1053,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 
 
 func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
+	var origin_character = (players + enemies + civilians).filter(func(character: Character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 	if target_tile.is_occupied_by_asset():
 		var hit_direction = (origin_tile_coords - target_tile.coords).sign()
 		var pull_direction = hit_direction
@@ -1072,7 +1072,7 @@ func _on_tile_action_towards_and_push_back(target_tile: MapTile, action_damage: 
 
 
 func _on_tile_action_pull_together(target_tile_coords: Vector2i, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
+	var origin_character = (players + enemies + civilians).filter(func(character: Character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 	var hit_direction = (origin_tile_coords - target_tile_coords).sign()
 	var pull_direction = hit_direction
 	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_tile_coords + pull_direction).front()
@@ -1284,7 +1284,7 @@ func _on_character_action_push_back(target_character: Character, action_damage: 
 
 
 func _on_character_action_towards_and_push_back(target_character: Character, action_damage: int, origin_tile_coords: Vector2i) -> void:
-	var origin_character = (players + enemies + civilians).filter(func(character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
+	var origin_character = (players + enemies + civilians).filter(func(character: Character): return character.is_alive and character.tile.coords == origin_tile_coords).front() as Character
 	var hit_direction = (origin_tile_coords - target_character.tile.coords).sign()
 	var pull_direction = hit_direction
 	var pulled_into_tile = map.tiles.filter(func(tile: MapTile): return tile.coords == target_character.tile.coords + pull_direction).front()
@@ -1432,27 +1432,27 @@ func _on_undo_texture_button_pressed() -> void:
 func _on_points_texture_button_down() -> void:
 	for tile in map.tiles:
 		tile.toggle_text(true, str(tile.points))
-	
-	for alive_player in players.filter(func(player: Player): return player.is_alive):
-		_on_player_stats_mouse_entered(alive_player.id)
 
 
 func _on_points_texture_button_up() -> void:
 	for tile in map.tiles:
 		tile.toggle_text(false)
-	
-	for alive_player in players.filter(func(player: Player): return player.is_alive):
-		_on_player_stats_mouse_exited(alive_player.id)
 
 
 func _on_order_texture_button_down():
 	for tile in map.tiles.filter(func(tile): return tile.enemy) as Array[MapTile]:
 		tile.toggle_text(true, str(tile.enemy.order), Color.RED)
+	
+	for alive_character in (players + enemies + civilians).filter(func(character: Character): return character.is_alive) as Array[Character]:
+		alive_character.toggle_health_bar(true)
 
 
 func _on_order_texture_button_up():
 	for tile in map.tiles:
 		tile.toggle_text(false)
+	
+	for alive_character in (players + enemies + civilians).filter(func(character: Character): return character.is_alive) as Array[Character]:
+		alive_character.toggle_health_bar(false)
 
 
 func _on_player_stats_mouse_entered(id: PlayerType) -> void:

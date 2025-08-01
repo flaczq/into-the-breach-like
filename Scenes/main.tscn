@@ -223,6 +223,7 @@ layout_mode = 2
 alignment = 2
 
 [node name="PointsTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+visible = false
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 tooltip_text = "INFO"

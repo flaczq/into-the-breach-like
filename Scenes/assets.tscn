@@ -1215,7 +1215,6 @@ visible = false
 mesh = SubResource("ArrayMesh_p1fxp")
 
 [node name="tile-text" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.353553, -0.353553, -1.54543e-08, 0, -2.18557e-08, 0.5, -0.353553, -0.353553, -1.54543e-08, 0, 0.22, 0)
-visible = false
+transform = Transform3D(0.353553, 0, 0.353553, 0, 0.499999, 0, -0.353553, 0, 0.353553, 0, 0.35, 0)
 cast_shadow = 0
 mesh = SubResource("TextMesh_rycou")

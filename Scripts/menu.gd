@@ -14,6 +14,8 @@ class_name Menu
 @onready var language_option_button			= $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer/LanguageOptionButton
 @onready var camera_position_option_button	= $CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer/CameraPositionOptionButton
 @onready var aa_check_box					= $CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox
+@onready var game_speed_h_slider			= $CanvasLayer/PanelCenterContainer/OptionsContainer/GameSpeedHBoxContainer/GameSpeedHSlider
+@onready var volume_h_slider				= $CanvasLayer/PanelCenterContainer/OptionsContainer/VolumeHBoxContainer/VolumeHSlider
 @onready var players_container				= $CanvasLayer/PanelCenterContainer/PlayersContainer
 @onready var players_grid_container 		= $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer
 @onready var next_texture_button 			= $CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton
@@ -46,6 +48,10 @@ func _ready() -> void:
 	
 	aa_check_box.set_pressed(Global.antialiasing)
 	_on_aa_check_box_toggled(Global.antialiasing)
+	
+	_on_game_speed_h_slider_drag_ended(true)
+	
+	_on_volume_h_slider_drag_ended(true)
 	
 	on_button_disabled(next_texture_button, true)
 	
@@ -80,6 +86,7 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	options_container.hide()
 	players_container.hide()
 	
+	# this can be changed from inside the game
 	camera_position_option_button.select(Global.camera_position)
 	_on_camera_position_option_button_item_selected(Global.camera_position)
 	
@@ -282,6 +289,22 @@ func _on_aa_check_box_toggled(toggled_on: bool) -> void:
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_8X)
 	else:
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)
+
+
+func _on_end_turn_confirmation_check_box_toggled(toggled_on: bool) -> void:
+	# TODO implement
+	Global.end_turn_confirmation = toggled_on
+
+
+func _on_game_speed_h_slider_drag_ended(value_changed: bool) -> void:
+	if value_changed:
+		Global.game_speed = game_speed_h_slider.value
+
+
+func _on_volume_h_slider_drag_ended(value_changed: bool) -> void:
+	if value_changed:
+		# TODO implement
+		Global.volume = volume_h_slider.value
 
 
 func _on_next_texture_button_pressed() -> void:

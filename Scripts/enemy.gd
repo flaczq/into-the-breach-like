@@ -89,7 +89,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			tile = target_tile
 			tile.set_enemy(self)
 			
-			var duration = Global.move_speed / Global.default_speed
+			var duration = Global.character_speed / Global.game_speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)

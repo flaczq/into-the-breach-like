@@ -23,10 +23,11 @@ class_name GameStateManager
 @onready var action_2_label						= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Label'
 @onready var action_2_tooltip: ActionTooltip	= $'../CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton/Action2Tooltip'
 @onready var panel_full_screen_container		= $'../CanvasLayer/PanelFullScreenContainer'
-@onready var turn_end_texture_rect				= $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect'
-@onready var turn_end_label						= $'../CanvasLayer/PanelFullScreenContainer/TurnEndTextureRect/TurnEndLabel'
-@onready var level_end_popup					= $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup'
-@onready var level_end_label 					= $'../CanvasLayer/PanelFullScreenContainer/LevelEndPopup/LevelEndLabel'
+@onready var level_end_color_rect				= $'../CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/LevelEndColorRect'
+@onready var level_end_label					= $'../CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/LevelEndColorRect/LevelEndLabel'
+@onready var turn_end_color_rect				= $'../CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/TurnEndColorRect'
+@onready var turn_end_label						= $'../CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/TurnEndColorRect/TurnEndLabel'
+@onready var et_confirmation_color_rect			= $'../CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/ETConfirmationColorRect'
 
 # FIXME hardcoded
 #const MAX_TUTORIAL_LEVELS: int = 6
@@ -39,7 +40,7 @@ var players: Array[Player]		= []
 var enemies: Array[Enemy]		= []
 var civilians: Array[Civilian]	= []
 var level_data: Dictionary		= {}
-var level_end_clicked: bool		= false
+var is_level_end_clicked: bool	= false
 
 var level: int
 var max_levels: int
@@ -117,10 +118,9 @@ func init_game_state() -> void:
 	action_1_texture_button.hide()
 	action_2_texture_button.hide()
 	panel_full_screen_container.hide()
-	turn_end_texture_rect.hide()
-	turn_end_label.text = ''
-	level_end_popup.hide()
-	level_end_label.text = ''
+	level_end_color_rect.hide()
+	turn_end_color_rect.hide()
+	et_confirmation_color_rect.hide()
 	
 	Global.tutorial = (level_data.level_type == LevelType.TUTORIAL)
 
@@ -430,7 +430,7 @@ func level_won() -> void:
 	if level < max_levels and not Global.editor:
 		Global.level_time = level_time_start
 		level_end_label.text = 'LEVEL WON'
-		level_end_popup.show()
+		level_end_color_rect.show()
 		panel_full_screen_container.show()
 		#next_level()
 		#init(LevelType.TUTORIAL)
@@ -441,7 +441,7 @@ func level_won() -> void:
 func level_lost() -> void:
 	if not Global.editor:
 		level_end_label.text = 'LEVEL LOST'
-		level_end_popup.show()
+		level_end_color_rect.show()
 		panel_full_screen_container.show()
 	else:
 		print('LOOOOOOST!!!')
@@ -452,19 +452,13 @@ func level_lost() -> void:
 func show_turn_end_texture_rect(whose_turn: String) -> void:
 	# FIXME hardcoded
 	turn_end_label.text = whose_turn + ' TURN'
-	turn_end_texture_rect.show()
+	turn_end_color_rect.show()
 	panel_full_screen_container.show()
 	
-	await get_tree().create_timer(0.5).timeout
-	
-	var turn_end_tween = create_tween()
-	turn_end_tween.tween_property(turn_end_texture_rect, 'modulate:a', 0, 1.0).from(1.0)
-	await turn_end_tween.finished
+	await get_tree().create_timer(2.0).timeout
 	
 	panel_full_screen_container.hide()
-	turn_end_texture_rect.hide()
-	turn_end_texture_rect.modulate.a = 1.0
-	turn_end_label.text = ''
+	turn_end_color_rect.hide()
 	
 	if whose_turn == 'ENEMY':
 		await get_tree().create_timer(0.5).timeout
@@ -1371,7 +1365,14 @@ func _on_collectable_picked_event(target_character: Character):
 
 
 func _on_end_turn_texture_button_pressed() -> void:
-	end_turn()
+	var actions_available = players.any(func(player: Player): return player.is_alive and player.can_be_interacted_with())
+	if Global.end_turn_confirmation and actions_available:
+		et_confirmation_color_rect.show()
+		panel_full_screen_container.show()
+		level_end_color_rect.hide()
+		turn_end_color_rect.hide()
+	else:
+		end_turn()
 
 
 func _on_action_1_texture_button_mouse_entered() -> void:
@@ -1495,12 +1496,12 @@ func _on_player_stats_toggled(toggled_on: bool, id: PlayerType) -> void:
 	set_player_texture_button_state(player_stats.avatar_texture_button, false)
 
 
-func _on_level_end_popup_gui_input(event: InputEvent) -> void:
+func _on_level_end_color_rect_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if level_end_clicked:
+		if is_level_end_clicked:
 			return
 		
-		level_end_clicked = true
+		is_level_end_clicked = true
 		
 		for alive_player in players.filter(func(player: Player): return player.is_alive):
 			var flying_tile_tween = create_tween()
@@ -1527,9 +1528,24 @@ func _on_level_end_popup_gui_input(event: InputEvent) -> void:
 			index += 0.005
 		
 		panel_full_screen_container.hide()
-		level_end_popup.hide()
-		level_end_label.text = ''
+		level_end_color_rect.hide()
 		
 		progress()
 		
-		level_end_clicked = false
+		is_level_end_clicked = false
+
+
+func _on_et_confirmation_color_rect_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_on_end_turn_confirmation_no_button_pressed()
+
+
+func _on_end_turn_confirmation_no_button_pressed() -> void:
+	panel_full_screen_container.hide()
+	et_confirmation_color_rect.hide()
+
+
+func _on_end_turn_confirmation_yes_button_pressed() -> void:
+	_on_end_turn_confirmation_no_button_pressed()
+	
+	end_turn()

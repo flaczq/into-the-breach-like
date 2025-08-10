@@ -401,7 +401,6 @@ button_pressed = true
 
 [node name="EndTurnConfirmationHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
 layout_mode = 2
-tooltip_text = "works only in Windows app"
 
 [node name="EndTurnConfirmationLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/OptionsContainer/EndTurnConfirmationHBoxContainer"]
 layout_mode = 2

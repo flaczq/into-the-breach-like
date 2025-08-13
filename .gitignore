@@ -3,10 +3,11 @@
 
 # Godot-specific ignores
 .import/
-Assets/
+#Assets/
 export.cfg
 export_presets.cfg
 *.tmp
+*.import
 
 # Imported translations (automatically generated from CSV files)
 *.translation
@@ -16,6 +17,11 @@ export_presets.cfg
 data_*/
 mono_crash.*.json
 
+# Assets
+Assets/**/*.*
+!Assets/**/*.png
+
+# Other
 todo.txt
 addons/
 Release/

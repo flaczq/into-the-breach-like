@@ -16,8 +16,8 @@
 [ext_resource type="PackedScene" uid="uid://dliou6uj8vx8g" path="res://Scenes/enemy3.tscn" id="11_kt37j"]
 [ext_resource type="PackedScene" uid="uid://djb7hjxihkin0" path="res://Scenes/tutorial_player.tscn" id="16_b1rcx"]
 [ext_resource type="PackedScene" uid="uid://bj8bk338r75sx" path="res://Scenes/enemy4.tscn" id="17_60fhf"]
+[ext_resource type="Texture2D" uid="uid://dhpehm5rjrnev" path="res://Assets/aaaps/background_squares_brown_tilted_left.png" id="17_af0oh"]
 [ext_resource type="PackedScene" uid="uid://cyk5jmmvp3sag" path="res://Scenes/tutorial_enemy.tscn" id="17_hdgpr"]
-[ext_resource type="Texture2D" uid="uid://iu12lg4nasjg" path="res://Assets/aaaps/background_squares.png" id="17_jpkl4"]
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="18_v5xqc"]
 [ext_resource type="Texture2D" uid="uid://danokvk15cayv" path="res://Assets/penzilla.vector-icon-pack/Icon_Settings.png" id="19_rhlap"]
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="19_yyv2y"]
@@ -68,9 +68,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("17_jpkl4")
+texture = ExtResource("17_af0oh")
 expand_mode = 3
-flip_v = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.45452, 0.541675, 0, 0.766045, 0.642788, -0.707107, -0.45452, 0.541675, 12, 13.2, 12)

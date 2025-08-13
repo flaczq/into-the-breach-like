@@ -1411,6 +1411,12 @@ func _on_action_2_texture_button_toggled(toggled_on: bool) -> void:
 	action_1_texture_button.set_pressed_no_signal(false)
 
 
+func _on_reset_level_texture_button_pressed() -> void:
+	# reset level
+	level -= 1
+	init_by_level_type(level_data.level_type)
+
+
 func _on_undo_texture_button_pressed() -> void:
 	if not undo.is_empty():
 		var last_undo_player_instance_id = undo.keys().back()

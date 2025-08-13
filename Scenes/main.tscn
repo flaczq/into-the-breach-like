@@ -1,9 +1,9 @@
 [gd_scene load_steps=36 format=3 uid="uid://cygwqk0c02vjo"]
 
 [ext_resource type="Script" uid="uid://dlenupugd1h7n" path="res://Scripts/main.gd" id="1_h8ron"]
+[ext_resource type="Texture2D" uid="uid://dhpehm5rjrnev" path="res://Assets/aaaps/background_squares_brown_tilted_left.png" id="2_1w6v2"]
 [ext_resource type="Script" uid="uid://cyydhyrfheu45" path="res://Scripts/game_state_manager.gd" id="2_23un4"]
 [ext_resource type="PackedScene" uid="uid://cjcmn1g4vfh8e" path="res://Scenes/map8x8.tscn" id="2_gdtvm"]
-[ext_resource type="Texture2D" uid="uid://iu12lg4nasjg" path="res://Assets/aaaps/background_squares.png" id="2_ru1lx"]
 [ext_resource type="PackedScene" uid="uid://bysqedydgeakv" path="res://Scenes/map4x4.tscn" id="4_22mq3"]
 [ext_resource type="PackedScene" uid="uid://cxidqolshdlac" path="res://Scenes/map6x6.tscn" id="4_wpjf0"]
 [ext_resource type="PackedScene" uid="uid://bb3b503xrvj7m" path="res://Scenes/player1.tscn" id="6_vfyg3"]
@@ -20,7 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://bhmnehlqiw8bo" path="res://Scenes/tutorial_civilian.tscn" id="16_grlly"]
 [ext_resource type="Texture2D" uid="uid://danokvk15cayv" path="res://Assets/penzilla.vector-icon-pack/Icon_Settings.png" id="17_1dry2"]
 [ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="19_mojst"]
-[ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="20_6obs3"]
+[ext_resource type="Texture2D" uid="uid://cbh3q7prcu45a" path="res://Assets/penzilla.vector-icon-pack/Icon_Magic.png" id="21_1w6v2"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="21_mwtkn"]
 [ext_resource type="PackedScene" uid="uid://c3pe6m0m8tc5y" path="res://Scenes/player_stats.tscn" id="24_3qie4"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="24_k063w"]
@@ -69,9 +69,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_ru1lx")
+texture = ExtResource("2_1w6v2")
 expand_mode = 3
-flip_v = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.45452, 0.541675, 0, 0.766045, 0.642788, -0.707107, -0.45452, 0.541675, 12, 13.2, 12)
@@ -139,13 +138,11 @@ texture_normal = ExtResource("19_mojst")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
-visible = false
+[node name="ResetLevelTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 tooltip_text = "ATTACK"
-toggle_mode = true
-texture_normal = ExtResource("20_6obs3")
+texture_normal = ExtResource("21_1w6v2")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -330,6 +327,7 @@ uppercase = true
 visible = false
 
 [node name="PanelFullScreenContainer" type="PanelContainer" parent="CanvasLayer"]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -363,8 +361,10 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "LEVEL WON/LOST"
+horizontal_alignment = 1
 
 [node name="TurnEndColorRect" type="ColorRect" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer"]
+visible = false
 custom_minimum_size = Vector2(1280, 720)
 layout_mode = 2
 color = Color(0, 0, 0, 0.501961)
@@ -383,6 +383,7 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "PLAYER/ENEMY/CIVILIAN TURN"
+horizontal_alignment = 1
 
 [node name="ETConfirmationColorRect" type="ColorRect" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer"]
 visible = false
@@ -449,7 +450,7 @@ text = "YES"
 
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/SettingsTextureButton" to="." method="_on_settings_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ResetLevelTextureButton" to="GameStateManager" method="_on_reset_level_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
 [connection signal="button_down" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/PointsTextureButton" to="GameStateManager" method="_on_points_texture_button_down"]
 [connection signal="button_up" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer/PointsTextureButton" to="GameStateManager" method="_on_points_texture_button_up"]

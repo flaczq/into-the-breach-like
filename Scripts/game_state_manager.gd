@@ -10,6 +10,7 @@ class_name GameStateManager
 
 @onready var level_timer						= $'../LevelTimer'
 @onready var end_turn_texture_button			= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton'
+@onready var reset_level_texture_button			= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ResetLevelTextureButton'
 @onready var undo_texture_button				= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton'
 @onready var game_info_label					= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/GameInfoLabel'
 @onready var objectives_label					= $'../CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftCenterContainer/ObjectivesLabel'
@@ -41,6 +42,7 @@ var enemies: Array[Enemy]		= []
 var civilians: Array[Civilian]	= []
 var level_data: Dictionary		= {}
 var is_level_end_clicked: bool	= false
+var is_level_reseted: bool		= false
 
 var level: int
 var max_levels: int
@@ -107,21 +109,6 @@ func init_game_state() -> void:
 	selected_player = null
 	undo = {}
 	level_time_start = 0
-	
-	# UI
-	update_ui()
-	# FIXME proper disabled icons
-	on_button_disabled(end_turn_texture_button, true)
-	on_button_disabled(action_1_texture_button, true)
-	on_button_disabled(action_2_texture_button, true)
-	on_button_disabled(undo_texture_button, true)
-	action_1_texture_button.hide()
-	action_2_texture_button.hide()
-	panel_full_screen_container.hide()
-	level_end_color_rect.hide()
-	turn_end_color_rect.hide()
-	et_confirmation_color_rect.hide()
-	
 	Global.tutorial = (level_data.level_type == LevelType.TUTORIAL)
 
 
@@ -224,6 +211,21 @@ func init_civilians() -> void:
 
 
 func init_ui() -> void:
+	update_ui()
+	
+	# FIXME proper disabled icons
+	on_button_disabled(end_turn_texture_button, true)
+	on_button_disabled(action_1_texture_button, true)
+	on_button_disabled(action_2_texture_button, true)
+	on_button_disabled(reset_level_texture_button, is_level_reseted)
+	on_button_disabled(undo_texture_button, true)
+	action_1_texture_button.hide()
+	action_2_texture_button.hide()
+	panel_full_screen_container.hide()
+	level_end_color_rect.hide()
+	turn_end_color_rect.hide()
+	et_confirmation_color_rect.hide()
+	
 	for child in players_grid_container.get_children():
 		child.hide()
 	
@@ -455,7 +457,7 @@ func show_turn_end_texture_rect(whose_turn: String) -> void:
 	turn_end_color_rect.show()
 	panel_full_screen_container.show()
 	
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(1.0).timeout
 	
 	panel_full_screen_container.hide()
 	turn_end_color_rect.hide()
@@ -473,6 +475,11 @@ func update_ui():
 	game_info_label.text += 'MONEY: ' + str(Global.money)
 	tile_info_label.text = ''
 	debug_info_label.text = ''
+	objectives_label.text = 'MAP OBJECTIVES:'
+	
+	if level_data.has('objectives'):
+		for objective: ObjectiveObject in level_data.objectives:
+			objectives_label.text += ('\n- ' + objective.description)
 
 
 func calculate_tiles_for_movement(active: bool, character: Character) -> Array[MapTile]:
@@ -1412,6 +1419,7 @@ func _on_action_2_texture_button_toggled(toggled_on: bool) -> void:
 
 
 func _on_reset_level_texture_button_pressed() -> void:
+	is_level_reseted = true
 	# reset level
 	level -= 1
 	init_by_level_type(level_data.level_type)

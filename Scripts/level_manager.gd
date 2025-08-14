@@ -21,7 +21,7 @@ func generate_data(level_type: LevelType, level: int, enemy_scenes_size: int, ci
 	
 	add_characters(level_data, enemy_scenes_size, civilian_scenes_size)
 	add_events_details(level_data, enemy_scenes_size)
-	add_level_type_details(level_data)
+	add_details_by_level_type(level_data)
 	add_objectives(level_data)
 	
 	return level_data
@@ -121,7 +121,7 @@ func add_events_details(level_data: Dictionary, enemy_scenes_size: int) -> void:
 			level_data.falling_rock_last_turn = 99
 
 
-func add_level_type_details(level_data: Dictionary) -> void:
+func add_details_by_level_type(level_data: Dictionary) -> void:
 	if level_data.level_type == LevelType.KILL_ENEMIES:
 		var enemies_from_below_size = level_data.level_events.filter(func(level_event): return level_event == LevelEvent.ENEMIES_FROM_BELOW).size()
 		var enemies_from_below_turns_size = (1 + level_data.enemies_from_below_last_turn - level_data.enemies_from_below_first_turn) if (enemies_from_below_size > 0) else (0)
@@ -135,21 +135,45 @@ func add_level_type_details(level_data: Dictionary) -> void:
 
 
 func add_objectives(level_data: Dictionary) -> void:
-	#TODO
-	if level_data.level_type == LevelType.KILL_ENEMIES:
-		level_data.objectives = [{
-			'type': LevelObjective.ALL_ENEMIES_DEAD,
-			'money': 1,
-			'done': false
-		}, {
-			'type': LevelObjective.LESS_THAN_HALF_TILES_DAMAGED,
-			'money': 2,
-			'done': false
-		}, {
-			'type': LevelObjective.NO_PLAYERS_DEAD,
-			'money': 3,
-			'done': false
-		}]
+	level_data.objectives = []
+	if level_data.level_type == LevelType.TUTORIAL:
+		var objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.JUST_WIN)
+		level_data.objectives.append(objective)
+	elif level_data.level_type == LevelType.KILL_ENEMIES:
+		var objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.ALL_ENEMIES_DEAD)
+		level_data.objectives.append(objective)
+		
+		# check if objective clears with .new()
+		objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.NO_PLAYERS_DEAD, true)
+		level_data.objectives.append(objective)
+	elif level_data.level_type == LevelType.SURVIVE_TURNS:
+		var objective = ObjectiveObject.new()
+		# how to set until which turn to survive
+		objective.init_by_type(LevelObjective.SURVIVE_UNTIL_TURN_5)
+		level_data.objectives.append(objective)
+		
+		objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.NO_PLAYERS_DEAD, true)
+		level_data.objectives.append(objective)
+	elif level_data.level_type == LevelType.SAVE_CIVILIANS:
+		var objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.NO_CIVILIANS_DEAD)
+		level_data.objectives.append(objective)
+		
+		objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.NO_PLAYERS_DEAD, true)
+		level_data.objectives.append(objective)
+	elif level_data.level_type == LevelType.SAVE_TILES:
+		var objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.LESS_THAN_HALF_TILES_DAMAGED)
+		level_data.objectives.append(objective)
+		
+		objective = ObjectiveObject.new()
+		objective.init_by_type(LevelObjective.NO_PLAYERS_DEAD, true)
+		level_data.objectives.append(objective)
 
 
 func plan_events(game_state_manager: GameStateManager) -> void:
@@ -443,15 +467,23 @@ func check_objectives(game_state_manager: GameStateManager) -> void:
 	var map = game_state_manager.map
 	var players = game_state_manager.players
 	var enemies = game_state_manager.enemies
+	var civilians = game_state_manager.civilians
 	var level_data = game_state_manager.level_data
 	for objective in level_data.objectives:
-		if objective.type == LevelObjective.ALL_ENEMIES_DEAD:
+		if objective.type == LevelObjective.JUST_WIN:
+			# why does it even exist..?
 			if enemies.all(func(enemy): return not enemy.is_alive):
 				objective.done = true
 		elif objective.type == LevelObjective.LESS_THAN_HALF_TILES_DAMAGED:
 			var current_points = map.get_current_points()
 			if map.origin_points / 2 > current_points:
 				objective.done = true
+		elif objective.type == LevelObjective.ALL_ENEMIES_DEAD:
+			if enemies.all(func(enemy): return not enemy.is_alive):
+				objective.done = true
 		elif objective.type == LevelObjective.NO_PLAYERS_DEAD:
 			if players.all(func(player): return player.is_alive):
+				objective.done = true
+		elif objective.type == LevelObjective.NO_CIVILIANS_DEAD:
+			if civilians.all(func(civilian): return civilian.is_alive):
 				objective.done = true

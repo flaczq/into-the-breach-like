@@ -237,6 +237,25 @@ var players_data: Array[Dictionary] = [
 		'textures': [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
 		'item_2_id': Util.ItemType.NONE
+	},
+	{
+		# TODO
+		'id': Util.PlayerType.PLAYER_4,
+		'model_name': 'Player 4',
+		'max_health': 3,
+		'health': 3,
+		'damage': 1,
+		'move_distance': 2,
+		'action_1_id': Util.ActionType.NONE,
+		'action_2_id': Util.ActionType.NONE,
+		'action_direction': Util.ActionDirection.HORIZONTAL_LINE,
+		'passive_type': Util.PassiveType.NONE,
+		'can_fly': false,
+		'can_swim': true,
+		'state_types': [] as Array[Util.StateType],
+		'textures': [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture] as Array[CompressedTexture2D],
+		'item_1_id': Util.ItemType.NONE,
+		'item_2_id': Util.ItemType.NONE
 	}
 ]
 
@@ -386,7 +405,7 @@ func init_tutorial_player() -> Player:
 
 func init_playable_players() -> Array[Player]:
 	var playable_players = [] as Array[Player]
-	for player_data in players_data.filter(func(player_data): return player_data.id != Util.PlayerType.PLAYER_TUTORIAL):
+	for player_data in players_data.filter(func(player_data): return Global.save.playable_players_ids.has(player_data.id)):
 		var playable_player = Player.new()
 		playable_player.id = player_data.id
 		playable_player.model_name = player_data.model_name
@@ -409,7 +428,7 @@ func init_playable_players() -> Array[Player]:
 
 
 func init_player(target_player: Player, id: Util.PlayerType) -> void:
-	var player_data = Util.get_selected_player(id)
+	var player_data = Global.save.selected_players.filter(func(selected_player): return selected_player.id == id).front()
 	target_player.id = player_data.id
 	target_player.model_name = player_data.model_name
 	target_player.max_health = player_data.max_health
@@ -473,7 +492,7 @@ func init_action(action_id: Util.ActionType) -> ActionObject:
 
 func init_available_items() -> Array[ItemObject]:
 	var available_items = [] as Array[ItemObject]
-	for item_data in items_data.filter(func(item_data): return item_data.is_available and Global.selected_items.all(func(selected_item): return selected_item.id != item_data.id)):
+	for item_data in items_data.filter(func(item_data): return item_data.is_available and Global.save.selected_items.all(func(selected_item): return selected_item.id != item_data.id)):
 		var item_object = ItemObject.new()
 		item_object.init_from_item_data(item_data)
 		available_items.push_back(item_object)

@@ -40,14 +40,14 @@ func _ready() -> void:
 	tutorial_check_button.set_pressed(Global.tutorial)
 	_on_tutorial_check_button_toggled(Global.tutorial)
 	
-	language_option_button.select(Global.language)
-	_on_language_option_button_item_selected(Global.language)
+	language_option_button.select(Global.settings.language)
+	_on_language_option_button_item_selected(Global.settings.language)
 	
-	camera_position_option_button.select(Global.camera_position)
-	_on_camera_position_option_button_item_selected(Global.camera_position)
+	camera_position_option_button.select(Global.settings.camera_position)
+	_on_camera_position_option_button_item_selected(Global.settings.camera_position)
 	
-	aa_check_box.set_pressed(Global.antialiasing)
-	_on_aa_check_box_toggled(Global.antialiasing)
+	aa_check_box.set_pressed(Global.settings.antialiasing)
+	_on_aa_check_box_toggled(Global.settings.antialiasing)
 	
 	_on_game_speed_h_slider_drag_ended(true)
 	
@@ -87,8 +87,8 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	players_container.hide()
 	
 	# this can be changed from inside the game
-	camera_position_option_button.select(Global.camera_position)
-	_on_camera_position_option_button_item_selected(Global.camera_position)
+	camera_position_option_button.select(Global.settings.camera_position)
+	_on_camera_position_option_button_item_selected(Global.settings.camera_position)
 	
 	toggle_visibility(true)
 
@@ -108,10 +108,9 @@ func show_cutscenes() -> void:
 
 
 func show_players_selection() -> void:
-	#Global.selected_items = []
-	Global.selected_players = []
-	Global.selected_items = []
-	Global.played_maps_ids = []
+	Global.save.selected_players = []
+	Global.save.selected_items = []
+	Global.save.played_maps_ids = []
 	
 	for player_inventory in players_grid_container.get_children():
 		var player_texture_button = player_inventory.avatar_texture_button
@@ -191,7 +190,7 @@ func _on_editor_texture_button_pressed() -> void:
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
 		var tutorial_player_object = init_manager_script.init_tutorial_player()
-		Global.selected_players.push_back(tutorial_player_object)
+		Global.save.selected_players.push_back(tutorial_player_object)
 		
 		show_main()
 	else:
@@ -272,39 +271,42 @@ func _on_back_texture_button_pressed() -> void:
 	players_container.hide()
 
 
+func _on_difficulty_option_button_item_selected(index: int) -> void:
+	Global.settings.difficulty = index
+
+
 func _on_language_option_button_item_selected(index: int) -> void:
-	Global.language = index
+	Global.settings.language = index
 	
-	TranslationServer.set_locale(Language.keys()[Global.language].to_lower())
+	TranslationServer.set_locale(Language.keys()[Global.settings.language].to_lower())
 
 
 func _on_camera_position_option_button_item_selected(index):
-	Global.camera_position = index
+	Global.settings.camera_position = index
 
 
 func _on_aa_check_box_toggled(toggled_on: bool) -> void:
-	Global.antialiasing = toggled_on
+	Global.settings.antialiasing = toggled_on
 	
-	if Global.antialiasing:
+	if Global.settings.antialiasing:
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_8X)
 	else:
 		RenderingServer.viewport_set_msaa_3d(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_MSAA_DISABLED)
 
 
 func _on_end_turn_confirmation_check_box_toggled(toggled_on: bool) -> void:
-	# TODO implement
-	Global.end_turn_confirmation = toggled_on
+	Global.settings.end_turn_confirmation = toggled_on
 
 
 func _on_game_speed_h_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		Global.game_speed = game_speed_h_slider.value
+		Global.settings.game_speed = game_speed_h_slider.value
 
 
 func _on_volume_h_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
 		# TODO implement
-		Global.volume = volume_h_slider.value
+		Global.settings.volume = volume_h_slider.value
 
 
 func _on_next_texture_button_pressed() -> void:
@@ -326,9 +328,9 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 	
 	if toggled_on:
 		var selected_player = playable_players.filter(func(playable_player): return playable_player.id == id).front()
-		Global.selected_players.push_back(selected_player)
+		Global.save.selected_players.push_back(selected_player)
 	else:
-		Global.selected_players = Global.selected_players.filter(func(selected_player): return selected_player.id != id)
+		Global.save.selected_players = Global.save.selected_players.filter(func(selected_player): return selected_player.id != id)
 	
-	on_button_disabled(next_texture_button, Global.selected_players.size() != 3)
-	assert(Global.selected_players.size() <= 3, 'Too many selected players')
+	on_button_disabled(next_texture_button, Global.save.selected_players.size() != 3)
+	assert(Global.save.selected_players.size() <= 3, 'Too many selected players')

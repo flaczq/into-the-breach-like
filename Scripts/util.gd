@@ -4,9 +4,10 @@ class_name Util
 
 enum Language {EN, PL}
 enum CameraPosition {HIGH, MIDDLE, LOW}
+enum DifficultyLevel {EASY, HARD}
 enum BuildMode {RELEASE, DEBUG}
 enum EngineMode {MENU, GAME, EDITOR, AWAITING}
-enum PlayerType {PLAYER_TUTORIAL, PLAYER_1, PLAYER_2, PLAYER_3, NONE = -1}
+enum PlayerType {PLAYER_TUTORIAL, PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4, NONE = -1}
 enum EnemyType {ENEMY_TUTORIAL, ENEMY_1, ENEMY_2, ENEMY_3, ENEMY_4, NONE = -1}
 enum CivilianType {CIVILIAN_TUTORIAL, CIVILIAN_1}
 enum ItemType {HEALTH, DAMAGE, SHIELD, MOVE_DISTANCE, FLYING, SWIMMING, NONE = -1}
@@ -115,11 +116,3 @@ func get_character_color(character: Character) -> Color:
 	if character.is_in_group('ENEMIES'): return character.arrow_color
 	if character.is_in_group('CIVILIANS'): return CIVILIAN_ARROW_COLOR
 	return Color.BLACK
-
-
-static func get_selected_player(selected_player_id: PlayerType) -> Player:
-	return Global.selected_players.filter(func(selected_player): return selected_player.id == selected_player_id).front()
-
-
-static func get_selected_item(selected_item_id: ItemType) -> ItemObject:
-	return Global.selected_items.filter(func(selected_item): return selected_item.id == selected_item_id).front()

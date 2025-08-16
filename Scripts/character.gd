@@ -124,7 +124,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 func force_into_occupied_tile(target_tile_position: Vector3, target_tile: MapTile = null) -> void:
 	# remember position to bounce back to it
 	var origin_position = position
-	var duration = Global.character_speed / Global.game_speed
+	var duration = Global.character_speed / Global.settings.game_speed
 	var position_tween = create_tween()
 	position_tween.tween_property(self, 'position', target_tile_position, duration)
 	await position_tween.finished
@@ -381,7 +381,7 @@ func spawn_bullet(target_tile: MapTile) -> void:
 	
 	var position_tween = create_tween()
 	if action_direction == ActionDirection.HORIZONTAL_LINE or action_direction == ActionDirection.VERTICAL_LINE:
-		var duration = 0.2 * position_to_target.length() / Global.game_speed
+		var duration = 0.2 * position_to_target.length() / Global.settings.game_speed
 		position_tween.tween_property(bullet_model, 'position', get_vector3_on_map(-1 * position_to_target), duration)
 	elif action_direction == ActionDirection.HORIZONTAL_DOT or action_direction == ActionDirection.VERTICAL_DOT:
 		var origin_position = get_vector3_on_map(Vector3.ZERO)
@@ -391,7 +391,7 @@ func spawn_bullet(target_tile: MapTile) -> void:
 		var control_2 = Vector3((position_difference / 2).x, 3.0, (position_difference / 2).z)
 		# more = smoother
 		var amount = maxi(2 * roundi(position_difference.length()), 6)
-		var duration = 0.1 / Global.game_speed#position_difference.length() / (amount * 6.0)
+		var duration = 0.1 / Global.settings.game_speed#position_difference.length() / (amount * 6.0)
 		for i in range(1, amount + 1):
 			# manually slowing down the bullet in the top part of the trajectory
 			#var current_duration = (duration * 1.2) if (i > amount * 2/6 and i < amount * 4/6) else (duration)
@@ -483,7 +483,7 @@ func collect_if_collectable(target_tile: MapTile) -> void:
 		collectable.queue_free()
 		
 		if is_in_group('PLAYERS'):
-			Global.money += 1
+			Global.save.money += 1
 		
 		collectable_picked_event.emit(self)
 

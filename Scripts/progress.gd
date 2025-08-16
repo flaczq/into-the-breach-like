@@ -27,13 +27,13 @@ var selected_level_type: LevelType = LevelType.NONE
 
 func _ready() -> void:
 	Global.engine_mode = EngineMode.MENU
-	Global.money = 0 # DEBUG
+	Global.save.money = 0 # DEBUG
 	
 	summary_next_texture_button.connect('pressed', _on_summary_next_texture_button_pressed)
 	
 	# after level end
-	if Global.played_maps_ids.is_empty():
-		if Global.money > 0:
+	if Global.save.played_maps_ids.is_empty():
+		if Global.save.money > 0:
 			upgrades_container.show()
 			levels_container.hide()
 			summary_container.hide()
@@ -60,8 +60,8 @@ func init_ui() -> void:
 		child.hide()
 	
 	var index = 0
-	assert(Global.selected_players.size() > 0 and Global.selected_players.size() <= 3, 'Wrong selected players size')
-	for player in Global.selected_players as Array[Player]:
+	assert(Global.save.selected_players.size() > 0 and Global.save.selected_players.size() <= 3, 'Wrong selected players size')
+	for player in Global.save.selected_players as Array[Player]:
 		assert(player.id != PlayerType.NONE, 'Wrong selected player id')
 		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
 		player_inventory.init(player, true)
@@ -81,15 +81,15 @@ func init_ui() -> void:
 	shop.connect('item_clicked', _on_shop_item_clicked)
 	
 	var empty_item: ItemObject = init_manager_script.init_item(ItemType.NONE)
-	inventory.init(Global.selected_items, empty_item)
+	inventory.init(Global.save.selected_items, empty_item)
 	inventory.connect('item_hovered', _on_inventory_item_hovered)
 	inventory.connect('item_clicked', _on_inventory_item_clicked)
 
 
 func update_ui() -> void:
-	shop_label.text = 'Welcome to the SHOP\nMoney: ' + str(Global.money)
-	summary_time_value_label.text = str(Global.money)
-	summary_money_value_label.text = str(Global.level_time)
+	shop_label.text = 'Welcome to the SHOP\nMoney: ' + str(Global.save.money)
+	summary_time_value_label.text = str(Global.save.money)
+	summary_money_value_label.text = str(Global.save.level_time)
 
 
 func show_back() -> void:
@@ -121,7 +121,7 @@ func _on_shop_item_clicked(shop_item_texture_index: int, item_id: ItemType) -> v
 		on_button_disabled(shop_buy_texture_button, true)
 	else:
 		var shop_clicked_item = init_manager_script.init_item(shop_clicked_item_id)
-		on_button_disabled(shop_buy_texture_button, shop_clicked_item.cost > Global.money)
+		on_button_disabled(shop_buy_texture_button, shop_clicked_item.cost > Global.save.money)
 	
 	inventory.reset_items()
 	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
@@ -136,13 +136,13 @@ func _on_shop_buy_texture_button_pressed() -> void:
 		return
 	
 	var shop_clicked_item = init_manager_script.init_item(shop_clicked_item_id)
-	if shop_clicked_item.cost > Global.money:
+	if shop_clicked_item.cost > Global.save.money:
 		return
 	
 	shop_clicked_item.is_available = false
-	Global.selected_items.push_back(shop_clicked_item)
+	Global.save.selected_items.push_back(shop_clicked_item)
 	
-	Global.money -= shop_clicked_item.cost
+	Global.save.money -= shop_clicked_item.cost
 	update_ui()
 	
 	shop.buy_item(shop_clicked_item_id)

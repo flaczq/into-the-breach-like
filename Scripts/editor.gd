@@ -212,7 +212,7 @@ func calculate_level_data() -> void:
 	var playable_players = init_manager_script.init_playable_players()
 	for player_scene_id in level_data.player_scenes:
 		var selected_player = playable_players.filter(func(playable_player): return playable_player.id == player_scene_id).front()
-		Global.selected_players.push_back(selected_player)
+		Global.save.selected_players.push_back(selected_player)
 
 
 func _on_settings_texture_button_pressed() -> void:

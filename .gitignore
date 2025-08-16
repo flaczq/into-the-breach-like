@@ -19,7 +19,7 @@ mono_crash.*.json
 
 # Assets
 Assets/**/*.*
-!Assets/**/*.png
+#!Assets/**/*.png
 
 # Other
 todo.txt

@@ -89,7 +89,7 @@ func move(tiles_path: Array[MapTile], forced: bool = false, outside_tile_positio
 			tile = target_tile
 			tile.set_enemy(self)
 			
-			var duration = Global.character_speed / Global.game_speed
+			var duration = Global.character_speed / Global.settings.game_speed
 			for next_tile in tiles_path:
 				if not forced:
 					look_at_y(next_tile)
@@ -210,11 +210,11 @@ func toggle_health_bar(is_toggled: bool, displayed_health: int = health) -> void
 			health_bar.position.x -= 30
 			
 			# hardcoded
-			if Global.camera_position == CameraPosition.HIGH:
+			if Global.settings.camera_position == CameraPosition.HIGH:
 				health_bar.position.y -= 41
-			elif Global.camera_position == CameraPosition.MIDDLE:
+			elif Global.settings.camera_position == CameraPosition.MIDDLE:
 				health_bar.position.y -= 45
-			elif Global.camera_position == CameraPosition.LOW:
+			elif Global.settings.camera_position == CameraPosition.LOW:
 				health_bar.position.y -= 49
 
 

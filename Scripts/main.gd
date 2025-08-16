@@ -34,18 +34,18 @@ func _input(event: InputEvent) -> void:
 	if game_state_manager.map:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP):
 			if is_close(camera_3d.rotation_degrees.x, -50):
-				Global.camera_position = CameraPosition.MIDDLE
+				Global.settings.camera_position = CameraPosition.MIDDLE
 				adjust_camera_position()
 			elif is_close(camera_3d.rotation_degrees.x, -40):
-				Global.camera_position = CameraPosition.LOW
+				Global.settings.camera_position = CameraPosition.LOW
 				adjust_camera_position()
 		
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN):
 			if is_close(camera_3d.rotation_degrees.x, -40):
-				Global.camera_position = CameraPosition.HIGH
+				Global.settings.camera_position = CameraPosition.HIGH
 				adjust_camera_position()
 			elif is_close(camera_3d.rotation_degrees.x, -30):
-				Global.camera_position = CameraPosition.MIDDLE
+				Global.settings.camera_position = CameraPosition.MIDDLE
 				adjust_camera_position()
 	
 		# UNCLICK PLAYER
@@ -92,13 +92,13 @@ func show_back() -> void:
 
 
 func adjust_camera_position():
-	if Global.camera_position == CameraPosition.HIGH:
+	if Global.settings.camera_position == CameraPosition.HIGH:
 		camera_3d.rotation_degrees.x = -50
 		camera_3d.position.y = 19.2
-	elif Global.camera_position == CameraPosition.MIDDLE:
+	elif Global.settings.camera_position == CameraPosition.MIDDLE:
 		camera_3d.rotation_degrees.x = -40
 		camera_3d.position.y = 13.2
-	elif Global.camera_position == CameraPosition.LOW:
+	elif Global.settings.camera_position == CameraPosition.LOW:
 		camera_3d.rotation_degrees.x = -30
 		camera_3d.position.y = 9
 

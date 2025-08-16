@@ -259,12 +259,17 @@ func start_turn() -> void:
 	var alive_players: Array[Player] = players.filter(func(player: Player): return player.is_alive)
 	
 	for alive_civilian in alive_civilians:
+		# civilian AI
 		var tiles_for_movement = calculate_tiles_for_movement(true, alive_civilian)
 		if tiles_for_movement.is_empty():
 			tiles_for_movement.push_back(alive_civilian.tile)
 		
 		# prefer to move if possible
-		var target_tile_for_movement = (tiles_for_movement[0]) if (tiles_for_movement.size() == 1) else (tiles_for_movement.filter(func(tile: MapTile): return tile != alive_civilian.tile)).pick_random()
+		var target_tile_for_movement
+		if tiles_for_movement.size() == 1:
+			target_tile_for_movement = tiles_for_movement[0]
+		else:
+			target_tile_for_movement = tiles_for_movement.filter(func(tile: MapTile): return tile != alive_civilian.tile).pick_random()
 		var tiles_path = calculate_tiles_path(alive_civilian, target_tile_for_movement)
 		await alive_civilian.move(tiles_path)
 		
@@ -284,13 +289,11 @@ func start_turn() -> void:
 	# sort by order
 	alive_enemies.sort_custom(func(e1, e2): return e1.order < e2.order)
 	for alive_enemy in alive_enemies:
+		# enemy AI
 		var tiles_for_movement = calculate_tiles_for_movement(true, alive_enemy)
 		tiles_for_movement.push_back(alive_enemy.tile)
-		var target_tile_for_movement = calculate_tile_for_movement_towards_characters(tiles_for_movement, alive_enemy, target_tiles_for_enemy)
-		if not target_tile_for_movement:
-			target_tile_for_movement = tiles_for_movement.pick_random()
-			print('enemy ' + str(alive_enemy.tile.coords) + ' -> random move ' + str(target_tile_for_movement.coords))
 		
+		var target_tile_for_movement = select_best_tile_to_move(tiles_for_movement, alive_enemy, target_tiles_for_enemy)
 		# wait for 'thinking' about move
 		await get_tree().create_timer(0.5).timeout
 		var tiles_path = calculate_tiles_path(alive_enemy, target_tile_for_movement)
@@ -306,16 +309,7 @@ func start_turn() -> void:
 		if tiles_for_action.is_empty():
 			print('enemy ' + str(alive_enemy.tile.coords) + ' -> no actions available')
 		else:
-			var target_tile_for_action = calculate_tile_for_action_towards_characters(tiles_for_action, target_tiles_for_enemy)
-			if not target_tile_for_action:
-				# no friendly fire preferred
-				var no_ff_tiles = tiles_for_action.filter(func(tile: MapTile): return not tile.enemy)
-				if no_ff_tiles.is_empty():
-					target_tile_for_action = tiles_for_action.pick_random()
-				else:
-					target_tile_for_action = no_ff_tiles.pick_random()
-				print('enemy ' + str(alive_enemy.tile.coords) + ' -> random action ' + str(target_tile_for_action.coords))
-			
+			var target_tile_for_action = select_best_tile_to_make_action(tiles_for_action, alive_enemy, target_tiles_for_enemy)
 			alive_enemy.plan_action(target_tile_for_action)
 	
 	for alive_player in alive_players:
@@ -426,11 +420,11 @@ func level_won() -> void:
 	
 	print('adding money for level: ' + str(money_for_level) + '(' + str(points_for_level) + ' ' + str(dead_players_size) + ')')
 	if money_for_level > 0:
-		Global.money += money_for_level
+		Global.save.money += money_for_level
 	
 	# TODO
 	if level < max_levels and not Global.editor:
-		Global.level_time = level_time_start
+		Global.save.level_time = level_time_start
 		level_end_label.text = 'LEVEL WON'
 		level_end_color_rect.show()
 		panel_full_screen_container.show()
@@ -472,7 +466,7 @@ func update_ui():
 	game_info_label.text = 'TIME: ' + ('%02d:%02d' % [minutes, seconds]) + '\n'
 	game_info_label.text += 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info_label.text += 'MONEY: ' + str(Global.money)
+	game_info_label.text += 'MONEY: ' + str(Global.save.money)
 	tile_info_label.text = ''
 	debug_info_label.text = ''
 	objectives_label.text = 'MAP OBJECTIVES:'
@@ -565,7 +559,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 					if character.is_in_group('PLAYERS'):
 						push_unique_to_array(tiles_for_action, tile)
 					else:
-						var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(character, character.tile.coords, tile.coords)
+						var first_occupied_tile_in_line = select_first_occupied_tile_for_action_direction_line(character, character.tile.coords, tile.coords)
 						if not first_occupied_tile_in_line:
 							first_occupied_tile_in_line = tile
 						
@@ -581,7 +575,7 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 						if character.is_in_group('PLAYERS'):
 							push_unique_to_array(tiles_for_action, tile)
 						else:
-							var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(character, character.tile.coords, tile.coords)
+							var first_occupied_tile_in_line = select_first_occupied_tile_for_action_direction_line(character, character.tile.coords, tile.coords)
 							if not first_occupied_tile_in_line:
 								first_occupied_tile_in_line = tile
 							
@@ -625,8 +619,21 @@ func calculate_tiles_for_action(active: bool, character: Character) -> Array[Map
 	return tiles_for_action
 
 
-func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[MapTile], origin_character: Character, different_target_tiles: Array[Array]) -> MapTile:
-	for target_tiles in different_target_tiles:
+func select_best_tile_to_move(tiles_for_movement: Array[MapTile], origin_character: Character, target_tiles_of_many_types: Array[Array]) -> MapTile:
+	if Global.settings.difficulty == DifficultyLevel.EASY:
+		var target_tile_for_movement = select_tile_for_movement_towards_characters(tiles_for_movement, origin_character, target_tiles_of_many_types)
+		if not target_tile_for_movement:
+			target_tile_for_movement = tiles_for_movement.pick_random()
+			print('chara ' + str(origin_character.tile.coords) + ' -> random move ' + str(target_tile_for_movement.coords))
+		
+		return target_tile_for_movement
+	
+	# default or HARD:
+	return select_tile_by_weights(tiles_for_movement, origin_character, target_tiles_of_many_types)
+
+
+func select_tile_for_movement_towards_characters(tiles_for_movement: Array[MapTile], origin_character: Character, target_tiles_of_many_types: Array[Array]) -> MapTile:
+	for target_tiles in target_tiles_of_many_types:
 		var valid_tiles_for_movement = []
 		var target_tile_for_movement = null
 		
@@ -658,7 +665,7 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[Ma
 			
 			# exclude tiles behind occupied tiles
 			if target_tile_for_movement and (origin_character.action_direction == ActionDirection.HORIZONTAL_LINE or origin_character.action_direction == ActionDirection.VERTICAL_LINE):
-				if valid_tiles_for_movement.all(func(target_tile: MapTile): return target_tile != calculate_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_tile.coords)):
+				if valid_tiles_for_movement.all(func(target_tile: MapTile): return target_tile != select_first_occupied_tile_for_action_direction_line(origin_character, target_tile_for_movement.coords, target_tile.coords)):
 					valid_tiles_for_movement = []
 					target_tile_for_movement = null
 			
@@ -680,8 +687,26 @@ func calculate_tile_for_movement_towards_characters(tiles_for_movement: Array[Ma
 	return null
 
 
-func calculate_tile_for_action_towards_characters(tiles_for_action: Array[MapTile], different_target_tiles: Array[Array]) -> MapTile:
-	for target_tiles in different_target_tiles:
+func select_best_tile_to_make_action(tiles_for_action: Array[MapTile], origin_character: Character, target_tiles_of_many_types: Array[Array]) -> MapTile:
+	if Global.settings.difficulty == DifficultyLevel.EASY:
+		var target_tile_for_action = select_tile_for_action_towards_characters(tiles_for_action, target_tiles_of_many_types)
+		if not target_tile_for_action:
+			# no friendly fire preferred
+			var no_ff_tiles = tiles_for_action.filter(func(tile: MapTile): return not tile.enemy)
+			if no_ff_tiles.is_empty():
+				target_tile_for_action = tiles_for_action.pick_random()
+			else:
+				target_tile_for_action = no_ff_tiles.pick_random()
+			print('chara ' + str(origin_character.tile.coords) + ' -> random action ' + str(target_tile_for_action.coords))
+		
+		return target_tile_for_action
+	
+	# default or HARD:
+	return select_tile_by_weights(tiles_for_action, origin_character, target_tiles_of_many_types)
+
+
+func select_tile_for_action_towards_characters(tiles_for_action: Array[MapTile], target_tiles_of_many_types: Array[Array]) -> MapTile:
+	for target_tiles in target_tiles_of_many_types:
 		# make it random
 		tiles_for_action.shuffle()
 		
@@ -692,7 +717,12 @@ func calculate_tile_for_action_towards_characters(tiles_for_action: Array[MapTil
 	return null
 
 
-func calculate_first_occupied_tile_for_action_direction_line(origin_character: Character, origin_tile_coords: Vector2i, target_tile_coords: Vector2i) -> MapTile:
+func select_tile_by_weights(tiles_for_movement: Array[MapTile], origin_character: Character, target_tiles_of_many_types: Array[Array]) -> MapTile:
+	# TODO
+	return null
+
+
+func select_first_occupied_tile_for_action_direction_line(origin_character: Character, origin_tile_coords: Vector2i, target_tile_coords: Vector2i) -> MapTile:
 	var origin_to_target_sign = (origin_tile_coords - target_tile_coords).sign()
 	var hit_direction = get_hit_direction(origin_to_target_sign)
 	# this can happen if two+ characters are pushed/pulled at the same time (CROSS_PUSH_BACK)
@@ -719,7 +749,7 @@ func calculate_first_occupied_tile_for_action_direction_line(origin_character: C
 
 func recalculate_enemies_planned_actions() -> void:
 	for enemy in enemies.filter(func(enemy: Enemy): return enemy.is_alive and enemy.planned_tile) as Array[Enemy]:
-		var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(enemy, enemy.tile.coords, enemy.planned_tile.coords)
+		var first_occupied_tile_in_line = select_first_occupied_tile_for_action_direction_line(enemy, enemy.tile.coords, enemy.planned_tile.coords)
 		if first_occupied_tile_in_line:# and first_occupied_tile_in_line != enemy.planned_tile:
 			enemy.plan_action(first_occupied_tile_in_line)
 		else:
@@ -882,7 +912,7 @@ func on_tile_hovered(target_tile: MapTile, is_hovered: bool) -> void:
 		elif selected_player.can_make_action():
 			# target_tile.is_player_clicked = action_1_texture_button.is_pressed() or action_2_texture_button.is_pressed()
 			if is_hovered:
-				var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
+				var first_occupied_tile_in_line = select_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
 				if first_occupied_tile_in_line and first_occupied_tile_in_line != target_tile:
 					target_tile.is_hovered = false
 					target_tile.reset_tile_models()
@@ -1020,7 +1050,7 @@ func _on_tile_clicked(target_tile: MapTile) -> void:
 			selected_player.clear_arrows()
 			selected_player.clear_action_indicators()
 		
-			var first_occupied_tile_in_line = calculate_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
+			var first_occupied_tile_in_line = select_first_occupied_tile_for_action_direction_line(selected_player, selected_player.tile.coords, target_tile.coords)
 			if not first_occupied_tile_in_line:
 				first_occupied_tile_in_line = target_tile
 			
@@ -1373,7 +1403,7 @@ func _on_collectable_picked_event(target_character: Character):
 
 func _on_end_turn_texture_button_pressed() -> void:
 	var actions_available = players.any(func(player: Player): return player.is_alive and player.can_be_interacted_with())
-	if Global.end_turn_confirmation and actions_available:
+	if Global.settings.end_turn_confirmation and actions_available:
 		et_confirmation_color_rect.show()
 		panel_full_screen_container.show()
 		level_end_color_rect.hide()

@@ -91,6 +91,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainMenuContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="EditorTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
@@ -320,7 +321,6 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="OptionsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 
 [node name="BackTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
@@ -347,6 +347,23 @@ theme_type_variation = &"LabelBig"
 text = "BACK"
 vertical_alignment = 1
 uppercase = true
+
+[node name="DifficultyHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
+layout_mode = 2
+
+[node name="DifficultyLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/OptionsContainer/DifficultyHBoxContainer"]
+layout_mode = 2
+text = "DIFFICULTY:"
+
+[node name="DifficultyOptionButton" type="OptionButton" parent="CanvasLayer/PanelCenterContainer/OptionsContainer/DifficultyHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 2
+popup/item_0/text = "EASY"
+popup/item_0/id = 0
+popup/item_1/text = "HARD"
+popup/item_1/id = 1
 
 [node name="LanguageHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
 layout_mode = 2
@@ -466,6 +483,9 @@ layout_mode = 2
 [node name="Player3Inventory" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("7_5gw6c")]
 layout_mode = 2
 
+[node name="Player4Inventory" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("7_5gw6c")]
+layout_mode = 2
+
 [node name="NextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -504,6 +524,7 @@ uppercase = true
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/InGameMenuContainer/OptionsTextureButton" to="." method="_on_options_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/InGameMenuContainer/ExitTextureButton" to="." method="_on_exit_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/OptionsContainer/BackTextureButton" to="." method="_on_back_texture_button_pressed"]
+[connection signal="item_selected" from="CanvasLayer/PanelCenterContainer/OptionsContainer/DifficultyHBoxContainer/DifficultyOptionButton" to="." method="_on_difficulty_option_button_item_selected"]
 [connection signal="item_selected" from="CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer/LanguageOptionButton" to="." method="_on_language_option_button_item_selected"]
 [connection signal="item_selected" from="CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer/CameraPositionOptionButton" to="." method="_on_camera_position_option_button_item_selected"]
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox" to="." method="_on_aa_check_box_toggled"]

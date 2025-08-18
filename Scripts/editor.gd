@@ -209,10 +209,10 @@ func calculate_level_data() -> void:
 			elif child.is_in_group('CIVILIANS'):
 				level_data.civilian_scenes.push_back(child.id)
 	
-	var playable_players = init_manager_script.init_playable_players()
+	#var playable_players = init_manager_script.init_playable_players()
 	for player_scene_id in level_data.player_scenes:
-		var selected_player = playable_players.filter(func(playable_player): return playable_player.id == player_scene_id).front()
-		Global.save.selected_players.push_back(selected_player)
+		#var selected_player = playable_players.filter(func(playable_player): return playable_player.id == player_scene_id).front()
+		Global.save.selected_player_ids.push_back(player_scene_id)
 
 
 func _on_settings_texture_button_pressed() -> void:

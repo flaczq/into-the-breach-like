@@ -182,7 +182,8 @@ var players_data: Array[Dictionary] = [
 		'textures': [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture] as Array[CompressedTexture2D],
 		#'items_applied': [false, false] as Array[bool]
 		'item_1_id': Util.ItemType.NONE,
-		'item_2_id': Util.ItemType.NONE
+		'item_2_id': Util.ItemType.NONE,
+		'is_unlocked': true
 	},
 	{
 		'id': Util.PlayerType.PLAYER_1,
@@ -200,7 +201,8 @@ var players_data: Array[Dictionary] = [
 		'state_types': [] as Array[Util.StateType],
 		'textures': [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
-		'item_2_id': Util.ItemType.NONE
+		'item_2_id': Util.ItemType.NONE,
+		'is_unlocked': true
 	},
 	{
 		'id': Util.PlayerType.PLAYER_2,
@@ -218,7 +220,8 @@ var players_data: Array[Dictionary] = [
 		'state_types': [] as Array[Util.StateType],
 		'textures': [player_2_normal_texture, player_2_pressed_texture, player_2_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
-		'item_2_id': Util.ItemType.NONE
+		'item_2_id': Util.ItemType.NONE,
+		'is_unlocked': true
 	},
 	{
 		'id': Util.PlayerType.PLAYER_3,
@@ -236,7 +239,8 @@ var players_data: Array[Dictionary] = [
 		'state_types': [] as Array[Util.StateType],
 		'textures': [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
-		'item_2_id': Util.ItemType.NONE
+		'item_2_id': Util.ItemType.NONE,
+		'is_unlocked': true
 	},
 	{
 		# TODO
@@ -255,7 +259,8 @@ var players_data: Array[Dictionary] = [
 		'state_types': [] as Array[Util.StateType],
 		'textures': [player_3_normal_texture, player_3_pressed_texture, player_3_hover_texture] as Array[CompressedTexture2D],
 		'item_1_id': Util.ItemType.NONE,
-		'item_2_id': Util.ItemType.NONE
+		'item_2_id': Util.ItemType.NONE,
+		'is_unlocked': false
 	}
 ]
 
@@ -381,31 +386,9 @@ var civilians_data: Array[Dictionary] = [
 ]
 
 
-func init_tutorial_player() -> Player:
-	var tutorial_player_data = players_data.filter(func(player_data): return player_data.id == Util.PlayerType.PLAYER_TUTORIAL).front()
-	var tutorial_player = Player.new()
-	tutorial_player.id = tutorial_player_data.id
-	tutorial_player.model_name = tutorial_player_data.model_name
-	tutorial_player.max_health = tutorial_player_data.max_health
-	tutorial_player.health = tutorial_player_data.health
-	tutorial_player.damage = tutorial_player_data.damage
-	tutorial_player.move_distance = tutorial_player_data.move_distance
-	tutorial_player.action_1 = init_action(tutorial_player_data.action_1_id)
-	tutorial_player.action_2 = init_action(tutorial_player_data.action_2_id)
-	tutorial_player.action_direction = tutorial_player_data.action_direction
-	tutorial_player.passive_type = tutorial_player_data.passive_type
-	tutorial_player.can_fly = tutorial_player_data.can_fly
-	tutorial_player.can_swim = tutorial_player_data.can_swim
-	tutorial_player.state_types = tutorial_player_data.state_types.duplicate()
-	tutorial_player.textures = tutorial_player_data.textures.duplicate()
-	tutorial_player.item_1 = init_item(tutorial_player_data.item_1_id)
-	tutorial_player.item_2 = init_item(tutorial_player_data.item_2_id)
-	return tutorial_player
-
-
 func init_playable_players() -> Array[Player]:
 	var playable_players = [] as Array[Player]
-	for player_data in players_data.filter(func(player_data): return Global.save.playable_player_ids.has(player_data.id)):
+	for player_data in players_data.filter(func(player_data): return player_data.id != Util.PlayerType.PLAYER_TUTORIAL).front():
 		var playable_player = Player.new()
 		playable_player.id = player_data.id
 		playable_player.model_name = player_data.model_name
@@ -423,28 +406,31 @@ func init_playable_players() -> Array[Player]:
 		playable_player.textures = player_data.textures.duplicate()
 		playable_player.item_1 = init_item(player_data.item_1_id)
 		playable_player.item_2 = init_item(player_data.item_2_id)
+		playable_player.is_unlocked = player_data.is_unlocked
 		playable_players.push_back(playable_player)
 	return playable_players
 
 
 func init_player(target_player: Player, id: Util.PlayerType) -> void:
-	var player_data = Global.save.selected_players.filter(func(selected_player): return selected_player.id == id).front()
+	assert(Global.save.selected_player_ids.has(id), 'Why NOT selected player is being initialized?')
+	var player_data = players_data.filter(func(player_data): return player_data.id == id).front()
 	target_player.id = player_data.id
 	target_player.model_name = player_data.model_name
 	target_player.max_health = player_data.max_health
 	target_player.health = player_data.health
 	target_player.damage = player_data.damage
 	target_player.move_distance = player_data.move_distance
-	target_player.action_1 = player_data.action_1
-	target_player.action_2 = player_data.action_2
+	target_player.action_1 = init_action(player_data.action_1_id)
+	target_player.action_2 = init_action(player_data.action_2_id)
 	target_player.action_direction = player_data.action_direction
 	target_player.passive_type = player_data.passive_type
 	target_player.can_fly = player_data.can_fly
 	target_player.can_swim = player_data.can_swim
 	target_player.state_types = player_data.state_types.duplicate()
 	target_player.textures = player_data.textures.duplicate()
-	target_player.item_1 = player_data.item_1
-	target_player.item_2 = player_data.item_2
+	target_player.item_1 = init_item(player_data.item_1_id)
+	target_player.item_2 = init_item(player_data.item_2_id)
+	target_player.is_unlocked = player_data.is_unlocked
 
 
 func init_enemy(target_enemy: Enemy, id: Util.EnemyType) -> void:

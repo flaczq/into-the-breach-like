@@ -77,8 +77,8 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 	else:
-		for selected_player in Global.save.selected_players:
-			level_data.player_scenes.push_back(selected_player.id)
+		for selected_player_id in Global.save.selected_player_ids:
+			level_data.player_scenes.push_back(selected_player_id)
 		
 		if level_data.level_type == LevelType.KILL_ENEMIES:
 			# scene 0 is always tutorial

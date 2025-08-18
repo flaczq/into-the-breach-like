@@ -17,6 +17,7 @@ var is_ghost: bool					= false
 var id: PlayerType
 var item_1: ItemObject
 var item_2: ItemObject
+var is_unlocked: bool
 
 
 func _ready() -> void:
@@ -51,11 +52,11 @@ func after_ready() -> void:
 
 
 func include_items_updates() -> void:
-	if item_1 and item_1.is_applied:
+	if item_1 and not item_1.is_applied:
 		item_1.apply_to_player(self)
 		item_1.is_applied = true
 	
-	if item_2 and item_2.is_applied:
+	if item_2 and not item_2.is_applied:
 		item_2.apply_to_player(self)
 		item_2.is_applied = true
 

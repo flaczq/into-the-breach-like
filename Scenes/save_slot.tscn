@@ -1,12 +1,86 @@
-[gd_scene load_steps=2 format=3 uid="uid://xo2b6hy86xtm"]
+[gd_scene load_steps=3 format=3 uid="uid://xo2b6hy86xtm"]
 
 [ext_resource type="Script" uid="uid://dcmxnwpfpox86" path="res://Scripts/save_slot.gd" id="1_rn4jt"]
+[ext_resource type="Texture2D" uid="uid://co4vf2e54cmuo" path="res://Assets/aaaps/player_background.png" id="2_rys4q"]
 
 [node name="SaveSlotX" type="Control"]
+custom_minimum_size = Vector2(666, 200)
 layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_rn4jt")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 666.0
+offset_bottom = 200.0
+texture = ExtResource("2_rys4q")
+expand_mode = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="TextureRect"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_rn4jt")
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TextureRect/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="NameHBoxContainer" type="HBoxContainer" parent="TextureRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="NameLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/NameHBoxContainer"]
+layout_mode = 2
+text = "NAME:"
+horizontal_alignment = 1
+
+[node name="NameTextEdit" type="TextEdit" parent="TextureRect/MarginContainer/VBoxContainer/NameHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "save slot 1"
+scroll_fit_content_height = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TextureRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LeftVBoxContainer" type="VBoxContainer" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/LeftVBoxContainer"]
+layout_mode = 2
+text = "SLOT: 1"
+
+[node name="UnlockedPlayersLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/LeftVBoxContainer"]
+layout_mode = 2
+text = "UNLOCKED PLAYERS: 3"
+
+[node name="RightVBoxContainer" type="VBoxContainer" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="CreatedLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/RightVBoxContainer"]
+layout_mode = 2
+text = "CREATED: 15:01:32 18.08.2025"
+horizontal_alignment = 2
+
+[node name="PlayTimeLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/RightVBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "PLAY TIME: 1:25H"
+horizontal_alignment = 2
+
+[node name="SaveButton" type="Button" parent="TextureRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "SAVE"
+
+[connection signal="pressed" from="TextureRect/MarginContainer/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]

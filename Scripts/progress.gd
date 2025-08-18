@@ -60,9 +60,11 @@ func init_ui() -> void:
 		child.hide()
 	
 	var index = 0
-	assert(Global.save.selected_players.size() > 0 and Global.save.selected_players.size() <= 3, 'Wrong selected players size')
-	for player in Global.save.selected_players as Array[Player]:
-		assert(player.id != PlayerType.NONE, 'Wrong selected player id')
+	assert(Global.save.selected_player_ids.size() > 0 and Global.save.selected_player_ids.size() <= 3, 'Wrong selected player ids size')
+	for player_id in Global.save.selected_player_ids:
+		assert(player_id != PlayerType.NONE, 'Wrong selected player id')
+		var player = Player.new()
+		init_manager_script.init_player(player, player_id)
 		var player_inventory = players_grid_container.get_child(index) as PlayerInventory
 		player_inventory.init(player, true)
 		player_inventory.connect('player_inventory_mouse_entered', _on_player_inventory_mouse_entered)
@@ -97,7 +99,7 @@ func show_back() -> void:
 	toggle_visibility(true)
 
 
-func get_player_clicked_item_id(player_id: PlayerType = PlayerType.NONE) -> ItemType:
+func get_player_clicked_item_id() -> ItemType:
 	var player_inventory = players_grid_container.get_children().filter(func(child): return child.clicked_item_id != ItemType.NONE).front() as PlayerInventory
 	if player_inventory:
 		return player_inventory.clicked_item_id
@@ -210,7 +212,7 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 
 func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int, item_id: ItemType, player_id: PlayerType) -> void:
 	# switching items not available
-	var player_clicked_item_id = get_player_clicked_item_id(player_id)
+	var player_clicked_item_id = get_player_clicked_item_id()
 	var inventory_clicked_item_id = inventory.clicked_item_id
 	var selected_player_inventory = players_grid_container.get_children().filter(func(child): return child.player.id == player_id).front() as PlayerInventory
 	var selected_player = selected_player_inventory.player

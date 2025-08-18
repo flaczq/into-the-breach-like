@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=14 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" uid="uid://dl7a25jomg7lo" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bui25y017bdal" path="res://Assets/aaaps/background_squares_green.png" id="5_wbdvm"]
 [ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="7_5gw6c"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="7_evuth"]
+[ext_resource type="PackedScene" uid="uid://xo2b6hy86xtm" path="res://Scenes/save_slot.tscn" id="8_q3rjx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8re6"]
 
@@ -486,15 +487,16 @@ layout_mode = 2
 [node name="Player4Inventory" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersGridContainer" instance=ExtResource("7_5gw6c")]
 layout_mode = 2
 
-[node name="NextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer"]
+[node name="PlayersNextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/PlayersContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+disabled = true
 texture_normal = SubResource("AtlasTexture_2fu10")
 texture_pressed = SubResource("AtlasTexture_iekyi")
 texture_hover = SubResource("AtlasTexture_8oi4x")
 texture_disabled = SubResource("AtlasTexture_0cirs")
 
-[node name="NextLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton"]
+[node name="NextLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersNextTextureButton"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -513,6 +515,7 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="SaveSlotsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="SaveSlotsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]
@@ -522,6 +525,42 @@ horizontal_alignment = 1
 
 [node name="SaveSlotsGridContainer" type="GridContainer" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]
 layout_mode = 2
+
+[node name="SaveSlot1" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsGridContainer" instance=ExtResource("8_q3rjx")]
+layout_mode = 2
+
+[node name="SaveSlot2" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsGridContainer" instance=ExtResource("8_q3rjx")]
+layout_mode = 2
+
+[node name="SaveSlot3" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsGridContainer" instance=ExtResource("8_q3rjx")]
+layout_mode = 2
+
+[node name="SaveSlotsNextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+disabled = true
+texture_normal = SubResource("AtlasTexture_2fu10")
+texture_pressed = SubResource("AtlasTexture_iekyi")
+texture_hover = SubResource("AtlasTexture_8oi4x")
+texture_disabled = SubResource("AtlasTexture_0cirs")
+
+[node name="NextLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsNextTextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -34.5
+offset_top = -17.5
+offset_right = 34.5
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"LabelBig"
+text = "NEXT"
+vertical_alignment = 1
+uppercase = true
 
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton" to="." method="_on_editor_texture_button_pressed"]
@@ -542,4 +581,5 @@ layout_mode = 2
 [connection signal="toggled" from="CanvasLayer/PanelCenterContainer/OptionsContainer/EndTurnConfirmationHBoxContainer/EndTurnConfirmationCheckBox" to="." method="_on_end_turn_confirmation_check_box_toggled"]
 [connection signal="drag_ended" from="CanvasLayer/PanelCenterContainer/OptionsContainer/GameSpeedHBoxContainer/GameSpeedHSlider" to="." method="_on_game_speed_h_slider_drag_ended"]
 [connection signal="drag_ended" from="CanvasLayer/PanelCenterContainer/OptionsContainer/VolumeHBoxContainer/VolumeHSlider" to="." method="_on_volume_h_slider_drag_ended"]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/PlayersContainer/NextTextureButton" to="." method="_on_next_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersNextTextureButton" to="." method="_on_players_next_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsNextTextureButton" to="." method="_on_save_slots_next_texture_button_pressed"]

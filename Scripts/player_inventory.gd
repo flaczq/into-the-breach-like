@@ -33,6 +33,10 @@ func init(new_player: Player, show_actions: bool = false) -> void:
 	avatar_texture_button.texture_pressed = player.textures[1]
 	avatar_texture_button.texture_hover = player.textures[2]
 	
+	if not player.is_unlocked:
+		propagate_call('set_mouse_filter', [Control.MOUSE_FILTER_IGNORE])
+		texture_rect.modulate.a = 0.5
+	
 	update_stats()
 	
 	action_tooltip.init(player, show_actions)

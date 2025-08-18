@@ -32,7 +32,7 @@ func _ready() -> void:
 	summary_next_texture_button.connect('pressed', _on_summary_next_texture_button_pressed)
 	
 	# after level end
-	if Global.save.played_maps_ids.is_empty():
+	if Global.save.played_map_ids.is_empty():
 		if Global.save.money > 0:
 			upgrades_container.show()
 			levels_container.hide()

@@ -178,7 +178,7 @@ var players_data: Array[Dictionary] = [
 		'can_fly': false,
 		'can_swim': true,
 		'state_types': [] as Array[Util.StateType],
-		#'items_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
+		#'item_ids': [Util.ItemType.NONE, Util.ItemType.NONE] as Array[Util.ItemType],
 		'textures': [player_1_normal_texture, player_1_pressed_texture, player_1_hover_texture] as Array[CompressedTexture2D],
 		#'items_applied': [false, false] as Array[bool]
 		'item_1_id': Util.ItemType.NONE,
@@ -405,7 +405,7 @@ func init_tutorial_player() -> Player:
 
 func init_playable_players() -> Array[Player]:
 	var playable_players = [] as Array[Player]
-	for player_data in players_data.filter(func(player_data): return Global.save.playable_players_ids.has(player_data.id)):
+	for player_data in players_data.filter(func(player_data): return Global.save.playable_player_ids.has(player_data.id)):
 		var playable_player = Player.new()
 		playable_player.id = player_data.id
 		playable_player.model_name = player_data.model_name

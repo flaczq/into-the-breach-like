@@ -110,7 +110,7 @@ func show_cutscenes() -> void:
 func show_players_selection() -> void:
 	Global.save.selected_players = []
 	Global.save.selected_items = []
-	Global.save.played_maps_ids = []
+	Global.save.played_map_ids = []
 	
 	for player_inventory in players_grid_container.get_children():
 		var player_texture_button = player_inventory.avatar_texture_button
@@ -146,7 +146,7 @@ func init_steam() -> void:
 	## TODO include in save
 	#var all_players = init_manager_script.init_all_players()
 	#Global.all_players.append_array(all_players)
-	#assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.items_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
+	#assert(Global.all_players.all(func(player): return player.state_types.is_empty() and player.item_ids.all(func(item): return item == ItemType.NONE)), 'Wrong default values for all players')
 	
 	#ENEMIES
 	#var all_enemies = init_manager_script.init_all_enemies()

@@ -321,6 +321,7 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="OptionsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="BackTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
@@ -460,7 +461,6 @@ tick_count = 2
 ticks_on_borders = true
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -511,6 +511,17 @@ theme_type_variation = &"LabelBig"
 text = "NEXT"
 vertical_alignment = 1
 uppercase = true
+
+[node name="SaveSlotsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+layout_mode = 2
+
+[node name="SaveSlotsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]
+layout_mode = 2
+text = "SAVE SLOTS"
+horizontal_alignment = 1
+
+[node name="SaveSlotsGridContainer" type="GridContainer" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]
+layout_mode = 2
 
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton" to="." method="_on_editor_texture_button_pressed"]

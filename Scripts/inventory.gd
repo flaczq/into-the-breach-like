@@ -114,7 +114,7 @@ func reset_items(is_highlighted: bool = false) -> void:
 	var index = 0
 	for inventory_item_texture_button in inventory_items_texture_buttons:
 		inventory_item_texture_button.set_pressed_no_signal(false)
-		#inventory_item_texture_button.modulate.a = (1.0) if (is_highlighted or items_ids[index] != Util.ItemType.NONE) else (0.5)
+		#inventory_item_texture_button.modulate.a = (1.0) if (is_highlighted or item_ids[index] != Util.ItemType.NONE) else (0.5)
 		index += 1
 	clicked_item_id = Util.ItemType.NONE
 

@@ -7,8 +7,11 @@ enum CameraPosition {HIGH, MIDDLE, LOW}
 enum DifficultyLevel {EASY, HARD}
 enum BuildMode {RELEASE, DEBUG}
 enum EngineMode {MENU, GAME, EDITOR, AWAITING}
+#FIXME change this to appropriate name e.g. PLAYER_PUSH_BACK
 enum PlayerType {PLAYER_TUTORIAL, PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4, NONE = -1}
+#FIXME ditto
 enum EnemyType {ENEMY_TUTORIAL, ENEMY_1, ENEMY_2, ENEMY_3, ENEMY_4, NONE = -1}
+#FIXME ditto
 enum CivilianType {CIVILIAN_TUTORIAL, CIVILIAN_1}
 enum ItemType {HEALTH, DAMAGE, SHIELD, MOVE_DISTANCE, FLYING, SWIMMING, NONE = -1}
 enum ActionDirection {HORIZONTAL_LINE, VERTICAL_LINE, HORIZONTAL_DOT, VERTICAL_DOT, NONE = -1}

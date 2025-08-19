@@ -21,7 +21,7 @@ var items: Array[ItemObject]		= []
 var clicked_item_id: Util.ItemType	= Util.ItemType.NONE
 
 
-func init(selected_items: Array[ItemObject], new_empty_item: ItemObject) -> void:
+func init(bought_items: Array[ItemObject], new_empty_item: ItemObject) -> void:
 	inventory_items_texture_buttons = [
 		inventory_item_1_texture_button,
 		inventory_item_2_texture_button,
@@ -43,9 +43,9 @@ func init(selected_items: Array[ItemObject], new_empty_item: ItemObject) -> void
 		inventory_item_texture_button.connect('pressed', _on_texture_button_pressed.bind(index))
 		index += 1
 	
-	for selected_item in selected_items:
-		assert(selected_item.id >= 0, 'Wrong selected item id')
-		add_item(selected_item)
+	for bought_item in bought_items:
+		assert(bought_item.id >= 0, 'Wrong selected item id')
+		add_item(bought_item)
 
 
 func find_first_empty_index() -> int:

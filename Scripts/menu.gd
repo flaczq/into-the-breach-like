@@ -9,6 +9,7 @@ class_name Menu
 @onready var main_menu_container			= $CanvasLayer/PanelCenterContainer/MainMenuContainer
 @onready var editor_texture_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton
 @onready var tutorial_check_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
+@onready var continue_texture_button		= $CanvasLayer/PanelCenterContainer/MainMenuContainer/ContinueTextureButton
 @onready var in_game_menu_container			= $CanvasLayer/PanelCenterContainer/InGameMenuContainer
 @onready var options_container				= $CanvasLayer/PanelCenterContainer/OptionsContainer
 @onready var language_option_button			= $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer/LanguageOptionButton
@@ -31,6 +32,7 @@ const STEAM_APP_ID = 480; # Spacewar (deprecated)
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
 var last_screen: Util
+var selected_save_object_id: int = 0
 
 
 func _ready() -> void:
@@ -41,6 +43,9 @@ func _ready() -> void:
 	
 	tutorial_check_button.set_pressed(Global.tutorial)
 	_on_tutorial_check_button_toggled(Global.tutorial)
+	
+	# is save slot selected
+	continue_texture_button.set_visible(Global.save.id > 0)
 	
 	language_option_button.select(Global.settings.language)
 	_on_language_option_button_item_selected(Global.settings.language)
@@ -79,58 +84,6 @@ func _input(event: InputEvent) -> void:
 		return
 
 
-func show_in_game_menu(new_last_screen: Util) -> void:
-	Global.engine_mode = EngineMode.MENU
-	
-	last_screen = new_last_screen
-	
-	main_menu_button.hide()
-	main_menu_container.hide()
-	in_game_menu_container.show()
-	options_container.hide()
-	players_container.hide()
-	save_slots_container.hide()
-	
-	# this can be changed from inside the game
-	camera_position_option_button.select(Global.settings.camera_position)
-	_on_camera_position_option_button_item_selected(Global.settings.camera_position)
-	
-	toggle_visibility(true)
-
-
-func show_main() -> void:
-	toggle_visibility(false)
-	
-	add_sibling(main_scene.instantiate())
-
-
-func show_cutscenes() -> void:
-	toggle_visibility(false)
-	
-	var cutscenes = cutscenes_scene.instantiate() as Cutscenes
-	add_sibling(cutscenes)
-	cutscenes.init(1)
-
-
-func show_players_selection() -> void:
-	# TODO load
-	Global.save.selected_player_ids = []
-	Global.save.selected_item_ids = {}
-	Global.save.played_map_ids = []
-	
-	for player_inventory in players_grid_container.get_children():
-		var player_texture_button = player_inventory.avatar_texture_button
-		player_texture_button.set_pressed_no_signal(false)
-		#player_texture_button.modulate.a = 0.5
-	
-	main_menu_button.show()
-	main_menu_container.hide()
-	in_game_menu_container.hide()
-	options_container.hide()
-	players_container.hide()
-	save_slots_container.show()
-
-
 func init_steam() -> void:
 	Steam.steamInitEx()
 	if Steam.isSteamRunning():
@@ -163,11 +116,75 @@ func init_ui() -> void:
 	for child in save_slots_grid_container.get_children():
 		child.hide()
 	
+	# TODO load
 	for i in range(3):
 		var save_slot = save_slots_grid_container.get_child(i) as SaveSlot
 		var save_object = SaveObject.new()
+		save_object.init()
 		save_slot.init(save_object)
+		save_slot.connect('slot_clicked', _on_save_slot_clicked)
 		save_slot.show()
+
+
+func show_in_game_menu(new_last_screen: Util) -> void:
+	Global.engine_mode = EngineMode.MENU
+	
+	last_screen = new_last_screen
+	
+	main_menu_button.hide()
+	main_menu_container.hide()
+	in_game_menu_container.show()
+	options_container.hide()
+	players_container.hide()
+	save_slots_container.hide()
+	
+	# this can be changed from inside the game
+	camera_position_option_button.select(Global.settings.camera_position)
+	_on_camera_position_option_button_item_selected(Global.settings.camera_position)
+	
+	toggle_visibility(true)
+
+
+func show_main() -> void:
+	toggle_visibility(false)
+	
+	add_sibling(main_scene.instantiate())
+
+
+func show_save_slot_selection() -> void:
+	# this is now done by selecting save slot
+	#Global.save.selected_player_ids = []
+	#Global.save.bought_item_ids = {}
+	#Global.save.played_map_ids = []
+	
+	main_menu_button.show()
+	main_menu_container.hide()
+	in_game_menu_container.hide()
+	options_container.hide()
+	players_container.hide()
+	save_slots_container.show()
+
+
+func show_cutscenes() -> void:
+	toggle_visibility(false)
+	
+	var cutscenes = cutscenes_scene.instantiate() as Cutscenes
+	add_sibling(cutscenes)
+	cutscenes.init(1)
+
+
+func show_players_selection() -> void:
+	for player_inventory in players_grid_container.get_children():
+		var player_texture_button = player_inventory.avatar_texture_button
+		player_texture_button.set_pressed_no_signal(false)
+		#player_texture_button.modulate.a = 0.5
+	
+	main_menu_button.show()
+	main_menu_container.hide()
+	in_game_menu_container.hide()
+	options_container.hide()
+	players_container.show()
+	save_slots_container.hide()
 
 
 func _on_editor_texture_button_pressed() -> void:
@@ -176,12 +193,17 @@ func _on_editor_texture_button_pressed() -> void:
 	add_sibling(editor_scene.instantiate())
 
 
+func _on_continue_texture_button_pressed() -> void:
+	assert(Global.save.id > 0, 'Save slot was NOT selected')
+	show_main()
+
+
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
 		Global.save.selected_player_ids.push_back(Util.PlayerType.PLAYER_TUTORIAL)
 		show_main()
 	else:
-		show_cutscenes()
+		show_save_slot_selection()
 
 
 func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
@@ -322,7 +344,15 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 	assert(Global.save.selected_player_ids.size() <= 3, 'Too many selected player ids')
 
 
+func _on_save_slot_clicked(save_object_id: int) -> void:
+	selected_save_object_id = save_object_id
+	
+	on_button_disabled(save_slots_next_texture_button, selected_save_object_id == 0)
+
+
 func _on_save_slots_next_texture_button_pressed() -> void:
-	# TODO checking if save slot was selected
+	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
+	Global.save = save_slot.save_object
+	
 	players_container.show()
 	save_slots_container.hide()

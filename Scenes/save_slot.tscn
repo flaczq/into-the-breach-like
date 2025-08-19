@@ -67,20 +67,17 @@ layout_mode = 2
 size_flags_horizontal = 10
 
 [node name="CreatedLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/RightVBoxContainer"]
+visible = false
 layout_mode = 2
 text = "CREATED: 15:01:32 18.08.2025"
 horizontal_alignment = 2
 
 [node name="PlayTimeLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/RightVBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 10
 text = "PLAY TIME: 1:25H"
 horizontal_alignment = 2
 
-[node name="SaveButton" type="Button" parent="TextureRect/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-text = "SAVE"
-
-[connection signal="pressed" from="TextureRect/MarginContainer/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="gui_input" from="TextureRect" to="." method="_on_texture_rect_gui_input"]
+[connection signal="text_changed" from="TextureRect/MarginContainer/VBoxContainer/NameHBoxContainer/NameTextEdit" to="." method="_on_name_text_edit_text_changed"]

@@ -90,7 +90,7 @@ func init_ui() -> void:
 	shop.connect('item_clicked', _on_shop_item_clicked)
 	
 	var empty_item = init_manager_script.init_item(ItemType.NONE)
-	var bought_items = []
+	var bought_items = [] as Array[ItemObject]
 	for bought_item_id in Global.save.bought_item_ids:
 		# is in inventory
 		if Global.save.bought_item_ids[bought_item_id] == PlayerType.NONE:

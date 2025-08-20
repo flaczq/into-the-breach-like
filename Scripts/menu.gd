@@ -63,7 +63,7 @@ func _ready() -> void:
 	on_button_disabled(players_next_texture_button, true)
 	on_button_disabled(save_slots_next_texture_button, true)
 	
-	main_menu_button.hide()
+	#main_menu_button.hide()
 	main_menu_container.show()
 	if Global.build_mode == BuildMode.DEBUG:
 		editor_texture_button.show()
@@ -75,7 +75,6 @@ func _ready() -> void:
 	save_slots_container.hide()
 	
 	init_steam()
-	#init_all_things()
 	init_ui()
 
 
@@ -131,7 +130,7 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	
 	last_screen = new_last_screen
 	
-	main_menu_button.hide()
+	#main_menu_button.hide()
 	main_menu_container.hide()
 	in_game_menu_container.show()
 	options_container.hide()
@@ -157,7 +156,7 @@ func show_save_slot_selection() -> void:
 	#Global.save.bought_item_ids = {}
 	#Global.save.played_map_ids = []
 	
-	main_menu_button.show()
+	#main_menu_button.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.hide()
@@ -179,7 +178,7 @@ func show_players_selection() -> void:
 		player_texture_button.set_pressed_no_signal(false)
 		#player_texture_button.modulate.a = 0.5
 	
-	main_menu_button.show()
+	#main_menu_button.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.hide()
@@ -211,7 +210,7 @@ func _on_tutorial_check_button_toggled(toggled_on: bool) -> void:
 
 
 func _on_options_texture_button_pressed() -> void:
-	main_menu_button.hide()
+	#main_menu_button.hide()
 	main_menu_container.hide()
 	in_game_menu_container.hide()
 	options_container.show()
@@ -252,12 +251,14 @@ func _on_resume_texture_button_pressed() -> void:
 func _on_main_menu_texture_button_pressed() -> void:
 	Global.engine_mode = EngineMode.MENU
 	
-	main_menu_button.hide()
+	#main_menu_button.hide()
 	main_menu_container.show()
 	in_game_menu_container.hide()
 	options_container.hide()
 	players_container.hide()
 	save_slots_container.hide()
+	
+	continue_texture_button.set_visible(Global.save.id > 0)
 	
 	on_button_disabled(players_next_texture_button, true)
 	on_button_disabled(save_slots_next_texture_button, true)
@@ -269,7 +270,7 @@ func _on_main_menu_texture_button_pressed() -> void:
 
 
 func _on_back_texture_button_pressed() -> void:
-	main_menu_button.hide()
+	#main_menu_button.hide()
 	
 	if get_node_or_null('/root/Main'):
 		# in game

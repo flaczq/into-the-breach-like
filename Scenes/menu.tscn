@@ -65,6 +65,7 @@ layout_mode = 2
 size_flags_vertical = 0
 
 [node name="MainMenuButton" type="Button" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer"]
+visible = false
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_e8re6")
 text = "MAIN_MENU"
@@ -541,6 +542,7 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="SaveSlotsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="SaveSlotsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]

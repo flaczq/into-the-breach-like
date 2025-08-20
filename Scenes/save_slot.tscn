@@ -56,7 +56,7 @@ layout_mode = 2
 
 [node name="IdLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/LeftVBoxContainer"]
 layout_mode = 2
-text = "SLOT: 1"
+text = "ID: 1"
 
 [node name="UnlockedPlayersLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/HBoxContainer/LeftVBoxContainer"]
 layout_mode = 2

@@ -1450,9 +1450,11 @@ func _on_action_2_texture_button_toggled(toggled_on: bool) -> void:
 
 func _on_reset_level_texture_button_pressed() -> void:
 	is_level_reseted = true
-	# reset level
+	# will increase again in next_level()
 	level -= 1
-	init_by_level_type(level_data.level_type)
+	next_level()
+	# level_data is already generated
+	init()
 
 
 func _on_undo_texture_button_pressed() -> void:

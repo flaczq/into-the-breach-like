@@ -33,20 +33,13 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="NameHBoxContainer" type="HBoxContainer" parent="TextureRect/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="NameLabel" type="Label" parent="TextureRect/MarginContainer/VBoxContainer/NameHBoxContainer"]
 layout_mode = 2
-text = "NAME:"
+text = "NAME: DEFAULT NAME 1"
 horizontal_alignment = 1
-
-[node name="NameTextEdit" type="TextEdit" parent="TextureRect/MarginContainer/VBoxContainer/NameHBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "save slot 1"
-scroll_fit_content_height = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TextureRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -80,4 +73,3 @@ text = "PLAY TIME: 1:25H"
 horizontal_alignment = 2
 
 [connection signal="gui_input" from="TextureRect" to="." method="_on_texture_rect_gui_input"]
-[connection signal="text_changed" from="TextureRect/MarginContainer/VBoxContainer/NameHBoxContainer/NameTextEdit" to="." method="_on_name_text_edit_text_changed"]

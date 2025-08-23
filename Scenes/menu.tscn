@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=16 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" uid="uid://dl7a25jomg7lo" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="7_5gw6c"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="7_evuth"]
 [ext_resource type="PackedScene" uid="uid://xo2b6hy86xtm" path="res://Scenes/save_slot.tscn" id="8_q3rjx"]
+[ext_resource type="Texture2D" uid="uid://co4vf2e54cmuo" path="res://Assets/aaaps/player_background.png" id="9_6swd7"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8re6"]
 
@@ -26,6 +27,8 @@ region = Rect2(0, 156, 248, 74)
 [sub_resource type="AtlasTexture" id="AtlasTexture_0cirs"]
 atlas = ExtResource("7_evuth")
 region = Rect2(0, 234, 248, 74)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7qvly"]
 
 [node name="Menu" type="Node3D" groups=["NEVER_FREE"]]
 script = ExtResource("1_ybquj")
@@ -542,7 +545,6 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="SaveSlotsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 
 [node name="SaveSlotsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]
@@ -562,32 +564,84 @@ layout_mode = 2
 [node name="SaveSlot3" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsGridContainer" instance=ExtResource("8_q3rjx")]
 layout_mode = 2
 
-[node name="SaveSlotsNextTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-disabled = true
-texture_normal = SubResource("AtlasTexture_2fu10")
-texture_pressed = SubResource("AtlasTexture_iekyi")
-texture_hover = SubResource("AtlasTexture_8oi4x")
-texture_disabled = SubResource("AtlasTexture_0cirs")
+[node name="PanelFullScreenContainer" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_7qvly")
 
-[node name="NextLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsNextTextureButton"]
+[node name="FullScreenCenterContainer" type="CenterContainer" parent="CanvasLayer/PanelFullScreenContainer"]
+layout_mode = 2
+
+[node name="SSConfirmationColorRect" type="ColorRect" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer"]
+visible = false
+custom_minimum_size = Vector2(1280, 720)
+layout_mode = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="SSConfirmationPopup" type="TextureRect" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect"]
+custom_minimum_size = Vector2(350, 350)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -34.5
-offset_top = -17.5
-offset_right = 34.5
-offset_bottom = 22.5
+offset_left = -175.0
+offset_top = -175.0
+offset_right = 175.0
+offset_bottom = 175.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_type_variation = &"LabelBig"
-text = "NEXT"
-vertical_alignment = 1
-uppercase = true
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("9_6swd7")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SSConfirmationVBoxContainer" type="VBoxContainer" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -138.0
+offset_top = -55.5
+offset_right = 138.0
+offset_bottom = 55.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="SSConfirmationLabel" type="Label" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "THIS SLOT WILL BE USED TO AUTOMATICALLY SAVE GAME
+
+CONTINUE?"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="SSConfirmationHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="SSConfirmationNoButton" type="Button" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer/SSConfirmationHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NO"
+
+[node name="SSConfirmationYesButton" type="Button" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer/SSConfirmationHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "YES"
 
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton" to="." method="_on_main_menu_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton" to="." method="_on_editor_texture_button_pressed"]
@@ -610,4 +664,5 @@ uppercase = true
 [connection signal="drag_ended" from="CanvasLayer/PanelCenterContainer/OptionsContainer/GameSpeedHBoxContainer/GameSpeedHSlider" to="." method="_on_game_speed_h_slider_drag_ended"]
 [connection signal="drag_ended" from="CanvasLayer/PanelCenterContainer/OptionsContainer/VolumeHBoxContainer/VolumeHSlider" to="." method="_on_volume_h_slider_drag_ended"]
 [connection signal="pressed" from="CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersNextTextureButton" to="." method="_on_players_next_texture_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsNextTextureButton" to="." method="_on_save_slots_next_texture_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer/SSConfirmationHBoxContainer/SSConfirmationNoButton" to="." method="_on_ss_confirmation_no_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer/SSConfirmationHBoxContainer/SSConfirmationYesButton" to="." method="_on_ss_confirmation_yes_button_pressed"]

@@ -6,6 +6,8 @@ class_name Menu
 @export var editor_scene: PackedScene
 @export var cutscenes_scene: PackedScene
 
+@onready var main_menu_button 				= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton
+@onready var version_label 					= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
 @onready var main_menu_container			= $CanvasLayer/PanelCenterContainer/MainMenuContainer
 @onready var editor_texture_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton
 @onready var tutorial_check_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
@@ -22,9 +24,9 @@ class_name Menu
 @onready var players_next_texture_button	= $CanvasLayer/PanelCenterContainer/PlayersContainer/PlayersNextTextureButton
 @onready var save_slots_container			= $CanvasLayer/PanelCenterContainer/SaveSlotsContainer
 @onready var save_slots_grid_container		= $CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsGridContainer
-@onready var save_slots_next_texture_button	= $CanvasLayer/PanelCenterContainer/SaveSlotsContainer/SaveSlotsNextTextureButton
-@onready var main_menu_button 				= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/MainMenuButton
-@onready var version_label 					= $CanvasLayer/PanelRightContainer/RightMarginContainer/RightBottomContainer/VersionLabel
+@onready var panel_full_screen_container	= $CanvasLayer/PanelFullScreenContainer
+@onready var ss_confirmation_color_rect		= $CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect
+@onready var ss_confirmation_label			= $CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer/SSConfirmationLabel
 
 # FIXME change when steam page is up
 const STEAM_APP_ID = 480; # Spacewar (deprecated)
@@ -32,7 +34,7 @@ const STEAM_APP_ID = 480; # Spacewar (deprecated)
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
 var last_screen: Util
-var selected_save_object_id: int = 0
+var selected_save_object_id: int = -1
 
 
 func _ready() -> void:
@@ -40,6 +42,7 @@ func _ready() -> void:
 	
 	TranslationServer.set_locale('en')
 	version_label.text = 'version: ' + ProjectSettings.get_setting('application/config/version') + '-' + Time.get_date_string_from_system().replace('-', '')
+	#main_menu_button.hide()
 	
 	tutorial_check_button.set_pressed(Global.tutorial)
 	_on_tutorial_check_button_toggled(Global.tutorial)
@@ -57,13 +60,10 @@ func _ready() -> void:
 	_on_aa_check_box_toggled(Global.settings.antialiasing)
 	
 	_on_game_speed_h_slider_drag_ended(true)
-	
 	_on_volume_h_slider_drag_ended(true)
 	
 	on_button_disabled(players_next_texture_button, true)
-	on_button_disabled(save_slots_next_texture_button, true)
 	
-	#main_menu_button.hide()
 	main_menu_container.show()
 	if Global.build_mode == BuildMode.DEBUG:
 		editor_texture_button.show()
@@ -73,6 +73,8 @@ func _ready() -> void:
 	options_container.hide()
 	players_container.hide()
 	save_slots_container.hide()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
 	
 	init_steam()
 	init_ui()
@@ -136,6 +138,8 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	options_container.hide()
 	players_container.hide()
 	save_slots_container.hide()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
 	
 	# this can be changed from inside the game
 	camera_position_option_button.select(Global.settings.camera_position)
@@ -162,6 +166,8 @@ func show_save_slot_selection() -> void:
 	options_container.hide()
 	players_container.hide()
 	save_slots_container.show()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
 
 
 func show_cutscenes() -> void:
@@ -184,6 +190,8 @@ func show_players_selection() -> void:
 	options_container.hide()
 	players_container.show()
 	save_slots_container.hide()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
 
 
 func _on_editor_texture_button_pressed() -> void:
@@ -216,6 +224,8 @@ func _on_options_texture_button_pressed() -> void:
 	options_container.show()
 	players_container.hide()
 	save_slots_container.hide()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
 
 
 func _on_wishlist_texture_button_pressed() -> void:
@@ -257,11 +267,12 @@ func _on_main_menu_texture_button_pressed() -> void:
 	options_container.hide()
 	players_container.hide()
 	save_slots_container.hide()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
 	
 	continue_texture_button.set_visible(Global.save.id > 0)
 	
 	on_button_disabled(players_next_texture_button, true)
-	on_button_disabled(save_slots_next_texture_button, true)
 	
 	toggle_visibility(true)
 	
@@ -283,6 +294,8 @@ func _on_back_texture_button_pressed() -> void:
 	options_container.hide()
 	players_container.hide()
 	save_slots_container.hide()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
 
 
 func _on_difficulty_option_button_item_selected(index: int) -> void:
@@ -348,12 +361,33 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 func _on_save_slot_clicked(save_object_id: int) -> void:
 	selected_save_object_id = save_object_id
 	
-	on_button_disabled(save_slots_next_texture_button, selected_save_object_id == 0)
+	for save_slot in save_slots_grid_container.get_children():
+		if save_slot.save_object.id == selected_save_object_id:
+			save_slot.modulate.a = 1.0
+		else:
+			save_slot.modulate.a = 0.5
+	
+	ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) +  ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
+	
+	panel_full_screen_container.show()
+	ss_confirmation_color_rect.show()
 
 
-func _on_save_slots_next_texture_button_pressed() -> void:
+func _on_ss_confirmation_no_button_pressed() -> void:
+	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
+	save_slot.modulate.a = 0.5
+	
+	selected_save_object_id = -1
+	
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()
+
+
+func _on_ss_confirmation_yes_button_pressed() -> void:
 	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
 	Global.save = save_slot.save_object
 	
 	players_container.show()
 	save_slots_container.hide()
+	panel_full_screen_container.hide()
+	ss_confirmation_color_rect.hide()

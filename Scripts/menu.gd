@@ -367,7 +367,10 @@ func _on_save_slot_clicked(save_object_id: int) -> void:
 		else:
 			save_slot.modulate.a = 0.5
 	
-	ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) +  ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
+	if Global.save.id == selected_save_object_id:
+		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' IS ALREADY SELECTED\n\nCONTINUE?'
+	else:
+		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
 	
 	panel_full_screen_container.show()
 	ss_confirmation_color_rect.show()
@@ -385,9 +388,14 @@ func _on_ss_confirmation_no_button_pressed() -> void:
 
 func _on_ss_confirmation_yes_button_pressed() -> void:
 	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
-	Global.save = save_slot.save_object
-	
-	players_container.show()
-	save_slots_container.hide()
-	panel_full_screen_container.hide()
-	ss_confirmation_color_rect.hide()
+	if Global.save.id == selected_save_object_id:
+		# FIXME maybe compare each field separately
+		assert(Global.save == save_slot.save_object, 'Already selected save slot is different than clicked one')
+		_on_continue_texture_button_pressed()
+	else:
+		Global.save = save_slot.save_object
+		
+		players_container.show()
+		save_slots_container.hide()
+		panel_full_screen_container.hide()
+		ss_confirmation_color_rect.hide()

@@ -139,6 +139,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="ResetLevelTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
+visible = false
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 tooltip_text = "RESET LEVEL (ONE TIME)"
@@ -338,7 +339,6 @@ mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_0msnr")
 
 [node name="FullScreenCenterContainer" type="CenterContainer" parent="CanvasLayer/PanelFullScreenContainer"]
-visible = false
 layout_mode = 2
 
 [node name="LevelEndColorRect" type="ColorRect" parent="CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer"]

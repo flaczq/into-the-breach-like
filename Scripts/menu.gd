@@ -49,6 +49,7 @@ func _ready() -> void:
 	
 	# is save slot selected
 	continue_texture_button.set_visible(Global.save.id > 0)
+	continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.save.description
 	
 	language_option_button.select(Global.settings.language)
 	_on_language_option_button_item_selected(Global.settings.language)
@@ -207,7 +208,7 @@ func _on_continue_texture_button_pressed() -> void:
 
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
-		Global.save.selected_player_ids.push_back(Util.PlayerType.PLAYER_TUTORIAL)
+		Global.save.init(true)
 		show_main()
 	else:
 		show_save_slot_selection()
@@ -271,6 +272,7 @@ func _on_main_menu_texture_button_pressed() -> void:
 	ss_confirmation_color_rect.hide()
 	
 	continue_texture_button.set_visible(Global.save.id > 0)
+	continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.save.description
 	
 	on_button_disabled(players_next_texture_button, true)
 	

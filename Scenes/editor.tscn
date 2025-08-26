@@ -22,7 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://danokvk15cayv" path="res://Assets/penzilla.vector-icon-pack/Icon_Settings.png" id="19_rhlap"]
 [ext_resource type="Texture2D" uid="uid://bfuw58vd7gjdn" path="res://Assets/penzilla.vector-icon-pack/Item4.png" id="19_yyv2y"]
 [ext_resource type="Texture2D" uid="uid://lm0aldnrj0ws" path="res://Assets/penzilla.vector-icon-pack/Icon_Power.png" id="20_qtn6l"]
-[ext_resource type="Texture2D" uid="uid://dq3rhdi2pxpu1" path="res://Assets/penzilla.vector-icon-pack/Icon_Focus.png" id="21_cb0vv"]
+[ext_resource type="Texture2D" uid="uid://cbh3q7prcu45a" path="res://Assets/penzilla.vector-icon-pack/Icon_Magic.png" id="22_af0oh"]
 [ext_resource type="Texture2D" uid="uid://bh64q3knee5p6" path="res://Assets/penzilla.vector-icon-pack/Icon_Return.png" id="22_nxh73"]
 [ext_resource type="PackedScene" uid="uid://c3pe6m0m8tc5y" path="res://Scenes/player_stats.tscn" id="24_3qie4"]
 [ext_resource type="Texture2D" uid="uid://c1j8oguuv8xfv" path="res://Assets/penzilla.vector-icon-pack/Icon_Question.png" id="25_rkgt4"]
@@ -141,13 +141,12 @@ texture_normal = ExtResource("20_qtn6l")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ActionFirstTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
+[node name="ResetLevelTextureButton" type="TextureButton" parent="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer"]
 visible = false
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
-disabled = true
-toggle_mode = true
-texture_normal = ExtResource("21_cb0vv")
+tooltip_text = "RESET LEVEL (ONE TIME)"
+texture_normal = ExtResource("22_af0oh")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -223,7 +222,8 @@ alignment = 2
 layout_mode = 2
 alignment = 2
 
-[node name="MoneyTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+[node name="PointsTextureButton" type="TextureButton" parent="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightTopContainer"]
+visible = false
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 tooltip_text = "INFO"
@@ -554,7 +554,7 @@ vertical_alignment = 1
 
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/SettingsTextureButton" to="." method="_on_settings_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/EndTurnTextureButton" to="GameStateManager" method="_on_end_turn_texture_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ActionFirstTextureButton" to="GameStateManager" method="_on_action_texture_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/ResetLevelTextureButton" to="GameStateManager" method="_on_reset_level_texture_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/PanelLeftContainer/LeftMarginContainer/LeftContainer/LeftTopContainer/UndoTextureButton" to="GameStateManager" method="_on_undo_texture_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/PlayButton" to="." method="_on_play_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/PanelRightContainer/RightMarginContainer/RightContainer/RightBottomContainer/ResetButton" to="." method="_on_reset_button_pressed"]

@@ -78,6 +78,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="UpgradesContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="ShopContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer/UpgradesContainer"]

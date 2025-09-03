@@ -546,6 +546,7 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="SaveSlotsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="SaveSlotsLabel" type="Label" parent="CanvasLayer/PanelCenterContainer/SaveSlotsContainer"]

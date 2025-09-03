@@ -13,6 +13,12 @@ extends Util
 @onready var inventory_label						= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/InventoryLabel
 @onready var players_grid_container					= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer
 @onready var inventory: Inventory					= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
+@onready var epochs_container						= $CanvasLayer/PanelCenterContainer/EpochsContainer
+@onready var epochs_next_texture_button				= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsNextTextureButton
+@onready var epoch_type_1_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType1TextureButton
+@onready var epoch_type_2_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType2TextureButton
+@onready var epoch_type_3_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType3TextureButton
+@onready var epoch_type_4_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType4TextureButton
 @onready var levels_container						= $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_texture_button				= $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
 @onready var summary_container						= $CanvasLayer/PanelCenterContainer/SummaryContainer
@@ -28,22 +34,19 @@ var selected_level_type: LevelType = LevelType.NONE
 func _ready() -> void:
 	Global.engine_mode = EngineMode.MENU
 	
+	epoch_type_1_texture_button.connect('toggled', _on_epoch_type_texture_button_toggled.bind(0))
+	epoch_type_2_texture_button.connect('toggled', _on_epoch_type_texture_button_toggled.bind(1))
+	epoch_type_3_texture_button.connect('toggled', _on_epoch_type_texture_button_toggled.bind(2))
+	epoch_type_4_texture_button.connect('toggled', _on_epoch_type_texture_button_toggled.bind(3))
 	summary_next_texture_button.connect('pressed', _on_summary_next_texture_button_pressed)
 	
-	# after level end
-	if Global.save.played_map_ids.is_empty():
-		if Global.save.money > 0:
-			upgrades_container.show()
-			levels_container.hide()
-			summary_container.hide()
-		else:
-			upgrades_container.hide()
-			levels_container.show()
-			summary_container.hide()
+	# FIXME better way of controlling which screen to show
+	if Global.save.selected_epoch == Util.EpochType.NONE:
+		# first time starting
+		go_to_epochs()
 	else:
-		upgrades_container.hide()
-		levels_container.hide()
-		summary_container.show()
+		# level ended
+		go_to_summary()
 	
 	on_button_disabled(shop_buy_texture_button, true)
 	on_button_disabled(shop_skip_texture_button, false)
@@ -120,6 +123,41 @@ func get_player_clicked_item_id() -> ItemType:
 	return ItemType.NONE
 
 
+func go_to_upgrades() -> void:
+	upgrades_container.show()
+	epochs_container.hide()
+	levels_container.hide()
+	summary_container.hide()
+
+
+func go_to_epochs() -> void:
+	upgrades_container.hide()
+	epochs_container.show()
+	levels_container.hide()
+	summary_container.hide()
+
+
+func go_to_levels() -> void:
+	upgrades_container.hide()
+	epochs_container.hide()
+	levels_container.show()
+	summary_container.hide()
+
+
+func go_to_summary() -> void:
+	upgrades_container.hide()
+	epochs_container.hide()
+	levels_container.hide()
+	summary_container.show()
+
+
+func go_to_main() -> void:
+	game_state_manager.get_parent().toggle_visibility(true)
+	game_state_manager.init_by_level_type(selected_level_type)
+	
+	queue_free()
+
+
 func _on_menu_button_pressed() -> void:
 	toggle_visibility(false)
 	menu.show_in_game_menu(self)
@@ -171,9 +209,7 @@ func _on_shop_buy_texture_button_pressed() -> void:
 
 
 func _on_shop_skip_texture_button_pressed() -> void:
-	upgrades_container.hide()
-	levels_container.show()
-	summary_container.hide()
+	go_to_main()
 
 
 func _on_inventory_item_hovered(inventory_item_texture_index: int, item_id: ItemType, is_hovered: bool) -> void:
@@ -276,6 +312,15 @@ func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int,
 			player_inventory.reset_items()
 
 
+func _on_epochs_next_texture_button_pressed() -> void:
+	go_to_levels()
+
+
+func _on_epoch_type_texture_button_toggled(toggled_on: bool, epoch_type: EpochType) -> void:
+	assert(Global.save.unlocked_epoch_ids.has(epoch_type), 'Selected epoch not unlocked')
+	Global.save.selected_epoch = epoch_type
+
+
 func _on_level_type_texture_button_toggled(toggled_on: bool, level_type: LevelType) -> void:
 	if toggled_on:
 		selected_level_type = level_type
@@ -286,13 +331,8 @@ func _on_level_type_texture_button_toggled(toggled_on: bool, level_type: LevelTy
 
 
 func _on_levels_next_texture_button_pressed() -> void:
-	game_state_manager.get_parent().toggle_visibility(true)
-	game_state_manager.init_by_level_type(selected_level_type)
-	
-	queue_free()
+	go_to_upgrades()
 
 
 func _on_summary_next_texture_button_pressed() -> void:
-	upgrades_container.show()
-	levels_container.hide()
-	summary_container.hide()
+	go_to_levels()

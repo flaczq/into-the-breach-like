@@ -4,9 +4,9 @@ extends Node
 class_name SaveObject
 
 var id: int										= -1
-var description: String							= ''
-var created: String								= ''
-var updated: String								= ''
+var description: String							= '-'
+var created: String								= '-'
+var updated: String								= '-'
 var unlocked_epoch_ids: Array[Util.EpochType]	= []
 var selected_epoch: Util.EpochType				= Util.EpochType.NONE
 var unlocked_player_ids: Array[Util.PlayerType]	= []
@@ -28,6 +28,7 @@ func init(is_tutorial: bool = false) -> void:
 		Util.PlayerType.PLAYER_3
 	]
 	money = 0
+	play_time = 0
 	
 	if is_tutorial:
 		selected_player_ids.push_back(Util.PlayerType.PLAYER_TUTORIAL)

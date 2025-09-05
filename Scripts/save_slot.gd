@@ -30,11 +30,15 @@ func update_ui() -> void:
 	id_label.text = 'ID: ' + str(save_object.id)
 	unlocked_players_label.text = 'UNLOCKED PLAYERS: ' + str(save_object.unlocked_player_ids.size())
 	created_label.text = 'CREATED: ' + save_object.created
-	play_time_label.text = 'PLAY TIME: ' + str(save_object.play_time)
-	if save_object.created == '':
-		created_label.hide()
-	if save_object.play_time == 0:
-		play_time_label.hide()
+	var play_time_hours = save_object.play_time / (60 * 60)
+	var play_time_without_hours = (save_object.play_time - play_time_hours * (60 * 60))
+	var play_time_minutes = play_time_without_hours / 60
+	var play_time_seconds = play_time_without_hours % 60
+	play_time_label.text = 'PLAY TIME: ' + ('%02d:%02d:%02d' % [play_time_hours, play_time_minutes, play_time_seconds])
+	#if save_object.created == '-':
+		#created_label.hide()
+	#if save_object.play_time == 0:
+		#play_time_label.hide()
 
 
 func _on_texture_rect_gui_input(event: InputEvent) -> void:

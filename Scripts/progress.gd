@@ -318,6 +318,7 @@ func _on_epochs_next_texture_button_pressed() -> void:
 
 func _on_epoch_type_texture_button_toggled(toggled_on: bool, epoch_type: EpochType) -> void:
 	assert(Global.save.unlocked_epoch_ids.has(epoch_type), 'Selected epoch not unlocked')
+	print('Selected epoch: ' + str(EpochType.keys()[epoch_type]))
 	Global.save.selected_epoch = epoch_type
 
 

@@ -22,16 +22,18 @@ func _ready() -> void:
 
 
 func spawn(level_data: Dictionary) -> void:
-	assert(level_data.has('tiles'), 'Set tiles for level_data')
-	assert(level_data.has('tiles_assets'), 'Set tiles_assets for level_data')
+	assert(level_data.has('index'), 'Set index for level_data')
+	assert(level_data.has('epoch_type'), 'Set epoch_type for level_data')
 	assert(level_data.has('level_type'), 'Set level_type for level_data')
-	assert(level_data.has('level'), 'Set level for level_data')
+	assert(level_data.has('scene'), 'Set scene for level_data')
+	assert(level_data.has('tiles'), 'Set tiles for level_data')
+	assert(level_data.has('assets'), 'Set assets for level_data')
 	for tile in tiles:
 		# file content index based on coords
 		var index = get_side_dimension() * (tile.coords.x - 1) + (tile.coords.y - 1)
 		var tile_type = convert_tile_type_initial_to_enum(level_data.tiles[index])
-		var asset_filename = convert_asset_initial_to_filename(level_data.tiles_assets[index])
-		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.level_type, level_data.level)
+		var asset_filename = convert_asset_initial_to_filename(level_data.assets[index])
+		var models = get_models_by_tile_type(tile_type, asset_filename, level_data.index, level_data.level_type)
 		var health_type = get_health_type_by_tile_type(tile_type, asset_filename)
 		var points = get_points_by_tile_type(tile_type, asset_filename)
 		var map_tile_object: MapTileObject = MapTileObject.new()
@@ -116,7 +118,7 @@ func convert_asset_filename_to_initial(asset_filename: String) -> String:
 	return '0'
 
 
-func get_models_by_tile_type(tile_type: TileType, asset_filename: String, level_type: LevelType, level: int) -> Dictionary:
+func get_models_by_tile_type(tile_type: TileType, asset_filename: String, index: int, level_type: LevelType) -> Dictionary:
 	var models = {
 		'tile_shader': FLASHING_SHADER,
 		'tile_texture': null,
@@ -159,8 +161,8 @@ func get_models_by_tile_type(tile_type: TileType, asset_filename: String, level_
 			
 			# change name for custom translations
 			if models.asset.name == 'sign' and level_type == LevelType.TUTORIAL:
-				models.asset.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
-				models.asset_damaged.name += '_' + LevelType.keys()[level_type] + '_' + str(level)
+				models.asset.name += '_' + LevelType.keys()[level_type] + '_' + str(index)
+				models.asset_damaged.name += '_' + LevelType.keys()[level_type] + '_' + str(index)
 	
 	if models.asset:
 		for child in models.asset.get_children():
@@ -259,12 +261,12 @@ func get_side_dimension() -> int:
 	return sqrt(tiles.size())
 
 
-func get_horizontal_diagonal_dimension(coords: Vector2i) -> int:
-	return get_side_dimension() - absi(get_side_dimension() + 1 - (coords.x + coords.y))
+#func get_horizontal_diagonal_dimension(coords: Vector2i) -> int:
+	#return get_side_dimension() - absi(get_side_dimension() + 1 - (coords.x + coords.y))
 
 
-func get_vertical_diagonal_dimension(coords: Vector2i) -> int:
-	return get_side_dimension() - absi(coords.x - coords.y)
+#func get_vertical_diagonal_dimension(coords: Vector2i) -> int:
+	#return get_side_dimension() - absi(coords.x - coords.y)
 
 
 func get_available_tiles() -> Array[MapTile]:
@@ -290,7 +292,7 @@ func get_targetable_tiles() -> Array[MapTile]:
 
 
 func get_tiles_for_events() -> Array[MapTile]:
-	return tiles.filter(func(tile: MapTile): return not get_targetable_tiles().has(tile) and not tile.models.get('asset') and (not tile.models.get('event_asset')))# or not tile.models.event_asset.is_in_group('EVENTS_INDICATORS')))
+	return tiles.filter(func(tile: MapTile): return not tile.models.get('asset') and not tile.models.get('event_asset'))
 
 
 func get_tiles_in_cross(middle_tile: MapTile) -> Array[MapTile]:

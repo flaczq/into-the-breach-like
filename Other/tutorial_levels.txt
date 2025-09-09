@@ -1,9 +1,10 @@
 #TUTORIAL LEVELS
+#index->epoch_type-level_type
 
 1-1-0->START
-{ "scene": 0, "level": 1, "level_type": 0, "tiles": "TTTTPPPPPPPPMMMM", "tiles_assets": "TTTTS0000000MMMM", "spawn_player_coords": [{ "x": 2, "y": 2 }, { "x": 3, "y": 2 }], "spawn_enemy_coords": [{ "x": 2, "y": 4 }, { "x": 3, "y": 4 }], "spawn_civilian_coords": [] }
+{ "index": 1, epoch_type": 1, "level_type": 0, "scene": 0, "tiles": "TTTTPPPPPPPPMMMM", "assets": "TTTTS0000000MMMM", "spawn_player_coords": [{ "x": 2, "y": 2 }, { "x": 3, "y": 2 }], "spawn_enemy_coords": [{ "x": 2, "y": 4 }, { "x": 3, "y": 4 }], "spawn_civilian_coords": [] }
 1-1-0->STOP
 
-2-2-0->START
-{ "scene": 0, "level": 2, "level_type": 0, "tiles": "PGGMPPGPPPGPPGGM", "tiles_assets": "STTM00T000T00TTM", "spawn_player_coords": [{ "x": 2, "y": 2 }, { "x": 3, "y": 2 }], "spawn_enemy_coords": [{ "x": 2, "y": 4 }, { "x": 3, "y": 4 }], "spawn_civilian_coords": [] }
+2-1-0->START
+{ "index": 2, "epoch_type": 1, "level_type": 0, "scene": 0, "tiles": "PGGMPPGPPPGPPGGM", "assets": "STTM00T000T00TTM", "spawn_player_coords": [{ "x": 2, "y": 2 }, { "x": 3, "y": 2 }], "spawn_enemy_coords": [{ "x": 2, "y": 4 }, { "x": 3, "y": 4 }], "spawn_civilian_coords": [] }
 2-2-0->STOP

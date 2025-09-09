@@ -14,11 +14,11 @@ extends Util
 @onready var players_grid_container					= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/PlayersGridContainer
 @onready var inventory: Inventory					= $CanvasLayer/PanelCenterContainer/UpgradesContainer/InventoryContainer/Inventory
 @onready var epochs_container						= $CanvasLayer/PanelCenterContainer/EpochsContainer
-@onready var epochs_next_texture_button				= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsNextTextureButton
 @onready var epoch_type_1_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType1TextureButton
 @onready var epoch_type_2_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType2TextureButton
 @onready var epoch_type_3_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType3TextureButton
 @onready var epoch_type_4_texture_button			= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsGridContainer/EpochType4TextureButton
+@onready var epochs_next_texture_button				= $CanvasLayer/PanelCenterContainer/EpochsContainer/EpochsNextTextureButton
 @onready var levels_container						= $CanvasLayer/PanelCenterContainer/LevelsContainer
 @onready var levels_next_texture_button				= $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
 @onready var summary_container						= $CanvasLayer/PanelCenterContainer/SummaryContainer
@@ -51,6 +51,7 @@ func _ready() -> void:
 	on_button_disabled(shop_buy_texture_button, true)
 	on_button_disabled(shop_skip_texture_button, false)
 	on_button_disabled(levels_next_texture_button, true)
+	on_button_disabled(epochs_next_texture_button, true)
 	inventory_label.text = 'INVENTORY'
 	
 	init_ui()
@@ -320,6 +321,8 @@ func _on_epoch_type_texture_button_toggled(toggled_on: bool, epoch_type: EpochTy
 	assert(Global.save.unlocked_epoch_ids.has(epoch_type), 'Selected epoch not unlocked')
 	print('Selected epoch: ' + str(EpochType.keys()[epoch_type]))
 	Global.save.selected_epoch = epoch_type
+	
+	on_button_disabled(epochs_next_texture_button, Global.save.selected_epoch == EpochType.NONE)
 
 
 func _on_level_type_texture_button_toggled(toggled_on: bool, level_type: LevelType) -> void:

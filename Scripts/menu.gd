@@ -29,7 +29,7 @@ class_name Menu
 @onready var ss_confirmation_label			= $CanvasLayer/PanelFullScreenContainer/FullScreenCenterContainer/SSConfirmationColorRect/SSConfirmationPopup/SSConfirmationVBoxContainer/SSConfirmationLabel
 
 # FIXME change when steam page is up
-const STEAM_APP_ID = 480; # Spacewar (deprecated)
+const STEAM_APP_ID = 480 # Spacewar (deprecated)
 
 var init_manager_script: InitManager = preload('res://Scripts/init_manager.gd').new()
 
@@ -239,7 +239,7 @@ func _on_wishlist_texture_button_pressed() -> void:
 		Steam.activateGameOverlayToStore(app_id)
 		print('Opened game page via steam overlay')
 	else:
-		var steam_open = OS.shell_open('steam://advertise/' + str(app_id));
+		var steam_open = OS.shell_open('steam://advertise/' + str(app_id))
 		if steam_open == OK:
 			print('Opened game page via shell command, which should open steam anyway...')
 		else:

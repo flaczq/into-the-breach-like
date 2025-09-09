@@ -30,7 +30,7 @@ extends Util
 @onready var action_1_texture_button				= $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action1TextureButton
 @onready var action_2_texture_button				= $CanvasLayer/PanelCenterContainer/CenterMarginContainer/ActionsHBoxContainer/Action2TextureButton
 
-const SAVED_LEVELS_FILE_PATH = 'res://Other/saved_levels.txt'
+const PREHISTORIC_LEVELS_FILE_PATH = 'res://Other/prehistoric_levels.txt'
 
 var level_manager_script: LevelManager = preload('res://Scripts/level_manager.gd').new()
 var init_manager_script: InitManager   = preload('res://Scripts/init_manager.gd').new()
@@ -153,7 +153,15 @@ func init() -> void:
 	enemies_menu_button.set_disabled(true)
 	civilians_menu_button.set_disabled(true)
 	level_data = {
-		'scene': -1, 'level': -1, 'level_type': -1, 'level_events': [], 'tiles': '', 'tiles_assets': '', 'spawn_player_coords': [], 'spawn_enemy_coords': [], 'spawn_civilian_coords': []
+		'scene': -1,
+		'epoch_type': -1,
+		'level_type': -1,
+		'level_events': [],
+		'tiles': '',
+		'assets': '',
+		'spawn_player_coords': [],
+		'spawn_enemy_coords': [],
+		'spawn_civilian_coords': []
 	}
 
 
@@ -178,14 +186,15 @@ func calculate_level_data() -> void:
 	#########################
 	
 	# FIXME all levels are 1 for now, later group them by levels and pick random
-	level_data.level = 1
+	level_data.index = 1
+	level_data.epoch_type = 0
 	level_data.level_type = 1
 	level_data.level_events = [LevelEvent.ENEMIES_FROM_BELOW, LevelEvent.ENEMIES_FROM_BELOW]
 	level_manager_script.add_events_details(level_data, enemy_scenes.size())
 	level_manager_script.add_level_type_details(level_data)
 	level_manager_script.add_objectives(level_data)
 	level_data.tiles = ''
-	level_data.tiles_assets = ''
+	level_data.assets = ''
 	level_data.player_scenes = []
 	level_data.enemy_scenes = []
 	level_data.civilian_scenes = []
@@ -194,7 +203,7 @@ func calculate_level_data() -> void:
 		level_data.tiles += map.convert_tile_type_enum_to_initial(tile.tile_type)
 		
 		var asset = (tile.models.asset.name) if (tile.models.get('asset')) else ''
-		level_data.tiles_assets += map.convert_asset_filename_to_initial(asset)
+		level_data.assets += map.convert_asset_filename_to_initial(asset)
 	
 	if get_children().all(func(child): return not child.is_in_group('PLAYERS') and not child.is_in_group('ENEMIES') and not child.is_in_group('CIVILIANS')):
 		# place 3 default players and enemies
@@ -303,7 +312,7 @@ func _on_delete_button_toggled(toggled_on: bool) -> void:
 
 
 func _on_save_button_pressed() -> void:
-	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
+	var file = FileAccess.open(PREHISTORIC_LEVELS_FILE_PATH, FileAccess.READ_WRITE)
 	var content = file.get_as_text()
 	var index = content.count('->START') + 1
 	
@@ -326,17 +335,17 @@ func _on_save_button_pressed() -> void:
 	#level_data.erase('enemies_from_above_last_turn')
 	var proper_level_data = {
 		'scene': level_data.scene,
-		'level': level_data.level,
+		'epoch_type': level_data.epoch_type,
 		'level_type': level_data.level_type,
 		'level_events': level_data.level_events,
 		'tiles': level_data.tiles,
-		'tiles_assets': level_data.tiles_assets,
+		'assets': level_data.assets,
 		'spawn_player_coords': level_data.spawn_player_coords,
 		'spawn_enemy_coords': level_data.spawn_enemy_coords,
 		'spawn_civilian_coords': level_data.spawn_civilian_coords
 	}
 	
-	var prefix = '-' + str(proper_level_data.level) + '-' + str(proper_level_data.level_type) + '->'
+	var prefix = '-' + str(proper_level_data.epoch_type) + '-' + str(proper_level_data.level_type) + '->'
 	content += '\n' + str(index) + prefix + 'START\n'
 	# make it pretty
 	#content += JSON.stringify(proper_level_data, '\t')
@@ -348,7 +357,7 @@ func _on_save_button_pressed() -> void:
 
 
 func _on_load_menu_button_about_to_popup() -> void:
-	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
+	var file = FileAccess.open(PREHISTORIC_LEVELS_FILE_PATH, FileAccess.READ)
 	var content = file.get_as_text()
 	var index = content.count('->START')
 	if index != load_menu_button.get_popup().get_item_count():
@@ -362,7 +371,7 @@ func _on_load_menu_button_about_to_popup() -> void:
 func _on_load_id_pressed(id: int) -> void:
 	_on_reset_button_pressed()
 	
-	var file = FileAccess.open(SAVED_LEVELS_FILE_PATH, FileAccess.READ)
+	var file = FileAccess.open(PREHISTORIC_LEVELS_FILE_PATH, FileAccess.READ)
 	var content = file.get_as_text()
 	# FIXME hardcoded
 	var level_data_string = content.get_slice(str(id) + '-1-1->START', 1).get_slice(str(id) + '-1-1->STOP', 0).strip_escapes()
@@ -378,7 +387,7 @@ func _on_load_id_pressed(id: int) -> void:
 		tile.tile_type = tile_type
 		tile.model_material.albedo_color = color
 		
-		var asset_filename = map.convert_asset_initial_to_filename(level_data.tiles_assets[index])
+		var asset_filename = map.convert_asset_initial_to_filename(level_data.assets[index])
 		if asset_filename:
 			var asset = assets.filter(func(asset): return asset.name == asset_filename).front().duplicate()
 			asset.set_meta('tile', tile)

@@ -679,7 +679,7 @@ func select_tile_for_movement_towards_characters(tiles_for_movement: Array[MapTi
 						if get_hit_direction(other_enemy_to_planned_sign) == get_hit_direction(target_tile_to_other_enemy_planned_sign) and get_hit_direction(target_tile_to_other_enemy_planned_sign) != get_hit_direction(target_tile_to_other_enemy_sign):
 							valid_tiles_for_movement = []
 							target_tile_for_movement = null
-							break;
+							break
 				
 				if target_tile_for_movement:
 					return target_tile_for_movement
@@ -1124,7 +1124,7 @@ func _on_tile_action_cross_push_back(target_tile_coords: Vector2i, action_damage
 			tiles_to_be_pushed.push_back(tile)
 		
 		if tiles_to_be_pushed.size() == 4:
-			break;
+			break
 	
 	var i = 0
 	for tile_to_be_pushed in tiles_to_be_pushed:

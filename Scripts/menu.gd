@@ -176,7 +176,7 @@ func show_cutscenes() -> void:
 	
 	var cutscenes = cutscenes_scene.instantiate() as Cutscenes
 	add_sibling(cutscenes)
-	cutscenes.init(1)
+	cutscenes.init(CutsceneType.START)
 
 
 func show_players_selection() -> void:
@@ -198,7 +198,8 @@ func show_players_selection() -> void:
 func _on_editor_texture_button_pressed() -> void:
 	toggle_visibility(false)
 	
-	add_sibling(editor_scene.instantiate())
+	var editor = editor_scene.instantiate() as Editor
+	add_sibling(editor)
 
 
 func _on_continue_texture_button_pressed() -> void:
@@ -393,11 +394,9 @@ func _on_ss_confirmation_yes_button_pressed() -> void:
 	if Global.save.id == selected_save_object_id:
 		# FIXME maybe compare each field separately
 		assert(Global.save == save_slot.save_object, 'Already selected save slot is different than clicked one')
+		# same as clicking 'continue' on the main screen
 		_on_continue_texture_button_pressed()
 	else:
 		Global.save = save_slot.save_object
 		
-		players_container.show()
-		save_slots_container.hide()
-		panel_full_screen_container.hide()
-		ss_confirmation_color_rect.hide()
+		show_cutscenes()

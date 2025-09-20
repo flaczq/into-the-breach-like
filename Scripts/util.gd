@@ -7,6 +7,7 @@ enum CameraPosition {HIGH, MIDDLE, LOW}
 enum DifficultyLevel {EASY, HARD}
 enum BuildMode {RELEASE, DEBUG}
 enum EngineMode {MENU, GAME, EDITOR, AWAITING}
+enum CutsceneType {TUTORIAL, START, GOOD_ENDGAME, BAD_ENDGAME, NONE = -1}
 #FIXME change this to appropriate name e.g. PLAYER_PUSH_BACK
 enum PlayerType {PLAYER_TUTORIAL, PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4, NONE = -1}
 #FIXME ditto

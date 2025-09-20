@@ -1,6 +1,9 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://bl431255d3vtg"]
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://bl431255d3vtg"]
 
 [ext_resource type="SystemFont" uid="uid://bxw7laij0iht8" path="res://Other/luckiest_font.tres" id="1_rjfij"]
+
+[sub_resource type="SystemFont" id="SystemFont_u7jbl"]
+font_names = PackedStringArray("Acme")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vxr55"]
 
@@ -32,6 +35,10 @@ default_font_size = 18
 Button/fonts/font = ExtResource("1_rjfij")
 CheckButton/font_sizes/font_size = 25
 CheckButton/fonts/font = ExtResource("1_rjfij")
+CutsceneLabel/base_type = &"Label"
+CutsceneLabel/constants/outline_size = 8
+CutsceneLabel/font_sizes/font_size = 25
+CutsceneLabel/fonts/font = SubResource("SystemFont_u7jbl")
 Label/colors/font_color = Color(1, 1, 1, 1)
 Label/colors/font_outline_color = Color(0.180392, 0.180392, 0.180392, 1)
 Label/constants/outline_size = 12

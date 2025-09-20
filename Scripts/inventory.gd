@@ -21,7 +21,7 @@ var items: Array[ItemObject]		= []
 var clicked_item_id: Util.ItemType	= Util.ItemType.NONE
 
 
-func init(bought_items: Array[ItemObject], new_empty_item: ItemObject) -> void:
+func _ready() -> void:
 	inventory_items_texture_buttons = [
 		inventory_item_1_texture_button,
 		inventory_item_2_texture_button,
@@ -32,6 +32,9 @@ func init(bought_items: Array[ItemObject], new_empty_item: ItemObject) -> void:
 		inventory_item_7_texture_button,
 		inventory_item_8_texture_button
 	]
+
+
+func init(bought_items: Array[ItemObject], new_empty_item: ItemObject) -> void:
 	empty_item = new_empty_item
 	items.resize(8)
 	items.fill(empty_item)

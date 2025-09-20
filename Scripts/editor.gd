@@ -1,5 +1,7 @@
 extends Util
 
+class_name Editor
+
 @export var map_scenes: Array[PackedScene]		= []
 @export var player_scenes: Array[PackedScene]	= []
 @export var enemy_scenes: Array[PackedScene]	= []

@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://1noimyb1f3xg"]
+[gd_scene load_steps=5 format=3 uid="uid://1noimyb1f3xg"]
 
 [ext_resource type="Script" uid="uid://bkyr0wlb47jco" path="res://Scripts/cutscenes.gd" id="1_rffcp"]
 [ext_resource type="Texture2D" uid="uid://cp650xgbgulx" path="res://Assets/aaaps/background_squares_blue.png" id="2_4pwd1"]
+[ext_resource type="Texture2D" uid="uid://cqkgnh18q3vgi" path="res://Assets/aaaps/player_1_normal.png" id="3_cr1fu"]
 [ext_resource type="Texture2D" uid="uid://boox7w2y51txy" path="res://Assets/penzilla.vector-icon-pack/Item2.png" id="3_tm4wa"]
 
 [node name="Cutscenes" type="CanvasLayer"]
@@ -28,34 +29,51 @@ offset_right = 500.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="BottomMarginContainer" type="MarginContainer" parent="PanelBottomContainer"]
+[node name="BottomHBoxContainer" type="HBoxContainer" parent="PanelBottomContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
+
+[node name="CharacterLeftTextureButton" type="TextureButton" parent="PanelBottomContainer/BottomHBoxContainer"]
+custom_minimum_size = Vector2(148, 132)
+layout_mode = 2
+texture_normal = ExtResource("3_cr1fu")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BottomMarginContainer" type="MarginContainer" parent="PanelBottomContainer/BottomHBoxContainer"]
+layout_mode = 2
 theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="CutsceneTextureRect" type="TextureRect" parent="PanelBottomContainer/BottomMarginContainer"]
-custom_minimum_size = Vector2(1000, 0)
+[node name="CutsceneTextureRect" type="TextureRect" parent="PanelBottomContainer/BottomHBoxContainer/BottomMarginContainer"]
+custom_minimum_size = Vector2(880, 0)
 layout_mode = 2
 texture = ExtResource("3_tm4wa")
 expand_mode = 5
 stretch_mode = 5
 
-[node name="CutsceneMarginContainer" type="MarginContainer" parent="PanelBottomContainer/BottomMarginContainer/CutsceneTextureRect"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="CutsceneMarginContainer" type="MarginContainer" parent="PanelBottomContainer/BottomHBoxContainer/BottomMarginContainer/CutsceneTextureRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/margin_left = 40
 theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
-[node name="CutsceneLabel" type="Label" parent="PanelBottomContainer/BottomMarginContainer/CutsceneTextureRect/CutsceneMarginContainer"]
+[node name="CutsceneLabel" type="Label" parent="PanelBottomContainer/BottomHBoxContainer/BottomMarginContainer/CutsceneTextureRect/CutsceneMarginContainer"]
 layout_mode = 2
-theme_type_variation = &"LabelBig"
+theme_type_variation = &"CutsceneLabel"
 text = "Long long time ago...
 
 NAH! This is a turn-based strategy puzzle game!
-
 WTF do you want?! Get this lore out of here!!!"
+
+[node name="CharacterRightTextureButton" type="TextureButton" parent="PanelBottomContainer/BottomHBoxContainer"]
+custom_minimum_size = Vector2(148, 132)
+layout_mode = 2
+texture_normal = ExtResource("3_cr1fu")
+ignore_texture_size = true
+stretch_mode = 5

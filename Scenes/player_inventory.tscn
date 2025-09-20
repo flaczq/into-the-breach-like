@@ -37,13 +37,15 @@ texture = ExtResource("2_ymhgr")
 [node name="AvatarTextureButton" type="TextureButton" parent="TextureRect"]
 layout_mode = 0
 offset_left = 8.0
-offset_right = 151.0
-offset_bottom = 122.0
+offset_right = 156.0
+offset_bottom = 132.0
 toggle_mode = true
 action_mode = 0
 texture_normal = ExtResource("3_lmim4")
 texture_pressed = ExtResource("4_udju1")
 texture_hover = ExtResource("5_c6vr3")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="HealthLabel" type="Label" parent="TextureRect"]
 layout_mode = 0

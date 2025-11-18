@@ -2,6 +2,7 @@ extends Control
 
 class_name SaveSlot
 
+signal slot_hovered(save_object_id: int, is_hovered: bool)
 signal slot_clicked(save_object_id: int)
 
 @onready var name_label				= $TextureRect/MarginContainer/VBoxContainer/NameHBoxContainer/NameLabel
@@ -39,6 +40,14 @@ func update_ui() -> void:
 		#created_label.hide()
 	#if save_object.play_time == 0:
 		#play_time_label.hide()
+
+
+func _on_texture_rect_mouse_entered() -> void:
+	slot_hovered.emit(save_object.id, true)
+
+
+func _on_texture_rect_mouse_exited() -> void:
+	slot_hovered.emit(save_object.id, false)
 
 
 func _on_texture_rect_gui_input(event: InputEvent) -> void:

@@ -4,12 +4,12 @@ class_name LevelManager
 
 signal init_enemy_event(enemy_scene: int, spawn_tile: MapTile)
 
-const TUTORIAL_LEVELS_FILE_PATH: String	= 'res://Other/tutorial_levels.txt'
+const TUTORIAL_LEVELS_FILE_PATH: String		= 'res://Other/tutorial_levels.txt'
 const PREHISTORIC_LEVELS_FILE_PATH: String	= 'res://Other/prehistoric_levels.txt'
 const MIDDLE_AGES_LEVELS_FILE_PATH: String	= 'res://Other/middle_ages_levels.txt'
 const RENAISSANCE_LEVELS_FILE_PATH: String	= 'res://Other/renaissance_levels.txt'
 const PRESENT_DAY_LEVELS_FILE_PATH: String	= 'res://Other/present_day_levels.txt'
-const FUTURE_LEVELS_FILE_PATH: String	= 'res://Other/future_levels.txt'
+const FUTURE_LEVELS_FILE_PATH: String		= 'res://Other/future_levels.txt'
 
 var spawn_from_below: bool = false
 

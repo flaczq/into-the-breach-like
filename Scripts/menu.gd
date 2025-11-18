@@ -52,16 +52,19 @@ func _ready() -> void:
 	continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.save.description
 	
 	language_option_button.select(Global.settings.language)
-	_on_language_option_button_item_selected(Global.settings.language)
+	#_on_language_option_button_item_selected(Global.settings.language)
 	
 	camera_position_option_button.select(Global.settings.camera_position)
-	_on_camera_position_option_button_item_selected(Global.settings.camera_position)
+	#_on_camera_position_option_button_item_selected(Global.settings.camera_position)
 	
 	aa_check_box.set_pressed(Global.settings.antialiasing)
-	_on_aa_check_box_toggled(Global.settings.antialiasing)
+	#_on_aa_check_box_toggled(Global.settings.antialiasing)
 	
-	_on_game_speed_h_slider_drag_ended(true)
-	_on_volume_h_slider_drag_ended(true)
+	game_speed_h_slider.set_value_no_signal(Global.settings.game_speed)
+	#_on_game_speed_h_slider_drag_ended(true)
+	
+	volume_h_slider.set_value_no_signal(Global.settings.volume)
+	#_on_volume_h_slider_drag_ended(true)
 	
 	on_button_disabled(players_next_texture_button, true)
 	
@@ -118,12 +121,16 @@ func init_ui() -> void:
 	for child in save_slots_grid_container.get_children():
 		child.hide()
 	
+	# [10,11,12,...,99,100] - already picked
+	var id_range = [randi_range(10, 100)]
 	# TODO load
 	for i in range(3):
 		var save_slot = save_slots_grid_container.get_child(i) as SaveSlot
 		var save_object = SaveObject.new()
-		save_object.init()
+		var id = id_range.pick_random()
+		save_object.init(id)
 		save_slot.init(save_object)
+		save_slot.connect('slot_hovered', _on_save_slot_hovered)
 		save_slot.connect('slot_clicked', _on_save_slot_clicked)
 		save_slot.show()
 
@@ -335,7 +342,6 @@ func _on_game_speed_h_slider_drag_ended(value_changed: bool) -> void:
 
 func _on_volume_h_slider_drag_ended(value_changed: bool) -> void:
 	if value_changed:
-		# TODO implement
 		Global.settings.volume = volume_h_slider.value
 
 
@@ -359,6 +365,14 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 	
 	on_button_disabled(players_next_texture_button, Global.save.selected_player_ids.size() != 3)
 	assert(Global.save.selected_player_ids.size() <= 3, 'Too many selected player ids')
+
+
+func _on_save_slot_hovered(save_object_id: int, is_hovered: bool) -> void:
+	for save_slot in save_slots_grid_container.get_children():
+		if is_hovered and save_slot.save_object.id == save_object_id:
+			save_slot.modulate.a = 1.0
+		else:
+			save_slot.modulate.a = 0.5
 
 
 func _on_save_slot_clicked(save_object_id: int) -> void:

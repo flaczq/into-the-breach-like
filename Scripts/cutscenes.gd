@@ -13,6 +13,8 @@ enum CharacterType {PLAYER_1, PLAYER_2, GOODGUY, BADGUY, GOD, DEVIL}
 const character_textures: Array[CompressedTexture2D] = [
 	preload('res://Assets/aaaps/player_1_normal.png'),
 	preload('res://Assets/aaaps/player_2_normal.png'),
+	preload('res://Assets/aaaps/player_1_normal.png'),
+	preload('res://Assets/aaaps/player_2_normal.png'),
 	#preload('res://Assets/aaaps/goodguy_normal.png'),
 	#preload('res://Assets/aaaps/badguy_normal.png'),
 	#preload('res://Assets/aaaps/god_normal.png'),

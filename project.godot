@@ -13,12 +13,14 @@ config_version=5
 config/name="Save the Tiles"
 config/version="0.1"
 run/main_scene="res://Scenes/menu.tscn"
+config/use_custom_user_dir=true
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://Icons/tank.png"
 
 [autoload]
 
 Global="*res://Scripts/global.gd"
+Config="*res://Scripts/config.gd"
 
 [display]
 

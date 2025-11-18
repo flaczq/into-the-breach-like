@@ -18,8 +18,8 @@ var play_time: int								= -1
 var level_time: int 							= -1
 
 
-func init(is_tutorial: bool = false) -> void:
-	id = randi_range(10, 100)
+func init(new_id: int, is_tutorial: bool = false) -> void:
+	id = new_id
 	unlocked_epoch_ids.append(Util.EpochType.PREHISTORIC)
 	# tutorial player is obviously unlocked but not added here to not show it in the selection screen
 	unlocked_player_ids = [

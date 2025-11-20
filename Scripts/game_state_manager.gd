@@ -420,11 +420,11 @@ func level_won() -> void:
 	
 	print('adding money for level: ' + str(money_for_level) + '(' + str(points_for_level) + ' ' + str(dead_players_size) + ')')
 	if money_for_level > 0:
-		Global.save.money += money_for_level
+		Global.saves[Global.settings.selected_save_index].money += money_for_level
 	
 	# TODO
 	if level < max_levels and not Global.editor:
-		Global.save.level_time = level_time_start
+		Global.saves[Global.settings.selected_save_index].level_time = level_time_start
 		level_end_label.text = 'LEVEL WON'
 		level_end_color_rect.show()
 		panel_full_screen_container.show()
@@ -466,7 +466,7 @@ func update_ui():
 	game_info_label.text = 'TIME: ' + ('%02d:%02d' % [minutes, seconds]) + '\n'
 	game_info_label.text += 'LEVEL: ' + str(level) + '\n'
 	game_info_label.text += 'TURN: ' + str(current_turn) + '\n'
-	game_info_label.text += 'MONEY: ' + str(Global.save.money)
+	game_info_label.text += 'MONEY: ' + str(Global.saves[Global.settings.selected_save_index].money)
 	tile_info_label.text = ''
 	debug_info_label.text = ''
 	objectives_label.text = 'MAP OBJECTIVES:'

@@ -41,7 +41,7 @@ func _ready() -> void:
 	summary_next_texture_button.connect('pressed', _on_summary_next_texture_button_pressed)
 	
 	# FIXME better way of controlling which screen to show
-	if Global.save.selected_epoch == Util.EpochType.NONE:
+	if Global.saves[Global.settings.selected_save_index].selected_epoch == Util.EpochType.NONE:
 		# first time starting
 		go_to_epochs()
 	else:
@@ -63,14 +63,14 @@ func init_ui() -> void:
 		child.hide()
 	
 	var index = 0
-	assert(Global.save.selected_player_ids.size() > 0 and Global.save.selected_player_ids.size() <= 3, 'Wrong selected player ids size')
-	for player_id in Global.save.selected_player_ids:
+	assert(Global.saves[Global.settings.selected_save_index].selected_player_ids.size() > 0 and Global.saves[Global.settings.selected_save_index].selected_player_ids.size() <= 3, 'Wrong selected player ids size')
+	for player_id in Global.saves[Global.settings.selected_save_index].selected_player_ids:
 		assert(player_id != PlayerType.NONE, 'Wrong selected player id')
 		var player = Player.new()
 		init_manager_script.init_player(player, player_id)
-		for bought_item_id in Global.save.bought_item_ids:
+		for bought_item_id in Global.saves[Global.settings.selected_save_index].bought_item_ids:
 			# is assigned to player
-			if Global.save.bought_item_ids[bought_item_id] == player_id:
+			if Global.saves[Global.settings.selected_save_index].bought_item_ids[bought_item_id] == player_id:
 				if not player.item_1 or player.item_1.id == ItemType.NONE:
 					player.item_1 = init_manager_script.init_item(bought_item_id)
 				elif not player.item_2 or player.item_2.id == ItemType.NONE:
@@ -95,9 +95,9 @@ func init_ui() -> void:
 	
 	var empty_item = init_manager_script.init_item(ItemType.NONE)
 	var bought_items = [] as Array[ItemObject]
-	for bought_item_id in Global.save.bought_item_ids:
+	for bought_item_id in Global.saves[Global.settings.selected_save_index].bought_item_ids:
 		# is in inventory
-		if Global.save.bought_item_ids[bought_item_id] == PlayerType.NONE:
+		if Global.saves[Global.settings.selected_save_index].bought_item_ids[bought_item_id] == PlayerType.NONE:
 			var bought_item = init_manager_script.init_item(bought_item_id)
 			bought_items.append(bought_item)
 	inventory.init(bought_items, empty_item)
@@ -106,9 +106,9 @@ func init_ui() -> void:
 
 
 func update_ui() -> void:
-	shop_label.text = 'Welcome to the SHOP\nMoney: ' + str(Global.save.money)
-	summary_time_value_label.text = str(Global.save.money)
-	summary_money_value_label.text = str(Global.save.level_time)
+	shop_label.text = 'Welcome to the SHOP\nMoney: ' + str(Global.saves[Global.settings.selected_save_index].money)
+	summary_time_value_label.text = str(Global.saves[Global.settings.selected_save_index].money)
+	summary_money_value_label.text = str(Global.saves[Global.settings.selected_save_index].level_time)
 
 
 func show_back() -> void:
@@ -175,7 +175,7 @@ func _on_shop_item_clicked(shop_item_texture_index: int, item_id: ItemType) -> v
 		on_button_disabled(shop_buy_texture_button, true)
 	else:
 		var shop_clicked_item = init_manager_script.init_item(shop_clicked_item_id)
-		on_button_disabled(shop_buy_texture_button, shop_clicked_item.cost > Global.save.money)
+		on_button_disabled(shop_buy_texture_button, shop_clicked_item.cost > Global.saves[Global.settings.selected_save_index].money)
 	
 	inventory.reset_items()
 	for player_inventory in players_grid_container.get_children() as Array[PlayerInventory]:
@@ -190,14 +190,14 @@ func _on_shop_buy_texture_button_pressed() -> void:
 		return
 	
 	var shop_clicked_item = init_manager_script.init_item(shop_clicked_item_id)
-	if shop_clicked_item.cost > Global.save.money:
+	if shop_clicked_item.cost > Global.saves[Global.settings.selected_save_index].money:
 		return
 	
 	shop_clicked_item.is_available = false
 	# item bought but not yet assigned
-	Global.save.bought_item_ids[shop_clicked_item.id] = PlayerType.NONE
+	Global.saves[Global.settings.selected_save_index].bought_item_ids[shop_clicked_item.id] = PlayerType.NONE
 	
-	Global.save.money -= shop_clicked_item.cost
+	Global.saves[Global.settings.selected_save_index].money -= shop_clicked_item.cost
 	update_ui()
 	
 	shop.buy_item(shop_clicked_item_id)
@@ -238,7 +238,7 @@ func _on_inventory_item_clicked(inventory_item_texture_index: int, item_id: Item
 			inventory.add_item(player_clicked_item, inventory_item_texture_index)
 			inventory.reset_items(false)
 			
-			Global.save.bought_item_ids[player_clicked_item_id] = PlayerType.NONE
+			Global.saves[Global.settings.selected_save_index].bought_item_ids[player_clicked_item_id] = PlayerType.NONE
 	
 	on_button_disabled(shop_buy_texture_button, true)
 	shop.reset_items()
@@ -279,7 +279,7 @@ func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int,
 			selected_player.item_2 = inventory_clicked_item
 		selected_player_inventory.update_stats()
 		
-		Global.save.bought_item_ids[inventory_clicked_item_id] = selected_player.id
+		Global.saves[Global.settings.selected_save_index].bought_item_ids[inventory_clicked_item_id] = selected_player.id
 	elif player_clicked_item_id != ItemType.NONE and item_id == ItemType.NONE:
 		# player X -> player Y
 		var origin_player_inventory = players_grid_container.get_children().filter(func(child): return child.clicked_item_id == player_clicked_item_id).front() as PlayerInventory
@@ -297,7 +297,7 @@ func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int,
 			selected_player.item_2 = player_clicked_item
 		selected_player_inventory.update_stats()
 		
-		Global.save.bought_item_ids[player_clicked_item_id] = selected_player.id
+		Global.saves[Global.settings.selected_save_index].bought_item_ids[player_clicked_item_id] = selected_player.id
 	else:
 		# set items in single player container in case they were moved
 		selected_player_inventory.update_stats()
@@ -318,11 +318,11 @@ func _on_epochs_next_texture_button_pressed() -> void:
 
 
 func _on_epoch_type_texture_button_toggled(toggled_on: bool, epoch_type: EpochType) -> void:
-	assert(Global.save.unlocked_epoch_ids.has(epoch_type), 'Selected epoch not unlocked')
+	assert(Global.saves[Global.settings.selected_save_index].unlocked_epoch_ids.has(epoch_type), 'Selected epoch not unlocked')
 	print('Selected epoch: ' + str(EpochType.keys()[epoch_type]))
-	Global.save.selected_epoch = epoch_type
+	Global.saves[Global.settings.selected_save_index].selected_epoch = epoch_type
 	
-	on_button_disabled(epochs_next_texture_button, Global.save.selected_epoch == EpochType.NONE)
+	on_button_disabled(epochs_next_texture_button, Global.saves[Global.settings.selected_save_index].selected_epoch == EpochType.NONE)
 
 
 func _on_level_type_texture_button_toggled(toggled_on: bool, level_type: LevelType) -> void:

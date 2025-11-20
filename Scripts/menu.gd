@@ -48,8 +48,9 @@ func _ready() -> void:
 	_on_tutorial_check_button_toggled(Global.tutorial)
 	
 	# is save slot selected
-	continue_texture_button.set_visible(Global.save.id > 0)
-	continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.save.description
+	continue_texture_button.set_visible(Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id > 0)
+	if Global.settings.selected_save_index >= 0:
+		continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.saves[Global.settings.selected_save_index].description
 	
 	language_option_button.select(Global.settings.language)
 	#_on_language_option_button_item_selected(Global.settings.language)
@@ -121,15 +122,15 @@ func init_ui() -> void:
 	for child in save_slots_grid_container.get_children():
 		child.hide()
 	
-	# [10,11,12,...,99,100] - already picked
-	var id_range = [randi_range(10, 100)]
-	# TODO load
+	# funny way of picking three unique random numbers
+	var ids_range = range(10, 100)
+	ids_range.shuffle()
 	for i in range(3):
 		var save_slot = save_slots_grid_container.get_child(i) as SaveSlot
-		var save_object = SaveObject.new()
-		var id = id_range.pick_random()
-		save_object.init(id)
-		save_slot.init(save_object)
+		var id = ids_range[i]
+		Global.saves[i].init(id)
+		
+		save_slot.init(Global.saves[i])
 		save_slot.connect('slot_hovered', _on_save_slot_hovered)
 		save_slot.connect('slot_clicked', _on_save_slot_clicked)
 		save_slot.show()
@@ -164,9 +165,9 @@ func show_main() -> void:
 
 func show_save_slot_selection() -> void:
 	# this is now done by selecting save slot
-	#Global.save.selected_player_ids = []
-	#Global.save.bought_item_ids = {}
-	#Global.save.played_map_ids = []
+	#Global.saves[Global.settings.selected_save_index].selected_player_ids = []
+	#Global.saves[Global.settings.selected_save_index].bought_item_ids = {}
+	#Global.saves[Global.settings.selected_save_index].played_map_ids = []
 	
 	#main_menu_button.hide()
 	main_menu_container.hide()
@@ -210,13 +211,15 @@ func _on_editor_texture_button_pressed() -> void:
 
 
 func _on_continue_texture_button_pressed() -> void:
-	assert(Global.save.id > 0, 'Save slot was NOT selected')
+	assert(Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id > 0, 'Save slot was NOT selected')
+	Global.saves[Global.settings.selected_save_index].save_enabled = true
+	
 	show_main()
 
 
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
-		Global.save.init(true)
+		Global.saves[Global.settings.selected_save_index].init(true)
 		show_main()
 	else:
 		show_save_slot_selection()
@@ -279,8 +282,8 @@ func _on_main_menu_texture_button_pressed() -> void:
 	panel_full_screen_container.hide()
 	ss_confirmation_color_rect.hide()
 	
-	continue_texture_button.set_visible(Global.save.id > 0)
-	continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.save.description
+	continue_texture_button.set_visible(Global.saves[Global.settings.selected_save_index].id > 0)
+	continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.saves[Global.settings.selected_save_index].description
 	
 	on_button_disabled(players_next_texture_button, true)
 	
@@ -359,12 +362,12 @@ func _on_player_inventory_mouse_exited(id: PlayerType) -> void:
 
 func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 	if toggled_on:
-		Global.save.selected_player_ids.push_back(id)
+		Global.saves[Global.settings.selected_save_index].selected_player_ids.push_back(id)
 	else:
-		Global.save.selected_player_ids.erase(id)
+		Global.saves[Global.settings.selected_save_index].selected_player_ids.erase(id)
 	
-	on_button_disabled(players_next_texture_button, Global.save.selected_player_ids.size() != 3)
-	assert(Global.save.selected_player_ids.size() <= 3, 'Too many selected player ids')
+	on_button_disabled(players_next_texture_button, Global.saves[Global.settings.selected_save_index].selected_player_ids.size() != 3)
+	assert(Global.saves[Global.settings.selected_save_index].selected_player_ids.size() <= 3, 'Too many selected player ids')
 
 
 func _on_save_slot_hovered(save_object_id: int, is_hovered: bool) -> void:
@@ -384,10 +387,13 @@ func _on_save_slot_clicked(save_object_id: int) -> void:
 		else:
 			save_slot.modulate.a = 0.5
 	
-	if Global.save.id == selected_save_object_id:
+	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
 		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' IS ALREADY SELECTED\n\nCONTINUE?'
 	else:
 		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
+	
+	Global.settings.selected_save_index = Global.saves.find_custom(func(save): return save.id == selected_save_object_id)
+	Config.save_save()
 	
 	panel_full_screen_container.show()
 	ss_confirmation_color_rect.show()
@@ -405,12 +411,13 @@ func _on_ss_confirmation_no_button_pressed() -> void:
 
 func _on_ss_confirmation_yes_button_pressed() -> void:
 	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
-	if Global.save.id == selected_save_object_id:
+	if Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
 		# FIXME maybe compare each field separately
-		assert(Global.save == save_slot.save_object, 'Already selected save slot is different than clicked one')
+		assert(Global.saves[Global.settings.selected_save_index] == save_slot.save_object, 'Already selected save slot is different than clicked one')
 		# same as clicking 'continue' on the main screen
 		_on_continue_texture_button_pressed()
 	else:
-		Global.save = save_slot.save_object
+		Global.saves[Global.settings.selected_save_index] = save_slot.save_object
+		Global.saves[Global.settings.selected_save_index].save_enabled = true
 		
 		show_cutscenes()

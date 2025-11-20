@@ -101,13 +101,13 @@ func reset_items(unclick_item_id: bool = true) -> void:
 
 func _on_texture_button_mouse_entered(item_texture_index: int) -> void:
 	var hovered_item = items[item_texture_index]
-	if Global.save.money >= hovered_item.cost:
+	if Global.saves[Global.settings.selected_save_index].money >= hovered_item.cost:
 		item_hovered.emit(item_texture_index, hovered_item.id, true)
 
 
 func _on_texture_button_mouse_exited(item_texture_index: int) -> void:
 	var hovered_item = items[item_texture_index]
-	if Global.save.money >= hovered_item.cost:
+	if Global.saves[Global.settings.selected_save_index].money >= hovered_item.cost:
 		item_hovered.emit(item_texture_index, hovered_item.id, false)
 
 
@@ -115,7 +115,7 @@ func _on_texture_button_pressed(item_texture_index: int) -> void:
 	reset_items(false)
 	
 	var new_clicked_item = items[item_texture_index]
-	if Global.save.money >= new_clicked_item.cost:
+	if Global.saves[Global.settings.selected_save_index].money >= new_clicked_item.cost:
 		if clicked_item_id != Util.ItemType.NONE and clicked_item_id == new_clicked_item.id:
 			#texture_button.modulate.a = 0.5
 			clicked_item_id = Util.ItemType.NONE

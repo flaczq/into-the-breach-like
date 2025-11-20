@@ -412,7 +412,7 @@ func init_playable_players() -> Array[Player]:
 
 
 func init_player(target_player: Player, id: Util.PlayerType) -> void:
-	assert(Global.save.selected_player_ids.has(id), 'Why NOT selected player is being initialized?')
+	assert(Global.saves[Global.settings.selected_save_index].selected_player_ids.has(id), 'Why NOT selected player is being initialized?')
 	var player_data = players_data.filter(func(player_data): return player_data.id == id).front()
 	target_player.id = player_data.id
 	target_player.model_name = player_data.model_name
@@ -478,7 +478,7 @@ func init_action(action_id: Util.ActionType) -> ActionObject:
 
 func init_available_items() -> Array[ItemObject]:
 	var available_items = [] as Array[ItemObject]
-	for item_data in items_data.filter(func(item_data): return item_data.is_available and not Global.save.bought_item_ids.has(item_data.id)):
+	for item_data in items_data.filter(func(item_data): return item_data.is_available and not Global.saves[Global.settings.selected_save_index].bought_item_ids.has(item_data.id)):
 		var item_object = ItemObject.new()
 		item_object.init_from_item_data(item_data)
 		available_items.push_back(item_object)

@@ -41,7 +41,7 @@ func get_levels_file_path(level_type: LevelType) -> String:
 	if level_type == LevelType.TUTORIAL:
 		return TUTORIAL_LEVELS_FILE_PATH
 	
-	match Global.save.selected_epoch:
+	match Global.saves[Global.settings.selected_save_index].selected_epoch:
 		EpochType.PREHISTORIC: return PREHISTORIC_LEVELS_FILE_PATH
 		EpochType.MIDDLE_AGES: return MIDDLE_AGES_LEVELS_FILE_PATH
 		EpochType.RENAISSANCE: return RENAISSANCE_LEVELS_FILE_PATH
@@ -60,16 +60,16 @@ func select_random_level_data(file_content: String, level: int, level_type: Leve
 	
 	var index = file_content.count(prefix + 'START')
 	var indices_range = range(1, index + 1)
-	if Global.save.played_map_ids.size() < indices_range.size():
+	if Global.saves[Global.settings.selected_save_index].played_map_ids.size() < indices_range.size():
 		# prevent selecting already played maps
-		indices_range = indices_range.filter(func(index): return not Global.save.played_map_ids.has(index))
+		indices_range = indices_range.filter(func(index): return not Global.saves[Global.settings.selected_save_index].played_map_ids.has(index))
 		assert(not indices_range.is_empty(), 'Empty indices for selected maps')
 	else:
 		# clear if all maps were already played (sic!)
-		Global.save.played_map_ids.clear()
+		Global.saves[Global.settings.selected_save_index].played_map_ids.clear()
 	
 	var random_index = indices_range.pick_random()
-	Global.save.played_map_ids.push_back(random_index)
+	Global.saves[Global.settings.selected_save_index].played_map_ids.push_back(random_index)
 	print('selected level: ' + str(random_index) + prefix.substr(0, prefix.length() - 2))
 	return file_content.get_slice(str(random_index) + prefix + 'START', 1).get_slice(str(random_index) + prefix + 'STOP', 0)#.strip_escapes()
 
@@ -88,7 +88,7 @@ func add_characters(level_data: Dictionary, enemy_scenes_size: int, civilian_sce
 			level_data.player_scenes.push_back(0)
 			level_data.enemy_scenes.push_back(0)
 	else:
-		for selected_player_id in Global.save.selected_player_ids:
+		for selected_player_id in Global.saves[Global.settings.selected_save_index].selected_player_ids:
 			level_data.player_scenes.push_back(selected_player_id)
 		
 		if level_data.level_type == LevelType.KILL_ENEMIES:

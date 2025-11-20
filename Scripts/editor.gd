@@ -221,7 +221,7 @@ func calculate_level_data() -> void:
 				level_data.civilian_scenes.push_back(child.id)
 	
 	for player_scene_id in level_data.player_scenes:
-		Global.save.selected_player_ids.push_back(player_scene_id)
+		Global.saves[Global.settings.selected_save_index].selected_player_ids.push_back(player_scene_id)
 
 
 func _on_settings_texture_button_pressed() -> void:

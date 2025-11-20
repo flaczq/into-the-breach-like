@@ -18,7 +18,7 @@ func init(new_save_object: SaveObject) -> void:
 	save_object = new_save_object
 	name = name.replace('X', str(save_object.id))
 	
-	if Global.save.id == save_object.id:
+	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == save_object.id:
 		modulate.a = 1.0
 	else:
 		modulate.a = 0.5
@@ -55,5 +55,6 @@ func _on_texture_rect_gui_input(event: InputEvent) -> void:
 		save_object.description = name_label.text
 		save_object.created = Time.get_datetime_string_from_system()
 		save_object.updated = Time.get_datetime_string_from_system()
+		save_object.save_enabled = true
 		
 		slot_clicked.emit(save_object.id)

@@ -6,7 +6,7 @@ var editor: bool 					= false
 var tutorial: bool 					= true
 var character_speed: float			= 0.3
 var settings: SettingsObject		= SettingsObject.new()
-var save: SaveObject				= SaveObject.new()
+var saves: Array[SaveObject]		= [SaveObject.new(), SaveObject.new(), SaveObject.new()]
 
 
 func _ready() -> void:

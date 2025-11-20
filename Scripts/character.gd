@@ -483,7 +483,7 @@ func collect_if_collectable(target_tile: MapTile) -> void:
 		collectable.queue_free()
 		
 		if is_in_group('PLAYERS'):
-			Global.save.money += 1
+			Global.saves[Global.settings.selected_save_index].money += 1
 		
 		collectable_picked_event.emit(self)
 

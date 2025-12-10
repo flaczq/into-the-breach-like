@@ -352,6 +352,7 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="OptionsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 
 [node name="BackTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
@@ -491,7 +492,6 @@ tick_count = 2
 ticks_on_borders = true
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 

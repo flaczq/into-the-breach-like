@@ -196,6 +196,7 @@ func _on_shop_buy_texture_button_pressed() -> void:
 	shop_clicked_item.is_available = false
 	# item bought but not yet assigned
 	Global.saves[Global.settings.selected_save_index].bought_item_ids[shop_clicked_item.id] = PlayerType.NONE
+	Config.save_save()
 	
 	Global.saves[Global.settings.selected_save_index].money -= shop_clicked_item.cost
 	update_ui()
@@ -239,6 +240,7 @@ func _on_inventory_item_clicked(inventory_item_texture_index: int, item_id: Item
 			inventory.reset_items(false)
 			
 			Global.saves[Global.settings.selected_save_index].bought_item_ids[player_clicked_item_id] = PlayerType.NONE
+			Config.save_save()
 	
 	on_button_disabled(shop_buy_texture_button, true)
 	shop.reset_items()
@@ -280,6 +282,7 @@ func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int,
 		selected_player_inventory.update_stats()
 		
 		Global.saves[Global.settings.selected_save_index].bought_item_ids[inventory_clicked_item_id] = selected_player.id
+		Config.save_save()
 	elif player_clicked_item_id != ItemType.NONE and item_id == ItemType.NONE:
 		# player X -> player Y
 		var origin_player_inventory = players_grid_container.get_children().filter(func(child): return child.clicked_item_id == player_clicked_item_id).front() as PlayerInventory
@@ -298,6 +301,7 @@ func _on_player_inventory_item_clicked(player_inventory_item_texture_index: int,
 		selected_player_inventory.update_stats()
 		
 		Global.saves[Global.settings.selected_save_index].bought_item_ids[player_clicked_item_id] = selected_player.id
+		Config.save_save()
 	else:
 		# set items in single player container in case they were moved
 		selected_player_inventory.update_stats()

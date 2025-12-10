@@ -41,7 +41,7 @@ var unlocked_player_ids: Array[Util.PlayerType]:
 var selected_player_ids: Array[Util.PlayerType]:
 	get: return _selected_player_ids
 	set(value): apply_change('_selected_player_ids', value)
-var bought_item_ids: Dictionary: # TODO CHECK IF THIS SAVES!
+var bought_item_ids: Dictionary:
 	get: return _bought_item_ids
 	set(value): apply_change('_bought_item_ids', value)
 var played_map_ids: Array[int]:

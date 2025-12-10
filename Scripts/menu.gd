@@ -365,6 +365,7 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 		Global.saves[Global.settings.selected_save_index].selected_player_ids.push_back(id)
 	else:
 		Global.saves[Global.settings.selected_save_index].selected_player_ids.erase(id)
+	Config.save_save()
 	
 	on_button_disabled(players_next_texture_button, Global.saves[Global.settings.selected_save_index].selected_player_ids.size() != 3)
 	assert(Global.saves[Global.settings.selected_save_index].selected_player_ids.size() <= 3, 'Too many selected player ids')
@@ -387,13 +388,10 @@ func _on_save_slot_clicked(save_object_id: int) -> void:
 		else:
 			save_slot.modulate.a = 0.5
 	
-	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
-		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' IS ALREADY SELECTED\n\nCONTINUE?'
-	else:
-		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
-	
-	Global.settings.selected_save_index = Global.saves.find_custom(func(save): return save.id == selected_save_object_id)
-	Config.save_save()
+	#if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
+		#ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' IS ALREADY SELECTED\n\nCONTINUE?'
+	#else:
+	ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
 	
 	panel_full_screen_container.show()
 	ss_confirmation_color_rect.show()
@@ -402,6 +400,7 @@ func _on_save_slot_clicked(save_object_id: int) -> void:
 func _on_ss_confirmation_no_button_pressed() -> void:
 	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
 	save_slot.modulate.a = 0.5
+	save_slot.save_object.save_enabled = false
 	
 	selected_save_object_id = -1
 	
@@ -411,13 +410,19 @@ func _on_ss_confirmation_no_button_pressed() -> void:
 
 func _on_ss_confirmation_yes_button_pressed() -> void:
 	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
-	if Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
+	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
 		# FIXME maybe compare each field separately
 		assert(Global.saves[Global.settings.selected_save_index] == save_slot.save_object, 'Already selected save slot is different than clicked one')
+		
 		# same as clicking 'continue' on the main screen
 		_on_continue_texture_button_pressed()
 	else:
-		Global.saves[Global.settings.selected_save_index] = save_slot.save_object
-		Global.saves[Global.settings.selected_save_index].save_enabled = true
+		Global.settings.selected_save_index = Global.saves.find_custom(func(save): return save.id == selected_save_object_id)
+		# unnecessary
+		#Global.saves[Global.settings.selected_save_index] = save_slot.save_object
+		#Global.saves[Global.settings.selected_save_index].save_enabled = true
 		
 		show_cutscenes()
+	
+	save_slot.save_object.save_enabled = true
+	Config.save_save()

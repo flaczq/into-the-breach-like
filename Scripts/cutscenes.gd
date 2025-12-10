@@ -33,12 +33,12 @@ var cutscenes_data: Array[Dictionary] = [
 		# END_CHAR end cutscene
 		'text': [
 			'Hello!\nThis is left character talking',
-			'This is still left character talking.......' + SWITCH_CHAR,
-			'Hi, this is right character talking now!' + SWITCH_CHAR,
-			'And left\n\nagain',
+			'This is still left character talking.......',
+			SWITCH_CHAR + 'Hi, this is right character talking now!',
+			SWITCH_CHAR + 'And left\n\nagain',
 			'Still left',
-			'And still going....' + SWITCH_CHAR,
-			'Now right',
+			'And still going....',
+			SWITCH_CHAR + 'Now right',
 			'END\nIT\nNOW' + END_CHAR
 		]
 	}
@@ -66,6 +66,9 @@ func init(cutscene_id: Util.CutsceneType) -> void:
 	character_left_texture_button.texture_normal = character_left_texture
 	var character_right_texture = character_textures[current_cutscene.character_right]
 	character_right_texture_button.texture_normal = character_right_texture
+	
+	character_left_texture_button.show()
+	character_right_texture_button.hide()
 	
 	next_text()
 

@@ -32,6 +32,7 @@ func init_from_item_object(item_object: ItemObject) -> void:
 
 
 func apply_to_player(target_player: Player, is_applied: bool = true) -> void:
+	assert(not is_applied, 'Item already applied')
 	match id:
 		Util.ItemType.HEALTH:
 			if is_applied:
@@ -66,3 +67,5 @@ func apply_to_player(target_player: Player, is_applied: bool = true) -> void:
 			else:
 				target_player.can_swim = false
 		_: pass
+	
+	is_applied = true

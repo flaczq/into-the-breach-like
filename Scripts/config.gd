@@ -32,7 +32,7 @@ func load_settings() -> void:
 		var current_game_speed = settings_cfg.get_value('game', 'game_speed', Global.settings.game_speed)
 		var current_volume = settings_cfg.get_value('game', 'volume', Global.settings.volume)
 		var current_difficulty = settings_cfg.get_value('game', 'difficulty', Global.settings.difficulty)
-		var current_selected_save_index = settings_cfg.get_value('game', 'selected_save_index', Global.settings.selected_save_index)
+		var current_selected_save_index = settings_cfg.get_value('other', 'selected_save_index', Global.settings.selected_save_index)
 		
 		Global.settings.language = current_language
 		Global.settings.camera_position = current_camera_position
@@ -83,19 +83,19 @@ func load_save(i: int, save_filepath: String) -> void:
 		print('Virgin save file in ' + save_filepath + ' created!')
 	else:
 		# save file exists
-		var current_id = save_cfg.get_value('game', 'id', Global.saves[i].id)
-		var current_description = save_cfg.get_value('game', 'description', Global.saves[i].description)
-		var current_created = save_cfg.get_value('game', 'created', Global.saves[i].created)
-		var current_updated = save_cfg.get_value('game', 'updated', Global.saves[i].updated)
-		var current_unlocked_epoch_ids = save_cfg.get_value('game', 'unlocked_epoch_ids', Global.saves[i].unlocked_epoch_ids)
-		var current_selected_epoch = save_cfg.get_value('game', 'selected_epoch', Global.saves[i].selected_epoch)
-		var current_unlocked_player_ids = save_cfg.get_value('game', 'unlocked_player_ids', Global.saves[i].unlocked_player_ids)
-		var current_selected_player_ids = save_cfg.get_value('game', 'selected_player_ids', Global.saves[i].selected_player_ids)
-		var current_bought_item_ids = save_cfg.get_value('game', 'bought_item_ids', Global.saves[i].bought_item_ids)
-		var current_played_map_ids = save_cfg.get_value('game', 'played_map_ids', Global.saves[i].played_map_ids)
-		var current_money = save_cfg.get_value('game', 'money', Global.saves[i].money)
-		var current_play_time = save_cfg.get_value('game', 'play_time', Global.saves[i].play_time)
-		var current_level_time = save_cfg.get_value('game', 'level_time', Global.saves[i].level_time)
+		var current_id = save_cfg.get_value('state', 'id', Global.saves[i].id)
+		var current_description = save_cfg.get_value('state', 'description', Global.saves[i].description)
+		var current_created = save_cfg.get_value('state', 'created', Global.saves[i].created)
+		var current_updated = save_cfg.get_value('state', 'updated', Global.saves[i].updated)
+		var current_unlocked_epoch_ids = save_cfg.get_value('state', 'unlocked_epoch_ids', Global.saves[i].unlocked_epoch_ids)
+		var current_selected_epoch = save_cfg.get_value('state', 'selected_epoch', Global.saves[i].selected_epoch)
+		var current_unlocked_player_ids = save_cfg.get_value('state', 'unlocked_player_ids', Global.saves[i].unlocked_player_ids)
+		var current_selected_player_ids = save_cfg.get_value('state', 'selected_player_ids', Global.saves[i].selected_player_ids)
+		var current_bought_item_ids = save_cfg.get_value('state', 'bought_item_ids', Global.saves[i].bought_item_ids)
+		var current_played_map_ids = save_cfg.get_value('state', 'played_map_ids', Global.saves[i].played_map_ids)
+		var current_money = save_cfg.get_value('state', 'money', Global.saves[i].money)
+		var current_play_time = save_cfg.get_value('state', 'play_time', Global.saves[i].play_time)
+		var current_level_time = save_cfg.get_value('state', 'level_time', Global.saves[i].level_time)
 		
 		Global.saves[i].id = current_id
 		Global.saves[i].description = current_description

@@ -54,11 +54,9 @@ func after_ready() -> void:
 func include_items_updates() -> void:
 	if item_1 and not item_1.is_applied:
 		item_1.apply_to_player(self)
-		item_1.is_applied = true
 	
 	if item_2 and not item_2.is_applied:
 		item_2.apply_to_player(self)
-		item_2.is_applied = true
 
 
 func spawn(spawn_tile: MapTile) -> void:

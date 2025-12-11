@@ -126,10 +126,12 @@ func init_ui() -> void:
 	var ids_range = range(10, 100)
 	ids_range.shuffle()
 	for i in range(3):
-		var save_slot = save_slots_grid_container.get_child(i) as SaveSlot
-		var id = ids_range[i]
-		Global.saves[i].init(id)
+		# save does not exist
+		if Global.saves[i].id <= 0:
+			var id = ids_range[i]
+			Global.saves[i].init(id)
 		
+		var save_slot = save_slots_grid_container.get_child(i) as SaveSlot
 		save_slot.init(Global.saves[i])
 		save_slot.connect('slot_hovered', _on_save_slot_hovered)
 		save_slot.connect('slot_clicked', _on_save_slot_clicked)
@@ -349,6 +351,8 @@ func _on_volume_h_slider_drag_ended(value_changed: bool) -> void:
 
 
 func _on_players_next_texture_button_pressed() -> void:
+	Config.save_save()
+	
 	show_main()
 
 
@@ -365,7 +369,6 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 		Global.saves[Global.settings.selected_save_index].selected_player_ids.push_back(id)
 	else:
 		Global.saves[Global.settings.selected_save_index].selected_player_ids.erase(id)
-	Config.save_save()
 	
 	on_button_disabled(players_next_texture_button, Global.saves[Global.settings.selected_save_index].selected_player_ids.size() != 3)
 	assert(Global.saves[Global.settings.selected_save_index].selected_player_ids.size() <= 3, 'Too many selected player ids')
@@ -373,10 +376,11 @@ func _on_player_inventory_toggled(toggled_on: bool, id: PlayerType) -> void:
 
 func _on_save_slot_hovered(save_object_id: int, is_hovered: bool) -> void:
 	for save_slot in save_slots_grid_container.get_children():
-		if is_hovered and save_slot.save_object.id == save_object_id:
-			save_slot.modulate.a = 1.0
-		else:
-			save_slot.modulate.a = 0.5
+		if Global.settings.selected_save_index < 0 or Global.saves[Global.settings.selected_save_index].id != save_slot.save_object.id:
+			if is_hovered and save_slot.save_object.id == save_object_id:
+				save_slot.modulate.a = 1.0
+			else:
+				save_slot.modulate.a = 0.5
 
 
 func _on_save_slot_clicked(save_object_id: int) -> void:
@@ -388,13 +392,13 @@ func _on_save_slot_clicked(save_object_id: int) -> void:
 		else:
 			save_slot.modulate.a = 0.5
 	
-	#if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
+	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
 		#ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' IS ALREADY SELECTED\n\nCONTINUE?'
-	#else:
-	ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
-	
-	panel_full_screen_container.show()
-	ss_confirmation_color_rect.show()
+		_on_ss_confirmation_yes_button_pressed()
+	else:
+		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
+		panel_full_screen_container.show()
+		ss_confirmation_color_rect.show()
 
 
 func _on_ss_confirmation_no_button_pressed() -> void:

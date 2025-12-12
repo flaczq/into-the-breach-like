@@ -14,6 +14,7 @@ var _bought_item_ids: Dictionary					= {} # {item_id: player_id (-1: inventory)}
 var _played_map_ids: Array[int]						= []
 var _money: int	 									= -1
 var _play_time: int									= -1
+# TODO FIXME maybe delete this from save and reset level time at the start of new level
 var _level_time: int 								= -1
 
 var save_enabled: bool = false

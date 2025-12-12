@@ -49,7 +49,7 @@ func _ready() -> void:
 	
 	# is save slot selected
 	continue_texture_button.set_visible(Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id > 0)
-	if Global.settings.selected_save_index >= 0:
+	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id > 0:
 		continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.saves[Global.settings.selected_save_index].description
 	
 	language_option_button.select(Global.settings.language)
@@ -153,8 +153,9 @@ func show_in_game_menu(new_last_screen: Util) -> void:
 	ss_confirmation_color_rect.hide()
 	
 	# this can be changed from inside the game
-	camera_position_option_button.select(Global.settings.camera_position)
-	_on_camera_position_option_button_item_selected(Global.settings.camera_position)
+	if camera_position_option_button.get_selected_id() != Global.settings.camera_position:
+		camera_position_option_button.select(Global.settings.camera_position)
+		_on_camera_position_option_button_item_selected(Global.settings.camera_position)
 	
 	toggle_visibility(true)
 
@@ -387,10 +388,11 @@ func _on_save_slot_clicked(save_object_id: int) -> void:
 	selected_save_object_id = save_object_id
 	
 	for save_slot in save_slots_grid_container.get_children():
-		if save_slot.save_object.id == selected_save_object_id:
-			save_slot.modulate.a = 1.0
-		else:
-			save_slot.modulate.a = 0.5
+		if Global.settings.selected_save_index < 0 or Global.saves[Global.settings.selected_save_index].id != save_slot.save_object.id:
+			if save_slot.save_object.id == selected_save_object_id:
+				save_slot.modulate.a = 1.0
+			else:
+				save_slot.modulate.a = 0.5
 	
 	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
 		#ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' IS ALREADY SELECTED\n\nCONTINUE?'

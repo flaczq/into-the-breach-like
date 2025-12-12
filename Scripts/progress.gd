@@ -44,6 +44,9 @@ func _ready() -> void:
 	if Global.saves[Global.settings.selected_save_index].selected_epoch == Util.EpochType.NONE:
 		# first time starting
 		go_to_epochs()
+	elif Global.saves[Global.settings.selected_save_index].level_time <= 0:
+		# epoch selected but level not started
+		go_to_levels()
 	else:
 		# level ended
 		go_to_summary()

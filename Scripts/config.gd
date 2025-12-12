@@ -16,6 +16,11 @@ func _ready() -> void:
 	
 	load_settings()
 	load_saves()
+	
+	# all saves are new so reset selected save index in settings
+	if Global.saves.all(func(save): return save.id <= 0) and Global.settings.selected_save_index >= 0:
+		Global.settings.save_enabled = true
+		Global.settings.selected_save_index = -1
 
 
 func load_settings() -> void:

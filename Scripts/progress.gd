@@ -23,6 +23,8 @@ extends Util
 @onready var levels_next_texture_button				= $CanvasLayer/PanelCenterContainer/LevelsContainer/LevelsNextTextureButton
 @onready var summary_container						= $CanvasLayer/PanelCenterContainer/SummaryContainer
 @onready var summary_time_value_label				= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryTimeContainer/SummaryTimeValueLabel
+@onready var summary_e_killed_value_label			= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryEKilledContainer/SummaryEKilledValueLabel
+@onready var summary_collectables_value_label		= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryCollectablesContainer/SummaryCollectablesValueLabel
 @onready var summary_money_value_label				= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryMoneyContainer/SummaryMoneyValueLabel
 @onready var summary_next_texture_button			= $CanvasLayer/PanelCenterContainer/SummaryContainer/SummaryNextTextureButton
 
@@ -111,6 +113,10 @@ func init_ui() -> void:
 func update_ui() -> void:
 	shop_label.text = 'Welcome to the SHOP\nMoney: ' + str(Global.saves[Global.settings.selected_save_index].money)
 	summary_time_value_label.text = str(Global.saves[Global.settings.selected_save_index].money)
+	# TODO
+	summary_e_killed_value_label.text = str('TODO')
+	# TODO
+	summary_collectables_value_label.text = str('TODO')
 	summary_money_value_label.text = str(Global.saves[Global.settings.selected_save_index].level_time)
 
 
@@ -199,9 +205,10 @@ func _on_shop_buy_texture_button_pressed() -> void:
 	shop_clicked_item.is_available = false
 	# item bought but not yet assigned
 	Global.saves[Global.settings.selected_save_index].bought_item_ids[shop_clicked_item.id] = PlayerType.NONE
+	Global.saves[Global.settings.selected_save_index].money -= shop_clicked_item.cost
+	# not required because 'money' will trigger it, but 'bought_item_ids' wont so lets keep it
 	Config.save_save()
 	
-	Global.saves[Global.settings.selected_save_index].money -= shop_clicked_item.cost
 	update_ui()
 	
 	shop.buy_item(shop_clicked_item_id)

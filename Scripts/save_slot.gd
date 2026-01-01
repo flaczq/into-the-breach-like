@@ -18,7 +18,7 @@ func init(new_save_object: SaveObject) -> void:
 	save_object = new_save_object
 	name = name.replace('X', str(save_object.id))
 	
-	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == save_object.id:
+	if Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id == save_object.id:
 		modulate.a = 1.0
 	else:
 		modulate.a = 0.5

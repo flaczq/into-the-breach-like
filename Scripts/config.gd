@@ -5,6 +5,7 @@ var save_cfg = ConfigFile.new()
 
 const SETTINGS_FILEPATH: String = 'user://settings.cfg'
 const SAVE_FILEPATHS: Array[String] = [
+	'user://save_aaa.cfg',
 	'user://save_abc.cfg',
 	'user://save_def.cfg',
 	'user://save_ghi.cfg'
@@ -17,9 +18,9 @@ func _ready() -> void:
 	load_settings()
 	load_saves()
 	
-	# all saves are new so reset selected save index in settings
-	if Global.saves.all(func(save): return save.id <= 0) and Global.settings.selected_save_index >= 0:
-		Global.settings.save_enabled = true
+	# last time was tutorial OR all saves are new so reset selected save index in settings
+	if Global.settings.selected_save_index == 0 or (Global.settings.selected_save_index > 0 and Global.saves.all(func(save): return save.id <= 0)):
+		#Global.settings.save_enabled = true
 		Global.settings.selected_save_index = -1
 
 
@@ -30,7 +31,7 @@ func load_settings() -> void:
 		print('Virgin settings file in ' + SETTINGS_FILEPATH + ' created!')
 	else:
 		# settings file exists
-		var current_language = settings_cfg.get_value('game', 'volume', Global.settings.volume)
+		var current_language = settings_cfg.get_value('game', 'language', Global.settings.language)
 		var current_camera_position = settings_cfg.get_value('game', 'camera_position', Global.settings.camera_position)
 		var current_antialiasing = settings_cfg.get_value('game', 'antialiasing', Global.settings.antialiasing)
 		var current_end_turn_confirmation = settings_cfg.get_value('game', 'end_turn_confirmation', Global.settings.end_turn_confirmation)
@@ -47,7 +48,6 @@ func load_settings() -> void:
 		Global.settings.volume = current_volume
 		Global.settings.difficulty = current_difficulty
 		Global.settings.selected_save_index = current_selected_save_index
-		Global.settings.save_enabled = true
 	
 	var current_project_version = ProjectSettings.get_setting('application/config/version')
 	if current_project_version != settings_cfg.get_value('engine', 'version', 'XXX'):

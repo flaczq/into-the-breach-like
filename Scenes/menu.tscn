@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dfwqyoo6wacnd"]
+[gd_scene load_steps=17 format=3 uid="uid://dfwqyoo6wacnd"]
 
 [ext_resource type="Script" uid="uid://dl7a25jomg7lo" path="res://Scripts/menu.gd" id="1_ybquj"]
 [ext_resource type="PackedScene" uid="uid://cygwqk0c02vjo" path="res://Scenes/main.tscn" id="2_50w2i"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://1noimyb1f3xg" path="res://Scenes/cutscenes.tscn" id="4_om7ip"]
 [ext_resource type="Texture2D" uid="uid://bui25y017bdal" path="res://Assets/aaaps/background_squares_green.png" id="5_wbdvm"]
 [ext_resource type="PackedScene" uid="uid://b0wx4peeuej0j" path="res://Scenes/player_inventory.tscn" id="7_5gw6c"]
+[ext_resource type="Texture2D" uid="uid://bsp7mvofea4yk" path="res://Assets/aaaps/demo_stamp.png" id="7_7qvly"]
 [ext_resource type="Texture2D" uid="uid://bjnj0l8r4efkn" path="res://Assets/aaaps/button.png" id="7_evuth"]
 [ext_resource type="PackedScene" uid="uid://xo2b6hy86xtm" path="res://Scenes/save_slot.tscn" id="8_q3rjx"]
 [ext_resource type="Texture2D" uid="uid://co4vf2e54cmuo" path="res://Assets/aaaps/player_background.png" id="9_6swd7"]
@@ -96,7 +97,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainMenuContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 
 [node name="EditorTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
@@ -151,7 +151,6 @@ uppercase = true
 
 [node name="TutorialCheckButton" type="CheckButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
 layout_mode = 2
-button_pressed = true
 text = "TUTORIAL"
 
 [node name="StartTextureButton" type="TextureButton" parent="CanvasLayer/PanelCenterContainer/MainMenuContainer"]
@@ -380,6 +379,17 @@ text = "BACK"
 vertical_alignment = 1
 uppercase = true
 
+[node name="LevelsDemoTextureRect" type="TextureRect" parent="CanvasLayer/PanelCenterContainer/OptionsContainer/BackTextureButton"]
+modulate = Color(1, 1, 1, 0.501961)
+top_level = true
+layout_mode = 2
+offset_left = 610.0
+offset_top = 290.0
+offset_right = 788.0
+offset_bottom = 333.0
+texture = ExtResource("7_7qvly")
+expand_mode = 1
+
 [node name="DifficultyHBoxContainer" type="HBoxContainer" parent="CanvasLayer/PanelCenterContainer/OptionsContainer"]
 layout_mode = 2
 
@@ -390,6 +400,7 @@ text = "DIFFICULTY:"
 [node name="DifficultyOptionButton" type="OptionButton" parent="CanvasLayer/PanelCenterContainer/OptionsContainer/DifficultyHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+disabled = true
 selected = 0
 item_count = 2
 popup/item_0/text = "EASY"
@@ -492,6 +503,7 @@ tick_count = 2
 ticks_on_borders = true
 
 [node name="PlayersContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 

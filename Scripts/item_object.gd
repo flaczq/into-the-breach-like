@@ -31,7 +31,7 @@ func init_from_item_object(item_object: ItemObject) -> void:
 	textures = item_object.textures
 
 
-func apply_to_player(target_player: Player, is_applied: bool = true) -> void:
+func apply_to_player(target_player: Player) -> void:
 	assert(not is_applied, 'Item already applied')
 	match id:
 		Util.ItemType.HEALTH:

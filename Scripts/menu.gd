@@ -14,9 +14,11 @@ class_name Menu
 @onready var continue_texture_button		= $CanvasLayer/PanelCenterContainer/MainMenuContainer/ContinueTextureButton
 @onready var in_game_menu_container			= $CanvasLayer/PanelCenterContainer/InGameMenuContainer
 @onready var options_container				= $CanvasLayer/PanelCenterContainer/OptionsContainer
+@onready var difficulty_option_button		= $CanvasLayer/PanelCenterContainer/OptionsContainer/DifficultyHBoxContainer/DifficultyOptionButton
 @onready var language_option_button			= $CanvasLayer/PanelCenterContainer/OptionsContainer/LanguageHBoxContainer/LanguageOptionButton
 @onready var camera_position_option_button	= $CanvasLayer/PanelCenterContainer/OptionsContainer/CameraPositionHBoxContainer/CameraPositionOptionButton
 @onready var aa_check_box					= $CanvasLayer/PanelCenterContainer/OptionsContainer/AAHBoxContainer/AACheckBox
+@onready var end_turn_confirm_check_box		= $CanvasLayer/PanelCenterContainer/OptionsContainer/EndTurnConfirmationHBoxContainer/EndTurnConfirmationCheckBox
 @onready var game_speed_h_slider			= $CanvasLayer/PanelCenterContainer/OptionsContainer/GameSpeedHBoxContainer/GameSpeedHSlider
 @onready var volume_h_slider				= $CanvasLayer/PanelCenterContainer/OptionsContainer/VolumeHBoxContainer/VolumeHSlider
 @onready var players_container				= $CanvasLayer/PanelCenterContainer/PlayersContainer
@@ -40,32 +42,40 @@ var selected_save_object_id: int = -1
 func _ready() -> void:
 	Global.engine_mode = EngineMode.MENU
 	
-	TranslationServer.set_locale('en')
+	TranslationServer.set_locale(Language.keys()[Global.settings.language].to_lower())
 	version_label.text = 'version: ' + ProjectSettings.get_setting('application/config/version') + '-' + Time.get_date_string_from_system().replace('-', '')
 	#main_menu_button.hide()
 	
 	tutorial_check_button.set_pressed(Global.tutorial)
-	_on_tutorial_check_button_toggled(Global.tutorial)
 	
-	# is save slot selected
-	continue_texture_button.set_visible(Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id > 0)
-	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id > 0:
+	# is save slot selected (selected_save_index = 0 is TUTORIAL)
+	continue_texture_button.set_visible(Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id > 0)
+	if Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id > 0:
 		continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.saves[Global.settings.selected_save_index].description
 	
+	#FIXME DEMO
+	#difficulty_option_button.select(Global.settings.difficulty)
+	#_on_difficulty_option_button_item_selected(Global.settings.difficulty)
+	
 	language_option_button.select(Global.settings.language)
-	#_on_language_option_button_item_selected(Global.settings.language)
+	_on_language_option_button_item_selected(Global.settings.language)
 	
 	camera_position_option_button.select(Global.settings.camera_position)
-	#_on_camera_position_option_button_item_selected(Global.settings.camera_position)
+	_on_camera_position_option_button_item_selected(Global.settings.camera_position)
 	
 	aa_check_box.set_pressed(Global.settings.antialiasing)
-	#_on_aa_check_box_toggled(Global.settings.antialiasing)
+	_on_aa_check_box_toggled(Global.settings.antialiasing)
 	
-	game_speed_h_slider.set_value_no_signal(Global.settings.game_speed)
-	#_on_game_speed_h_slider_drag_ended(true)
+	end_turn_confirm_check_box.set_pressed(Global.settings.end_turn_confirmation)
+	_on_end_turn_confirmation_check_box_toggled(Global.settings.end_turn_confirmation)
 	
-	volume_h_slider.set_value_no_signal(Global.settings.volume)
-	#_on_volume_h_slider_drag_ended(true)
+	game_speed_h_slider.set_value(Global.settings.game_speed)
+	_on_game_speed_h_slider_drag_ended(Global.settings.game_speed)
+	
+	volume_h_slider.set_value(Global.settings.volume)
+	_on_volume_h_slider_drag_ended(Global.settings.volume)
+	
+	Global.settings.save_enabled = true
 	
 	on_button_disabled(players_next_texture_button, true)
 	
@@ -125,13 +135,14 @@ func init_ui() -> void:
 	# funny way of picking three unique random numbers
 	var ids_range = range(10, 100)
 	ids_range.shuffle()
-	for i in range(3):
+	#0 is TUTORIAL
+	for i in range(1, 4):
 		# save does not exist
 		if Global.saves[i].id <= 0:
 			var id = ids_range[i]
 			Global.saves[i].init(id)
 		
-		var save_slot = save_slots_grid_container.get_child(i) as SaveSlot
+		var save_slot = save_slots_grid_container.get_child(i - 1) as SaveSlot
 		save_slot.init(Global.saves[i])
 		save_slot.connect('slot_hovered', _on_save_slot_hovered)
 		save_slot.connect('slot_clicked', _on_save_slot_clicked)
@@ -214,15 +225,17 @@ func _on_editor_texture_button_pressed() -> void:
 
 
 func _on_continue_texture_button_pressed() -> void:
-	assert(Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id > 0, 'Save slot was NOT selected')
+	assert(Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id > 0, 'Save slot was NOT selected')
 	Global.saves[Global.settings.selected_save_index].save_enabled = true
+	Global.tutorial = false
 	
 	show_main()
 
 
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
-		Global.saves[Global.settings.selected_save_index].init(true)
+		Global.settings.selected_save_index = 0
+		Global.saves[Global.settings.selected_save_index].init(420, true)
 		show_main()
 	else:
 		show_save_slot_selection()
@@ -394,9 +407,14 @@ func _on_save_slot_clicked(save_object_id: int) -> void:
 			else:
 				save_slot.modulate.a = 0.5
 	
-	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
+	if Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
 		#ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' IS ALREADY SELECTED\n\nCONTINUE?'
 		_on_ss_confirmation_yes_button_pressed()
+	elif Global.saves.filter(func(save): return save.id == selected_save_object_id).front().selected_player_ids.size() > 0:
+		#selected save slot was already played before
+		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WAS ALREADY SELECTED BEFORE\n\nUSE IT?'
+		panel_full_screen_container.show()
+		ss_confirmation_color_rect.show()
 	else:
 		ss_confirmation_label.text = 'SLOT ' + str(selected_save_object_id) + ' WILL BE USED TO AUTOMATICALLY SAVE GAME\n\nCONTINUE?'
 		panel_full_screen_container.show()
@@ -416,7 +434,7 @@ func _on_ss_confirmation_no_button_pressed() -> void:
 
 func _on_ss_confirmation_yes_button_pressed() -> void:
 	var save_slot = save_slots_grid_container.get_children().filter(func(save_slot): return save_slot.save_object.id == selected_save_object_id).front() as SaveSlot
-	if Global.settings.selected_save_index >= 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
+	if Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id == selected_save_object_id:
 		# FIXME maybe compare each field separately
 		assert(Global.saves[Global.settings.selected_save_index] == save_slot.save_object, 'Already selected save slot is different than clicked one')
 		

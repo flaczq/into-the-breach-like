@@ -53,8 +53,8 @@ func _on_texture_rect_mouse_exited() -> void:
 func _on_texture_rect_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		save_object.description = name_label.text
-		save_object.created = Time.get_datetime_string_from_system()
-		save_object.updated = Time.get_datetime_string_from_system()
+		#save_object.created = Time.get_datetime_string_from_system()
+		#save_object.updated = Time.get_datetime_string_from_system()
 		#save_object.save_enabled = true
 		
 		slot_clicked.emit(save_object.id)

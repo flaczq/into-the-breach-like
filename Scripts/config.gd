@@ -84,7 +84,7 @@ func load_saves() -> void:
 func load_save(i: int, save_filepath: String) -> void:
 	var load_result = save_cfg.load(save_filepath)
 	if load_result != OK:
-		save_save(i)
+		save_save(i, true)
 		print('Virgin save file in ' + save_filepath + ' created!')
 	else:
 		# save file exists
@@ -121,9 +121,11 @@ func load_save(i: int, save_filepath: String) -> void:
 		print('Different settings version! Maybe do something..?')
 
 
-func save_save(i: int = Global.settings.selected_save_index) -> void:
+func save_save(i: int = Global.settings.selected_save_index, init = false) -> void:
 	assert(i >= 0, 'Saving save with wrong index')
-	print('save saved')
+	print('save saved: ' + SAVE_FILEPATHS[i])
+	var current_created = save_cfg.get_value('state', 'created', Global.saves[i].created)
+	
 	save_cfg.clear()
 	
 	save_cfg.set_value('engine', 'version', ProjectSettings.get_setting('application/config/version'))
@@ -131,14 +133,14 @@ func save_save(i: int = Global.settings.selected_save_index) -> void:
 	
 	save_cfg.set_value('state', 'id', Global.saves[i].id)
 	save_cfg.set_value('state', 'description', Global.saves[i].description)
-	save_cfg.set_value('state', 'created', Global.saves[i].created)
-	save_cfg.set_value('state', 'updated', Global.saves[i].updated)
-	save_cfg.set_value('state', 'unlocked_epoch_ids', Global.saves[i].unlocked_epoch_ids.duplicate())
+	save_cfg.set_value('state', 'created', (Time.get_datetime_string_from_system()) if init else (current_created))
+	save_cfg.set_value('state', 'updated', Time.get_datetime_string_from_system())
+	save_cfg.set_value('state', 'unlocked_epoch_ids', Global.saves[i].unlocked_epoch_ids)
 	save_cfg.set_value('state', 'selected_epoch', Global.saves[i].selected_epoch)
-	save_cfg.set_value('state', 'unlocked_player_ids', Global.saves[i].unlocked_player_ids.duplicate())
-	save_cfg.set_value('state', 'selected_player_ids', Global.saves[i].selected_player_ids.duplicate())
-	save_cfg.set_value('state', 'bought_item_ids', Global.saves[i].bought_item_ids.duplicate())
-	save_cfg.set_value('state', 'played_map_ids', Global.saves[i].played_map_ids.duplicate())
+	save_cfg.set_value('state', 'unlocked_player_ids', Global.saves[i].unlocked_player_ids)
+	save_cfg.set_value('state', 'selected_player_ids', Global.saves[i].selected_player_ids)
+	save_cfg.set_value('state', 'bought_item_ids', Global.saves[i].bought_item_ids)
+	save_cfg.set_value('state', 'played_map_ids', Global.saves[i].played_map_ids)
 	save_cfg.set_value('state', 'money', Global.saves[i].money)
 	save_cfg.set_value('state', 'play_time', Global.saves[i].play_time)
 	save_cfg.set_value('state', 'level_time', Global.saves[i].level_time)

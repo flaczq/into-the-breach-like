@@ -229,13 +229,17 @@ func _on_continue_texture_button_pressed() -> void:
 	Global.saves[Global.settings.selected_save_index].save_enabled = true
 	Global.tutorial = false
 	
-	show_main()
+	if Global.saves[Global.settings.selected_save_index].selected_player_ids.is_empty():
+		show_cutscenes()
+	else:
+		show_main()
 
 
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
 		Global.settings.selected_save_index = 0
 		Global.saves[Global.settings.selected_save_index].init(420, true)
+		
 		show_main()
 	else:
 		show_save_slot_selection()

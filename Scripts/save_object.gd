@@ -9,6 +9,7 @@ var _updated: String								= '-'
 var _unlocked_epoch_ids: Array[Util.EpochType]		= []
 var _selected_epoch: Util.EpochType					= Util.EpochType.NONE
 var _unlocked_player_ids: Array[Util.PlayerType]	= []
+# use this to check if save has been used to play before
 var _selected_player_ids: Array[Util.PlayerType]	= []
 var _bought_item_ids: Dictionary					= {} # {item_id: player_id (-1: inventory)}
 var _played_map_ids: Array[int]						= []

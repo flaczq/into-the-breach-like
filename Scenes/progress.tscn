@@ -176,7 +176,6 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="EpochsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 
@@ -258,6 +257,7 @@ texture = ExtResource("8_aeu3p")
 expand_mode = 1
 
 [node name="LevelsContainer" type="VBoxContainer" parent="CanvasLayer/PanelCenterContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 50
 

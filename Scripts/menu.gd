@@ -12,6 +12,8 @@ class_name Menu
 @onready var editor_texture_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/EditorTextureButton
 @onready var tutorial_check_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/TutorialCheckButton
 @onready var continue_texture_button		= $CanvasLayer/PanelCenterContainer/MainMenuContainer/ContinueTextureButton
+@onready var load_texture_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/LoadTextureButton
+@onready var start_texture_button			= $CanvasLayer/PanelCenterContainer/MainMenuContainer/StartTextureButton
 @onready var in_game_menu_container			= $CanvasLayer/PanelCenterContainer/InGameMenuContainer
 @onready var options_container				= $CanvasLayer/PanelCenterContainer/OptionsContainer
 @onready var difficulty_option_button		= $CanvasLayer/PanelCenterContainer/OptionsContainer/DifficultyHBoxContainer/DifficultyOptionButton
@@ -49,9 +51,14 @@ func _ready() -> void:
 	tutorial_check_button.set_pressed(Global.tutorial)
 	
 	# is save slot selected (selected_save_index = 0 is TUTORIAL)
-	continue_texture_button.set_visible(Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id > 0)
-	if Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id > 0:
+	var has_played_before = Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].id > 0 and not Global.saves[Global.settings.selected_save_index].selected_player_ids.is_empty()
+	continue_texture_button.set_visible(has_played_before)
+	if Global.settings.selected_save_index > 0 and Global.saves[Global.settings.selected_save_index].description:
 		continue_texture_button.tooltip_text = 'SAVE SLOT: ' + Global.saves[Global.settings.selected_save_index].description
+	
+	load_texture_button.set_visible(has_played_before)
+	
+	start_texture_button.set_visible(!has_played_before)
 	
 	#FIXME DEMO
 	#difficulty_option_button.select(Global.settings.difficulty)
@@ -235,6 +242,10 @@ func _on_continue_texture_button_pressed() -> void:
 		show_main()
 
 
+func _on_load_texture_button_pressed() -> void:
+	show_save_slot_selection()
+
+
 func _on_start_texture_button_pressed() -> void:
 	if Global.tutorial:
 		Global.settings.selected_save_index = 0
@@ -242,6 +253,7 @@ func _on_start_texture_button_pressed() -> void:
 		
 		show_main()
 	else:
+		# TODO don't show it, just use the first slot
 		show_save_slot_selection()
 
 
